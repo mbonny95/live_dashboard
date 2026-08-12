@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Caprasimo:wght@400&family=Figtree:wght@400;600;700&display=swap');
+:root{--font-heading:"Caprasimo",system-ui,sans-serif;--font-body:"Figtree",system-ui,sans-serif}
+:root,[data-theme="day"]{--page:#eaeef4;--gr:#e0e5ec;--nu-d:#a3b1c6;--nu-l:#ffffff;--tx:#2b303b;--tx2:#5a6377;
+--acc:#c67139;--accT:#8c491a;--sage:#7a8a5e;--sageT:#4f5c39;--onAcc:#fff;--tint:rgba(198,113,57,.13);--warn:#b4741c;--alert:#a83e2b;--ok:#4f5c39}
+[data-theme="night"]{--page:#1a1e25;--gr:#23282f;--nu-d:#14171c;--nu-l:#2e343d;--tx:#e7ebf2;--tx2:#98a2b3;
+--acc:#d98c53;--accT:#eeb283;--sage:#9aab79;--sageT:#b3c294;--onAcc:#1a1e25;--tint:rgba(217,140,83,.15);--warn:#e0a95c;--alert:#e08974;--ok:#b3c294}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);font-family:var(--font-body),system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font-family:inherit;color:inherit;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:var(--accT);text-decoration:none}a:hover{color:var(--acc)}
+[data-nu]{--nu-out:7px 7px 15px var(--nu-d),-7px -7px 15px var(--nu-l);--nu-sm:4px 4px 9px var(--nu-d),-4px -4px 9px var(--nu-l);
+--nu-in:inset 5px 5px 10px var(--nu-d),inset -5px -5px 10px var(--nu-l);--nu-ins:inset 3px 3px 7px var(--nu-d),inset -3px -3px 7px var(--nu-l)}
+[data-sel="true"]{box-shadow:inset 3px 3px 7px var(--nu-d),inset -3px -3px 7px var(--nu-l);color:var(--accT)}
+[data-on="true"]{background:var(--tint)}
+[data-tone="warn"]{color:var(--warn)}[data-tone="alert"]{color:var(--alert)}[data-tone="ok"]{color:var(--ok)}
+[data-dim="true"]{opacity:.42}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:34px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:34px;border-radius:999px;background:var(--gr);
+box-shadow:inset 3px 3px 7px var(--nu-d),inset -3px -3px 7px var(--nu-l)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:4px;border-radius:999px;
+background:var(--gr);box-shadow:2px 2px 5px var(--nu-d),-2px -2px 5px var(--nu-l),inset 0 0 0 4px var(--acc)}
+input[type=range]::-moz-range-track{height:34px;border-radius:999px;background:var(--gr)}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(--acc);border-radius:999px;background:var(--gr)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+[data-r="casa"]{display:grid;gap:14px;grid-template-columns:minmax(0,.86fr) minmax(0,1.3fr) minmax(0,.94fr);min-height:100%}
+[data-r="hgroup"]{display:flex;align-items:center;gap:9px;flex:none}
+[data-r="rooms"]{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(148px,auto);flex:1;min-height:0}
+[data-r="mini"]{display:grid;gap:11px;grid-template-columns:repeat(2,minmax(0,1fr))}
+[data-r="two"]{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr));flex:none}
+[data-r="cells"]{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+[data-r="cells4"]{display:grid;gap:11px;grid-template-columns:repeat(4,minmax(0,1fr))}
+[data-r="btns"]{display:grid;gap:9px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-height:700px),(max-width:860px){body{overflow:auto}
+[data-nu]{height:auto!important;min-height:100vh;overflow:visible!important}
+[data-r="body"]{flex:none!important;min-height:auto!important;overflow:visible!important}
+[data-r="casa"],[data-r="two"]{height:auto!important;flex:none!important}
+[data-r="rooms"]{grid-template-rows:none}
+[data-r="casa"] > div > div,[data-r="two"] > div{flex:none!important;min-height:auto!important}}
+@media (max-width:860px){[data-r="casa"]{grid-template-columns:minmax(0,1fr) minmax(268px,320px);height:auto}}
+@media (max-width:700px){[data-r="casa"],[data-r="two"]{grid-template-columns:minmax(0,1fr)}[data-r="cells4"]{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@keyframes rise{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+</style>
+</helmet>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5A5.9 5.9 0 0 0 18 8 6 6 0 0 0 6 8c0 1.2.5 2.5 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></symbol>
+<symbol id="i-blind" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 8h18M3 13h18M12 13v6"/></symbol>
+<symbol id="i-therm" viewBox="0 0 24 24"><path d="M14 4v10.5a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol>
+<symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7Z"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
+<symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19a4.5 4.5 0 0 0 .5-9 6 6 0 0 0-11.6 1.6A3.7 3.7 0 0 0 7 19Z"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.7 8.9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1 1 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1Z"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></symbol>
+<symbol id="i-sprout" viewBox="0 0 24 24"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8Z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2Z"/></symbol>
+<symbol id="i-grass" viewBox="0 0 24 24"><path d="M12 21V9M12 21c0-5-3-8-7-9 1 5 3 8 7 9ZM12 21c0-5 3-8 7-9-1 5-3 8-7 9ZM12 9c0-3 1-5 3-6-1.5 2-1 4-1 6"/></symbol>
+<symbol id="i-bot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-wash" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="3"/><circle cx="12" cy="14" r="4.5"/><path d="M8 6h.01M11 6h.01"/></symbol>
+<symbol id="i-dryer" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 6h.01M11 6h.01"/><circle cx="12" cy="14" r="4.5"/><path d="M10.3 12.3a2.6 2.6 0 0 1 3.6 2.4M13.7 15.7a2.6 2.6 0 0 1-3.6-2.4"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></symbol>
+<symbol id="i-sofa" viewBox="0 0 24 24"><path d="M4 11V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M2 13a2 2 0 0 1 4 0v3h12v-3a2 2 0 0 1 4 0v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2Z"/></symbol>
+<symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 20V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11"/><path d="M3 14h18M7 11h4"/></symbol>
+<symbol id="i-crib" viewBox="0 0 24 24"><path d="M4 4v16M20 4v16M4 9h16M4 20h16M9 9v11M15 9v11"/></symbol>
+<symbol id="i-door" viewBox="0 0 24 24"><path d="M6 22V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v19"/><path d="M3 22h18M14 12h.01"/></symbol>
+<symbol id="i-bath" viewBox="0 0 24 24"><path d="M4 12h16v4a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4Z"/><path d="M7 12V6a2 2 0 0 1 4 0M6 20l-1 2M18 20l1 2"/></symbol>
+<symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="12" rx="2"/><path d="M2 19h20"/></symbol>
+<symbol id="i-hall" viewBox="0 0 24 24"><path d="M3 21V5a2 2 0 0 1 2-2h6v18M11 21h10V9h-6"/><path d="M7 12h.01"/></symbol>
+<symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 13h14a3 3 0 1 1-3 3"/><path d="M3 18h7"/></symbol>
+<symbol id="i-rain" viewBox="0 0 24 24"><path d="M17 14a4 4 0 0 0 .4-8A6 6 0 0 0 6 8.2 3.6 3.6 0 0 0 6.5 14"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/></symbol>
+<symbol id="i-solar" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M12 1v1.5M12 13.5V15M5.6 8H4.1M19.9 8h-1.5M7.5 3.5 6.4 2.4M17.6 2.4l-1.1 1.1"/><path d="M4 20h16l-2-4H6Z"/></symbol>
+<symbol id="i-tower" viewBox="0 0 24 24"><path d="M12 3v18M7 21l5-14 5 14M5 8h14M6.5 13h11"/></symbol>
+<symbol id="i-battery" viewBox="0 0 24 24"><rect x="2" y="7" width="17" height="10" rx="2.5"/><path d="M22 11v2"/></symbol>
+<symbol id="i-house" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V13h6v9"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M5 17h14M3 17v-4l2-6h14l2 6v4"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/><path d="M5 13h14"/></symbol>
+<symbol id="i-fuel" viewBox="0 0 24 24"><path d="M4 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18M3 22h12M4 12h10"/><path d="M14 8h3a2 2 0 0 1 2 2v7a1.5 1.5 0 0 0 3 0v-6l-2-4"/></symbol>
+<symbol id="i-tire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3v5.5M12 15.5V21M3 12h5.5M15.5 12H21"/></symbol>
+<symbol id="i-tv" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="13" rx="2"/><path d="M8 21h8M12 18v3"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></symbol>
+<symbol id="i-shutter-close" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 8h16M4 12.5h16M4 17h16"/></symbol>
+<symbol id="i-shutter-open" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 6.5h16M4 9h16"/><path d="M4 21 20 3"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17h.01"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m4 13 5 5L20 6"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></symbol>
+<symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v6M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-12 0Z"/><path d="M12 17v5"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 13.7 4.7L20 15.5"/><path d="M20 20v-4.5h-4.5"/></symbol>
+</defs></svg>
+
+<div data-nu="1" data-theme="{{ theme }}" style="height:100vh;background:var(--page);color:var(--tx);padding:16px 18px;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+
+<div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;flex:none">
+<div style="flex:none">
+<div style="font-family:var(--font-heading);font-size:24px;line-height:1.1">{{ greeting }}</div>
+<div style="font:500 12px/1.4 var(--font-body);color:var(--tx2);margin-top:3px">{{ dateStr }} · {{ timeStr }}</div>
+</div>
+
+<sc-if value="{{ hasModes }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px">
+<sc-for list="{{ modes }}" as="m" hint-placeholder-count="4">
+<button onClick="{{ m.set }}" data-sel="{{ m.sel }}" style="border-radius:999px;padding:0 15px;height:40px;background:transparent;color:var(--tx2);font:600 12.5px/1 var(--font-body);display:flex;align-items:center;gap:7px">
+<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ m.icon }}"></use></svg>
+{{ m.label }}
+</button>
+</sc-for>
+</div>
+</sc-if>
+
+<div style="flex:1;min-width:8px"></div>
+
+<div data-r="hgroup">
+<sc-if value="{{ hasWeather }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ openWeather }}" title="{{ S.weatherStation }}" style="display:flex;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:999px;padding:0 15px 0 14px;height:44px">
+<svg width="19" height="19" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ wxIcon }}"></use></svg>
+<span style="font:600 14px/1 var(--font-body)">{{ wxTemp }}</span>
+<span style="font:500 12px/1 var(--font-body);color:var(--tx2)">{{ wxLabel }}</span>
+<span style="width:1px;height:17px;background:var(--nu-d);opacity:.5"></span>
+<span style="font:600 11.5px/1 var(--font-body);color:var(--tx2)">{{ wxRain }}</span>
+</button>
+</sc-if>
+
+<sc-if value="{{ hasPeople }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:8px">
+<sc-for list="{{ people }}" as="p" hint-placeholder-count="2">
+<div title="{{ p.title }}" data-on="{{ p.home }}" style="width:44px;height:44px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;font:700 15px/1 var(--font-body);color:var(--accT)">{{ p.initial }}</div>
+</sc-for>
+</div>
+</sc-if>
+
+<button onClick="{{ toggleTheme }}" title="{{ S.dayNight }}" style="width:44px;height:44px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center">
+<svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ themeIcon }}"></use></svg>
+</button>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:10px;flex:none">
+<div></div>
+<div style="display:flex;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px;justify-self:center;max-width:100%;overflow:auto">
+<sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+<button onClick="{{ t.go }}" data-sel="{{ t.sel }}" style="border-radius:999px;padding:0 17px;height:42px;background:transparent;color:var(--tx2);font:600 13px/1 var(--font-body);display:flex;align-items:center;gap:8px">
+<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ t.icon }}"></use></svg>
+{{ t.label }}
+</button>
+</sc-for>
+</div>
+<div style="justify-self:end;display:flex;align-items:center;gap:8px">
+<sc-if value="{{ isDemo }}" hint-placeholder-val="{{ false }}">
+<span title="{{ S.demoTooltip }}" style="font:700 10px/1 var(--font-body);letter-spacing:.06em;text-transform:uppercase;color:var(--accT);background:var(--tint);border-radius:999px;padding:6px 10px">{{ S.demoBadge }}</span>
+</sc-if>
+<div title="{{ connTitle }}" style="display:flex;align-items:center;gap:8px;font:500 11px/1 var(--font-body);color:var(--tx2);letter-spacing:.04em;text-transform:uppercase">
+<span data-tone="{{ connTone }}" style="width:9px;height:9px;border-radius:999px;background:currentColor"></span>
+{{ connLabel }}
+</div>
+</div>
+</div>
+
+<div data-r="body" style="flex:1;min-height:0;overflow:auto">
+
+<sc-if value="{{ tabCasa }}" hint-placeholder-val="{{ true }}">
+<div data-r="casa" data-screen-label="Casa">
+
+<div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:1;min-height:0;display:flex;flex-direction:column">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:13px;flex:none">
+<span style="font-family:var(--font-heading);font-size:28px;line-height:1">{{ onCount }}</span>
+<span style="font:600 12.5px/1.3 var(--font-body);color:var(--tx2)">{{ S.onNow }}</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:9px;flex:1;min-height:132px;overflow:auto">
+<sc-for list="{{ activeItems }}" as="a" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:18px;padding:10px 12px;flex:none">
+<svg width="18" height="18" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ a.icon }}"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 13px/1.2 var(--font-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.name }}</div>
+<div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ a.sub }}</div>
+</div>
+<button onClick="{{ a.off }}" title="{{ S.turnOff }}" style="width:38px;height:38px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="15" height="15" fill="none" stroke="var(--accT)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-power"></use></svg>
+</button>
+</div>
+</sc-for>
+<sc-if value="{{ nothingOn }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 12.5px/1.5 var(--font-body);color:var(--tx2);padding:4px 2px">{{ S.allOff }}</div>
+</sc-if>
+</div>
+</div>
+
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:none">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin-bottom:12px">{{ S.quickActions }}</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ quick }}" as="q" hint-placeholder-count="3">
+<button onClick="{{ q.run }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:17px;padding:0 13px;height:48px;text-align:left">
+<svg width="19" height="19" fill="none" stroke="var(--accT)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ q.icon }}"></use></svg>
+<span style="flex:1;font:600 13px/1.2 var(--font-body)">{{ q.label }}</span>
+<span style="font:500 11px/1 var(--font-body);color:var(--tx2)">{{ q.sub }}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:11px;min-height:0">
+<div style="display:flex;align-items:center;gap:8px;padding:3px 2px 0;flex:none">
+<div style="flex:1;font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)">{{ S.rooms }}</div>
+<sc-if value="{{ hasOverflowRooms }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ openAllRooms }}" style="background:transparent;font:600 11px/1 var(--font-body);color:var(--accT);padding:4px 2px">{{ overflowLabel }}</button>
+</sc-if>
+</div>
+<div data-r="rooms">
+<sc-for list="{{ rooms }}" as="r" hint-placeholder-count="8">
+<div data-on="{{ r.active }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:9px;min-height:0">
+<div style="display:flex;align-items:flex-start;gap:10px;flex:none">
+<svg width="21" height="21" fill="none" stroke="{{ r.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:1px"><use href="{{ r.icon }}"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 14px/1.2 var(--font-body)">{{ r.name }}</div>
+<div style="font:500 11px/1.35 var(--font-body);color:var(--tx2);margin-top:3px">{{ r.sub }}</div>
+</div>
+</div>
+<sc-if value="{{ r.hasQuick }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:6px;flex-wrap:wrap;flex:none">
+<sc-for list="{{ r.quick }}" as="q" hint-placeholder-count="2">
+<span style="display:flex;align-items:center;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px 9px;font:600 10.5px/1 var(--font-body);color:var(--tx2)">
+<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ q.icon }}"></use></svg>
+{{ q.val }}
+</span>
+</sc-for>
+</div>
+</sc-if>
+<div style="flex:1;min-height:0"></div>
+<div style="display:flex;gap:7px;flex:none">
+<button onClick="{{ r.open }}" style="flex:1;height:38px;border-radius:13px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--tx2)">{{ S.open }}</button>
+<sc-if value="{{ r.hasCovers }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ r.closeCovers }}" title="{{ S.closeCoversTitle }}" style="width:42px;height:38px;border-radius:13px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2)">
+<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shutter-close"></use></svg>
+</button>
+<button onClick="{{ r.openCovers }}" title="{{ S.openCoversTitle }}" style="width:42px;height:38px;border-radius:13px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2)">
+<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shutter-open"></use></svg>
+</button>
+</sc-if>
+<sc-if value="{{ r.hasLight }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ r.toggle }}" data-sel="{{ r.lightOn }}" title="{{ S.lightsTitle }}" style="width:42px;height:38px;border-radius:13px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2)">
+<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bulb"></use></svg>
+</button>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+<sc-if value="{{ hasAlarm }}" hint-placeholder-val="{{ true }}">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:none">
+<div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
+<svg width="21" height="21" fill="none" stroke="{{ alarmStroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"></use></svg>
+<div style="flex:1">
+<div style="font:600 14px/1.2 var(--font-body)">{{ S.alarm }}</div>
+<div data-tone="{{ alarmTone }}" style="font:600 11px/1.3 var(--font-body);margin-top:3px">{{ alarmLabel }}</div>
+</div>
+</div>
+<div data-r="btns">
+<sc-for list="{{ alarmBtns }}" as="b" hint-placeholder-count="3">
+<button onClick="{{ b.run }}" data-sel="{{ b.sel }}" style="height:44px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--tx2)">{{ b.label }}</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasEnergy }}" hint-placeholder-val="{{ true }}">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:1;min-height:0;display:flex;flex-direction:column">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex:none">
+<svg width="18" height="18" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-solar"></use></svg>
+<span style="flex:1;font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)">{{ S.solar }}</span>
+<button onClick="{{ goEnergia }}" style="background:transparent;font:600 11px/1 var(--font-body);color:var(--accT);padding:6px 2px">{{ S.details }}</button>
+</div>
+<div style="position:relative;width:178px;height:178px;margin:0 auto 14px;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center;flex:none">
+<svg viewBox="0 0 200 200" style="position:absolute;inset:8px;width:162px;height:162px;transform:rotate(-90deg)">
+<circle cx="100" cy="100" r="82" fill="none" stroke="var(--nu-d)" stroke-width="15" opacity="0.45"></circle>
+<circle cx="100" cy="100" r="82" fill="none" stroke="var(--acc)" stroke-width="15" stroke-linecap="round" stroke-dasharray="{{ ringProd }}"></circle>
+<circle cx="100" cy="100" r="58" fill="none" stroke="var(--nu-d)" stroke-width="11" opacity="0.35"></circle>
+<circle cx="100" cy="100" r="58" fill="none" stroke="var(--sage)" stroke-width="11" stroke-linecap="round" stroke-dasharray="{{ ringLoad }}"></circle>
+</svg>
+<div style="position:relative;text-align:center">
+<div style="font-family:var(--font-heading);font-size:27px;line-height:1">{{ prodToday }}</div>
+<div style="font:600 10px/1.3 var(--font-body);color:var(--tx2);margin-top:4px">{{ S.kwhToday }}</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex:none">
+<span style="width:9px;height:9px;border-radius:999px;background:var(--acc);flex:none"></span>
+<span style="flex:1;font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ S.production }}</span>
+<span style="font:600 12.5px/1 var(--font-body)">{{ prodTodayFull }}</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;flex:none">
+<span style="width:9px;height:9px;border-radius:999px;background:var(--sage);flex:none"></span>
+<span style="flex:1;font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ S.fromGrid }}</span>
+<span style="font:600 12.5px/1 var(--font-body)">{{ loadTodayFull }}</span>
+</div>
+<div style="flex:1;min-height:0"></div>
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 14px;flex:none">
+<div style="font:600 12px/1.3 var(--font-body);color:var(--accT)">{{ selfRatioLine }}</div>
+<div style="font:500 10.5px/1.45 var(--font-body);color:var(--tx2);margin-top:4px">{{ gridNote }}</div>
+</div>
+</div>
+</sc-if>
+</div>
+
+</div>
+</sc-if>
+
+<sc-if value="{{ tabIrr }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Irrigazione" style="display:flex;flex-direction:column;gap:14px;min-height:100%">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:none">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+<svg width="22" height="22" fill="none" stroke="var(--sage)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-grass"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-size:20px;line-height:1.15">{{ irrSummary }}</div>
+<div style="font:500 11.5px/1.4 var(--font-body);color:var(--tx2);margin-top:4px">{{ irrSub }}</div>
+</div>
+<sc-if value="{{ hasResetButton }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ resetWeek }}" style="display:flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--tx2);flex:none">
+<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-refresh"></use></svg>
+{{ S.resetWeek }}
+</button>
+</sc-if>
+</div>
+<div data-r="cells4">
+<sc-for list="{{ meteo }}" as="c" hint-placeholder-count="8">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:20px;padding:12px 14px">
+<svg width="17" height="17" fill="none" stroke="var(--sage)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ c.icon }}"></use></svg>
+<div style="font-family:var(--font-heading);font-size:19px;line-height:1.1;margin-top:7px">{{ c.val }}</div>
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ c.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div data-r="two">
+<sc-for list="{{ zones }}" as="z" hint-placeholder-count="2">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;display:flex;flex-direction:column">
+<div style="display:flex;align-items:flex-start;gap:13px;margin-bottom:13px;flex:none">
+<svg width="21" height="21" fill="none" stroke="var(--sage)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><use href="#i-sprout"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 14.5px/1.2 var(--font-body)">{{ z.name }}</div>
+<div data-tone="{{ z.tone }}" style="font:600 12px/1.4 var(--font-body);margin-top:5px;text-wrap:pretty">{{ z.advisory }}</div>
+<div style="font:500 11px/1.4 var(--font-body);color:var(--tx2);margin-top:4px">{{ z.urgenza }}</div>
+</div>
+<div style="flex:none;text-align:right">
+<div style="font-family:var(--font-heading);font-size:24px;line-height:1">{{ z.soil }}</div>
+<div style="font:500 10px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ S.soil }}</div>
+</div>
+</div>
+
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:11px 13px 5px;margin-bottom:12px;flex:none">
+<div style="display:flex;justify-content:space-between;font:500 10px/1 var(--font-body);color:var(--tx2);margin-bottom:5px">
+<span>{{ S.soilMoisture48h }}</span><span>{{ z.soil }}</span>
+</div>
+<svg viewBox="0 0 240 44" preserveAspectRatio="none" style="display:block;width:100%;height:44px;overflow:visible">
+<polyline points="{{ z.spark }}" fill="none" stroke="var(--sage)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+</svg>
+</div>
+
+<div data-r="mini" style="margin-bottom:11px;flex:none">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:18px;padding:11px 13px">
+<div style="font-family:var(--font-heading);font-size:18px;line-height:1.1">{{ z.deficit }}</div>
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ S.deficitAccumulated }}</div>
+</div>
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:18px;padding:11px 13px">
+<div style="font-family:var(--font-heading);font-size:18px;line-height:1.1">{{ z.mmWeek }}</div>
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ S.mmPerWeek }}</div>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;gap:8px;font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-bottom:12px;flex:none">
+<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-timer"></use></svg>
+{{ z.lastRunLine }}
+</div>
+
+<div style="flex:1;min-height:0"></div>
+<div data-r="btns" style="flex:none">
+<sc-for list="{{ z.buttons }}" as="b" hint-placeholder-count="3">
+<button onClick="{{ b.run }}" style="height:46px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1 var(--font-body);color:var(--accT);display:flex;align-items:center;justify-content:center;gap:6px">
+<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-timer"></use></svg>
+{{ b.label }}
+</button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tabEnergia }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Energia" style="display:flex;flex-direction:column;gap:14px;height:100%;min-height:0">
+
+<div data-r="cells" style="flex:none">
+<sc-for list="{{ nowCells }}" as="c" hint-placeholder-count="4">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:14px 16px;display:flex;align-items:center;gap:12px">
+<svg width="20" height="20" fill="none" stroke="{{ c.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ c.icon }}"></use></svg>
+<div style="min-width:0">
+<div style="font-family:var(--font-heading);font-size:21px;line-height:1.1">{{ c.val }}</div>
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:4px">{{ c.label }}</div>
+</div>
+</div>
+</sc-for>
+</div>
+
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:20px 22px;flex:1;min-height:0;display:flex;flex-direction:column">
+<div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;flex:none">
+<div style="min-width:0">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)">{{ S.productionAndGrid }}</div>
+<div style="font-family:var(--font-heading);font-size:34px;line-height:1.05;margin-top:7px">{{ prodPeriod }}</div>
+<div style="font:500 11.5px/1.4 var(--font-body);color:var(--tx2);margin-top:4px">{{ periodNote }}</div>
+</div>
+<div style="flex:1;min-width:12px"></div>
+<div style="display:flex;align-items:center;gap:16px;margin-bottom:5px">
+<div style="display:flex;align-items:center;gap:7px">
+<span style="width:10px;height:10px;border-radius:3px;background:var(--acc)"></span>
+<span style="font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ S.produced }}</span>
+</div>
+<div style="display:flex;align-items:center;gap:7px">
+<span style="width:10px;height:10px;border-radius:3px;background:var(--sage)"></span>
+<span style="font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ S.fromGrid }}</span>
+</div>
+</div>
+<div style="display:flex;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px;margin-bottom:4px">
+<sc-for list="{{ ranges }}" as="g" hint-placeholder-count="3">
+<button onClick="{{ g.set }}" data-sel="{{ g.sel }}" style="border-radius:999px;padding:0 15px;height:40px;background:transparent;color:var(--tx2);font:600 12px/1 var(--font-body)">{{ g.label }}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;align-items:stretch;gap:10px;flex:1;min-height:172px;box-shadow:var(--nu-ins);border-radius:22px;padding:18px 16px;margin-top:16px">
+<div style="display:flex;flex-direction:column;gap:8px;flex:none">
+<div style="position:relative;flex:1;min-height:0;width:34px">
+<sc-for list="{{ axisTicks }}" as="t" hint-placeholder-count="5">
+<span style="position:absolute;right:0;bottom:{{ t.pct }};transform:translateY(50%);font:500 9px/1 var(--font-body);color:var(--tx2);white-space:nowrap">{{ t.val }}</span>
+</sc-for>
+</div>
+<span style="font:500 10px/1 var(--font-body);color:transparent;white-space:nowrap;flex:none" aria-hidden="true">0</span>
+</div>
+<sc-for list="{{ bars }}" as="b" hint-placeholder-count="7">
+<div title="{{ b.title }}" style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-end">
+<div style="position:relative;width:100%;flex:1;min-height:0">
+<div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:3px">
+<div style="width:42%;max-width:17px;border-radius:6px 6px 3px 3px;background:var(--acc);box-shadow:2px 2px 5px var(--nu-d);height:{{ b.hp }}"></div>
+<div style="width:42%;max-width:17px;border-radius:6px 6px 3px 3px;background:var(--sage);box-shadow:2px 2px 5px var(--nu-d);height:{{ b.hg }}"></div>
+</div>
+</div>
+<span style="font:500 10px/1 var(--font-body);color:var(--tx2);white-space:nowrap;flex:none">{{ b.label }}</span>
+</div>
+</sc-for>
+</div>
+
+<div data-r="cells" style="margin-top:15px;flex:none">
+<sc-for list="{{ periodCells }}" as="c" hint-placeholder-count="4">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:20px;padding:12px 14px">
+<div style="font-family:var(--font-heading);font-size:19px;line-height:1.1">{{ c.val }}</div>
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:4px">{{ c.label }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ tabAuto }}" hint-placeholder-val="{{ false }}">
+<div data-r="two" data-screen-label="Auto">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:20px;display:flex;flex-direction:column;min-height:0">
+<div style="display:flex;align-items:flex-start;gap:13px;margin-bottom:16px;flex:none">
+<svg width="22" height="22" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><use href="#i-car"></use></svg>
+<div style="flex:1">
+<div style="font:600 15px/1.2 var(--font-body)">{{ vehicleTitle }}</div>
+<div style="font:500 11.5px/1.4 var(--font-body);color:var(--tx2);margin-top:4px">{{ carMeta }}</div>
+</div>
+</div>
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:22px;padding:16px 18px;margin-bottom:14px;flex:none">
+<div style="display:flex;align-items:baseline;gap:9px">
+<span data-tone="{{ fuelTone }}" style="font-family:var(--font-heading);font-size:32px;line-height:1.1">{{ fuelPct }}</span>
+<span style="font:600 12px/1.3 var(--font-body);color:var(--tx2)">carburante · {{ carRange }} di autonomia</span>
+</div>
+<div style="height:12px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-ins);margin-top:13px;overflow:hidden">
+<div data-tone="{{ fuelTone }}" style="height:100%;border-radius:999px;background:currentColor;width:{{ fuelWidth }}"></div>
+</div>
+</div>
+<div data-r="cells" style="flex:none">
+<sc-for list="{{ carCells }}" as="c" hint-placeholder-count="6">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:20px;padding:12px 14px">
+<div style="font:600 15px/1.2 var(--font-body)">{{ c.val }}</div>
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:4px">{{ c.label }}</div>
+</div>
+</sc-for>
+</div>
+<div style="flex:1;min-height:0"></div>
+</div>
+
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:20px;display:flex;flex-direction:column;min-height:0">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin-bottom:13px;flex:none">{{ S.warnings }}</div>
+<div style="display:flex;flex-direction:column;gap:9px;flex:none">
+<sc-for list="{{ warnings }}" as="w" hint-placeholder-count="6">
+<div data-dim="{{ w.quiet }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:0 14px;height:48px">
+<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ w.icon }}"></use></svg>
+<span style="flex:1;font:600 12.5px/1.2 var(--font-body)">{{ w.label }}</span>
+<span data-tone="{{ w.tone }}" style="font:600 11.5px/1 var(--font-body)">{{ w.val }}</span>
+</div>
+</sc-for>
+</div>
+<div style="flex:1;min-height:0"></div>
+</div>
+</div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ panel }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeRoom }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:40;animation:fade .18s ease"></div>
+<div style="position:fixed;z-index:41;right:0;top:0;bottom:0;width:min(560px,100%);background:var(--page);box-shadow:-18px 0 44px rgba(20,24,30,.24);overflow-y:auto;padding:22px;animation:rise .22s cubic-bezier(.22,1,.36,1)">
+<div style="display:flex;align-items:center;gap:13px;margin-bottom:20px">
+<div style="width:52px;height:52px;border-radius:20px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="24" height="24" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ panel.icon }}"></use></svg>
+</div>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-size:24px;line-height:1.1">{{ panel.name }}</div>
+<div style="font:500 12px/1.4 var(--font-body);color:var(--tx2);margin-top:3px">{{ panel.sub }}</div>
+</div>
+<button onClick="{{ closeRoom }}" style="width:48px;height:48px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+
+<sc-if value="{{ panel.hasLights }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.lighting }}</div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
+<sc-for list="{{ panel.lights }}" as="l" hint-placeholder-count="1">
+<div data-on="{{ l.on }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<div style="display:flex;align-items:center;gap:12px">
+<svg width="20" height="20" fill="none" stroke="{{ l.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-bulb"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 14px/1.2 var(--font-body)">{{ l.name }}</div>
+<div style="font:500 11.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ l.sub }}</div>
+</div>
+<button onClick="{{ l.toggle }}" data-sel="{{ l.on }}" style="width:56px;height:44px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2)">
+<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-power"></use></svg>
+</button>
+</div>
+<sc-if value="{{ l.on }}" hint-placeholder-val="{{ false }}">
+<input type="range" min="1" max="100" value="{{ l.bri }}" onChange="{{ l.setBri }}" style="margin-top:14px">
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ panel.hasCovers }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.covers }}</div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
+<sc-for list="{{ panel.covers }}" as="c" hint-placeholder-count="1">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:13px">
+<svg width="20" height="20" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-blind"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 14px/1.2 var(--font-body)">{{ c.name }}</div>
+<div style="font:500 11.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ c.sub }}</div>
+</div>
+<div style="display:flex;gap:8px;flex:none">
+<button onClick="{{ c.up }}" title="{{ S.up }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--accT)">
+<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shutter-open"></use></svg>
+</button>
+<button onClick="{{ c.stop }}" title="{{ S.stop }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2)">
+<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-stop"></use></svg>
+</button>
+<button onClick="{{ c.down }}" title="{{ S.down }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--accT)">
+<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shutter-close"></use></svg>
+</button>
+</div>
+</div>
+<input type="range" min="0" max="100" value="{{ c.pos }}" onInput="{{ c.drag }}" onPointerUp="{{ c.setPos }}" onTouchEnd="{{ c.setPos }}">
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ panel.hasAppliances }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.appliances }}</div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
+<sc-for list="{{ panel.appliances }}" as="a" hint-placeholder-count="1">
+<div style="display:flex;align-items:center;gap:12px;background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<svg width="20" height="20" fill="none" stroke="{{ a.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ a.icon }}"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 14px/1.2 var(--font-body)">{{ a.name }}</div>
+<div style="font:500 11.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ a.sub }}</div>
+</div>
+<sc-if value="{{ a.hasPowerOff }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ a.powerOff }}" title="{{ S.turnOff }}" style="width:56px;height:44px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2)">
+<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-power"></use></svg>
+</button>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ panel.hasSwitches }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.switches }}</div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
+<sc-for list="{{ panel.switches }}" as="s" hint-placeholder-count="1">
+<div data-on="{{ s.on }}" style="display:flex;align-items:center;gap:12px;background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<svg width="20" height="20" fill="none" stroke="{{ s.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ s.icon }}"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 14px/1.2 var(--font-body)">{{ s.name }}</div>
+<div style="font:500 11.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ s.sub }}</div>
+</div>
+<button onClick="{{ s.toggle }}" data-sel="{{ s.on }}" style="width:56px;height:44px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2)">
+<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-power"></use></svg>
+</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ panel.hasSensors }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.environment }}</div>
+<div data-r="mini" style="margin-bottom:22px">
+<sc-for list="{{ panel.sensors }}" as="s" hint-placeholder-count="2">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:22px;padding:14px 16px">
+<svg width="18" height="18" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ s.icon }}"></use></svg>
+<div style="font-family:var(--font-heading);font-size:22px;line-height:1.1;margin-top:8px">{{ s.val }}</div>
+<div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ s.label }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ panel.hasMedia }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.multimedia }}</div>
+<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
+<sc-for list="{{ panel.media }}" as="m" hint-placeholder-count="1">
+<div data-dim="{{ m.quiet }}" style="display:flex;align-items:center;gap:12px;background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<svg width="20" height="20" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-tv"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 14px/1.2 var(--font-body)">{{ m.name }}</div>
+<div style="font:500 11.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.sub }}</div>
+</div>
+<button onClick="{{ m.toggle }}" style="width:56px;height:44px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2)">
+<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-power"></use></svg>
+</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ panel.hasExtras }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.other }}</div>
+<div style="display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ panel.extras }}" as="e" hint-placeholder-count="2">
+<div data-dim="{{ e.quiet }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:18px;padding:0 15px;height:52px">
+<svg width="18" height="18" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ e.icon }}"></use></svg>
+<span style="flex:1;font:600 13px/1.2 var(--font-body)">{{ e.name }}</span>
+<span style="font:600 12.5px/1 var(--font-body);color:var(--tx2)">{{ e.val }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ allRoomsOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeAllRooms }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:40;animation:fade .18s ease"></div>
+<div style="position:fixed;z-index:41;right:0;top:0;bottom:0;width:min(480px,100%);background:var(--page);box-shadow:-18px 0 44px rgba(20,24,30,.24);overflow-y:auto;padding:22px;animation:rise .22s cubic-bezier(.22,1,.36,1)">
+<div style="display:flex;align-items:center;gap:13px;margin-bottom:20px">
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-size:24px;line-height:1.1">{{ S.otherRooms }}</div>
+</div>
+<button onClick="{{ closeAllRooms }}" style="width:48px;height:48px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ overflowRooms }}" as="r" hint-placeholder-count="2">
+<button onClick="{{ r.open }}" style="display:flex;align-items:center;gap:12px;width:100%;background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:14px 16px;text-align:left">
+<svg width="20" height="20" fill="none" stroke="{{ r.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ r.icon }}"></use></svg>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:600 14px/1.2 var(--font-body)">{{ r.name }}</span>
+<span style="display:block;font:500 11.5px/1.35 var(--font-body);color:var(--tx2);margin-top:3px">{{ r.sub }}</span>
+</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ weatherOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ closeWeather }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:40;animation:fade .18s ease"></div>
+<div style="position:fixed;z-index:41;right:0;top:0;bottom:0;width:min(480px,100%);background:var(--page);box-shadow:-18px 0 44px rgba(20,24,30,.24);overflow-y:auto;padding:22px;animation:rise .22s cubic-bezier(.22,1,.36,1)">
+<div style="display:flex;align-items:center;gap:13px;margin-bottom:20px">
+<div style="width:52px;height:52px;border-radius:20px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="24" height="24" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ wxIcon }}"></use></svg>
+</div>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-size:24px;line-height:1.1">{{ S.weatherStation }}</div>
+<div style="font:500 12px/1.4 var(--font-body);color:var(--tx2);margin-top:3px">{{ wxDetailLine }}</div>
+</div>
+<button onClick="{{ closeWeather }}" style="width:48px;height:48px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+<div data-r="mini" style="margin-bottom:20px">
+<sc-for list="{{ station }}" as="s" hint-placeholder-count="6">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:15px 16px">
+<svg width="18" height="18" fill="none" stroke="var(--sage)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ s.icon }}"></use></svg>
+<div style="font-family:var(--font-heading);font-size:22px;line-height:1.1;margin-top:9px">{{ s.val }}</div>
+<div style="font:500 11px/1.35 var(--font-body);color:var(--tx2);margin-top:4px">{{ s.label }}</div>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ hasIrrigation }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ goIrrFromWeather }}" style="display:flex;align-items:center;gap:12px;width:100%;background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:0 18px;height:70px;text-align:left">
+<svg width="20" height="20" fill="none" stroke="var(--sage)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-sprout"></use></svg>
+<span style="flex:1;min-width:0">
+<span style="display:block;font:600 13px/1.2 var(--font-body)">{{ S.goToIrrigation }}</span>
+<span style="display:block;font:500 11.5px/1.35 var(--font-body);color:var(--tx2);margin-top:3px">{{ irrSummary }}</span>
+</span>
+</button>
+</sc-if>
+</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:800}}">
+// Defaults mirror config.example.js — see that file for what each key does.
+// A missing/broken config.js degrades to this, never to a crash.
+const DEFAULT_CONFIG = {
+  rooms: { order: [], hide: [], max: 8, icons: {} },
+  alarm: null, modes: null, people: [], weather: null, quickActions: null,
+  energy: null, irrigation: null, vehicle: null, language: null
+};
+function mergeConfig(user) {
+  const u = user || {};
+  return Object.assign({}, DEFAULT_CONFIG, u, { rooms: Object.assign({}, DEFAULT_CONFIG.rooms, u.rooms || {}) });
+}
+// Classic <script> tag injection instead of dynamic import(): Chrome blocks
+// ES module fetches (including import()) from file:// origins entirely
+// (each file: URL is a unique opaque origin under its CORS check), which
+// would silently break demo mode's "must open from file://" requirement.
+// Plain <script src> tags aren't subject to that restriction, so discovery.js
+// / i18n.js / the ha-backend-*.js trio / config.js are all loaded this way
+// and expose themselves as window.Casa* globals instead of module exports.
+function loadScript(src) {
+  return new Promise((resolve) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = () => resolve(true);
+    s.onerror = () => resolve(false); // config.js is optional — a 404 is not an error
+    document.head.appendChild(s);
+  });
+}
+
+class Component extends DCLogic {
+  state = { st: {}, status: 'connecting', tab: 'casa', room: null, allRooms: false, theme: null, hist: null, range: 7, weather: false, now: Date.now(), hassLanguage: null };
+  // Safe synchronous defaults: the first render happens before
+  // componentDidMount's dynamic imports resolve, so these must already be
+  // usable — _boot() below replaces them and forces a re-render via setState.
+  cfg = mergeConfig({});
+  registries = { areas: [], devices: [], entities: [] };
+  discovery = null;
+  t = (key) => key;
+  strings = {}; // static-label dictionary, exposed to the template as `S`
+
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ now: Date.now() }), 15000);
+    this._boot().catch((e) => { console.error('[casa] backend load failed', e); this.setState({ status: 'error' }); });
+  }
+
+  async _boot() {
+    await Promise.all([
+      loadScript('./discovery.js'),
+      loadScript('./i18n.js'),
+      loadScript('./i18n/it.js'),
+      loadScript('./i18n/en.js'),
+      loadScript('./ha-backend-panel.js'),
+      loadScript('./ha-backend-demo.js'),
+      loadScript('./ha-backend.js')
+    ]);
+    const hadConfig = await loadScript('./config.js');
+    const userConfig = hadConfig ? (window.CASA_CONFIG || {}) : {};
+
+    this.discovery = window.CasaDiscovery;
+    this.be = await window.CasaBackend.connect({
+      onStates: (s) => this.setState({ st: s }),
+      onStatus: (s) => this.setState({ status: s }),
+      onLanguage: (l) => this.setState({ hassLanguage: l })
+    });
+    this.kind = this.be.kind;
+    // The demo backend ships its own config so Energy/Irrigation/Vehicle/
+    // alarm/modes are all visible without anyone writing a config.js.
+    this.cfg = mergeConfig(this.kind === 'demo' ? window.CasaBackendDemo.DEMO_CONFIG : userConfig);
+    if (this.be.registries) {
+      try { this.registries = await this.be.registries(); }
+      catch (e) { console.warn('[casa] registries unavailable — rooms will stay empty', e); }
+    }
+    const lang = window.CasaI18n.resolveLang(this.cfg, this.state.hassLanguage);
+    const strings = window.CasaI18n.getStrings(lang);
+    this.t = window.CasaI18n.makeT(strings);
+    this.strings = strings; // exposed to the template as `S` for static labels — see renderVals()
+    this.lang = lang;
+    this.setState({}); // force a re-render now that cfg/registries/t are real
+    this._loadHistory();
+  }
+
+  _loadHistory() {
+    if (!this.be) return;
+    const jobs = [];
+    ((this.cfg.irrigation && this.cfg.irrigation.zones) || []).forEach((z, i) => {
+      if (z.moisture) jobs.push(this.be.history(z.moisture, 48).then((v) => ['zone' + i, v]));
+    });
+    const en = this.cfg.energy;
+    if (en && en.productionToday) jobs.push(this.be.history(en.productionToday, 30).then((v) => ['prod', v]));
+    if (en && en.gridToday) jobs.push(this.be.history(en.gridToday, 30).then((v) => ['grid', v]));
+    Promise.all(jobs).then((results) => {
+      const hist = {};
+      results.forEach((pair) => { hist[pair[0]] = pair[1]; });
+      this.setState({ hist });
+    });
+  }
+
+  componentWillUnmount() { clearInterval(this.timer); if (this.be) this.be.close(); }
+
+  s(id) { const e = this.state.st[id]; return e ? e.state : 'unknown'; }
+  at(id, k) { const e = this.state.st[id]; return e && e.attributes ? e.attributes[k] : undefined; }
+  fn(id) { return this.at(id, 'friendly_name') || id; }
+  unit(id) { return this.at(id, 'unit_of_measurement') || ''; }
+  isOn(id) { return this.s(id) === 'on'; }
+  n(id) { const v = parseFloat(this.s(id)); return isNaN(v) ? null : v; }
+  dec(v, d) { return v === null || v === undefined ? '—' : Number(v).toLocaleString(this.lang === 'it' ? 'it-IT' : 'en-GB', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  val(id, d, u) {
+    const v = this.n(id);
+    if (v === null) return '—';
+    return this.dec(v, d === undefined ? 1 : d) + (u === undefined ? (this.unit(id) ? ' ' + this.unit(id) : '') : u);
+  }
+  call(domain, service, data) { if (this.be) this.be.call(domain, service, data); }
+  cover(id, service, extra) { this.call('cover', service, Object.assign({ entity_id: id }, extra || {})); }
+  // Generic "run this valve for N minutes" for irrigation zones: just two
+  // standard switch calls, no per-duration helper entity required in HA.
+  runValve(id, minutes) {
+    this.call('switch', 'turn_on', { entity_id: id });
+    setTimeout(() => this.call('switch', 'turn_off', { entity_id: id }), minutes * 60000);
+  }
+
+  spark(arr, w, h) {
+    if (!arr || !arr.length) return '';
+    const lo = Math.min.apply(null, arr), hi = Math.max.apply(null, arr);
+    const span = hi - lo || 1;
+    return arr.map((v, i) => {
+      const x = (i / (arr.length - 1)) * w;
+      const y = h - ((v - lo) / span) * (h - 4) - 2;
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+  }
+
+  // Rooms come from Home Assistant's area/device/entity registries (see
+  // discovery.js), not from a hardcoded list — config.rooms only tunes the
+  // result (order/hide/max/icons). No discovery yet (still booting) or no
+  // registries available at all -> empty, same as "no rooms configured".
+  ROOMS_RESULT() {
+    if (!this.discovery) return { rooms: [], overflow: [] };
+    return this.discovery.discoverRooms(this.state.st, this.registries, this.cfg);
+  }
+
+  roomSummary(r) {
+    const bits = [];
+    const lOn = (r.lights || []).filter((id) => this.isOn(id)).length;
+    if ((r.lights || []).length) bits.push(lOn ? this.t('room.lightsOnCount', { n: lOn }) : this.t('room.lightsOff'));
+    const cs = (r.covers || []).map((id) => this.at(id, 'current_position')).filter((p) => p !== undefined);
+    if (cs.length === 1) bits.push(this.t('room.coverPct', { pct: cs[0] }));
+    else if (cs.length > 1) {
+      const open = cs.filter((p) => p > 0).length;
+      bits.push(open ? this.t('room.coversOpenCount', { open, total: cs.length }) : this.t('room.coversClosed'));
+    }
+    (r.switches || []).forEach((sw) => { if (this.isOn(sw[0])) bits.push(this.t('room.switchRunning', { name: sw[1] })); });
+    if ((r.media || []).some((id) => this.s(id) === 'playing')) bits.push(this.t('room.tvOn'));
+    if ((r.vacuum || []).some((v) => this.s(v[0]) === 'cleaning')) bits.push(this.t('room.vacuumRunning'));
+    return bits.slice(0, 2).join(' · ') || this.t('room.nothingActive');
+  }
+
+  ALARM_ID() { return this.discovery ? this.discovery.discoverAlarm(this.state.st, this.cfg) : null; }
+
+  ALARM(id) {
+    const s = this.s(id);
+    const map = {
+      disarmed: [this.t('alarm.disarmed'), 'ok'], armed_home: [this.t('alarm.armedHome'), 'warn'],
+      armed_away: [this.t('alarm.armedAway'), 'warn'], armed_night: [this.t('alarm.armedNight'), 'warn'],
+      armed_vacation: [this.t('alarm.armedVacation'), 'warn'],
+      arming: [this.t('alarm.arming'), 'warn'], pending: [this.t('alarm.pending'), 'alert'], triggered: [this.t('alarm.triggered'), 'alert']
+    };
+    return map[s] || [s, 'warn'];
+  }
+
+  renderVals() {
+    const d = new Date(this.state.now);
+    const h = d.getHours();
+    const theme = this.state.theme || (this.s('sun.sun') === 'below_horizon' ? 'night' : 'day');
+
+    const greeting = h < 6 ? this.t('greeting.night') : h < 12 ? this.t('greeting.morning') : h < 18 ? this.t('greeting.afternoon') : this.t('greeting.evening');
+
+    const modesCfg = this.discovery ? this.discovery.discoverModes(this.cfg) : null;
+    const hasModes = !!modesCfg;
+    const modeIcons = { Casa: '#i-sofa', Home: '#i-sofa', Fuori: '#i-door', Away: '#i-door', Notte: '#i-moon', Night: '#i-moon', Cinema: '#i-tv', Movie: '#i-tv' };
+    const cur = hasModes ? this.s(modesCfg.select) : null;
+    const scriptId = hasModes ? modesCfg.script.split('.').slice(1).join('.') : null;
+    const modes = hasModes ? (this.at(modesCfg.select, 'options') || []).map((o) => ({
+      label: o, icon: modeIcons[o] || '#i-sofa', sel: cur === o,
+      set: () => this.call('script', scriptId, { mode: o })
+    })) : [];
+
+    const weatherId = this.discovery ? this.discovery.discoverWeather(this.state.st, this.cfg) : null;
+    const hasWeather = !!weatherId;
+    const wx = weatherId ? this.s(weatherId) : null;
+    const wxMap = {
+      sunny: ['#i-sun', this.t('wx.sunny')], clear: ['#i-sun', this.t('wx.sunny')], 'clear-night': ['#i-moon', this.t('wx.sunny')],
+      partlycloudy: ['#i-cloud', this.t('wx.partlyCloudy')], cloudy: ['#i-cloud', this.t('wx.cloudy')],
+      rainy: ['#i-rain', this.t('wx.rainy')], pouring: ['#i-rain', this.t('wx.pouring')], windy: ['#i-wind', this.t('wx.windy')]
+    };
+    const wxi = wxMap[wx] || ['#i-cloud', wx || '—'];
+    // weather.* carries temperature/humidity as attributes, not as its state
+    // (the state is the condition string, e.g. "partlycloudy").
+    const outT = weatherId ? this.at(weatherId, 'temperature') : null;
+    const outH = weatherId ? this.at(weatherId, 'humidity') : null;
+
+    const peopleIds = this.discovery ? this.discovery.discoverPeople(this.state.st, this.cfg) : [];
+    const hasPeople = peopleIds.length > 0;
+    const people = peopleIds.map((id) => ({
+      initial: (this.fn(id) || '?').trim().charAt(0).toUpperCase(),
+      home: this.s(id) === 'home',
+      title: this.fn(id) + ' · ' + (this.s(id) === 'home' ? this.t('people.home') : this.t('people.away'))
+    }));
+
+    const statusMap = { connected: [this.t('status.connected'), 'ok'], connecting: [this.t('status.connecting'), 'warn'], error: [this.t('status.error'), 'alert'] };
+    const stt = statusMap[this.state.status] || ['—', 'warn'];
+
+    const hasEnergy = !!(this.cfg.energy && this.cfg.energy.production);
+    const hasIrrigation = !!(this.cfg.irrigation && this.cfg.irrigation.zones && this.cfg.irrigation.zones.length);
+    const hasVehicle = !!(this.cfg.vehicle);
+    const alarmId = this.ALARM_ID();
+    const hasAlarm = !!alarmId;
+
+    const tabDefs = [['casa', this.t('tab.casa'), '#i-sofa']];
+    if (hasIrrigation) tabDefs.push(['irrigazione', this.t('tab.irrigation'), '#i-sprout']);
+    if (hasEnergy) tabDefs.push(['energia', this.t('tab.energy'), '#i-zap']);
+    if (hasVehicle) tabDefs.push(['auto', this.t('tab.vehicle'), '#i-car']);
+    const tabs = tabDefs.map((t) => ({ label: t[1], icon: t[2], sel: this.state.tab === t[0], go: () => this.setState({ tab: t[0] }) }));
+
+    const activeItems = [];
+    Object.keys(this.state.st).forEach((id) => {
+      const dom = id.split('.')[0];
+      const s = this.s(id);
+      if (dom === 'light' && s === 'on') {
+        const b = this.at(id, 'brightness');
+        activeItems.push({ id, icon: '#i-bulb', name: this.fn(id), sub: b ? Math.round((b / 255) * 100) + '% luminosità' : 'accesa', off: () => this.call('light', 'turn_off', { entity_id: id }) });
+      } else if (dom === 'switch' && s === 'on') {
+        activeItems.push({ id, icon: '#i-plug', name: this.fn(id), sub: 'in funzione', off: () => this.call('switch', 'turn_off', { entity_id: id }) });
+      } else if (dom === 'media_player' && s === 'playing') {
+        activeItems.push({ id, icon: '#i-tv', name: this.fn(id), sub: this.at(id, 'media_title') || 'in riproduzione', off: () => this.call('media_player', 'turn_off', { entity_id: id }) });
+      } else if (dom === 'vacuum' && (s === 'cleaning' || s === 'returning')) {
+        activeItems.push({ id, icon: '#i-bot', name: this.t('vacuum.name'), sub: s === 'cleaning' ? this.t('vacuum.cleaning') : this.t('vacuum.returning'), off: () => this.call('vacuum', 'return_to_base', { entity_id: id }) });
+      }
+    });
+    activeItems.sort((a, b) => a.name.localeCompare(b.name));
+
+    const ALL_LIGHTS = this.discovery ? this.discovery.discoverAllOfDomain(this.state.st, this.registries, 'light') : [];
+    const ALL_COVERS = this.discovery ? this.discovery.discoverAllOfDomain(this.state.st, this.registries, 'cover') : [];
+    const litCount = ALL_LIGHTS.filter((id) => this.isOn(id)).length;
+    const openCount = ALL_COVERS.filter((id) => (this.at(id, 'current_position') || 0) > 0).length;
+    const quick = [];
+    if (ALL_LIGHTS.length) quick.push({ label: this.t('quick.lightsOff'), sub: litCount ? this.t('quick.onCount', { n: litCount }) : this.t('quick.alreadyOff'), icon: '#i-bulb', run: () => this.call('light', 'turn_off', { entity_id: ALL_LIGHTS }) });
+    if (ALL_COVERS.length) {
+      quick.push({ label: this.t('quick.coversUp'), sub: this.t('quick.openFraction', { open: openCount, total: ALL_COVERS.length }), icon: '#i-shutter-open', run: () => this.call('cover', 'open_cover', { entity_id: ALL_COVERS }) });
+      quick.push({ label: this.t('quick.coversDown'), sub: this.t('quick.all'), icon: '#i-shutter-close', run: () => this.call('cover', 'close_cover', { entity_id: ALL_COVERS }) });
+    }
+
+    const roomsResult = this.ROOMS_RESULT();
+    const buildRoom = (r) => {
+      const lightOn = (r.lights || []).some((id) => this.isOn(id));
+      const climateOn = (r.climate || []).some((c) => this.s(c[0]) !== 'off' && this.s(c[0]) !== 'unavailable');
+      const fanOn = (r.fan || []).some((f) => this.isOn(f[0]));
+      const vacuumOn = (r.vacuum || []).some((v) => this.s(v[0]) === 'cleaning');
+      const busy = lightOn || (r.switches || []).some((sw) => this.isOn(sw[0])) || (r.media || []).some((id) => this.s(id) === 'playing') || climateOn || fanOn || vacuumOn;
+      const quickChips = (r.sensors || []).map((s) => ({ icon: s[2], val: this.val(s[0], s[3], s[3] === 0 ? '%' : '°') })).filter((q) => q.val !== '—');
+      return {
+        id: r.id, name: r.name, icon: r.icon, sub: this.roomSummary(r),
+        quick: quickChips, hasQuick: quickChips.length > 0,
+        active: busy, lightOn, hasLight: (r.lights || []).length > 0,
+        hasCovers: (r.covers || []).length > 0,
+        stroke: busy ? 'var(--acc)' : 'var(--tx2)',
+        open: () => this.setState({ room: r.id, allRooms: false }),
+        toggle: () => this.call('light', lightOn ? 'turn_off' : 'turn_on', { entity_id: r.lights }),
+        closeCovers: () => this.call('cover', 'close_cover', { entity_id: r.covers }),
+        openCovers: () => this.call('cover', 'open_cover', { entity_id: r.covers })
+      };
+    };
+    const rooms = roomsResult.rooms.map(buildRoom);
+    const overflowRooms = roomsResult.overflow.map(buildRoom);
+
+    const al = hasAlarm ? this.ALARM(alarmId) : ['', 'ok'];
+    const alarmSt = hasAlarm ? this.s(alarmId) : 'disarmed';
+    // Alarm buttons follow the entity's supported_features bitmask instead of
+    // assuming which arm modes exist — different alarm integrations declare
+    // different subsets (see discovery.js comments / README/TROUBLESHOOTING).
+    const feat = hasAlarm ? Number(this.at(alarmId, 'supported_features')) : NaN;
+    const supp = isNaN(feat) ? 0 : feat;
+    const alarmBtns = hasAlarm ? [{ label: this.t('alarm.disarmed'), sel: alarmSt === 'disarmed', run: () => this.call('alarm_control_panel', 'alarm_disarm', { entity_id: alarmId }) }] : [];
+    if (hasAlarm) [[1, 'armed_home', 'alarm_arm_home', this.t('alarm.btnHome')],
+     [2, 'armed_away', 'alarm_arm_away', this.t('alarm.btnAway')],
+     [4, 'armed_night', 'alarm_arm_night', this.t('alarm.btnNight')],
+     [32, 'armed_vacation', 'alarm_arm_vacation', this.t('alarm.btnVacation')]].forEach((b) => {
+      if (supp & b[0]) alarmBtns.push({ label: b[3], sel: alarmSt === b[1], run: () => this.call('alarm_control_panel', b[2], { entity_id: alarmId }) });
+    });
+
+    // energy (Fase 3 — generic sensor-role mapping, see config.example.js).
+    // The ring/bars compare "produced today" against "taken from the grid
+    // today" (productionToday / gridToday) rather than against a "house
+    // consumption today" counter — the config schema only guarantees those
+    // two daily counters (see README's per-integration mapping table), so
+    // that's the pair that's always available together when energy is set.
+    const en = this.cfg.energy || {};
+    const prodT = hasEnergy ? this.n(en.productionToday) : null;
+    const gridT = hasEnergy ? this.n(en.gridToday) : null;
+    const ringMax = Math.max(prodT || 0, gridT || 0, 1);
+    const C1 = 515.2, C2 = 364.4;
+    const arc = (v, c) => (c * Math.max(0, Math.min(1, (v || 0) / ringMax))).toFixed(1) + ' ' + c;
+    const invRaw = hasEnergy && en.inverterStatus ? this.s(en.inverterStatus) : null;
+    const invStatus = invRaw == null ? '—' : /standby/i.test(invRaw) ? this.t('energy.inverterStandby') : /normal|grid|on.?grid/i.test(invRaw) ? this.t('energy.inverterProducing') : invRaw;
+
+    const nowCells = hasEnergy ? [
+      { icon: '#i-solar', stroke: 'var(--acc)', label: this.t('energy.productionNow'), val: this.val(en.production, 2, ' kW') },
+      { icon: '#i-house', stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.val(en.consumption, 2, ' kW') },
+      { icon: '#i-tower', stroke: 'var(--tx2)', label: this.t('energy.gridImportNow'), val: this.val(en.gridImport, 2, ' kW') }
+    ] : [];
+
+    const price = hasEnergy && en.price ? this.n(en.price) : null;
+    const R = this.state.range;
+    const ranges = [7, 14, 30].map((v) => ({ label: this.t('energy.days', { n: v }), sel: R === v, set: () => this.setState({ range: v }) }));
+    const hp = this.state.hist && this.state.hist.prod ? this.state.hist.prod.slice(-R) : [];
+    const hg = this.state.hist && this.state.hist.grid ? this.state.hist.grid.slice(-R) : [];
+    const bMax = Math.max.apply(null, [1].concat(hp, hg));
+    // Nice round axis ceiling (1/2/5 × a power of ten) instead of the raw
+    // max, so the y-axis reads in sensible steps — same idea as any charting
+    // library's default tick picker. Needed on touch devices, which have no
+    // hover to read exact values from the per-bar tooltip.
+    const axisStep = (() => {
+      const rough = bMax / 4;
+      const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+      const norm = rough / mag;
+      return (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag;
+    })();
+    const axisTickCount = Math.max(1, Math.ceil(bMax / axisStep));
+    const axisMax = axisStep * axisTickCount;
+    const axisDecimals = axisStep < 1 ? 1 : 0;
+    const axisTicks = [];
+    for (let i = axisTickCount; i >= 0; i--) {
+      axisTicks.push({ val: this.dec(axisStep * i, axisDecimals), pct: ((i / axisTickCount) * 100).toFixed(2) + '%' });
+    }
+    const step = Math.ceil(hp.length / 7) || 1;
+    const bars = hp.map((v, i) => {
+      const g = hg[i] || 0;
+      const dt = new Date(this.state.now - (hp.length - 1 - i) * 86400000);
+      return {
+        hp: Math.max(3, (v / axisMax) * 100).toFixed(1) + '%',
+        hg: Math.max(3, (g / axisMax) * 100).toFixed(1) + '%',
+        label: (hp.length <= 14 || i % step === 0) ? dt.getDate() + '/' + (dt.getMonth() + 1) : '',
+        title: dt.toLocaleDateString(this.lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'long' }) + ' · ' + this.t('energy.producedShort') + ' ' + this.dec(v, 2) + ' kWh · ' + this.t('energy.fromGridShort') + ' ' + this.dec(g, 2) + ' kWh'
+      };
+    });
+    const totP = hp.reduce((a, b) => a + b, 0);
+    const totG = hg.reduce((a, b) => a + b, 0);
+    const periodCells = hasEnergy ? [
+      { label: this.t('energy.producedPeriod'), val: this.dec(totP, 1) + ' kWh' },
+      { label: this.t('energy.takenFromGrid'), val: this.dec(totG, 1) + ' kWh' },
+      { label: this.t('energy.gridCost'), val: price === null ? '—' : this.dec(totG * price, 2) + ' €' },
+      { label: this.t('energy.avgPerDay'), val: hp.length ? this.dec(totP / hp.length, 2) + ' kWh' : '—' }
+    ] : [];
+
+    // irrigation (Fase 3 — zone-by-zone, degrades gracefully: only moisture +
+    // valve are required, everything else is extra if configured) ----------
+    const irrZones = hasIrrigation ? this.cfg.irrigation.zones : [];
+    const zoneTone = (txt) => /stress/i.test(txt || '') ? 'alert' : new RegExp(this.t('irrigation.needsWaterMatch'), 'i').test(txt || '') ? 'warn' : 'ok';
+    const zones = irrZones.map((z, i) => {
+      const adv = z.advisory ? this.s(z.advisory) : null;
+      const mins = z.advisory ? (this.at(z.advisory, 'minuti_consigliati') || 0) : 0;
+      const lastRaw = z.lastRun ? this.s(z.lastRun) : null;
+      let last = '—';
+      if (lastRaw && lastRaw !== 'unknown' && lastRaw !== 'unavailable') {
+        const t = new Date(lastRaw.indexOf('T') === -1 ? lastRaw.replace(' ', 'T') : lastRaw);
+        if (!isNaN(t)) last = t.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + ' · ' + t.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      }
+      return {
+        name: z.name, advisory: adv || '—', tone: zoneTone(adv),
+        urgenza: (z.advisory ? (this.at(z.advisory, 'urgenza') || '') : '') + (mins > 0 ? ' · ' + this.t('irrigation.recommendedMin', { n: mins }) : ''),
+        soil: (z.advisory && this.at(z.advisory, 'umidita_suolo')) || this.val(z.moisture, 0, '%'),
+        deficit: z.deficit ? this.val(z.deficit, 1, ' mm') : '—',
+        mmWeek: z.weekMm ? this.val(z.weekMm, 1, ' mm') : '—', last,
+        lastRunLine: this.t('irrigation.lastRun', { when: last }),
+        spark: this.spark(this.state.hist ? this.state.hist['zone' + i] : null, 240, 44),
+        buttons: (z.durations || [5, 10, 15]).map((m) => ({ label: this.t('irrigation.minutes', { n: m }), run: () => this.runValve(z.valve, m) }))
+      };
+    });
+
+    const irrWx = (hasIrrigation && this.cfg.irrigation.weather) || {};
+    const meteoDefs = [];
+    if (irrWx.temp) meteoDefs.push(['#i-therm', this.t('wx.temperature'), this.val(irrWx.temp, 1, '°')]);
+    if (irrWx.humidity) meteoDefs.push(['#i-drop', this.t('wx.airHumidity'), this.val(irrWx.humidity, 0, '%')]);
+    if (irrWx.irradiance) meteoDefs.push(['#i-solar', this.t('wx.irradiance'), this.val(irrWx.irradiance, 0, ' W/m²')]);
+    if (irrWx.rain) meteoDefs.push(['#i-rain', this.t('wx.rainToday'), this.val(irrWx.rain, 1, ' mm')]);
+    if (irrWx.wind) meteoDefs.push(['#i-wind', this.t('wx.wind'), this.val(irrWx.wind, 1, ' km/h')]);
+    if (hasIrrigation && this.cfg.irrigation.et0) meteoDefs.push(['#i-sun', this.t('irrigation.et0Today'), this.val(this.cfg.irrigation.et0, 2, ' mm')]);
+    if (hasIrrigation && this.cfg.irrigation.etc) meteoDefs.push(['#i-grass', this.t('irrigation.etcToday'), this.val(this.cfg.irrigation.etc, 2, ' mm')]);
+    if (hasIrrigation && this.cfg.irrigation.effectiveRain) meteoDefs.push(['#i-drop', this.t('irrigation.effectiveRain'), this.val(this.cfg.irrigation.effectiveRain, 1, ' mm')]);
+    const meteo = meteoDefs.map((x) => ({ icon: x[0], label: x[1], val: x[2] }));
+
+    // weather detail slide-over — outdoor readings from the weather entity
+    // plus whatever irrigation.weather / per-zone moisture is configured.
+    const stationDefs = [];
+    if (hasWeather) {
+      stationDefs.push(['#i-therm', this.t('wx.outdoorTemp'), outT === null ? '—' : this.dec(outT, 1) + '°']);
+      stationDefs.push(['#i-drop', this.t('wx.outdoorHumidity'), outH === null ? '—' : this.dec(outH, 0) + '%']);
+    }
+    if (irrWx.wind) stationDefs.push(['#i-wind', this.t('wx.wind'), this.val(irrWx.wind, 1, ' km/h')]);
+    if (irrWx.rain) stationDefs.push(['#i-rain', this.t('wx.rainToday'), this.val(irrWx.rain, 1, ' mm')]);
+    if (irrWx.irradiance) stationDefs.push(['#i-solar', this.t('wx.irradiance'), this.val(irrWx.irradiance, 0, ' W/m²')]);
+    if (hasIrrigation && this.cfg.irrigation.et0) stationDefs.push(['#i-sun', this.t('irrigation.et0Today'), this.val(this.cfg.irrigation.et0, 2, ' mm')]);
+    irrZones.forEach((z) => { if (z.moisture) stationDefs.push(['#i-sprout', this.t('irrigation.soilOf', { zone: z.name }), this.val(z.moisture, 0, '%')]); });
+    const station = stationDefs.map((x) => ({ icon: x[0], label: x[1], val: x[2] }));
+
+    // vehicle (optional module — no generic HA domain for this, so every
+    // field is an explicit mapping in config.vehicle) -----------------------
+    const veh = this.cfg.vehicle || {};
+    const fuel = hasVehicle && veh.fuel ? this.n(veh.fuel) : null;
+    const battery = hasVehicle && veh.battery ? this.n(veh.battery) : null;
+    const gaugePct = fuel !== null ? fuel : battery;
+    const vehicleTitle = hasVehicle ? (veh.name || this.t('tab.vehicle')) : '';
+    const carCells = hasVehicle ? (veh.cells || []).map((c) => ({ label: c.label, val: this.val(c.entity, c.decimals !== undefined ? c.decimals : 0, c.unit != null ? ' ' + c.unit : undefined) })) : [];
+    const warnings = hasVehicle ? (veh.warnings || []).map((w) => {
+      const on = this.isOn(w.entity);
+      const good = w.positiveIsGood ? on : !on;
+      return { label: w.label, icon: good ? '#i-check' : '#i-alert', tone: good ? 'ok' : 'alert', quiet: good, val: good ? this.t('vehicle.ok') : this.t('vehicle.check') };
+    }) : [];
+
+    // room detail slide-over --------------------------------------------------
+    let panel = null;
+    if (this.state.room) {
+      const r = roomsResult.rooms.concat(roomsResult.overflow).filter((x) => x.id === this.state.room)[0];
+      if (r) {
+        const extraTuples = [].concat(r.climate || [], r.fan || [], r.vacuum || []);
+        panel = {
+          name: r.name, icon: r.icon, sub: this.roomSummary(r),
+          hasLights: (r.lights || []).length > 0, hasCovers: (r.covers || []).length > 0,
+          hasAppliances: false, appliances: [],
+          hasSwitches: (r.switches || []).length > 0, hasSensors: (r.sensors || []).length > 0,
+          hasMedia: (r.media || []).length > 0, hasExtras: extraTuples.length > 0,
+          lights: (r.lights || []).map((id) => {
+            const on = this.isOn(id);
+            const b = this.at(id, 'brightness') || 200;
+            return { name: this.fn(id), on, stroke: on ? 'var(--acc)' : 'var(--tx2)',
+              sub: on ? Math.round((b / 255) * 100) + '% luminosità' : 'spenta',
+              bri: Math.max(1, Math.round((b / 255) * 100)),
+              toggle: () => this.call('light', on ? 'turn_off' : 'turn_on', { entity_id: id }),
+              setBri: (e) => this.call('light', 'turn_on', { entity_id: id, brightness: Math.round((Number(e.target.value) / 100) * 255) }) };
+          }),
+          covers: (r.covers || []).map((id) => {
+            const live = this.at(id, 'current_position');
+            const liveVal = live === undefined ? 0 : live;
+            const dragVal = this.state.coverDrag ? this.state.coverDrag[id] : undefined;
+            // While dragging, the slider shows the finger's position instead of
+            // the real (slow-moving) shutter position — otherwise every hass
+            // push (every ~600ms) snaps the thumb back to the stale live value
+            // mid-drag. The override self-clears once the shutter catches up.
+            const pos = dragVal !== undefined && dragVal !== liveVal ? dragVal : liveVal;
+            const clearDrag = () => {
+              if (!this.state.coverDrag || this.state.coverDrag[id] === undefined) return;
+              const d = Object.assign({}, this.state.coverDrag);
+              delete d[id];
+              this.setState({ coverDrag: d });
+            };
+            return { name: this.fn(id), pos,
+              sub: live === undefined ? this.s(id) : pos === 0 ? this.t('cover.closed') : pos === 100 ? this.t('cover.fullyOpen') : this.t('cover.openAt', { pct: pos }),
+              up: () => { clearDrag(); this.cover(id, 'open_cover'); },
+              down: () => { clearDrag(); this.cover(id, 'close_cover'); },
+              stop: () => { clearDrag(); this.cover(id, 'stop_cover'); },
+              // Fires on every tick while sliding: only updates the local
+              // visual position, no service call — a real cover motor can't
+              // keep up with dozens of position commands per second of drag.
+              drag: (e) => this.setState({ coverDrag: Object.assign({}, this.state.coverDrag, { [id]: Number(e.target.value) }) }),
+              // Fires once, on release: this is the only point a service call
+              // for this slider goes out.
+              setPos: (e) => this.cover(id, 'set_cover_position', { position: Number(e.target.value) }) };
+          }),
+          switches: (r.switches || []).map((sw) => {
+            const on = this.isOn(sw[0]);
+            return { name: sw[1], icon: sw[2], on, stroke: on ? 'var(--acc)' : 'var(--tx2)',
+              sub: on ? this.t('switch.running') : this.t('switch.off'),
+              toggle: () => this.call('switch', on ? 'turn_off' : 'turn_on', { entity_id: sw[0] }) };
+          }),
+          sensors: (r.sensors || []).map((s) => ({ label: s[1], icon: s[2], val: this.val(s[0], s[3], s[3] === 0 ? '%' : '°') })),
+          media: (r.media || []).map((id) => {
+            const s = this.s(id);
+            const live = s !== 'unavailable' && s !== 'unknown';
+            return { name: this.fn(id), quiet: !live,
+              sub: !live ? this.t('common.unreachable') : s === 'playing' ? (this.at(id, 'media_title') || this.t('media.playing')) : s === 'off' ? this.t('common.off') : s,
+              toggle: () => this.call('media_player', s === 'off' ? 'turn_on' : 'turn_off', { entity_id: id }) };
+          }),
+          extras: extraTuples.map((x) => {
+            const s = this.s(x[0]);
+            const live = s !== 'unavailable' && s !== 'unknown';
+            return { name: x[1], icon: x[2], quiet: !live, val: !live ? this.t('common.unreachable') : (this.unit(x[0]) ? this.val(x[0], 1) : s) };
+          })
+        };
+      }
+    }
+
+    return {
+      S: this.strings,
+      theme,
+      toggleTheme: () => this.setState({ theme: theme === 'night' ? 'day' : 'night' }),
+      themeIcon: theme === 'night' ? '#i-moon' : '#i-sun',
+      greeting,
+      dateStr: d.toLocaleDateString(this.lang === 'it' ? 'it-IT' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' }),
+      timeStr: d.toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }),
+      modes, hasModes, tabs,
+      hasWeather, wxIcon: wxi[0], wxLabel: wxi[1], wxTemp: outT === null ? '—' : this.dec(outT, 0) + '°',
+      wxRain: outH === null ? '—' : this.dec(outH, 0) + '%',
+      wxDetailLine: this.t('wx.detailLine', { label: wxi[1], temp: outT === null ? '—' : this.dec(outT, 0) + '°' }),
+      hasPeople, people,
+      isDemo: this.kind === 'demo',
+      connLabel: stt[0], connTone: stt[1], connTitle: 'Backend: ' + (this.kind || '…') + ' · ' + stt[0],
+      tabCasa: this.state.tab === 'casa', tabIrr: this.state.tab === 'irrigazione',
+      tabEnergia: this.state.tab === 'energia', tabAuto: this.state.tab === 'auto',
+      onCount: activeItems.length, activeItems, nothingOn: activeItems.length === 0,
+      quick, rooms,
+      hasOverflowRooms: overflowRooms.length > 0, overflowCount: overflowRooms.length, overflowRooms,
+      overflowLabel: this.t('rooms.overflow', { n: overflowRooms.length }),
+      allRoomsOpen: this.state.allRooms,
+      openAllRooms: () => this.setState({ allRooms: true }),
+      closeAllRooms: () => this.setState({ allRooms: false }),
+      hasAlarm, alarmLabel: al[0], alarmTone: al[1], alarmStroke: alarmSt === 'disarmed' ? 'var(--tx2)' : 'var(--acc)', alarmBtns,
+      hasEnergy,
+      ringProd: arc(prodT, C1), ringLoad: arc(gridT, C2),
+      prodToday: prodT === null ? '—' : this.dec(prodT, 1),
+      prodTodayFull: prodT === null ? '—' : this.dec(prodT, 2) + ' kWh',
+      loadTodayFull: gridT === null ? '—' : this.dec(gridT, 2) + ' kWh',
+      selfRatioLine: this.t('energy.selfConsumption', {
+        pct: hasEnergy && en.production && en.consumption ? (() => {
+          const p = this.n(en.production), c = this.n(en.consumption);
+          return p === null || c === null || c === 0 ? '—' : this.dec(Math.min(100, (p / c) * 100), 0) + '%';
+        })() : '—'
+      }),
+      gridNote: this.t('energy.gridNote', {
+        grid: hasEnergy ? this.val(en.gridToday, 2, ' kWh') : '—',
+        exportVal: hasEnergy && en.gridExport ? this.val(en.gridExport, 2, ' kW') : '—',
+        status: invStatus
+      }),
+      invStatus,
+      goEnergia: () => this.setState({ tab: 'energia' }),
+      nowCells, ranges, bars, axisTicks, periodCells,
+      prodPeriod: this.dec(totP, 1) + ' kWh',
+      periodNote: this.t('energy.periodNote', { n: R, grid: this.dec(totG, 1) }),
+      hasIrrigation, irrSummary: hasIrrigation ? (this.cfg.irrigation.summary ? this.s(this.cfg.irrigation.summary) : this.t('irrigation.defaultSummary', { n: zones.length })) : '',
+      irrSub: hasIrrigation
+        ? [
+            this.cfg.irrigation.etc ? this.t('irrigation.etcShort') + ' ' + this.val(this.cfg.irrigation.etc, 2, ' mm') : null,
+            zones.some((z) => z.deficit !== '—') ? this.t('irrigation.deficitShort') + ' ' + zones.filter((z) => z.deficit !== '—').map((z) => z.name + ' ' + z.deficit).join(' / ') : null
+          ].filter(Boolean).join(' · ')
+        : '',
+      zones, meteo,
+      hasResetButton: hasIrrigation && !!this.cfg.irrigation.resetButton,
+      resetWeek: hasIrrigation && this.cfg.irrigation.resetButton ? () => this.call('input_button', 'press', { entity_id: this.cfg.irrigation.resetButton }) : () => {},
+      station, weatherOpen: this.state.weather,
+      openWeather: () => this.setState({ weather: true }),
+      closeWeather: () => this.setState({ weather: false }),
+      goIrrFromWeather: () => this.setState({ weather: false, tab: 'irrigazione' }),
+      hasVehicle, vehicleTitle,
+      carMeta: hasVehicle ? this.t('vehicle.meta', { range: veh.range ? this.val(veh.range, 0, ' km') : '—', odometer: veh.odometer ? this.val(veh.odometer, 0, ' km') : '—' }) : '',
+      fuelPct: gaugePct === null ? '—' : this.dec(gaugePct, 0) + '%',
+      fuelWidth: (gaugePct === null ? 0 : Math.max(2, Math.min(100, gaugePct))) + '%',
+      fuelTone: gaugePct === null ? 'ok' : gaugePct < 20 ? 'alert' : gaugePct < 40 ? 'warn' : 'ok',
+      carRange: hasVehicle && veh.range ? this.val(veh.range, 0, ' km') : '—',
+      carCells, warnings,
+      panel, closeRoom: () => this.setState({ room: null })
+    };
+  }
+}
+
+</script>
+</body>
+</html>

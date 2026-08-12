@@ -1,0 +1,14 @@
+# Personal Home Assistant config — never publish a real installation's data
+public/config.js
+uploads/
+**/entities.json
+**/*entities*.json
+**/home_dashboard*.txt
+*.snapshot.json
+
+# OS / editor
+.DS_Store
+*.swp
+
+# Local scratch
+*.log

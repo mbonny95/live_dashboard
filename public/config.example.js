@@ -1,0 +1,104 @@
+// config.js — local overrides for the auto-discovery defaults.
+//
+// Copy this file to config.js next to it (config.js is git-ignored — it's
+// meant to hold your own entity IDs, never commit it) and uncomment only the
+// keys you need. Everything below is optional: with no config.js at all, the
+// dashboard discovers rooms, people, weather and quick actions on its own
+// from Home Assistant's area/device/entity registries.
+//
+// Any key left `null` (or an empty array where noted) means "try to
+// auto-discover it, and hide the section if nothing is found" — a missing
+// section never breaks the page.
+//
+// Classic script, not an ES module (`window.CASA_CONFIG =`, not
+// `export default`) — see the note at the top of discovery.js: dynamic
+// import() of config.js would break the "must open from file://" demo-mode
+// requirement, since Chrome blocks ES module fetches from file:// origins.
+
+window.CASA_CONFIG = {
+  // Rooms come from Home Assistant's areas automatically. Use this only to
+  // fine-tune the result:
+  rooms: {
+    order: [],   // area IDs (or names) to pin first, in this order — e.g. ['soggiorno', 'cucina']
+    hide: [],    // area IDs (or names) to exclude entirely
+    max: 8,      // tiles on the Casa view grid — the layout is fixed at 4 columns and does not scroll, so keep this at 8 unless you also changed the grid
+    icons: {}    // area ID -> icon id, to override the guessed icon — e.g. { cucina: '#i-house' }
+  },
+
+  // Alarm panel: the dashboard never guesses which alarm_control_panel is
+  // "the" one (there could be several, or none). Set the entity_id to show
+  // the alarm card; leave null to hide it.
+  alarm: null,   // 'alarm_control_panel.home'
+
+  // "Modalità casa" style scene switcher: an input_select whose options
+  // become buttons, paired with a script that receives { mode: <option> }.
+  // There's no generic way to auto-discover this pairing, so it's opt-in.
+  modes: null,   // { select: 'input_select.house_mode', script: 'script.set_house_mode' }
+
+  // People shown in "who's home". [] auto-discovers every person.* entity.
+  // Pass an explicit list only if you want to show a subset or a fixed order.
+  people: [],    // ['person.alex', 'person.sam']
+
+  // weather.* entity for the forecast card. null auto-discovers the first
+  // weather entity Home Assistant reports.
+  weather: null, // 'weather.home'
+
+  // Quick actions ("all lights off", "all covers up/down"). null generates
+  // them from every light/cover entity discovery finds (across all rooms,
+  // not just the 8 shown on the grid).
+  quickActions: null,
+
+  // --- optional modules — the tab bar adapts to how many of these are set ---
+
+  // Energy: independent of any specific inverter brand. Map your own
+  // integration's sensors to these roles — see README.md for examples
+  // (FusionSolar, SolarEdge, Fronius, Shelly EM, HA's own Energy Dashboard).
+  energy: null,
+  // energy: {
+  //   production: 'sensor.solar_power',        // instantaneous production, W or kW
+  //   consumption: 'sensor.house_power',        // instantaneous house load
+  //   gridImport: 'sensor.grid_import_power',
+  //   gridExport: 'sensor.grid_export_power',
+  //   battery: null,                            // { soc: 'sensor...', power: 'sensor...' } or null
+  //   inverterStatus: null,                     // sensor.* with a text state, or null
+  //   productionToday: 'sensor.solar_energy_today',   // daily counter, resets at midnight
+  //   gridToday: 'sensor.grid_import_today',          // daily counter, resets at midnight
+  //   price: null                               // sensor.* in currency/kWh, or null
+  // },
+
+  // Irrigation: zone by zone, degrading gracefully — with just `moisture` +
+  // `valve` a zone is already useful (sparkline, timed run buttons, valve
+  // state). Advisory/deficit/ET fields are extra and only appear if set.
+  // The agronomic math (ET0/ETc/deficit) is not part of this dashboard —
+  // see README.md for a link to the automations that compute it.
+  irrigation: null,
+  // irrigation: {
+  //   zones: [
+  //     { name: 'Zone 1', moisture: 'sensor.zone1_soil_moisture', valve: 'switch.zone1_valve',
+  //       durations: [5, 10, 15],
+  //       advisory: null, deficit: null, weekMm: null, lastRun: null }
+  //   ],
+  //   weather: { temp: null, humidity: null, rain: null, irradiance: null, wind: null },
+  //   et0: null, etc: null, effectiveRain: null, summary: null,
+  //   resetButton: null   // input_button.* that zeroes your own weekly-mm accumulator, or null to hide the button
+  // },
+
+  // Vehicle: the "Auto" tab. No Home Assistant domain standardizes car
+  // telemetry, so every field is an explicit sensor/binary_sensor mapping —
+  // works with any integration that exposes these (Mercedes me, Volvo, Kia
+  // Connect, BMW Connected Drive, OBD-II readers, ...). null hides the tab.
+  vehicle: null
+  // vehicle: {
+  //   fuel: 'sensor.car_fuel_level',       // % — omit (or null) for EVs
+  //   battery: null,                       // % state of charge, for EVs
+  //   range: 'sensor.car_range',
+  //   odometer: 'sensor.car_odometer',
+  //   cells: [                             // extra readouts, shown as-is
+  //     { label: 'AdBlue', entity: 'sensor.car_adblue_level', unit: '%' }
+  //   ],
+  //   warnings: [                          // binary_sensor.* shown as ok/attention chips
+  //     { entity: 'binary_sensor.car_tire_warning', label: 'Tyre pressure' },
+  //     { entity: 'binary_sensor.car_windows_closed', label: 'Windows', positiveIsGood: true }
+  //   ]
+  // }
+};
