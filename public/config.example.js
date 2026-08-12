@@ -87,7 +87,7 @@ window.CASA_CONFIG = {
   // telemetry, so every field is an explicit sensor/binary_sensor mapping —
   // works with any integration that exposes these (Mercedes me, Volvo, Kia
   // Connect, BMW Connected Drive, OBD-II readers, ...). null hides the tab.
-  vehicle: null
+  vehicle: null,
   // vehicle: {
   //   fuel: 'sensor.car_fuel_level',       // % — omit (or null) for EVs
   //   battery: null,                       // % state of charge, for EVs
@@ -100,5 +100,20 @@ window.CASA_CONFIG = {
   //     { entity: 'binary_sensor.car_tire_warning', label: 'Tyre pressure' },
   //     { entity: 'binary_sensor.car_windows_closed', label: 'Windows', positiveIsGood: true }
   //   ]
+  // },
+
+  // Cameras: fully auto-discovered from every camera.* entity Home Assistant
+  // reports (area from the registry, motion from a binary_sensor with
+  // device_class "motion" on the same device) — this block only overrides
+  // the defaults. No cameras found = the card and the "Sorveglianza"/
+  // "Surveillance" tab don't exist. The tab itself only appears with 2+
+  // cameras; with exactly one there's just the card in Casa and the tap-to
+  // fullscreen overlay.
+  cameras: null
+  // cameras: {
+  //   primary: null,        // entity_id featured in the Casa card; null = auto (first with motion, else first found)
+  //   hideUntilTap: [],     // entity_ids that show an icon instead of a live preview until tapped — for indoor cameras on a hallway tablet
+  //   snapshotInterval: 10, // seconds between preview refreshes; suspended while the tab/page isn't visible
+  //   gridTab: 6             // camera count above which the Sorveglianza grid switches from 2 to 3 columns
   // }
 };

@@ -117,8 +117,26 @@ const SEED = [
   entity('sensor.car_odometer', null, '38210', { friendly_name: 'Contachilometri', unit_of_measurement: 'km' }),
   entity('sensor.car_adblue_level', null, '78', { friendly_name: 'AdBlue', unit_of_measurement: '%' }),
   entity('binary_sensor.car_tire_warning', null, 'off', { friendly_name: 'Pressione pneumatici' }),
-  entity('binary_sensor.car_windows_closed', null, 'on', { friendly_name: 'Finestrini' })
+  entity('binary_sensor.car_windows_closed', null, 'on', { friendly_name: 'Finestrini' }),
+
+  // cameras (Fase 3 — no entity_picture on purpose: the demo has no real
+  // camera feed to show, so every tile stays on its icon placeholder, same
+  // as a real installation whose camera integration hasn't produced a
+  // snapshot yet. camera.corridoio is flagged hideUntilTap below to exercise
+  // the privacy tap-to-reveal behavior in the demo too.
+  entity('camera.cancello', 'giardino', 'idle', { friendly_name: 'Cancello' }),
+  entity('binary_sensor.cancello_motion', 'giardino', 'on', { friendly_name: 'Movimento cancello', device_class: 'motion' }),
+  entity('camera.ingresso', 'ingresso', 'idle', { friendly_name: 'Ingresso' }),
+  entity('camera.corridoio', 'corridoio', 'idle', { friendly_name: 'Corridoio' })
 ];
+
+// entity_id -> device_id, only for the pairs that need to prove the
+// "motion sensor on the same device as the camera" discovery link — every
+// other demo entity has no device at all (buildRegistries defaults to null).
+const DEVICE_LINKS = {
+  'camera.cancello': 'device_cancello',
+  'binary_sensor.cancello_motion': 'device_cancello'
+};
 
 const AREA_NAMES = {
   soggiorno: 'Soggiorno', camera: 'Camera', camera_bimbi: 'Camera Bimbi', cucina: 'Cucina',
@@ -162,13 +180,16 @@ const DEMO_CONFIG = {
       { entity: 'binary_sensor.car_tire_warning', label: 'Pressione pneumatici' },
       { entity: 'binary_sensor.car_windows_closed', label: 'Finestrini', positiveIsGood: true }
     ]
+  },
+  cameras: {
+    primary: null, hideUntilTap: ['camera.corridoio'], snapshotInterval: 10, gridTab: 6
   }
 };
 
 function buildRegistries() {
   const areas = Object.keys(AREA_NAMES).map((id) => ({ area_id: id, name: AREA_NAMES[id], icon: null }));
   const entities = SEED.map((e) => ({
-    entity_id: e.entity_id, area_id: e.area_id, device_id: null,
+    entity_id: e.entity_id, area_id: e.area_id, device_id: DEVICE_LINKS[e.entity_id] || null,
     disabled_by: null, hidden_by: null,
     entity_category: e.entity_id === 'sensor.router_wifi_rssi' ? 'diagnostic' : null
   }));

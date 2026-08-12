@@ -120,6 +120,36 @@ Mercedes `mbapi2020` install; it should work with any integration that
 exposes comparable sensors (Volvo, Kia Connect, BMW Connected Drive,
 generic OBD-II readers) since nothing here is brand-specific.
 
+## Cameras (optional)
+
+Fully auto-discovered from every `camera.*` entity Home Assistant reports —
+area from the registry, motion from a `binary_sensor` with
+`device_class: motion` on the same device. `config.cameras` only overrides
+the defaults (see `config.example.js`); there's no per-camera list to
+maintain.
+
+- **Previews, not video.** Each tile shows a still snapshot from
+  `entity_picture` (the URL Home Assistant already signs for you), reloaded
+  every `snapshotInterval` seconds (10 by default). The refresh pauses while
+  the browser tab/page isn't visible.
+- **Live on tap.** Tapping a preview opens a fullscreen MJPEG stream (the
+  same signed URL, `/api/camera_proxy/` swapped for
+  `/api/camera_proxy_stream/`) — no `hls.js`, no WebRTC, no build step. It
+  closes automatically after 2 minutes, or on tap.
+- **Privacy for indoor cameras**: list an entity_id in `hideUntilTap` and its
+  tile shows only an icon — no preview loads — until someone taps it once to
+  reveal the still, and taps again to go live. Meant for a camera pointed at
+  a hallway where the tablet itself lives.
+- The "Sorveglianza"/"Surveillance" tab only appears with **2 or more**
+  cameras — with exactly one, the Casa card and its tap-to-fullscreen
+  overlay are already the whole feature, a tab with one tile wouldn't add
+  anything. Above `gridTab` cameras (6 by default) the tab's grid switches
+  from 2 to 3 columns.
+- This only works over `panel_custom` (see "What this is, and isn't" above):
+  the snapshot/stream URLs are HA-signed and same-origin with the panel,
+  which is exactly what a future standalone/token variant would need to
+  handle differently.
+
 ## Kiosk mode for the wall tablet
 
 Point [Fully Kiosk Browser](https://www.fully-kiosk.com/) (or any kiosk
@@ -135,11 +165,24 @@ Casa view into a scrolling layout (deliberately — see TROUBLESHOOTING.md).
 Open the page with `?demo` appended to the URL (or just open it directly
 outside of `panel_custom` — from `file://`, the dashboard has no host to
 talk to and falls back to the same demo backend automatically after a short
-timeout). It shows all four views — Casa, Irrigazione, Energia, Auto — with
-invented data and a visible `DEMO` badge, and never calls a real service.
+timeout). It shows every view — Casa, Sorveglianza, Irrigazione, Energia,
+Auto — with invented data and a visible `DEMO` badge, and never calls a real
+service. The demo cameras show only their icon placeholder (there's no real
+feed to fake), including one flagged `hideUntilTap` so you can see that
+behavior too.
 
 ## Known limits
 
+- **The result is only as good as your area assignments.** Every room,
+  device and camera on this dashboard comes from Home Assistant's own
+  area/device/entity registries — there's no fallback naming or grouping
+  logic beyond that. If your installation has areas assigned consistently,
+  it looks sensible the moment you open it, no config required. If you've
+  never assigned areas — everything still lives under "no area" the way a
+  fresh install often does — the dashboard will look almost empty, and
+  that's not a bug to report: it's Home Assistant's own `Settings ->
+  Areas` waiting to be filled in, not something this dashboard can guess
+  for you.
 - Built for a landscape wall tablet first; the mobile page is complete but
   secondary, not the primary design target.
 - Not a Lovelace replacement — no card picker, no drag-and-drop layout, no

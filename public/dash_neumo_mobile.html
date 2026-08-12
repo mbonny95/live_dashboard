@@ -82,6 +82,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v6M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-12 0Z"/><path d="M12 17v5"/></symbol>
 <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 13.7 4.7L20 15.5"/><path d="M20 20v-4.5h-4.5"/></symbol>
 <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+<symbol id="i-cam" viewBox="0 0 24 24"><path d="M3 8.5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="m15 11 5-3v8l-5-3Z"/></symbol>
+<symbol id="i-motion" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M6.5 6.5a7.8 7.8 0 0 0 0 11M17.5 6.5a7.8 7.8 0 0 1 0 11M3.5 3.5a12 12 0 0 0 0 17M20.5 3.5a12 12 0 0 1 0 17"/></symbol>
 </defs></svg>
 
 <div data-nu="1" data-theme="{{ theme }}" style="min-height:100dvh;background:var(--page);color:var(--tx);max-width:560px;margin:0 auto;padding:14px 14px calc(134px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px">
@@ -193,6 +195,31 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </span>
 </sc-for>
 </span>
+</button>
+</sc-if>
+
+<sc-if value="{{ hasCameras }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ camMain.open }}" style="position:relative;display:block;width:100%;aspect-ratio:16/8;border-radius:22px;background:var(--nu-d);box-shadow:var(--nu-ins);overflow:hidden;padding:0">
+<sc-if value="{{ camMain.showImg }}" hint-placeholder-val="{{ false }}">
+<img src="{{ camMain.src }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+</sc-if>
+<sc-if value="{{ camMain.showIcon }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;display:grid;place-items:center;opacity:.4">
+<svg width="30" height="30" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cam"></use></svg>
+</div>
+</sc-if>
+<div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:flex-end;gap:8px;padding:10px 12px;text-align:left">
+<div style="flex:1;min-width:0">
+<div style="font:600 12.5px/1.2 var(--font-body)">{{ camMain.name }}</div>
+<div style="font:500 10px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ camMain.stamp }}</div>
+</div>
+<sc-if value="{{ camMain.motion }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:5px;height:22px;padding:0 9px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);flex:none">
+<svg width="12" height="12" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-motion"></use></svg>
+<span style="font:600 10px/1 var(--font-body);color:var(--accT)">{{ S.motion }}</span>
+</div>
+</sc-if>
+</div>
 </button>
 </sc-if>
 
@@ -347,6 +374,44 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 </div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ tabCam }}" hint-placeholder-val="{{ false }}">
+<div data-m="col" data-screen-label="Sorveglianza">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px;display:flex;align-items:center;gap:12px">
+<svg width="22" height="22" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-cam"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-size:18px;line-height:1.15">{{ camHeadline }}</div>
+<div style="font:500 11px/1.4 var(--font-body);color:var(--tx2);margin-top:4px">{{ camSub }}</div>
+</div>
+</div>
+<sc-for list="{{ camList }}" as="c" hint-placeholder-count="4">
+<button onClick="{{ c.open }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:12px;display:flex;flex-direction:column;gap:10px;text-align:left;width:100%">
+<div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;background:var(--nu-d);box-shadow:var(--nu-ins);overflow:hidden;flex:none">
+<sc-if value="{{ c.showImg }}" hint-placeholder-val="{{ false }}">
+<img src="{{ c.src }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+</sc-if>
+<sc-if value="{{ c.showIcon }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;display:grid;place-items:center;opacity:.4">
+<svg width="28" height="28" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cam"></use></svg>
+</div>
+</sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:8px;width:100%">
+<div style="flex:1;min-width:0">
+<div style="font:600 13.5px/1.2 var(--font-body)">{{ c.name }}</div>
+<div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ c.area }}</div>
+</div>
+<sc-if value="{{ c.motion }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:5px;height:24px;padding:0 10px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);flex:none">
+<svg width="13" height="13" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-motion"></use></svg>
+<span style="font:600 10.5px/1 var(--font-body);color:var(--accT)">{{ S.motion }}</span>
+</div>
+</sc-if>
+</div>
+</button>
 </sc-for>
 </div>
 </sc-if>
@@ -581,6 +646,41 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ camOpen }}" hint-placeholder-val="{{ false }}">
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;inset:0;z-index:44;background:var(--page);display:flex;flex-direction:column;color:var(--tx);padding:calc(14px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom))">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;flex:none">
+<div style="width:40px;height:40px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="18" height="18" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cam"></use></svg>
+</div>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-size:18px;line-height:1.15">{{ camName }}</div>
+<div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ camArea }}</div>
+</div>
+<button onClick="{{ closeCam }}" style="width:40px;height:40px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="16" height="16" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+<div style="position:relative;flex:1;min-height:0;border-radius:20px;background:var(--nu-d);box-shadow:var(--nu-ins);overflow:hidden">
+<sc-if value="{{ camHasStream }}" hint-placeholder-val="{{ false }}">
+<img src="{{ camStreamSrc }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain">
+</sc-if>
+<sc-if value="{{ camNoStream }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;inset:0;display:grid;place-items:center;opacity:.4">
+<svg width="40" height="40" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cam"></use></svg>
+</div>
+</sc-if>
+<div style="position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:7px;height:27px;padding:0 11px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm)">
+<span style="width:7px;height:7px;border-radius:999px;background:var(--acc);flex:none"></span>
+<span style="font:600 10.5px/1 var(--font-body);color:var(--accT)">{{ S.live }}</span>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:8px;margin-top:13px;font:500 11px/1.3 var(--font-body);color:var(--tx2);flex:none">
+<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-timer"></use></svg>
+{{ S.camAutoClose }} {{ camCountdown }}
+</div>
+</div>
+</sc-if>
+
 <div style="position:fixed;left:0;right:0;bottom:0;background:var(--page);padding:8px 10px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 18px rgba(0,0,0,.06);z-index:5">
 <div style="max-width:540px;margin:0 auto;display:flex;gap:4px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px">
 <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
@@ -599,7 +699,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 const DEFAULT_CONFIG = {
   rooms: { order: [], hide: [], max: 8, icons: {} },
   alarm: null, modes: null, people: [], weather: null, quickActions: null,
-  energy: null, irrigation: null, vehicle: null, language: null
+  energy: null, irrigation: null, vehicle: null, cameras: null, language: null
 };
 function mergeConfig(user) {
   const u = user || {};
@@ -623,7 +723,7 @@ function loadScript(src) {
 }
 
 class Component extends DCLogic {
-  state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null };
+  state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now() };
   cfg = mergeConfig({});
   registries = { areas: [], devices: [], entities: [] };
   discovery = null;
@@ -632,7 +732,37 @@ class Component extends DCLogic {
 
   componentDidMount() {
     this.timer = setInterval(() => this.setState({ now: Date.now() }), 15000);
+    this._onVisibility = () => {
+      if (document.visibilityState === 'hidden') this._stopSnapTimer();
+      else this._startSnapTimer();
+    };
+    document.addEventListener('visibilitychange', this._onVisibility);
     this._boot().catch((e) => { console.error('[casa] backend load failed', e); this.setState({ status: 'error' }); });
+  }
+
+  _startSnapTimer() {
+    this._stopSnapTimer();
+    if (document.visibilityState === 'hidden') return;
+    const seconds = (this.cfg.cameras && this.cfg.cameras.snapshotInterval) || 10;
+    this.snapTimer = setInterval(() => this.setState({ snapTick: Date.now() }), Math.max(2, seconds) * 1000);
+  }
+  _stopSnapTimer() { if (this.snapTimer) { clearInterval(this.snapTimer); this.snapTimer = null; } }
+
+  _openCam(id) {
+    this.camCloseAt = Date.now() + 120000;
+    if (this.camTimer) clearInterval(this.camTimer);
+    this.camTimer = setInterval(() => {
+      if (Date.now() >= this.camCloseAt) this._closeCam();
+      else this.setState({});
+    }, 1000);
+    this.setState({ cam: id });
+  }
+  _closeCam() {
+    if (this.camTimer) { clearInterval(this.camTimer); this.camTimer = null; }
+    this.setState({ cam: null });
+  }
+  _revealCam(id) {
+    this.setState({ camRevealed: Object.assign({}, this.state.camRevealed, { [id]: true }) });
   }
 
   async _boot() {
@@ -667,6 +797,7 @@ class Component extends DCLogic {
     this.lang = lang;
     this.setState({});
     this._loadHistory();
+    this._startSnapTimer();
   }
 
   _loadHistory() {
@@ -685,7 +816,13 @@ class Component extends DCLogic {
     });
   }
 
-  componentWillUnmount() { clearInterval(this.timer); if (this.be) this.be.close(); }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+    this._stopSnapTimer();
+    if (this.camTimer) clearInterval(this.camTimer);
+    document.removeEventListener('visibilitychange', this._onVisibility);
+    if (this.be) this.be.close();
+  }
 
   s(id) { const e = this.state.st[id]; return e ? e.state : 'unknown'; }
   at(id, k) { const e = this.state.st[id]; return e && e.attributes ? e.attributes[k] : undefined; }
@@ -861,6 +998,33 @@ class Component extends DCLogic {
     const alarmId = this.ALARM_ID();
     const hasAlarm = !!alarmId;
 
+    // cameras — see dash_neumo.html for the full explanation of this block.
+    const camCfg = this.cfg.cameras || {};
+    const camsRaw = this.discovery ? this.discovery.discoverCameras(this.state.st, this.registries, this.cfg) : [];
+    const hasCameras = camsRaw.length > 0;
+    const hasCamTab = camsRaw.length >= 2;
+    const snapTick = this.state.snapTick;
+    const camList = camsRaw.map((c) => {
+      const revealed = !!this.state.camRevealed[c.id];
+      const showImg = !!c.picture && (!c.hidden || revealed);
+      return {
+        id: c.id, name: c.name, area: c.area, motion: c.motion, picture: c.picture,
+        showImg, showIcon: !showImg,
+        src: showImg ? c.picture + (c.picture.indexOf('?') === -1 ? '?' : '&') + 't=' + snapTick : '',
+        stamp: new Date(snapTick).toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        open: () => { if (c.hidden && !revealed) this._revealCam(c.id); else this._openCam(c.id); }
+      };
+    });
+    const camMain = camList[0] || { name: '—', showImg: false, showIcon: true, motion: false, stamp: '', open: () => {} };
+    const camMotionOne = camList.find((c) => c.motion);
+    const camHeadline = camMotionOne ? this.t('cameras.motionDetected', { name: camMotionOne.name }) : this.t('cameras.allQuiet');
+    const camSub = this.t('cameras.tabSub', { n: camList.length, seconds: camCfg.snapshotInterval || 10 });
+    const camCur = camList.find((c) => c.id === this.state.cam) || null;
+    const camOpen = !!camCur;
+    const camStreamSrc = camCur && camCur.picture ? camCur.picture.replace('/api/camera_proxy/', '/api/camera_proxy_stream/') : '';
+    const camRemainingS = camOpen ? Math.max(0, Math.ceil((this.camCloseAt - Date.now()) / 1000)) : 0;
+    const camCountdown = Math.floor(camRemainingS / 60) + ':' + String(camRemainingS % 60).padStart(2, '0');
+
     const activeItems = [];
     Object.keys(this.state.st).forEach((id) => {
       const dom = id.split('.')[0];
@@ -884,6 +1048,7 @@ class Component extends DCLogic {
     const openCount = ALL_COVERS.filter((id) => (this.at(id, 'current_position') || 0) > 0).length;
 
     const tabDefs = [['casa', this.t('tab.casa'), '#i-house'], ['stanze', this.t('rooms'), '#i-sofa']];
+    if (hasCamTab) tabDefs.push(['camere', this.t('tab.cameras'), '#i-cam']);
     if (hasIrrigation) tabDefs.push(['irrigazione', this.t('tab.irrigation'), '#i-sprout']);
     if (hasEnergy) tabDefs.push(['energia', this.t('tab.energy'), '#i-zap']);
     if (hasVehicle) tabDefs.push(['auto', this.t('tab.vehicle'), '#i-car']);
@@ -1021,8 +1186,12 @@ class Component extends DCLogic {
       timeStr: d.toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }),
       connTone: stt[1], connLabel: stt[0],
       tabCasa: tab === 'casa', tabStanze: tab === 'stanze', tabIrr: tab === 'irrigazione',
-      tabEnergia: tab === 'energia', tabAuto: tab === 'auto', tabMeteo: tab === 'meteo',
+      tabEnergia: tab === 'energia', tabAuto: tab === 'auto', tabMeteo: tab === 'meteo', tabCam: tab === 'camere',
       hasEnergy, hasIrrigation, hasVehicle, hasWeather, hasAlarm, hasModes, hasPeople,
+      hasCameras, hasCamTab, camList, camMain, camHeadline, camSub,
+      camOpen, camName: camCur ? camCur.name : '', camArea: camCur ? camCur.area : '',
+      camStreamSrc, camHasStream: !!camStreamSrc, camNoStream: !camStreamSrc,
+      camCountdown, closeCam: () => this._closeCam(),
       goEnergia: () => this.setState({ tab: 'energia' }),
       goMeteo: () => this.setState({ tab: 'meteo' }),
       goIrr: () => this.setState({ tab: 'irrigazione' }),

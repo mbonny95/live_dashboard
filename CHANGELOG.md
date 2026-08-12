@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.2.0] - 2026-08-12
+
+### Added
+
+- Cameras (optional, auto-discovered): a "Sorveglianza"/"Surveillance" tab
+  (from 2+ cameras), a featured-camera card in Casa, snapshot previews that
+  refresh on a timer (paused while the page isn't visible), a tap-to-live
+  MJPEG fullscreen overlay with a 2-minute auto-close, and a `hideUntilTap`
+  privacy mode for indoor cameras. Motion is read from any `binary_sensor`
+  with `device_class: motion` on the same device as the camera. The
+  Fotovoltaico card in Casa compacts itself when cameras are present, to
+  keep the fixed 1200×800 no-scroll layout.
+
 ## [0.1.0] - 2026-08-12
 
 ### Added

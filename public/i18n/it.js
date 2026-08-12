@@ -5,7 +5,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   deficitAccumulated: 'Deficit accumulato', demoBadge: 'DEMO',
   demoTooltip: 'Demo — dati inventati, nessuna installazione reale collegata',
   details: 'Dettagli', down: 'Giù', environment: 'Ambiente', fromGrid: 'Dalla rete',
-  goToIrrigation: "Vai all'irrigazione", kwhToday: 'kWh prodotti oggi', lighting: 'Illuminazione',
+  goToIrrigation: "Vai all'irrigazione", kwhToday: 'kWh prodotti oggi', kwhTodayShort: 'kWh oggi', lighting: 'Illuminazione',
   lightsTitle: 'Luci', mmPerWeek: 'mm settimana', multimedia: 'Multimedia', onNow: 'cose accese adesso',
   open: 'Apri', openCoversTitle: 'Apri le tapparelle', other: 'Altro', otherRooms: 'Altre stanze',
   produced: 'Prodotti', production: 'Produzione', productionAndGrid: 'Produzione e prelievo',
@@ -15,12 +15,16 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   houseMode: 'Modalità casa', whoIsHome: 'Chi è in casa', lightsOffShort: 'Spegni luci', allOffShort: 'Tutto spento.',
   coversDown: 'Tapparelle giù', coversUp: 'Tapparelle su', now: 'Adesso', producedToday: 'Prodotti oggi',
   consumption: 'Consumo casa', controls: 'Controlli',
+  surveillance: 'Sorveglianza', motion: 'Movimento', live: 'Live', camAutoClose: 'Chiusura automatica tra',
 
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Inserito · fuori', 'alarm.armedHome': 'Inserito · in casa', 'alarm.armedNight': 'Inserito · notte',
   'alarm.armedVacation': 'Inserito · vacanza', 'alarm.arming': 'In inserimento…',
   'alarm.btnAway': 'Fuori', 'alarm.btnHome': 'In casa', 'alarm.btnNight': 'Notte', 'alarm.btnVacation': 'Vacanza',
   'alarm.disarmed': 'Disinserito', 'alarm.pending': 'In attesa…', 'alarm.triggered': 'ALLARME IN CORSO',
+
+  'cameras.motionDetected': 'Movimento rilevato · {name}', 'cameras.allQuiet': 'Tutto tranquillo',
+  'cameras.tabSub': '{n} telecamere · anteprime aggiornate ogni {seconds} secondi',
 
   'chart.hide': 'Nascondi andamento', 'chart.show': 'Vedi andamento', 'chart.show48h': 'Vedi andamento 48h',
 
@@ -34,6 +38,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'energy.inverterStandby': 'inverter in standby', 'energy.periodNote': 'prodotti negli ultimi {n} giorni · {grid} kWh presi dalla rete',
   'energy.producedPeriod': 'Prodotti nel periodo', 'energy.producedShort': 'prodotti', 'energy.productionNow': 'Produzione adesso',
   'energy.takenFromGrid': 'Prelevati dalla rete', 'energy.selfConsumption': '{pct} di autoconsumo',
+  'energy.selfConsumptionShort': 'autoconsumo',
   'energy.gridNote': '{grid} dalla rete · {exportVal} kW in immissione · {status}',
 
   'greeting.afternoon': 'Buon pomeriggio', 'greeting.evening': 'Buonasera', 'greeting.morning': 'Buongiorno', 'greeting.night': 'Notte',
@@ -63,7 +68,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   'switch.off': 'spenta', 'switch.running': 'in funzione',
 
-  'tab.casa': 'Casa', 'tab.energy': 'Energia', 'tab.irrigation': 'Irrigazione', 'tab.vehicle': 'Auto', 'tab.weather': 'Meteo',
+  'tab.casa': 'Casa', 'tab.cameras': 'Sorveglianza', 'tab.energy': 'Energia', 'tab.irrigation': 'Irrigazione', 'tab.vehicle': 'Auto', 'tab.weather': 'Meteo',
 
   'vacuum.cleaning': 'in pulizia', 'vacuum.name': 'Aspirapolvere', 'vacuum.returning': 'in rientro',
 

@@ -8,9 +8,10 @@
   after updating files you may need a hard refresh (Ctrl/Cmd+Shift+R).
 - Check that `panel.js`, `dash_neumo.html` / `dash_neumo_mobile.html`,
   `support.js`, `ha-backend.js`, `ha-backend-panel.js`,
-  `ha-backend-demo.js`, `discovery.js`, `i18n.js`, `i18n/it.js`, `i18n/en.js`
-  and `_ds/` all made it into `config/www/casa/` — a single missing file
-  (most often `_ds/`, since it's a folder) breaks the load silently.
+  `ha-backend-demo.js`, `discovery.js`, `i18n.js`, `i18n/it.js` and
+  `i18n/en.js` all made it into `config/www/casa/` — a single missing file
+  breaks the load silently, and the `i18n/` subfolder is easy to drop by
+  accident when copying file-by-file instead of the whole directory.
 
 ### The page never leaves "Connessione…" / "Connecting…"
 
@@ -24,6 +25,12 @@
 
 ### Rooms are empty, or show far fewer entities than expected
 
+- The most common cause by far: **areas were never assigned** in this
+  installation. This dashboard has no naming or grouping fallback beyond
+  Home Assistant's own area/device/entity registries — it can't guess a
+  room from an entity's name or its old YAML dashboard position. If most
+  entities show under "no area" in `Settings -> Areas`, that's the fix, not
+  something wrong with the dashboard (see "Known limits" in README.md).
 - Auto-discovery only looks at entities that have `disabled_by` and
   `hidden_by` **unset**, and `entity_category` **not** `diagnostic`/`config`.
   An entity you expect to see that's disabled in the entity registry, or
@@ -78,6 +85,32 @@ The "48h" sparkline reads `zone.moisture`'s raw history — if the sensor
 itself is noisy or reports rarely, the sparkline will look sparse or jumpy.
 That's the sensor's data, not a bug in the chart.
 
+### A camera tile only ever shows an icon, never a preview
+
+- If the entity is listed in `config.cameras.hideUntilTap`, this is
+  intentional — tap it once to reveal the still, tap again to go live.
+- Otherwise: the camera's `entity_picture` attribute is empty or missing.
+  Some camera integrations only populate it once the camera has produced at
+  least one frame, or don't populate it at all for certain stream types —
+  check the entity's attributes in Home Assistant's own Developer Tools.
+  This dashboard doesn't fetch snapshots any other way.
+
+### The live camera overlay is a black/broken image
+
+`camera_proxy_stream` (the MJPEG endpoint this dashboard uses for the live
+view) isn't implemented by every camera integration — some only support the
+still-image proxy or a WebRTC/HLS stream instead. If the still preview works
+but tapping into live doesn't, that's the integration, not a config mistake;
+there's no per-camera setting here to change it.
+
+### The "Sorveglianza"/"Surveillance" tab doesn't appear even though I have cameras
+
+The tab only shows up with **2 or more** discovered cameras — with exactly
+one, the Casa card and its tap-to-fullscreen overlay are already the whole
+feature (see README.md). Check that any extra cameras aren't
+`disabled_by`/`hidden_by` in the entity registry, same as any other entity
+this dashboard discovers.
+
 ### Alarm card has no buttons, or fewer than expected
 
 Buttons are generated from the alarm entity's `supported_features` bitmask,
@@ -86,10 +119,10 @@ the "Home" button won't appear — that's the integration's own declaration,
 this dashboard doesn't second-guess it. If the whole card is missing, check
 that `config.alarm` is set to a real `alarm_control_panel.*` entity ID.
 
-### A whole section (Energy / Irrigation / Vehicle / Alarm / Modes / People) is missing
+### A whole section (Energy / Irrigation / Vehicle / Cameras / Alarm / Modes / People) is missing
 
 That's by design when it isn't configured: `alarm`/`modes`/`energy`/
 `irrigation`/`vehicle` are all opt-in in `config.js` (`null` hides them);
-`people`/`weather` auto-discover but hide themselves if nothing is found.
-Nothing here indicates an error — see `config.example.js` for what each
-section needs.
+`people`/`weather`/`cameras` auto-discover but hide themselves if nothing is
+found. Nothing here indicates an error — see `config.example.js` for what
+each section needs.

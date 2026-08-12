@@ -164,6 +164,63 @@ function discoverWeather(states, config) {
   return id || null;
 }
 
+// --- cameras -----------------------------------------------------------
+
+// A camera's motion sensor isn't linked to it by any state or attribute —
+// the only relation Home Assistant exposes is "same device". So: resolve
+// each camera's device_id from the registry, then look for a binary_sensor
+// on that same device whose device_class is motion.
+function discoverCameras(states, registries, config) {
+  const cfg = (config && config.cameras) || {};
+  const entities = (registries && registries.entities) || [];
+  const areas = (registries && registries.areas) || [];
+  const devices = (registries && registries.devices) || [];
+  const deviceById = new Map(devices.map((d) => [d.id, d]));
+  const areaById = new Map(areas.map((a) => [a.area_id, a]));
+  const areaNameOf = (areaId) => (areaId && areaById.has(areaId) ? areaById.get(areaId).name : '');
+
+  const camEntities = entities.filter((e) => !isExcluded(e) && domainOf(e.entity_id) === 'camera' && e.entity_id in states);
+  if (!camEntities.length) return [];
+
+  const motionByDevice = new Map();
+  for (const e of entities) {
+    if (isExcluded(e) || domainOf(e.entity_id) !== 'binary_sensor' || !e.device_id) continue;
+    const st = states[e.entity_id];
+    if (!st || (st.attributes && st.attributes.device_class) !== 'motion') continue;
+    if (st.state === 'on') motionByDevice.set(e.device_id, true);
+    else if (!motionByDevice.has(e.device_id)) motionByDevice.set(e.device_id, false);
+  }
+
+  const hideUntilTap = new Set((cfg.hideUntilTap || []).map(String));
+
+  const cams = camEntities.map((e) => {
+    const device = e.device_id ? deviceById.get(e.device_id) : null;
+    const areaId = e.area_id || (device && device.area_id) || null;
+    const st = states[e.entity_id];
+    const picture = (st.attributes && st.attributes.entity_picture) || null;
+    return {
+      id: e.entity_id,
+      name: friendlyName(states, e.entity_id),
+      area: areaNameOf(areaId),
+      motion: e.device_id ? !!motionByDevice.get(e.device_id) : false,
+      picture,
+      hidden: hideUntilTap.has(e.entity_id)
+    };
+  });
+
+  const primary = cfg.primary && cams.find((c) => c.id === cfg.primary);
+  if (primary) {
+    const rest = cams.filter((c) => c.id !== primary.id);
+    return [primary].concat(rest);
+  }
+  const motionFirst = cams.find((c) => c.motion);
+  if (motionFirst) {
+    const rest = cams.filter((c) => c.id !== motionFirst.id);
+    return [motionFirst].concat(rest);
+  }
+  return cams;
+}
+
 // --- alarm ------------------------------------------------------------------
 
 function discoverAlarm(states, config) {
@@ -187,7 +244,7 @@ function discoverModes(config) {
 // <script> tag — see loadScript() in dash_neumo*.html — and exposed here as
 // a global.
 window.CasaDiscovery = {
-  discoverRooms, discoverAllOfDomain, discoverPeople, discoverWeather, discoverAlarm, discoverModes,
+  discoverRooms, discoverAllOfDomain, discoverPeople, discoverWeather, discoverAlarm, discoverModes, discoverCameras,
   CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName
 };
 

@@ -123,6 +123,37 @@ binary_sensor di avviso). È stata usata con un'installazione Mercedes
 comparabili (Volvo, Kia Connect, BMW Connected Drive, lettori OBD-II
 generici), dato che qui non c'è nulla di specifico per una marca.
 
+## Telecamere (opzionale)
+
+Auto-discovery completo da ogni entità `camera.*` che Home Assistant
+espone — area dal registry, movimento da un `binary_sensor` con
+`device_class: motion` sullo stesso device. `config.cameras` sovrascrive
+solo le eccezioni (vedi `config.example.js`); non c'è nessun elenco di
+telecamere da mantenere a mano.
+
+- **Anteprime, non video.** Ogni tessera mostra uno snapshot da
+  `entity_picture` (l'URL che Home Assistant firma già da solo), ricaricato
+  ogni `snapshotInterval` secondi (10 di default). Il refresh si sospende
+  quando la scheda/pagina non è visibile.
+- **Live al tap.** Toccare un'anteprima apre uno stream MJPEG a schermo
+  intero (lo stesso URL firmato, con `/api/camera_proxy/` sostituito da
+  `/api/camera_proxy_stream/`) — niente `hls.js`, niente WebRTC, niente
+  build step. Si chiude da sola dopo 2 minuti, o al tap.
+- **Privacy per le telecamere interne**: elenca un entity_id in
+  `hideUntilTap` e la sua tessera mostra solo un'icona — nessuna anteprima
+  caricata — finché qualcuno non la tocca una volta per vedere lo snapshot,
+  e una seconda per andare live. Pensata per una telecamera puntata su un
+  corridoio dove vive lo stesso tablet.
+- La tab "Sorveglianza" compare solo da **due telecamere in su** — con una
+  sola, la card in Casa e il suo overlay a schermo intero al tap sono già
+  tutta la funzione: una tab con una tessera sola non aggiungerebbe nulla.
+  Oltre `gridTab` telecamere (6 di default) la griglia della tab passa da 2
+  a 3 colonne.
+- Funziona solo su `panel_custom` (vedi "Cos'è, e cosa non è" sopra): gli
+  URL di snapshot/stream sono firmati da HA e same-origin col pannello, che
+  è esattamente ciò che un'eventuale variante standalone/token dovrebbe
+  gestire diversamente.
+
 ## Modalità kiosk per il tablet a muro
 
 Punta [Fully Kiosk Browser](https://www.fully-kiosk.com/) (o un altro
@@ -138,11 +169,25 @@ un layout scorrevole (voluto — vedi TROUBLESHOOTING.md).
 Apri la pagina con `?demo` in coda all'URL (oppure aprila direttamente fuori
 da `panel_custom` — da `file://` la dashboard non ha nessun host con cui
 parlare e passa da sola allo stesso backend demo dopo un breve timeout).
-Mostra tutte e quattro le view — Casa, Irrigazione, Energia, Auto — con dati
-inventati e un badge `DEMO` visibile, e non chiama mai un servizio reale.
+Mostra tutte le view — Casa, Sorveglianza, Irrigazione, Energia, Auto — con
+dati inventati e un badge `DEMO` visibile, e non chiama mai un servizio
+reale. Le telecamere demo mostrano solo l'icona segnaposto (non c'è un feed
+vero da inventare), compresa una impostata `hideUntilTap` per far vedere
+anche quel comportamento.
 
 ## Limiti noti
 
+- **Il risultato vale quanto le tue aree assegnate.** Ogni stanza,
+  dispositivo e telecamera su questa dashboard viene dai registri di
+  Home Assistant (aree/dispositivi/entità) — non c'è nessuna logica di
+  raggruppamento o denominazione alternativa oltre a quella. Se la tua
+  installazione ha le aree assegnate con coerenza, la dashboard ha già
+  senso al primo avvio, senza scrivere una riga di config. Se non hai mai
+  assegnato le aree — tutto resta sotto "nessuna area", come capita spesso
+  a un'installazione appena fatta — la dashboard sembrerà quasi vuota, e
+  non è un bug da segnalare: è `Impostazioni -> Aree` di Home Assistant che
+  aspetta di essere compilato, cosa che questa dashboard non può indovinare
+  al posto tuo.
 - Pensata prima di tutto per un tablet a muro in orizzontale; la pagina
   mobile è completa ma secondaria, non l'obiettivo primario del design.
 - Non sostituisce Lovelace: nessun selettore di card, nessun layout
