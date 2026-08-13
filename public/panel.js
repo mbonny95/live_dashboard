@@ -22,6 +22,17 @@ const ASSET_VERSION = '16';
 const FLUSH_MS = 600;
 const CALL_TIMEOUT_MS = 15000;
 
+// The custom element's tag name has to be known synchronously the moment
+// this module runs (it's what panel_custom.name in configuration.yaml
+// must match) but it also has to be unique per install, so two copies of
+// this dashboard — a live one and a side-by-side test one, say — can be
+// registered in the same browser tab without customElements.define()
+// throwing a "name already used" collision. Deriving it from this module's
+// own folder (the same `config/www/<folder>/` the user picked when they
+// copied panel.js there) solves both at once with no config to keep in
+// sync: `panel_custom.name` just has to be `<folder>-panel`.
+const PANEL_TAG = new URL('.', import.meta.url).pathname.split('/').filter(Boolean).pop() + '-panel';
+
 // Below this width the phone layout (dash_neumo_mobile.html) loads instead
 // of the desktop one. Decided once at mount from the host's innerWidth (not
 // the iframe's) — see connectedCallback for why it's not re-evaluated on
@@ -343,4 +354,4 @@ class CasaPanel extends HTMLElement {
   }
 }
 
-customElements.define('casa-panel', CasaPanel);
+customElements.define(PANEL_TAG, CasaPanel);

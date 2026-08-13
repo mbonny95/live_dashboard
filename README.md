@@ -41,7 +41,13 @@ no Home Assistant required. It shows invented data and a `DEMO` badge; see
 
 1. Copy the whole `public/` folder into `config/www/casa/` (rename as you
    like — `casa` is just what the example below uses).
-2. Add to `configuration.yaml`:
+2. Add to `configuration.yaml`. **`name:` must be `<folder>-panel`** — the
+   panel element registers itself under that exact tag, derived from the
+   folder you copied it into, so it has to match or the panel loads as a
+   blank/black screen with nothing in the browser console. This also means
+   you can run a second copy side by side under a different folder (e.g.
+   `casa2/` while trying this out, without touching a working `casa/`
+   install) — just give it its own `name`/`url_path` pointing at that folder:
 
    ```yaml
    panel_custom:
@@ -49,12 +55,20 @@ no Home Assistant required. It shows invented data and a `DEMO` badge; see
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/casa/panel.js
+       module_url: /local/casa/panel.js?v=1
        embed_iframe: true
        trust_external_script: false
    ```
 
-3. Restart Home Assistant. Open the new sidebar entry.
+   The `?v=1` on `module_url` matters more than it looks: `/local/` is
+   served with long cache headers, and browsers cache ES modules
+   particularly aggressively — a plain hard refresh doesn't reliably force
+   a re-fetch of `panel.js` itself. Bump that number (`?v=2`, `?v=3`, …)
+   every time you update the files in this folder, or you may keep running
+   a stale `panel.js` with no error to show for it.
+3. **Restart Home Assistant** — `panel_custom` entries are registered at
+   startup, not hot-reloadable, so editing `configuration.yaml` alone has no
+   effect until you restart. Then open the new sidebar entry.
 
 That's it — with no `config.js` at all, the dashboard auto-discovers your
 areas and shows up to 8 of them as room tiles, plus any `person.*` entities

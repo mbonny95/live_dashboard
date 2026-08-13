@@ -2,10 +2,28 @@
 
 ### White / blank panel
 
+- **Check `panel_custom.name` first, especially with a second/parallel
+  install.** The panel element registers itself under the tag
+  `<folder>-panel`, derived automatically from the folder you copied
+  `panel.js` into (`config/www/casa2/panel.js` registers `casa2-panel`, not
+  `casa-panel`). If `name:` in `configuration.yaml` doesn't match, Home
+  Assistant creates an element nothing has defined — a genuinely blank
+  panel with **no error in the console at all**, because nothing ever ran.
+  This is the most likely cause if the page was completely black/empty and
+  the console showed nothing.
+- **`panel_custom` doesn't hot-reload.** Editing `configuration.yaml` (a new
+  `name`, a fixed `module_url`, anything under `panel_custom`) has no effect
+  until you fully restart Home Assistant — there's no YAML-reload button for
+  this integration.
+- **No `?v=` on `module_url`, or you forgot to bump it after updating
+  files.** `/local/` is served with long cache headers, and browsers cache
+  ES modules more aggressively than regular assets — a hard refresh doesn't
+  reliably force a re-fetch of `panel.js` itself, so you can end up running
+  a stale copy indefinitely with no error to show for it (this can look
+  identical to the `name:` mismatch above: blank panel, empty console).
+  Add `?v=1` to `module_url` if it's missing, and bump it on every update.
 - Open the browser console (F12) on the panel page. A red error there is
-  almost always a wrong `module_url` in `configuration.yaml` or a stale
-  browser cache — Home Assistant serves `/local/` with long cache headers, so
-  after updating files you may need a hard refresh (Ctrl/Cmd+Shift+R).
+  almost always a wrong `module_url` in `configuration.yaml`.
 - Check that `panel.js`, `dash_neumo.html` / `dash_neumo_mobile.html`,
   `support.js`, `ha-backend.js`, `ha-backend-panel.js`,
   `ha-backend-demo.js`, `discovery.js`, `i18n.js`, `i18n/it.js` and

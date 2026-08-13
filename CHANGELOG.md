@@ -3,6 +3,24 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.2.1] - 2026-08-13
+
+### Fixed
+
+- `panel.js` registered its custom element under a hardcoded `casa-panel`
+  tag regardless of the folder it was deployed to or the `name:` set in
+  `configuration.yaml`. Any install using a different `panel_custom.name`
+  (a renamed folder, or a second install running side by side with a
+  working one to try the public build without touching it) loaded as a
+  blank/black panel with no error in the console, because Home Assistant
+  created an element nothing had ever registered. The tag is now derived
+  from the module's own deploy folder (`config/www/<folder>/panel.js`
+  registers `<folder>-panel`), so `name:` just has to match the folder —
+  and two installs can now run side by side without a
+  `customElements.define()` collision. Documented in README.md/README.it.md
+  and TROUBLESHOOTING.md, along with the separate (and easy to conflate)
+  failure mode of a missing/stale `?v=` cache-bust on `module_url`.
+
 ## [0.2.0] - 2026-08-12
 
 ### Added

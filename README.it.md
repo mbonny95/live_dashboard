@@ -41,7 +41,14 @@ vedi [Modalità demo](#modalità-demo) più sotto.
 
 1. Copia l'intera cartella `public/` in `config/www/casa/` (il nome è
    arbitrario — `casa` è solo l'esempio usato qui sotto).
-2. Aggiungi a `configuration.yaml`:
+2. Aggiungi a `configuration.yaml`. **`name:` deve essere `<cartella>-panel`**
+   — l'elemento del pannello si registra esattamente sotto quel tag,
+   derivato dalla cartella in cui l'hai copiato, quindi deve corrispondere o
+   il pannello resta uno schermo vuoto/nero senza nulla in console. Questo
+   significa anche che puoi tenere una seconda copia in parallelo sotto
+   un'altra cartella (es. `casa2/` per provarla senza toccare
+   un'installazione `casa/` già funzionante) — basta dargli il proprio
+   `name`/`url_path` che punta a quella cartella:
 
    ```yaml
    panel_custom:
@@ -49,12 +56,22 @@ vedi [Modalità demo](#modalità-demo) più sotto.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/casa/panel.js
+       module_url: /local/casa/panel.js?v=1
        embed_iframe: true
        trust_external_script: false
    ```
 
-3. Riavvia Home Assistant. Apri la nuova voce nella sidebar.
+   Quel `?v=1` su `module_url` conta più di quanto sembri: `/local/` viene
+   servito con cache lunga, e i browser cachano i moduli ES in modo
+   particolarmente aggressivo — un hard refresh da solo non forza sempre un
+   nuovo fetch di `panel.js`. Incrementa quel numero (`?v=2`, `?v=3`, …) ogni
+   volta che aggiorni i file in questa cartella, altrimenti rischi di
+   continuare a far girare un `panel.js` vecchio senza nessun errore che lo
+   segnali.
+3. **Riavvia Home Assistant** — le voci `panel_custom` si registrano
+   all'avvio, non si ricaricano a caldo, quindi modificare
+   `configuration.yaml` da solo non ha effetto finché non riavvii. Poi apri
+   la nuova voce nella sidebar.
 
 Fatto — senza nessun `config.js`, la dashboard scopre da sola le tue aree e
 ne mostra fino a 8 come tessere stanza, più le eventuali entità `person.*` e
