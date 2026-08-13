@@ -16,6 +16,9 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   coversDown: 'Covers down', coversUp: 'Covers up', now: 'Now', producedToday: 'Produced today',
   consumption: 'House consumption', controls: 'Controls',
   surveillance: 'Surveillance', motion: 'Motion', live: 'Live', camAutoClose: 'Closes automatically in',
+  noAreasTitle: 'No areas found', noAreasCta: 'Go to Areas',
+  noAreasBody: "This dashboard builds itself from Home Assistant's areas: assign your entities to an area to see rooms here.",
+  fromGridHint: 'Energy drawn from the grid today — not total house consumption',
 
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Armed · away', 'alarm.armedHome': 'Armed · home', 'alarm.armedNight': 'Armed · night',

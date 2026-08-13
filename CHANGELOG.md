@@ -3,6 +3,29 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.0] - 2026-08-13
+
+Validated end to end against a real Home Assistant installation, running
+alongside its original hand-built dashboard, not just the demo dataset.
+
+### Added
+
+- Empty-state guidance when zero Home Assistant areas exist: a message and
+  a direct link to Settings → Areas instead of a silently blank Stanze
+  section — this is the single most likely reason a fresh install would
+  look broken on first load.
+- Inline tooltip on the Fotovoltaico card's "grid" figure (dotted
+  underline, hover/tap) clarifying it's energy imported from the grid, not
+  total house consumption — in the dashboard itself, not only the README,
+  since someone who clones the repo may never open it.
+
+### Fixed
+
+- Mobile's Energia tab showed a tile labeled "Consumo casa" that actually
+  duplicated the grid-import value — the same number as the adjacent,
+  correctly-labeled "Dalla rete" tile. Found while adding the tooltip
+  above. The mislabeled tile is removed.
+
 ## [0.3.0] - 2026-08-13
 
 ### Added

@@ -375,6 +375,14 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-if>
 </div>
 </sc-for>
+<sc-if value="{{ hasNoAreas }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+<svg width="22" height="22" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-hall"></use></svg>
+<div style="font:600 14px/1.3 var(--font-body)">{{ S.noAreasTitle }}</div>
+<div style="font:500 12px/1.5 var(--font-body);color:var(--tx2)">{{ S.noAreasBody }}</div>
+<button onClick="{{ goToAreas }}" style="margin-top:4px;height:40px;padding:0 16px;border-radius:13px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1 var(--font-body);color:var(--accT)">{{ S.noAreasCta }}</button>
+</div>
+</sc-if>
 </div>
 </sc-if>
 
@@ -504,15 +512,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <span style="font:600 13px/1 var(--font-body);color:var(--tx2);padding-bottom:5px">kWh</span>
 </div>
 <div style="font:500 11px/1.4 var(--font-body);color:var(--tx2);margin-top:7px">{{ energySummaryLine }}</div>
-<div data-m="two" style="margin-top:13px">
-<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:11px 13px">
-<div style="font-family:var(--font-heading);font-size:16px;line-height:1.1">{{ loadTodayFull }}</div>
-<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ S.consumption }}</div>
-</div>
-<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:11px 13px">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:11px 13px;margin-top:13px">
 <div style="font-family:var(--font-heading);font-size:16px;line-height:1.1">{{ gridToday }}</div>
-<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ S.fromGrid }}</div>
-</div>
+<div title="{{ S.fromGridHint }}" style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px;display:inline-block">{{ S.fromGrid }}</div>
 </div>
 </div>
 
@@ -554,7 +556,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 <div style="display:flex;gap:14px;font:500 10.5px/1 var(--font-body);color:var(--tx2);margin-top:11px">
 <span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--acc)"></span>{{ S.produced }}</span>
-<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--tx2);opacity:.5"></span>{{ S.fromGrid }}</span>
+<span title="{{ S.fromGridHint }}" style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--tx2);opacity:.5"></span><span style="text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px">{{ S.fromGrid }}</span></span>
 </div>
 <div data-m="two" style="margin-top:14px">
 <sc-for list="{{ periodCells }}" as="c" hint-placeholder-count="4">
@@ -1057,6 +1059,8 @@ class Component extends DCLogic {
 
     const roomsResult = this.ROOMS_RESULT();
     const allRoomsFlat = roomsResult.rooms.concat(roomsResult.overflow);
+    const hasNoAreas = !this.registries.areas || this.registries.areas.length === 0;
+    const goToAreas = () => { try { window.top.location.href = '/config/areas/dashboard'; } catch (e) {} };
     const rooms = allRoomsFlat.map((r) => {
       const isOpen = this.state.room === r.id;
       const lightOn = (r.lights || []).some((id) => this.isOn(id));
@@ -1191,6 +1195,7 @@ class Component extends DCLogic {
       tabCasa: tab === 'casa', tabStanze: tab === 'stanze', tabIrr: tab === 'irrigazione',
       tabEnergia: tab === 'energia', tabAuto: tab === 'auto', tabMeteo: tab === 'meteo', tabCam: tab === 'camere',
       hasEnergy, hasIrrigation, hasVehicle, hasWeather, hasAlarm, hasModes, hasPeople,
+      hasNoAreas, goToAreas,
       hasCameras, hasCamTab, camList, camMain, camHeadline, camSub,
       camOpen, camName: camCur ? camCur.name : '', camArea: camCur ? camCur.area : '',
       camStreamSrc, camHasStream: !!camStreamSrc, camNoStream: !camStreamSrc,
@@ -1213,7 +1218,6 @@ class Component extends DCLogic {
       wxDetailLine: this.t('wx.humidityDetailLine', { label: wxi[1], humidity: outH === null ? '—' : this.dec(outH, 0) + '%' }),
       nowCells, invStatus,
       prodToday: prodT === null ? '—' : this.dec(prodT, 1),
-      loadTodayFull: gridT === null ? '—' : this.dec(gridT, 2) + ' kWh',
       gridToday: hasEnergy ? this.val(en.gridToday, 2, ' kWh') : '—',
       selfRatio: hasEnergy && en.production && en.consumption ? (() => {
         const p = this.n(en.production), c = this.n(en.consumption);

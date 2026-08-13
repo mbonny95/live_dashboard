@@ -16,6 +16,9 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   coversDown: 'Tapparelle giù', coversUp: 'Tapparelle su', now: 'Adesso', producedToday: 'Prodotti oggi',
   consumption: 'Consumo casa', controls: 'Controlli',
   surveillance: 'Sorveglianza', motion: 'Movimento', live: 'Live', camAutoClose: 'Chiusura automatica tra',
+  noAreasTitle: 'Nessuna area trovata', noAreasCta: 'Vai alle Aree',
+  noAreasBody: "Questa dashboard si costruisce dalle aree di Home Assistant: assegna le tue entità a un'area per vedere le stanze qui.",
+  fromGridHint: 'Energia prelevata dalla rete oggi — non è il consumo totale della casa',
 
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Inserito · fuori', 'alarm.armedHome': 'Inserito · in casa', 'alarm.armedNight': 'Inserito · notte',

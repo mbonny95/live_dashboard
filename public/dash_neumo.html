@@ -261,6 +261,14 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-for>
 </div>
+<sc-if value="{{ hasNoAreas }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start">
+<svg width="22" height="22" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-hall"></use></svg>
+<div style="font:600 14px/1.3 var(--font-body)">{{ S.noAreasTitle }}</div>
+<div style="font:500 12px/1.5 var(--font-body);color:var(--tx2)">{{ S.noAreasBody }}</div>
+<button onClick="{{ goToAreas }}" style="margin-top:4px;height:40px;padding:0 16px;border-radius:13px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1 var(--font-body);color:var(--accT)">{{ S.noAreasCta }}</button>
+</div>
+</sc-if>
 </div>
 
 <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
@@ -308,7 +316,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;flex:none">
 <span style="width:9px;height:9px;border-radius:999px;background:var(--sage);flex:none"></span>
-<span style="flex:1;font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ S.fromGrid }}</span>
+<span title="{{ S.fromGridHint }}" style="flex:1;font:500 11.5px/1 var(--font-body);color:var(--tx2);text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px">{{ S.fromGrid }}</span>
 <span style="font:600 12.5px/1 var(--font-body)">{{ loadTodayFull }}</span>
 </div>
 <div style="flex:1;min-height:0"></div>
@@ -344,7 +352,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 <div style="display:flex;align-items:center;gap:8px;margin-bottom:11px;flex:none">
 <span style="width:9px;height:9px;border-radius:999px;background:var(--sage);flex:none"></span>
-<span style="flex:1;font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ S.fromGrid }}</span>
+<span title="{{ S.fromGridHint }}" style="flex:1;font:500 11.5px/1 var(--font-body);color:var(--tx2);text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px">{{ S.fromGrid }}</span>
 <span style="font:600 12.5px/1 var(--font-body)">{{ loadTodayFull }}</span>
 </div>
 <div style="display:flex;align-items:baseline;gap:9px;flex:none">
@@ -546,7 +554,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 <div style="display:flex;align-items:center;gap:7px">
 <span style="width:10px;height:10px;border-radius:3px;background:var(--sage)"></span>
-<span style="font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ S.fromGrid }}</span>
+<span title="{{ S.fromGridHint }}" style="font:500 11.5px/1 var(--font-body);color:var(--tx2);text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px">{{ S.fromGrid }}</span>
 </div>
 </div>
 <div style="display:flex;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px;margin-bottom:4px">
@@ -1248,6 +1256,12 @@ class Component extends DCLogic {
     };
     const rooms = roomsResult.rooms.map(buildRoom);
     const overflowRooms = roomsResult.overflow.map(buildRoom);
+    // Literally zero areas in the registry — not "areas exist but nothing
+    // controllable in them", which is a different, rarer case that doesn't
+    // need this message. This is the single most likely reason a fresh
+    // install looks empty, so it gets a direct link instead of a blank grid.
+    const hasNoAreas = !this.registries.areas || this.registries.areas.length === 0;
+    const goToAreas = () => { try { window.top.location.href = '/config/areas/dashboard'; } catch (e) {} };
 
     const al = hasAlarm ? this.ALARM(alarmId) : ['', 'ok'];
     const alarmSt = hasAlarm ? this.s(alarmId) : 'disarmed';
@@ -1496,6 +1510,7 @@ class Component extends DCLogic {
       tabCam: this.state.tab === 'camere',
       onCount: activeItems.length, activeItems, nothingOn: activeItems.length === 0,
       quick, rooms,
+      hasNoAreas, goToAreas,
       hasOverflowRooms: overflowRooms.length > 0, overflowCount: overflowRooms.length, overflowRooms,
       overflowLabel: this.t('rooms.overflow', { n: overflowRooms.length }),
       allRoomsOpen: this.state.allRooms,
