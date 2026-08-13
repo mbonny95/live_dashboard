@@ -112,6 +112,19 @@ aggiungi un helper
 [`utility_meter`](https://www.home-assistant.io/integrations/utility_meter/)
 in Home Assistant che si azzeri ogni giorno e punta `config.js` su quello.
 
+**L'anello Fotovoltaico e la sua seconda riga confrontano `productionToday`
+con `gridToday` — produzione contro energia *prelevata dalla rete*, non
+consumo totale della casa.** Se vieni da una dashboard scritta a mano che
+confrontava la produzione con un contatore "consumo casa oggi", aspettati
+qui un numero più piccolo e diverso: il prelievo dalla rete è solo la parte
+di consumo che la rete ha coperto, non tutto quello che la casa ha usato.
+Lo schema chiede solo questi due ruoli perché sono gli unici contatori
+giornalieri garantiti su tutte le integrazioni — un contatore "consumo casa
+oggi" non è universale come lo è per FusionSolar. Se la tua integrazione ne
+espone uno e vuoi quell'abbinamento, in questa release non c'è un campo di
+config per farlo — apri una issue o adatta direttamente la sezione energia
+in `dash_neumo*.html`.
+
 ## Attivare l'Irrigazione
 
 Ogni zona è già utile con solo `moisture` (un `sensor.*` con stato in `%`) e

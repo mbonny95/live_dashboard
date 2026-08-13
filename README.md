@@ -107,6 +107,18 @@ If your integration doesn't expose a daily counter for a given role, add a
 [`utility_meter` helper](https://www.home-assistant.io/integrations/utility_meter/)
 in Home Assistant that resets daily and point `config.js` at that instead.
 
+**The Fotovoltaico ring and its second row compare `productionToday` against
+`gridToday` — production vs. energy *imported from the grid*, not total
+house consumption.** If you're coming from a hand-built dashboard that paired
+production against a "house load today" counter instead, expect a smaller,
+different number here: grid import is only the part of consumption the grid
+covered, not everything the house used. The schema only asks for these two
+roles because they're the only daily counters guaranteed to exist across
+integrations — a "house consumption today" counter isn't universal the way
+FusionSolar's happens to be. If your integration does expose one and you
+want that pairing instead, there's no config field for it in this release —
+open an issue or adapt `dash_neumo*.html`'s energy section directly.
+
 ## Enabling Irrigation
 
 Each zone needs only `moisture` (a `sensor.*` with `%` state) and a way to run
