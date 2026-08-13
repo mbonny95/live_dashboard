@@ -1353,7 +1353,14 @@ class Component extends DCLogic {
         mmWeek: z.weekMm ? this.val(z.weekMm, 1, ' mm') : '—', last,
         lastRunLine: this.t('irrigation.lastRun', { when: last }),
         spark: this.spark(this.state.hist ? this.state.hist['zone' + i] : null, 240, 44),
-        buttons: (z.durations || [5, 10, 15]).map((m) => ({ label: this.t('irrigation.minutes', { n: m }), run: () => this.runValve(z.valve, m) }))
+        // Two ways to run a timed watering: a `valve` switch this dashboard
+        // opens/closes itself (durations are just labels), or `buttons` —
+        // one input_button per duration, for installs where a script/
+        // automation already owns the timing and there's no switch to
+        // drive directly. `buttons` wins if both happen to be set.
+        buttons: (z.buttons && z.buttons.length)
+          ? z.buttons.map((b) => ({ label: this.t('irrigation.minutes', { n: b.minutes }), run: () => this.call('input_button', 'press', { entity_id: b.entity }) }))
+          : (z.valve ? (z.durations || [5, 10, 15]).map((m) => ({ label: this.t('irrigation.minutes', { n: m }), run: () => this.runValve(z.valve, m) })) : [])
       };
     });
 

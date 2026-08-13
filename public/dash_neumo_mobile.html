@@ -1146,7 +1146,10 @@ class Component extends DCLogic {
         showChart: chartVisible, chartLabel: chartVisible ? this.t('chart.hide') : this.t('chart.show48h'),
         toggleChart: () => this.toggleChart('zone' + i),
         spark: this.spark(this.state.hist ? this.state.hist['zone' + i] : null, 240, 54),
-        buttons: (z.durations || [5, 10, 15]).map((m) => ({ label: this.t('irrigation.minutes', { n: m }), run: () => this.runValve(z.valve, m) }))
+        // See dash_neumo.html for why there are two mechanisms here.
+        buttons: (z.buttons && z.buttons.length)
+          ? z.buttons.map((b) => ({ label: this.t('irrigation.minutes', { n: b.minutes }), run: () => this.call('input_button', 'press', { entity_id: b.entity }) }))
+          : (z.valve ? (z.durations || [5, 10, 15]).map((m) => ({ label: this.t('irrigation.minutes', { n: m }), run: () => this.runValve(z.valve, m) })) : [])
       };
     });
 

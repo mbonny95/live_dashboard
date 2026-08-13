@@ -3,6 +3,18 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.3.0] - 2026-08-13
+
+### Added
+
+- Irrigation zones can now run timed watering through `buttons` — one
+  `input_button.*` per duration — as an alternative to `valve` +
+  `durations`. Found while validating against a real installation whose
+  zones are opened by a script/automation already owning the timing, with
+  no switch entity for the dashboard to drive directly; `valve` alone
+  couldn't represent that setup. `buttons` takes over from `valve` when
+  both are set.
+
 ## [0.2.1] - 2026-08-13
 
 ### Fixed

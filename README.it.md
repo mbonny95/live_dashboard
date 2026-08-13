@@ -115,9 +115,17 @@ in Home Assistant che si azzeri ogni giorno e punta `config.js` su quello.
 ## Attivare l'Irrigazione
 
 Ogni zona è già utile con solo `moisture` (un `sensor.*` con stato in `%`) e
-`valve` (uno `switch.*`): sparkline, stato valvola e pulsanti a durata che si
-limitano a chiamare `switch.turn_on` e poi `switch.turn_off` dopo N minuti —
-nessuna entità helper aggiuntiva richiesta per questa parte.
+un modo di far scorrere l'acqua: sparkline, stato valvola e pulsanti a
+durata. Due modi per collegare questa seconda parte, scegli quello che
+combacia con il tuo impianto:
+
+- `valve` — uno `switch.*` che questa dashboard apre da sola, chiamando
+  `switch.turn_on` e poi `switch.turn_off` dopo N minuti. Nessuna entità
+  helper aggiuntiva richiesta.
+- `buttons` — un `input_button.*` per ogni durata, per impianti dove uno
+  script/un'automazione possiede già la temporizzazione (es. un'automazione
+  quick-action per ogni durata) e non c'è uno switch da comandare
+  direttamente. Ha la precedenza su `valve` se sono impostati entrambi.
 
 Tutto il resto (`advisory`, `deficit`, `weekMm`, `lastRun`, `et0`, `etc`,
 `effectiveRain`, `summary`) è opzionale e compare solo se lo imposti.

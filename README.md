@@ -109,10 +109,17 @@ in Home Assistant that resets daily and point `config.js` at that instead.
 
 ## Enabling Irrigation
 
-Each zone needs only `moisture` (a `sensor.*` with `%` state) and `valve` (a
-`switch.*`) to be useful: sparkline, valve state, and timed-run buttons that
-just call `switch.turn_on` then `switch.turn_off` after N minutes — no extra
-helper entities required for that part.
+Each zone needs only `moisture` (a `sensor.*` with `%` state) and a way to run
+water to be useful: sparkline, valve state, and timed-run buttons. Two ways to
+wire that second part, pick whichever matches your setup:
+
+- `valve` — a `switch.*` this dashboard opens itself, calling
+  `switch.turn_on` then `switch.turn_off` after N minutes. No extra helper
+  entities required.
+- `buttons` — one `input_button.*` per duration, for setups where a
+  script/automation already owns the timing (e.g. a quick-action automation
+  per duration) and there's no switch to drive directly. Takes over from
+  `valve` if both are set.
 
 Everything else (`advisory`, `deficit`, `weekMm`, `lastRun`, `et0`, `etc`,
 `effectiveRain`, `summary`) is optional and only appears if you set it.

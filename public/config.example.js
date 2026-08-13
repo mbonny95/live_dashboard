@@ -67,15 +67,21 @@ window.CASA_CONFIG = {
   // },
 
   // Irrigation: zone by zone, degrading gracefully — with just `moisture` +
-  // `valve` a zone is already useful (sparkline, timed run buttons, valve
-  // state). Advisory/deficit/ET fields are extra and only appear if set.
-  // The agronomic math (ET0/ETc/deficit) is not part of this dashboard —
-  // see README.md for a link to the automations that compute it.
+  // a way to run water (`valve` or `buttons`, see below) a zone is already
+  // useful (sparkline, timed run buttons, valve state). Advisory/deficit/ET
+  // fields are extra and only appear if set. The agronomic math (ET0/ETc/
+  // deficit) is not part of this dashboard — see README.md for a link to
+  // the automations that compute it.
   irrigation: null,
   // irrigation: {
   //   zones: [
-  //     { name: 'Zone 1', moisture: 'sensor.zone1_soil_moisture', valve: 'switch.zone1_valve',
-  //       durations: [5, 10, 15],
+  //     { name: 'Zone 1', moisture: 'sensor.zone1_soil_moisture',
+  //       // Two ways to run a timed watering — set one, not both:
+  //       valve: 'switch.zone1_valve',   // a switch this dashboard opens then closes itself after N minutes
+  //       durations: [5, 10, 15],        // minutes offered as buttons, paired with `valve` above
+  //       buttons: null,                 // [{ minutes: 5, entity: 'input_button.zone1_5min' }, ...] — for
+  //                                       // installs where a script/automation already owns the timing and
+  //                                       // there's no switch to drive directly; takes over from `valve` if set
   //       advisory: null, deficit: null, weekMm: null, lastRun: null }
   //   ],
   //   weather: { temp: null, humidity: null, rain: null, irradiance: null, wind: null },
