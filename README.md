@@ -1,5 +1,11 @@
 <!-- title: Live Dashboard -->
+![Live Dashboard](readme-header.png)
+
 # Live Dashboard
+
+[![Latest release](https://img.shields.io/github/v/tag/mbonny95/live_dashboard?sort=semver&label=release&color=c67139)](https://github.com/mbonny95/live_dashboard/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-c67139)](LICENSE)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2022.x%2B-c67139)](#requirements)
 
 *[Leggi in italiano](README.it.md)*
 
