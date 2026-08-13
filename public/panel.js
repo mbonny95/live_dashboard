@@ -17,7 +17,7 @@
 // every deploy of the dashboard (and keep configuration.yaml's panel_custom
 // module_url ?v= in sync — the module and the page it loads must cache-bust
 // together or a stale module can point at a fresh page's mismatched API).
-const ASSET_VERSION = '16';
+const ASSET_VERSION = '17';
 
 const FLUSH_MS = 600;
 const CALL_TIMEOUT_MS = 15000;
