@@ -3,6 +3,22 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.1] - 2026-08-14
+
+### Fixed
+
+- `dash_neumo.html`/`dash_neumo_mobile.html` cache-bust `?v=` only ever
+  covered the page itself (via the iframe src) — the scripts it loads in
+  turn (`discovery.js`, `config.js`, the i18n/backend files) had no
+  cache-bust at all, so a browser could keep a stale `discovery.js` (missing
+  a recent fix or feature) even after a fresh deploy and a full HA restart,
+  with no visible sign anything was wrong. Found validating Appliances
+  (1.1.0) against a real installation: the page was demonstrably fresh
+  (correct `ASSET_VERSION` in the iframe URL) but behavior still matched
+  the pre-1.1.0 code. Every `loadScript()` call now reuses the same `?v=`
+  the page itself was loaded with, so one `ASSET_VERSION` bump busts the
+  whole chain, not just the page.
+
 ## [1.1.0] - 2026-08-14
 
 ### Added

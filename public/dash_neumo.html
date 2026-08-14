@@ -919,6 +919,14 @@ function mergeConfig(user) {
 // Plain <script src> tags aren't subject to that restriction, so discovery.js
 // / i18n.js / the ha-backend-*.js trio / config.js are all loaded this way
 // and expose themselves as window.Casa* globals instead of module exports.
+// panel.js cache-busts this file itself via `?v=` on the iframe src (see
+// ASSET_VERSION there), but that alone doesn't stop the browser from serving
+// a stale cached copy of the scripts *this* file loads below — discovery.js,
+// config.js, the i18n/backend files. Reusing the same `v` here means one
+// ASSET_VERSION bump busts the whole chain, not just this file.
+const ASSET_V = new URLSearchParams(location.search).get('v');
+function bust(src) { return ASSET_V ? `${src}?v=${ASSET_V}` : src; }
+
 function loadScript(src) {
   return new Promise((resolve) => {
     const s = document.createElement('script');
@@ -982,15 +990,15 @@ class Component extends DCLogic {
 
   async _boot() {
     await Promise.all([
-      loadScript('./discovery.js'),
-      loadScript('./i18n.js'),
-      loadScript('./i18n/it.js'),
-      loadScript('./i18n/en.js'),
-      loadScript('./ha-backend-panel.js'),
-      loadScript('./ha-backend-demo.js'),
-      loadScript('./ha-backend.js')
+      loadScript(bust('./discovery.js')),
+      loadScript(bust('./i18n.js')),
+      loadScript(bust('./i18n/it.js')),
+      loadScript(bust('./i18n/en.js')),
+      loadScript(bust('./ha-backend-panel.js')),
+      loadScript(bust('./ha-backend-demo.js')),
+      loadScript(bust('./ha-backend.js'))
     ]);
-    const hadConfig = await loadScript('./config.js');
+    const hadConfig = await loadScript(bust('./config.js'));
     const userConfig = hadConfig ? (window.CASA_CONFIG || {}) : {};
 
     this.discovery = window.CasaDiscovery;
