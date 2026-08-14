@@ -123,7 +123,7 @@ const SEED = [
   entity('input_number.zone2_week_mm', null, '14', { friendly_name: 'Settimana zona 2', unit_of_measurement: 'mm' }),
   entity('input_datetime.zone2_last_run', null, new Date(Date.now() - 5 * 86400000).toISOString(), { friendly_name: 'Ultima irrigazione zona 2' }),
 
-  // vehicle (optional module — see config.example.js)
+  // vehicle (optional module — see live_dashboard_config.js)
   entity('sensor.car_fuel_level', null, '64', { friendly_name: 'Livello carburante', unit_of_measurement: '%' }),
   entity('sensor.car_range', null, '480', { friendly_name: 'Autonomia', unit_of_measurement: 'km' }),
   entity('sensor.car_odometer', null, '38210', { friendly_name: 'Contachilometri', unit_of_measurement: 'km' }),

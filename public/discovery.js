@@ -8,7 +8,7 @@
 //   registries { areas: [...], devices: [...], entities: [...] }  — raw
 //               config/*_registry/list results, or the demo backend's
 //               fabricated equivalent (see ha-backend-demo.js)
-//   config     the merged config.js (see config.example.js)
+//   config     the merged config.js (see live_dashboard_config.js)
 
 // Wrapped in an IIFE: this is a classic script sharing one global scope with
 // every other file loaded via loadScript() in dash_neumo*.html (see the note

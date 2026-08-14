@@ -13,11 +13,18 @@
 // own React/webcomponents in the same document.
 
 // HA serves /local/ with long cache headers, so a deploy needs an explicit
-// cache-bust or browsers keep serving the stale page/module. Bump this on
-// every deploy of the dashboard (and keep configuration.yaml's panel_custom
-// module_url ?v= in sync — the module and the page it loads must cache-bust
-// together or a stale module can point at a fresh page's mismatched API).
-const ASSET_VERSION = '22';
+// cache-bust or browsers keep serving the stale page/module — including
+// after a HACS update, which is exactly when a user is most likely to load
+// a stale mix of old and new files. VERSION is the single source of truth
+// for that: it threads through the iframe src below, and dash_neumo*.html
+// reuses the same `v` query param to bust every script it loads in turn
+// (discovery.js, config, i18n, ha-backend-*). Keep it aligned with the git
+// tag on release (and with configuration.yaml's panel_custom module_url
+// ?v= for manual installs — the module and the page it loads must
+// cache-bust together or a stale module can point at a fresh page's
+// mismatched API).
+const VERSION = '1.3.0';
+console.info(`[live_dashboard] v${VERSION}`);
 
 const FLUSH_MS = 600;
 const CALL_TIMEOUT_MS = 15000;
@@ -215,7 +222,7 @@ class CasaPanel extends HTMLElement {
     // re-checking on resize (e.g. on-screen keyboard, iOS rotation) would
     // reload the iframe mid-session and drop whatever state the user is in.
     const page = window.innerWidth < MOBILE_BREAKPOINT_PX ? 'dash_neumo_mobile.html' : 'dash_neumo.html';
-    iframe.src = new URL(`./${page}?v=${ASSET_VERSION}`, import.meta.url).href;
+    iframe.src = new URL(`./${page}?v=${VERSION}`, import.meta.url).href;
     this._iframe = iframe;
     this._targetOrigin = window.location.origin;
     this.appendChild(iframe);

@@ -1,5 +1,5 @@
 <!-- title: Live Dashboard -->
-![Live Dashboard](readme-header.png)
+![Live Dashboard](assets/readme-header.png)
 
 # Live Dashboard
 
@@ -45,15 +45,70 @@ no Home Assistant required. It shows invented data and a `DEMO` badge; see
 
 ## Installation
 
+There are two ways to install this: via HACS (recommended — you get update
+notifications and a one-click update whenever a new version is tagged), or
+by copying the files by hand. Both end up running the same dashboard; the
+only real difference between them is `module_url` and where the plugin's
+files live, which matters if you ever migrate from one to the other.
+
+### Via HACS (recommended)
+
+1. In HACS, add this repo as a custom repository: **⋮ menu → Custom
+   repositories**, URL `https://github.com/mbonny95/live_dashboard`,
+   category **Dashboard**.
+2. Find "Live Dashboard" in HACS and click **Download**. HACS installs it
+   into `config/www/community/live_dashboard/` — that exact path, not a
+   name you choose (this is HACS's own convention for the Dashboard
+   category, and it's what the `name:`/`module_url:` below assume).
+3. Add to `configuration.yaml`:
+
+   ```yaml
+   panel_custom:
+     - name: live_dashboard-panel
+       url_path: casa
+       sidebar_title: Casa
+       sidebar_icon: mdi:home-heart
+       module_url: /local/community/live_dashboard/panel.js?v=1.3.0
+       embed_iframe: true
+       trust_external_script: false
+   ```
+
+   `name:` has to be exactly `live_dashboard-panel` — the panel element
+   registers itself under `<folder>-panel`, derived from the folder it's
+   running from, and for a HACS install that folder is always
+   `live_dashboard`. Get this wrong and the panel loads as a blank/black
+   screen with nothing in the browser console.
+
+   The `?v=1.3.0` on `module_url` matters more than it looks: `/local/` is
+   served with long cache headers, and browsers cache ES modules
+   particularly aggressively, so a plain hard refresh doesn't reliably force
+   a re-fetch of `panel.js` after an update. Match it to the version you
+   just installed (shown in HACS, and logged to the browser console on
+   load as `[live_dashboard] vX.Y.Z`) and bump it again the next time you
+   update.
+4. **Restart Home Assistant** — `panel_custom` entries are registered at
+   startup, not hot-reloadable, so editing `configuration.yaml` alone has no
+   effect until you restart. Then open the new sidebar entry.
+
+**Important — read this before you hit an update:**
+
+- HACS updates the plugin's *files*, never `configuration.yaml`. You write
+  the `panel_custom` block once, above, and never touch it again for
+  routine updates.
+- Your own config goes in **`config/www/live_dashboard_config.js`** — one
+  level up from `config/www/community/live_dashboard/`, not inside it.
+  That inner folder is fully overwritten by every HACS update, so a config
+  file placed there is deleted the next time you update; `config/www/`
+  itself is never touched by HACS. See "Configuring the rest" below.
+
+### Manual installation
+
 1. Copy the whole `public/` folder into `config/www/casa/` (rename as you
-   like — `casa` is just what the example below uses).
-2. Add to `configuration.yaml`. **`name:` must be `<folder>-panel`** — the
-   panel element registers itself under that exact tag, derived from the
-   folder you copied it into, so it has to match or the panel loads as a
-   blank/black screen with nothing in the browser console. This also means
-   you can run a second copy side by side under a different folder (e.g.
-   `casa2/` while trying this out, without touching a working `casa/`
-   install) — just give it its own `name`/`url_path` pointing at that folder:
+   like — `casa` is just what the example below uses; this is also how you
+   can run a second copy side by side, e.g. `casa2/`, without touching a
+   working `casa/` install).
+2. Add to `configuration.yaml`. **`name:` must be `<folder>-panel`**,
+   matching whatever folder you chose above:
 
    ```yaml
    panel_custom:
@@ -66,17 +121,16 @@ no Home Assistant required. It shows invented data and a `DEMO` badge; see
        trust_external_script: false
    ```
 
-   The `?v=1` on `module_url` matters more than it looks: `/local/` is
-   served with long cache headers, and browsers cache ES modules
-   particularly aggressively — a plain hard refresh doesn't reliably force
-   a re-fetch of `panel.js` itself. Bump that number (`?v=2`, `?v=3`, …)
-   every time you update the files in this folder, or you may keep running
-   a stale `panel.js` with no error to show for it.
-3. **Restart Home Assistant** — `panel_custom` entries are registered at
-   startup, not hot-reloadable, so editing `configuration.yaml` alone has no
-   effect until you restart. Then open the new sidebar entry.
+   Same cache-busting note as above: bump `?v=1` → `?v=2` → … yourself
+   every time you update the files in this folder, since there's no HACS
+   version to read it from here.
+3. **Restart Home Assistant**, then open the new sidebar entry.
 
-That's it — with no `config.js` at all, the dashboard auto-discovers your
+**Migrating from a manual install to HACS?** The `module_url` and `name:`
+above are different between the two — update both lines, not just one, or
+the panel will keep loading the old copy (or nothing at all).
+
+That's it — with no config file at all, the dashboard auto-discovers your
 areas and shows up to 8 of them as room tiles, plus any `person.*` entities
 and the first `weather.*` entity it finds. Alarm, house-mode scene switcher,
 Energy, Irrigation and Vehicle stay hidden until you opt into them (see
@@ -86,10 +140,23 @@ guessing wrong.
 
 ### Configuring the rest
 
-Copy `config.example.js` to `config.js` **in the same folder** (next to
-`panel.js`) and uncomment what you need — every key is documented inline
-there. `config.js` is meant to hold your own entity IDs; keep it out of
-version control (the provided `.gitignore` already excludes it).
+Copy [`live_dashboard_config.js`](public/live_dashboard_config.js) and
+uncomment what you need — every key is documented inline there. It's
+checked in this order, first one found wins:
+
+1. `config/www/live_dashboard_config.js` — **recommended for every install,
+   HACS or manual.** Outside any folder HACS manages, so updates never
+   touch it.
+2. `config/www/community/live_dashboard/config.js` — back-compat for an
+   earlier HACS layout; prefer path 1 above for new installs.
+3. `config.js` next to `panel.js`, inside whichever folder you copied
+   `public/` into (manual installs only) — back-compat for existing manual
+   installs; still works unchanged, but a HACS update would erase it if
+   used there, so don't use this path once you're on HACS.
+
+Whichever path you use, keep the file out of version control — it holds
+your own entity IDs (the provided `.gitignore` already excludes `config.js`
+under `public/`; a copy under `config/www/` is outside this repo entirely).
 
 ## Enabling Energy
 
@@ -208,7 +275,7 @@ in the room summary, the same as lights or a vacuum in progress.
 Fully auto-discovered from every `camera.*` entity Home Assistant reports —
 area from the registry, motion from a `binary_sensor` with
 `device_class: motion` on the same device. `config.cameras` only overrides
-the defaults (see `config.example.js`); there's no per-camera list to
+the defaults (see `live_dashboard_config.js`); there's no per-camera list to
 maintain.
 
 - **Previews, not video.** Each tile shows a still snapshot from
@@ -278,5 +345,5 @@ behavior too.
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — white panel, empty rooms, wrong
   charts, missing alarm buttons.
 - [CHANGELOG.md](CHANGELOG.md)
-- [config.example.js](public/config.example.js) — every override, documented
+- [live_dashboard_config.js](public/live_dashboard_config.js) — every override, documented
   inline.

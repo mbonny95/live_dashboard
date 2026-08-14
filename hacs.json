@@ -1,0 +1,8 @@
+{
+  "name": "Live Dashboard",
+  "content_in_root": false,
+  "zip_release": true,
+  "filename": "live_dashboard.zip",
+  "render_readme": true,
+  "homeassistant": "2022.1.0"
+}

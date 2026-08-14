@@ -3,6 +3,22 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.0] - 2026-08-14
+
+### Added
+
+- **HACS support.** The dashboard can now be installed and updated through
+  HACS as a custom repository, category **Dashboard**, alongside the
+  existing manual install method — see the README's "Via HACS" section.
+- **A config location that HACS updates can't erase.** Your `config.js`
+  overrides can now live at `config/www/live_dashboard_config.js`. This is
+  the new recommended spot, because it sits outside the folder a HACS
+  update overwrites — previous versions only supported placing it next to
+  the dashboard's own files, which meant an update would wipe it out on a
+  HACS install. If you already have a working `config.js` from a manual
+  install, it's picked up exactly as before — nothing to change, nothing
+  breaks.
+
 ## [1.2.0] - 2026-08-14
 
 ### Added

@@ -1,10 +1,19 @@
-// config.js — local overrides for the auto-discovery defaults.
+// live_dashboard_config.js — local overrides for the auto-discovery defaults.
 //
-// Copy this file to config.js next to it (config.js is git-ignored — it's
-// meant to hold your own entity IDs, never commit it) and uncomment only the
-// keys you need. Everything below is optional: with no config.js at all, the
-// dashboard discovers rooms, people, weather and quick actions on its own
-// from Home Assistant's area/device/entity registries.
+// Recommended (HACS installs): copy this file, unchanged in name, to
+// config/www/live_dashboard_config.js — that's outside the community/
+// folder HACS overwrites on every update, so an update never wipes your
+// config out. It's also checked first regardless of install method.
+//
+// Manual installs: copying it as config.js next to panel.js still works
+// (checked last, for back-compat) — see the "Installazione manuale" /
+// "Manual installation" section of the README for the full path order.
+//
+// Whichever path you use, this file is git-ignored — it's meant to hold
+// your own entity IDs, never commit it. Uncomment only the keys you need.
+// Everything below is optional: with no config file at all, the dashboard
+// discovers rooms, people, weather and quick actions on its own from Home
+// Assistant's area/device/entity registries.
 //
 // Any key left `null` (or an empty array where noted) means "try to
 // auto-discover it, and hide the section if nothing is found" — a missing
@@ -12,7 +21,7 @@
 //
 // Classic script, not an ES module (`window.CASA_CONFIG =`, not
 // `export default`) — see the note at the top of discovery.js: dynamic
-// import() of config.js would break the "must open from file://" demo-mode
+// import() of this file would break the "must open from file://" demo-mode
 // requirement, since Chrome blocks ES module fetches from file:// origins.
 
 window.CASA_CONFIG = {

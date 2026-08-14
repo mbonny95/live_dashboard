@@ -712,7 +712,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:900},&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;casa&quot;,&quot;stanze&quot;,&quot;irrigazione&quot;,&quot;energia&quot;,&quot;auto&quot;,&quot;meteo&quot;],&quot;default&quot;:&quot;casa&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;themePref&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;day&quot;,&quot;night&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;showModes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamento&quot;}}">
-// Defaults mirror config.example.js — see that file for what each key does.
+// Defaults mirror live_dashboard_config.js — see that file for what each key does.
 const DEFAULT_CONFIG = {
   rooms: { order: [], hide: [], max: 8, icons: {} },
   alarm: null, modes: null, people: [], weather: null, quickActions: null,
@@ -730,10 +730,10 @@ function mergeConfig(user) {
 // / i18n.js / the ha-backend-*.js trio / config.js are all loaded this way
 // and expose themselves as window.Casa* globals instead of module exports.
 // panel.js cache-busts this file itself via `?v=` on the iframe src (see
-// ASSET_VERSION there), but that alone doesn't stop the browser from serving
+// VERSION there), but that alone doesn't stop the browser from serving
 // a stale cached copy of the scripts *this* file loads below — discovery.js,
 // config.js, the i18n/backend files. Reusing the same `v` here means one
-// ASSET_VERSION bump busts the whole chain, not just this file.
+// VERSION bump busts the whole chain, not just this file.
 const ASSET_V = new URLSearchParams(location.search).get('v');
 function bust(src) { return ASSET_V ? `${src}?v=${ASSET_V}` : src; }
 
@@ -745,6 +745,36 @@ function loadScript(src) {
     s.onerror = () => resolve(false); // config.js is optional — a 404 is not an error
     document.head.appendChild(s);
   });
+}
+
+// Tried in order, first hit wins. HACS overwrites the plugin's own folder
+// on every update, so a config.js living next to panel.js would be wiped
+// out by the next update — `/local/live_dashboard_config.js` (config/www/
+// root, outside any HACS-managed subfolder) is the recommended location
+// going forward. The other two exist purely for back-compat: installs that
+// followed an earlier HACS layout, and manual installs that still keep
+// config.js next to panel.js. All three are plain <script> tags (see the
+// file:// note above), not dynamic import(), so a missing one is a silent
+// 404 via loadScript's onerror, never a console error.
+// The two /local/ candidates only ever resolve when Home Assistant itself
+// is serving this page — i.e. when panel.js has embedded it in an iframe
+// (same signal ha-backend.js already uses to detect "not really installed
+// under HA" for demo mode: window.parent === window). Opened directly
+// (file://, or `?demo` for local testing) they can never succeed, so
+// skip them there — each is a <script> 404, which the browser logs to the
+// console as a network-level error no matter how the code handles it, and
+// there's no point paying that cost for two paths that can't possibly hit.
+const CONFIG_PATHS = window.parent !== window
+  ? ['/local/live_dashboard_config.js', '/local/community/live_dashboard/config.js', './config.js']
+  : ['./config.js'];
+async function loadUserConfig() {
+  for (const path of CONFIG_PATHS) {
+    if (await loadScript(bust(path)) && window.CASA_CONFIG) {
+      console.info(`[live_dashboard] config caricata da ${path}`);
+      return window.CASA_CONFIG;
+    }
+  }
+  return {};
 }
 
 class Component extends DCLogic {
@@ -800,8 +830,7 @@ class Component extends DCLogic {
       loadScript(bust('./ha-backend-demo.js')),
       loadScript(bust('./ha-backend.js'))
     ]);
-    const hadConfig = await loadScript(bust('./config.js'));
-    const userConfig = hadConfig ? (window.CASA_CONFIG || {}) : {};
+    const userConfig = await loadUserConfig();
 
     this.discovery = window.CasaDiscovery;
     this.be = await window.CasaBackend.connect({

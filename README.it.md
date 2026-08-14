@@ -1,5 +1,5 @@
 <!-- title: Live Dashboard -->
-![Live Dashboard](readme-header.png)
+![Live Dashboard](assets/readme-header.png)
 
 # Live Dashboard
 
@@ -45,16 +45,72 @@ vedi [Modalità demo](#modalità-demo) più sotto.
 
 ## Installazione
 
+Ci sono due modi per installarla: via HACS (consigliato — ricevi notifiche
+di aggiornamento e un update con un click ogni volta che esce una nuova
+versione), oppure copiando i file a mano. In entrambi i casi la dashboard
+che gira è la stessa; l'unica differenza reale è `module_url` e dove vivono
+i file del plugin, cosa che conta se mai passi dall'uno all'altro.
+
+### Via HACS (consigliato)
+
+1. In HACS aggiungi questo repo come repository personalizzato: **menu ⋮ →
+   Custom repositories**, URL `https://github.com/mbonny95/live_dashboard`,
+   categoria **Dashboard**.
+2. Trova "Live Dashboard" in HACS e clicca **Download**. HACS la installa in
+   `config/www/community/live_dashboard/` — quel percorso esatto, non un
+   nome a tua scelta (è la convenzione di HACS per la categoria Dashboard,
+   ed è ciò che `name:`/`module_url:` qui sotto danno per scontato).
+3. Aggiungi a `configuration.yaml`:
+
+   ```yaml
+   panel_custom:
+     - name: live_dashboard-panel
+       url_path: casa
+       sidebar_title: Casa
+       sidebar_icon: mdi:home-heart
+       module_url: /local/community/live_dashboard/panel.js?v=1.3.0
+       embed_iframe: true
+       trust_external_script: false
+   ```
+
+   `name:` deve essere esattamente `live_dashboard-panel` — l'elemento del
+   pannello si registra sotto `<cartella>-panel`, derivato dalla cartella in
+   cui gira, e per un'installazione HACS quella cartella è sempre
+   `live_dashboard`. Se non corrisponde, il pannello resta uno schermo
+   vuoto/nero senza nulla in console.
+
+   Quel `?v=1.3.0` su `module_url` conta più di quanto sembri: `/local/`
+   viene servito con cache lunga, e i browser cachano i moduli ES in modo
+   particolarmente aggressivo, quindi un hard refresh da solo non forza
+   sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
+   versione appena installata (mostrata in HACS, e loggata in console
+   all'avvio come `[live_dashboard] vX.Y.Z`) e incrementalo di nuovo al
+   prossimo aggiornamento.
+4. **Riavvia Home Assistant** — le voci `panel_custom` si registrano
+   all'avvio, non si ricaricano a caldo, quindi modificare
+   `configuration.yaml` da solo non ha effetto finché non riavvii. Poi apri
+   la nuova voce nella sidebar.
+
+**Importante — leggi prima del primo aggiornamento:**
+
+- HACS aggiorna i *file* del plugin, mai `configuration.yaml`. Il blocco
+  `panel_custom` sopra si scrive una volta sola e non va più toccato per gli
+  aggiornamenti di routine.
+- La tua config va in **`config/www/live_dashboard_config.js`** — un
+  livello sopra `config/www/community/live_dashboard/`, non dentro. Quella
+  cartella interna viene interamente sovrascritta a ogni aggiornamento HACS,
+  quindi un file di config lasciato lì viene cancellato al prossimo update;
+  `config/www/` invece non viene mai toccata da HACS. Vedi "Configurare il
+  resto" più sotto.
+
+### Installazione manuale
+
 1. Copia l'intera cartella `public/` in `config/www/casa/` (il nome è
-   arbitrario — `casa` è solo l'esempio usato qui sotto).
-2. Aggiungi a `configuration.yaml`. **`name:` deve essere `<cartella>-panel`**
-   — l'elemento del pannello si registra esattamente sotto quel tag,
-   derivato dalla cartella in cui l'hai copiato, quindi deve corrispondere o
-   il pannello resta uno schermo vuoto/nero senza nulla in console. Questo
-   significa anche che puoi tenere una seconda copia in parallelo sotto
-   un'altra cartella (es. `casa2/` per provarla senza toccare
-   un'installazione `casa/` già funzionante) — basta dargli il proprio
-   `name`/`url_path` che punta a quella cartella:
+   arbitrario — `casa` è solo l'esempio usato qui sotto; è anche così che
+   puoi tenere una seconda copia in parallelo, es. `casa2/`, senza toccare
+   un'installazione `casa/` già funzionante).
+2. Aggiungi a `configuration.yaml`. **`name:` deve essere `<cartella>-panel`**,
+   corrispondente alla cartella scelta sopra:
 
    ```yaml
    panel_custom:
@@ -67,21 +123,19 @@ vedi [Modalità demo](#modalità-demo) più sotto.
        trust_external_script: false
    ```
 
-   Quel `?v=1` su `module_url` conta più di quanto sembri: `/local/` viene
-   servito con cache lunga, e i browser cachano i moduli ES in modo
-   particolarmente aggressivo — un hard refresh da solo non forza sempre un
-   nuovo fetch di `panel.js`. Incrementa quel numero (`?v=2`, `?v=3`, …) ogni
-   volta che aggiorni i file in questa cartella, altrimenti rischi di
-   continuare a far girare un `panel.js` vecchio senza nessun errore che lo
-   segnali.
-3. **Riavvia Home Assistant** — le voci `panel_custom` si registrano
-   all'avvio, non si ricaricano a caldo, quindi modificare
-   `configuration.yaml` da solo non ha effetto finché non riavvii. Poi apri
-   la nuova voce nella sidebar.
+   Stessa nota sul cache-busting di sopra: incrementa `?v=1` → `?v=2` → …
+   a mano ogni volta che aggiorni i file in questa cartella, dato che qui
+   non c'è una versione HACS da cui leggerlo.
+3. **Riavvia Home Assistant**, poi apri la nuova voce nella sidebar.
 
-Fatto — senza nessun `config.js`, la dashboard scopre da sola le tue aree e
-ne mostra fino a 8 come tessere stanza, più le eventuali entità `person.*` e
-la prima `weather.*` che trova. Allarme, selettore di modalità casa,
+**Stai passando da un'installazione manuale a HACS?** `module_url` e
+`name:` sopra sono diversi tra i due casi — aggiorna entrambe le righe, non
+solo una, altrimenti il pannello continua a caricare la copia vecchia (o
+niente del tutto).
+
+Fatto — senza nessun file di config, la dashboard scopre da sola le tue aree
+e ne mostra fino a 8 come tessere stanza, più le eventuali entità `person.*`
+e la prima `weather.*` che trova. Allarme, selettore di modalità casa,
 Energia, Irrigazione e Auto restano nascosti finché non li attivi (vedi
 sotto) — non c'è modo di indovinare l'accoppiata giusta per uno script
 "modalità casa", né quale, tra più pannelli allarme, sia "quello giusto":
@@ -89,11 +143,25 @@ per questo restano spenti di default invece di tentare a caso.
 
 ### Configurare il resto
 
-Copia `config.example.js` in `config.js` **nella stessa cartella** (accanto
-a `panel.js`) e scommenta quello che ti serve — ogni chiave è documentata
-in linea nel file. `config.js` è pensato per contenere i tuoi entity ID:
-tienilo fuori dal controllo di versione (il `.gitignore` fornito lo esclude
-già).
+Copia [`live_dashboard_config.js`](public/live_dashboard_config.js) e
+scommenta quello che ti serve — ogni chiave è documentata in linea nel
+file. Viene cercato in quest'ordine, vince il primo trovato:
+
+1. `config/www/live_dashboard_config.js` — **consigliato per ogni
+   installazione, HACS o manuale.** Fuori da qualsiasi cartella gestita da
+   HACS, quindi gli aggiornamenti non lo toccano mai.
+2. `config/www/community/live_dashboard/config.js` — retrocompatibilità con
+   un layout HACS precedente; per nuove installazioni preferisci il
+   percorso 1.
+3. `config.js` accanto a `panel.js`, dentro la cartella in cui hai copiato
+   `public/` (solo installazioni manuali) — retrocompatibilità con
+   installazioni manuali esistenti; funziona ancora invariato, ma un
+   aggiornamento HACS lo cancellerebbe se usato lì, quindi non usare questo
+   percorso una volta passati a HACS.
+
+Qualunque percorso tu usi, tienilo fuori dal controllo di versione — contiene
+i tuoi entity ID (il `.gitignore` fornito esclude già `config.js` sotto
+`public/`; una copia sotto `config/www/` è comunque fuori da questo repo).
 
 ## Attivare l'Energia
 
@@ -218,7 +286,7 @@ Casa e nel riepilogo della stanza, come una luce o un robot in pulizia.
 Auto-discovery completo da ogni entità `camera.*` che Home Assistant
 espone — area dal registry, movimento da un `binary_sensor` con
 `device_class: motion` sullo stesso device. `config.cameras` sovrascrive
-solo le eccezioni (vedi `config.example.js`); non c'è nessun elenco di
+solo le eccezioni (vedi `live_dashboard_config.js`); non c'è nessun elenco di
 telecamere da mantenere a mano.
 
 - **Anteprime, non video.** Ogni tessera mostra uno snapshot da
@@ -291,5 +359,5 @@ anche quel comportamento.
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — pannello bianco, stanze vuote,
   grafici sbagliati, allarme senza pulsanti. (In inglese.)
 - [CHANGELOG.md](CHANGELOG.md)
-- [config.example.js](public/config.example.js) — ogni opzione, documentata
+- [live_dashboard_config.js](public/live_dashboard_config.js) — ogni opzione, documentata
   in linea.

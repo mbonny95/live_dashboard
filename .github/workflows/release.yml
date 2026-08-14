@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  zip-and-attach:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build live_dashboard.zip
+        # HACS (zip_release, content_in_root: false) extracts this archive
+        # straight into the plugin's own folder, so the files it contains
+        # have to sit at the zip's top level — not under a public/ wrapper.
+        run: |
+          cd public
+          zip -r ../live_dashboard.zip . -x '.DS_Store'
+
+      - name: Attach to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.event.release.tag_name }}" live_dashboard.zip --clobber
