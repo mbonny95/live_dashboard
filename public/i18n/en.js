@@ -85,6 +85,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'wx.pouring': 'Heavy rain', 'wx.rainToday': 'Rain today', 'wx.rainy': 'Rainy', 'wx.sunny': 'Clear',
   'wx.temperature': 'Temperature', 'wx.wind': 'Wind', 'wx.windy': 'Windy', 'wx.detailLine': '{label} · {temp} outside',
   'wx.humidityDetailLine': '{label} · {humidity} humidity',
+  'wx.feelsLike': 'Feels like', 'wx.dewPoint': 'Dew point',
 
   'energy.summaryLine': '{status} · {pct} self-consumption'
 };

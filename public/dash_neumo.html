@@ -131,7 +131,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <span style="font:600 14px/1 var(--font-body)">{{ wxTemp }}</span>
 <span style="font:500 12px/1 var(--font-body);color:var(--tx2)">{{ wxLabel }}</span>
 <span style="width:1px;height:17px;background:var(--nu-d);opacity:.5"></span>
-<span style="font:600 11.5px/1 var(--font-body);color:var(--tx2)">{{ wxRain }}</span>
+<span style="font:600 11.5px/1 var(--font-body);color:var(--tx2)">{{ wxHumidity }}</span>
 </button>
 </sc-if>
 
@@ -906,7 +906,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 const DEFAULT_CONFIG = {
   rooms: { order: [], hide: [], max: 8, icons: {} },
   alarm: null, modes: null, people: [], weather: null, quickActions: null,
-  energy: null, irrigation: null, vehicle: null, appliances: null, cameras: null, language: null
+  energy: null, irrigation: null, vehicle: null, appliances: null, cameras: null, weatherStation: null, language: null
 };
 function mergeConfig(user) {
   const u = user || {};
@@ -1183,9 +1183,10 @@ class Component extends DCLogic {
     };
     const wxi = wxMap[wx] || ['#i-cloud', wx || '—'];
     // weather.* carries temperature/humidity as attributes, not as its state
-    // (the state is the condition string, e.g. "partlycloudy").
-    const outT = weatherId ? this.at(weatherId, 'temperature') : null;
-    const outH = weatherId ? this.at(weatherId, 'humidity') : null;
+    // (the state is the condition string, e.g. "partlycloudy") — used below
+    // as the fallback when no local weather station is configured.
+    const entityT = weatherId ? this.at(weatherId, 'temperature') : null;
+    const entityH = weatherId ? this.at(weatherId, 'humidity') : null;
 
     const peopleIds = this.discovery ? this.discovery.discoverPeople(this.state.st, this.cfg) : [];
     const hasPeople = peopleIds.length > 0;
@@ -1433,6 +1434,20 @@ class Component extends DCLogic {
     });
 
     const irrWx = (hasIrrigation && this.cfg.irrigation.weather) || {};
+    // config.weatherStation is optional, on top of what irrigation.weather
+    // already maps — an install with irrigation configured doesn't have to
+    // retype the same local sensors just to prefer them here over the
+    // weather.* entity's (less precise, less local) attributes. Only
+    // feelsLike/dewPoint have no other home and always come from here.
+    const ws = this.cfg.weatherStation || {};
+    const stationTempId = ws.temp || irrWx.temp || null;
+    const stationHumidityId = ws.humidity || irrWx.humidity || null;
+    const stationWindId = ws.wind || irrWx.wind || null;
+    const stationRainId = ws.rain || irrWx.rain || null;
+    const stationIrradianceId = ws.irradiance || irrWx.irradiance || null;
+    const stationEt0Id = ws.et0 || (hasIrrigation && this.cfg.irrigation.et0) || null;
+    const outT = stationTempId ? this.n(stationTempId) : entityT;
+    const outH = stationHumidityId ? this.n(stationHumidityId) : entityH;
     const meteoDefs = [];
     if (irrWx.temp) meteoDefs.push(['#i-therm', this.t('wx.temperature'), this.val(irrWx.temp, 1, '°')]);
     if (irrWx.humidity) meteoDefs.push(['#i-drop', this.t('wx.airHumidity'), this.val(irrWx.humidity, 0, '%')]);
@@ -1444,18 +1459,21 @@ class Component extends DCLogic {
     if (hasIrrigation && this.cfg.irrigation.effectiveRain) meteoDefs.push(['#i-drop', this.t('irrigation.effectiveRain'), this.val(this.cfg.irrigation.effectiveRain, 1, ' mm')]);
     const meteo = meteoDefs.map((x) => ({ icon: x[0], label: x[1], val: x[2] }));
 
-    // weather detail slide-over — outdoor readings from the weather entity
-    // plus whatever irrigation.weather / per-zone moisture is configured.
+    // weather detail slide-over — outdoor temp/humidity prefer a configured
+    // local station (weatherStation, or irrigation.weather as a fallback
+    // source) over the weather.* entity; soil moisture stays out of here
+    // (it already has its own numbers in the Irrigation tab) and is reached
+    // instead via the "go to irrigation" link below, not duplicated as pills.
+    const hasStation = !!(stationTempId || stationHumidityId || stationWindId || stationRainId || stationIrradianceId || stationEt0Id || ws.feelsLike || ws.dewPoint);
     const stationDefs = [];
-    if (hasWeather) {
-      stationDefs.push(['#i-therm', this.t('wx.outdoorTemp'), outT === null ? '—' : this.dec(outT, 1) + '°']);
-      stationDefs.push(['#i-drop', this.t('wx.outdoorHumidity'), outH === null ? '—' : this.dec(outH, 0) + '%']);
-    }
-    if (irrWx.wind) stationDefs.push(['#i-wind', this.t('wx.wind'), this.val(irrWx.wind, 1, ' km/h')]);
-    if (irrWx.rain) stationDefs.push(['#i-rain', this.t('wx.rainToday'), this.val(irrWx.rain, 1, ' mm')]);
-    if (irrWx.irradiance) stationDefs.push(['#i-solar', this.t('wx.irradiance'), this.val(irrWx.irradiance, 0, ' W/m²')]);
-    if (hasIrrigation && this.cfg.irrigation.et0) stationDefs.push(['#i-sun', this.t('irrigation.et0Today'), this.val(this.cfg.irrigation.et0, 2, ' mm')]);
-    irrZones.forEach((z) => { if (z.moisture) stationDefs.push(['#i-sprout', this.t('irrigation.soilOf', { zone: z.name }), this.val(z.moisture, 0, '%')]); });
+    if (outT !== null) stationDefs.push(['#i-therm', this.t('wx.outdoorTemp'), this.dec(outT, 1) + '°']);
+    if (outH !== null) stationDefs.push(['#i-drop', this.t('wx.outdoorHumidity'), this.dec(outH, 0) + '%']);
+    if (ws.feelsLike) stationDefs.push(['#i-therm', this.t('wx.feelsLike'), this.val(ws.feelsLike, 1, '°')]);
+    if (ws.dewPoint) stationDefs.push(['#i-drop', this.t('wx.dewPoint'), this.val(ws.dewPoint, 1, '°')]);
+    if (stationWindId) stationDefs.push(['#i-wind', this.t('wx.wind'), this.val(stationWindId, 1, ' km/h')]);
+    if (stationRainId) stationDefs.push(['#i-rain', this.t('wx.rainToday'), this.val(stationRainId, 1, ' mm')]);
+    if (stationIrradianceId) stationDefs.push(['#i-solar', this.t('wx.irradiance'), this.val(stationIrradianceId, 0, ' W/m²')]);
+    if (stationEt0Id) stationDefs.push(['#i-sun', this.t('irrigation.et0Today'), this.val(stationEt0Id, 2, ' mm')]);
     const station = stationDefs.map((x) => ({ icon: x[0], label: x[1], val: x[2] }));
 
     // vehicle (optional module — no generic HA domain for this, so every
@@ -1554,8 +1572,8 @@ class Component extends DCLogic {
       dateStr: d.toLocaleDateString(this.lang === 'it' ? 'it-IT' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' }),
       timeStr: d.toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }),
       modes, hasModes, tabs,
-      hasWeather, wxIcon: wxi[0], wxLabel: wxi[1], wxTemp: outT === null ? '—' : this.dec(outT, 0) + '°',
-      wxRain: outH === null ? '—' : this.dec(outH, 0) + '%',
+      hasWeather: hasWeather || hasStation, wxIcon: wxi[0], wxLabel: wxi[1], wxTemp: outT === null ? '—' : this.dec(outT, 0) + '°',
+      wxHumidity: outH === null ? '—' : this.dec(outH, 0) + '%',
       wxDetailLine: this.t('wx.detailLine', { label: wxi[1], temp: outT === null ? '—' : this.dec(outT, 0) + '°' }),
       hasPeople, people,
       isDemo: this.kind === 'demo',

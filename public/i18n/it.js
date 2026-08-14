@@ -85,6 +85,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'wx.pouring': 'Pioggia forte', 'wx.rainToday': 'Pioggia oggi', 'wx.rainy': 'Pioggia', 'wx.sunny': 'Sereno',
   'wx.temperature': 'Temperatura', 'wx.wind': 'Vento', 'wx.windy': 'Ventoso', 'wx.detailLine': '{label} · {temp} fuori',
   'wx.humidityDetailLine': '{label} · umidità {humidity}',
+  'wx.feelsLike': 'Percepita', 'wx.dewPoint': 'Punto di rugiada',
 
   'energy.summaryLine': '{status} · autoconsumo {pct}'
 };

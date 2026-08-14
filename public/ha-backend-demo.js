@@ -87,6 +87,11 @@ const SEED = [
 
   // weather + alarm + modes
   entity('weather.demo_home', null, 'partlycloudy', { friendly_name: 'Casa', temperature: 18.5 }),
+  // Optional local weather station (see DEMO_CONFIG.weatherStation below) —
+  // feelsLike/dewPoint have no other config field, so demo needs its own
+  // entities to show them at all.
+  entity('sensor.station_feels_like', null, '17.8', { friendly_name: 'Percepita', unit_of_measurement: '°C' }),
+  entity('sensor.station_dew_point', null, '9.4', { friendly_name: 'Punto di rugiada', unit_of_measurement: '°C' }),
   entity('sun.sun', null, 'above_horizon', {}),
   entity('alarm_control_panel.demo_home', null, 'disarmed', { friendly_name: 'Allarme', supported_features: 7 }),
   entity('input_select.house_mode', null, 'Casa', { friendly_name: 'Modalità casa', options: ['Casa', 'Fuori', 'Notte', 'Cinema'] }),
@@ -180,6 +185,11 @@ const DEMO_CONFIG = {
     ],
     weather: null, et0: null, etc: null, effectiveRain: null, summary: null
   },
+  // feelsLike/dewPoint have no other config field to fall back to; temp/
+  // humidity/wind/rain/irradiance/et0 would reuse irrigation.weather/et0 if
+  // those were set above, but the demo leaves them null on purpose to also
+  // exercise the "weather station with no irrigation configured" path.
+  weatherStation: { feelsLike: 'sensor.station_feels_like', dewPoint: 'sensor.station_dew_point' },
   vehicle: {
     fuel: 'sensor.car_fuel_level', battery: null, range: 'sensor.car_range', odometer: 'sensor.car_odometer',
     cells: [{ label: 'AdBlue', entity: 'sensor.car_adblue_level', unit: '%' }],

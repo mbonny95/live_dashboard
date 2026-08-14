@@ -150,6 +150,22 @@ build your own (any automation that writes the result into an
 those fields unset and use the dashboard for live moisture + manual watering
 only.
 
+## Weather station (optional)
+
+The tappable weather widget (top of Casa, or its own tab on mobile) shows
+outdoor temperature/humidity from the `weather:` entity above by default.
+If you have a local weather station, `config.weatherStation` lets its
+sensors take over as the preferred source — usually more accurate and more
+local than a forecast provider's current-conditions reading — plus adds
+wind, rain, irradiance, ET₀, feels-like, and dew point, none of which a
+`weather.*` entity reliably exposes.
+
+If you've already filled in `irrigation.weather` (above), temperature,
+humidity, wind, rain, irradiance, and ET₀ are reused automatically — you
+only need to add `feelsLike`/`dewPoint` here, since those have no other
+field to live in. Entirely optional; leave it unset and the `weather:`
+entity keeps being the only source, same as before.
+
 ## Vehicle (optional)
 
 There's no Home Assistant domain that standardizes car telemetry, so

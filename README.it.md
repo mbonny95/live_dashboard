@@ -157,6 +157,23 @@ costruisci le tue (qualunque automazione che scriva il risultato in un
 questi campi non impostati e usa la dashboard solo per l'umidità in tempo
 reale e l'irrigazione manuale.
 
+## Stazione meteo (opzionale)
+
+Il widget meteo cliccabile (in alto in Casa, o una tab a sé su mobile)
+mostra temperatura/umidità esterna dall'entità `weather:` sopra, per
+impostazione predefinita. Se hai una stazione meteo locale,
+`config.weatherStation` fa in modo che i suoi sensori diventino la fonte
+preferita — di solito più precisa e più locale della stima "condizioni
+attuali" di un provider meteo — e aggiunge vento, pioggia, irraggiamento,
+ET₀, percepita e punto di rugiada, dati che un'entità `weather.*` in
+genere non espone in modo affidabile.
+
+Se hai già compilato `irrigation.weather` (sopra), temperatura, umidità,
+vento, pioggia, irraggiamento ed ET₀ vengono riusati automaticamente: qui
+serve aggiungere solo `feelsLike`/`dewPoint`, che non hanno altrove una
+casa. Del tutto opzionale: lascialo non impostato e l'entità `weather:`
+resta l'unica fonte, come prima.
+
 ## Auto (opzionale)
 
 Non esiste un dominio Home Assistant che standardizzi la telematica

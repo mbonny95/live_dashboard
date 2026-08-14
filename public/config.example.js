@@ -89,6 +89,23 @@ window.CASA_CONFIG = {
   //   resetButton: null   // input_button.* that zeroes your own weekly-mm accumulator, or null to hide the button
   // },
 
+  // Weather station (optional): the tappable weather widget shows outdoor
+  // temperature/humidity from the weather.* entity above (`weather:`) by
+  // default. If you have a local station (any brand — this is just field
+  // mapping, not an integration), set its sensors here and they take over
+  // as the preferred source, since they're usually more accurate/local than
+  // a forecast provider's current-conditions guess. If you've already
+  // filled `irrigation.weather` above, temp/humidity/wind/rain/irradiance
+  // (and irrigation.et0) are reused automatically — you only need to add
+  // feelsLike/dewPoint here, which have no other home. Entirely optional:
+  // leave null and the weather.* entity keeps being the only source.
+  weatherStation: null,
+  // weatherStation: {
+  //   temp: null, humidity: null,           // override irrigation.weather's, or set standalone if no irrigation
+  //   wind: null, rain: null, irradiance: null, et0: null,
+  //   feelsLike: 'sensor.station_feels_like', dewPoint: 'sensor.station_dew_point'
+  // },
+
   // Vehicle: the "Auto" tab. No Home Assistant domain standardizes car
   // telemetry, so every field is an explicit sensor/binary_sensor mapping —
   // works with any integration that exposes these (Mercedes me, Volvo, Kia

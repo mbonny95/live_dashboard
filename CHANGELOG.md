@@ -3,6 +3,27 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] - 2026-08-14
+
+### Added
+
+- Weather station (optional, `config.weatherStation`): outdoor
+  temperature/humidity in the weather widget and its detail card can now
+  prefer a local weather station's own sensors over the `weather:`
+  entity's current-conditions attributes, plus wind, rain, irradiance,
+  ET₀, feels-like, and dew point — none of which a `weather.*` entity
+  reliably exposes. Reuses `irrigation.weather`/`irrigation.et0` when
+  already set, so an install with irrigation configured only has to add
+  `feelsLike`/`dewPoint`, which have no other field to live in. Entirely
+  optional and additive — with nothing configured, behavior is unchanged.
+
+### Changed
+
+- The weather detail card no longer lists per-zone soil moisture as
+  duplicate pills (it already has its own numbers in the Irrigation tab);
+  the existing "go to irrigation" link with a one-line summary covers that
+  instead of repeating the same figures in two places.
+
 ## [1.1.2] - 2026-08-14
 
 ### Fixed
