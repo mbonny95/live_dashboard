@@ -3,6 +3,26 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.0] - 2026-08-14
+
+### Added
+
+- Appliances (optional, `config.appliances`): washer/dryer-style status —
+  running state, remaining minutes, energy today — for setups where a plain
+  switch isn't enough to show whether something is actually running. Like
+  Vehicle, this is explicit config since no Home Assistant domain
+  standardizes it. Appliances appear in the Casa "on right now" list, the
+  room summary, and a dedicated card in the room panel; a `powerSwitch` set
+  on one stops being auto-discovered as a plain toggle in its room, so it
+  isn't shown twice.
+
+### Fixed
+
+- Desktop's "on right now" list had a few labels hardcoded in Italian
+  instead of going through translation — invisible until `hass.language`
+  (or a browser set to English) actually requested English. Mobile already
+  did this correctly; desktop now matches it.
+
 ## [1.0.1] - 2026-08-14
 
 ### Fixed

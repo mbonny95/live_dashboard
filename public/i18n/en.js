@@ -26,6 +26,8 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'alarm.btnAway': 'Away', 'alarm.btnHome': 'Home', 'alarm.btnNight': 'Night', 'alarm.btnVacation': 'Vacation',
   'alarm.disarmed': 'Disarmed', 'alarm.pending': 'Pending…', 'alarm.triggered': 'ALARM TRIGGERED',
 
+  'appliance.remainingMin': '{n} min remaining', 'appliance.energyToday': '{val} today',
+
   'cameras.motionDetected': 'Motion detected · {name}', 'cameras.allQuiet': 'All quiet',
   'cameras.tabSub': '{n} cameras · previews refresh every {seconds} seconds',
 

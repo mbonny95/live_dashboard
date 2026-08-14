@@ -159,6 +159,34 @@ Mercedes `mbapi2020` install; it should work with any integration that
 exposes comparable sensors (Volvo, Kia Connect, BMW Connected Drive,
 generic OBD-II readers) since nothing here is brand-specific.
 
+## Appliances (optional)
+
+Washer, dryer, or anything else where "is it running" matters more than a
+plain on/off. No domain standardizes this either, so `config.appliances` is
+an explicit list, each entry matched to a room by resolving its `status`
+entity's own area (same rule as everything else — no separate room field to
+fill in).
+
+- `status` — any `sensor.*`/`binary_sensor.*`. Its raw state is shown as-is
+  unless you map it through `stateLabels` (recommended for a text-state
+  sensor like `sensor.washer_state`, whose vocabulary is entirely
+  integration-specific — a `binary_sensor`'s `on`/`off` reads fine without
+  one).
+- `idleStates` — which states count as "not running" (defaults to
+  `off`/`power_off`/`idle`/`unavailable`/`unknown`). Override it if your
+  integration uses different words for idle.
+- `remaining` (minutes) and `energyToday` are both optional and only shown
+  in the state they're relevant for — remaining while running, energy while
+  idle.
+- `powerSwitch` is optional and only adds an off button — a switch being
+  "on" isn't treated as "running" (a washer can stay powered between
+  cycles), so it never drives what's shown. If set, that switch also stops
+  being auto-discovered as a plain toggle in its room, since it'd otherwise
+  show up twice.
+
+Appliances that are running also appear in the Casa "on right now" list and
+in the room summary, the same as lights or a vacuum in progress.
+
 ## Cameras (optional)
 
 Fully auto-discovered from every `camera.*` entity Home Assistant reports —

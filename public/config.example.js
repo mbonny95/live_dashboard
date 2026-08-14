@@ -108,6 +108,25 @@ window.CASA_CONFIG = {
   //   ]
   // },
 
+  // Appliances (washer, dryer, ...): no Home Assistant domain standardizes
+  // "is it running", so like vehicle this is an explicit list. Each entry is
+  // matched to a room by resolving `status`'s own area (same rule as
+  // everything else — its own area, else its device's), so there's no
+  // separate room field to fill in. A switch listed as `powerSwitch` stops
+  // being auto-discovered as a plain toggle in that room, since it'd be the
+  // same physical control shown twice.
+  appliances: null,
+  // appliances: [
+  //   { name: 'Washer', icon: '#i-wash',
+  //     status: 'sensor.washer_state',        // any sensor/binary_sensor — its raw state is shown as-is unless mapped below
+  //     idleStates: ['off', 'power_off', 'idle', 'unavailable', 'unknown'],  // states that count as "not running"; override if your integration's vocabulary differs
+  //     stateLabels: { washing: 'Washing', rinsing: 'Rinsing', spinning: 'Spin' },  // optional — translates raw states into nicer text; unmapped states show as-is
+  //     remaining: 'sensor.washer_remaining_time',  // optional, minutes — shown only while running
+  //     energyToday: 'sensor.washer_energy_today',  // optional — shown only while idle
+  //     powerSwitch: 'switch.washer_power'    // optional — adds an off button; a switch "on" isn't the same as "running", so this never drives the status shown
+  //   }
+  // ],
+
   // Cameras: fully auto-discovered from every camera.* entity Home Assistant
   // reports (area from the registry, motion from a binary_sensor with
   // device_class "motion" on the same device) — this block only overrides

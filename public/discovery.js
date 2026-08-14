@@ -67,6 +67,11 @@ function discoverRooms(states, registries, config) {
 
   const deviceById = new Map(devices.map((d) => [d.id, d]));
   const areaById = new Map(areas.map((a) => [a.area_id, a]));
+  // A switch already represented as an appliance's powerSwitch (see
+  // applianceState()/applianceItems() in dash_neumo*.html) shouldn't also
+  // show up as a plain "Interruttori" toggle — it'd be the same physical
+  // control shown twice, once generic and once with real cycle status.
+  const excludeSwitches = new Set(((config && config.appliances) || []).map((a) => a.powerSwitch).filter(Boolean));
 
   const byArea = new Map(areas.map((a) => [a.area_id, {
     id: a.area_id, name: a.name,
@@ -85,7 +90,7 @@ function discoverRooms(states, registries, config) {
     const name = friendlyName(states, ent.entity_id);
 
     if (dom === 'light') room.lights.push(ent.entity_id);
-    else if (dom === 'switch') room.switches.push([ent.entity_id, name, '#i-plug']);
+    else if (dom === 'switch') { if (!excludeSwitches.has(ent.entity_id)) room.switches.push([ent.entity_id, name, '#i-plug']); }
     else if (dom === 'cover') room.covers.push(ent.entity_id);
     else if (dom === 'media_player') room.media.push(ent.entity_id);
     else if (dom === 'climate') room.climate.push([ent.entity_id, name, '#i-therm']);
@@ -237,6 +242,24 @@ function discoverModes(config) {
   return m;
 }
 
+// --- generic entity -> area lookup ------------------------------------------
+// Same resolution rule as everywhere else (entity's own area, else its
+// device's), exposed standalone for config-driven entities that don't come
+// through discoverRooms's own registry walk — e.g. an appliance's `status`
+// entity in config.appliances, which needs to land in the right room panel.
+function resolveEntityArea(entityId, registries) {
+  const entities = (registries && registries.entities) || [];
+  const devices = (registries && registries.devices) || [];
+  const ent = entities.find((e) => e.entity_id === entityId);
+  if (!ent) return null;
+  if (ent.area_id) return ent.area_id;
+  if (ent.device_id) {
+    const device = devices.find((d) => d.id === ent.device_id);
+    if (device && device.area_id) return device.area_id;
+  }
+  return null;
+}
+
 // Classic script, not an ES module: dynamic `import()` of separate files is
 // blocked by Chrome's CORS policy when the page is opened from file:// (each
 // file: URL is a unique opaque origin), which breaks the "must open from
@@ -245,6 +268,7 @@ function discoverModes(config) {
 // a global.
 window.CasaDiscovery = {
   discoverRooms, discoverAllOfDomain, discoverPeople, discoverWeather, discoverAlarm, discoverModes, discoverCameras,
+  resolveEntityArea,
   CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName
 };
 

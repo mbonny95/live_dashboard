@@ -906,7 +906,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 const DEFAULT_CONFIG = {
   rooms: { order: [], hide: [], max: 8, icons: {} },
   alarm: null, modes: null, people: [], weather: null, quickActions: null,
-  energy: null, irrigation: null, vehicle: null, cameras: null, language: null
+  energy: null, irrigation: null, vehicle: null, appliances: null, cameras: null, language: null
 };
 function mergeConfig(user) {
   const u = user || {};
@@ -1082,6 +1082,38 @@ class Component extends DCLogic {
     return this.discovery.discoverRooms(this.state.st, this.registries, this.cfg);
   }
 
+  // Appliances (washer/dryer/...) have no generic HA domain, so unlike
+  // rooms/lights/covers this is explicit config, matched to a room by
+  // resolving `status`'s own area — see config.example.js. `idleStates`
+  // lets "off" mean whatever the integration's vocabulary uses for it
+  // (a text sensor like "power_off", or a binary_sensor's "off").
+  applianceState(a) {
+    const DEFAULT_IDLE = ['off', 'power_off', 'idle', 'unavailable', 'unknown'];
+    const stateRaw = this.s(a.status);
+    const idle = (a.idleStates || DEFAULT_IDLE).indexOf(stateRaw) !== -1;
+    const label = (a.stateLabels && a.stateLabels[stateRaw]) || stateRaw;
+    return { stateRaw, idle, label };
+  }
+
+  applianceItems(roomId) {
+    if (!this.discovery) return [];
+    return (this.cfg.appliances || [])
+      .filter((a) => this.discovery.resolveEntityArea(a.status, this.registries) === roomId)
+      .map((a) => {
+        const { idle, label } = this.applianceState(a);
+        const remaining = a.remaining ? this.n(a.remaining) : null;
+        const energy = a.energyToday ? this.val(a.energyToday, 0) : null;
+        const sub = idle
+          ? (energy ? this.t('common.off') + ' · ' + this.t('appliance.energyToday', { val: energy }) : this.t('common.off'))
+          : (remaining ? label + ' · ' + this.t('appliance.remainingMin', { n: Math.round(remaining) }) : label);
+        return {
+          name: a.name, icon: a.icon || '#i-wash', stroke: idle ? 'var(--tx2)' : 'var(--acc)', sub,
+          hasPowerOff: !!a.powerSwitch,
+          powerOff: a.powerSwitch ? () => this.call('switch', 'turn_off', { entity_id: a.powerSwitch }) : () => {}
+        };
+      });
+  }
+
   roomSummary(r) {
     const bits = [];
     const lOn = (r.lights || []).filter((id) => this.isOn(id)).length;
@@ -1095,6 +1127,11 @@ class Component extends DCLogic {
     (r.switches || []).forEach((sw) => { if (this.isOn(sw[0])) bits.push(this.t('room.switchRunning', { name: sw[1] })); });
     if ((r.media || []).some((id) => this.s(id) === 'playing')) bits.push(this.t('room.tvOn'));
     if ((r.vacuum || []).some((v) => this.s(v[0]) === 'cleaning')) bits.push(this.t('room.vacuumRunning'));
+    (this.cfg.appliances || []).forEach((a) => {
+      if (this.discovery && this.discovery.resolveEntityArea(a.status, this.registries) === r.id && !this.applianceState(a).idle) {
+        bits.push(this.t('room.switchRunning', { name: a.name }));
+      }
+    });
     return bits.slice(0, 2).join(' · ') || this.t('room.nothingActive');
   }
 
@@ -1207,19 +1244,28 @@ class Component extends DCLogic {
     const tabs = tabDefs.map((t) => ({ label: t[1], icon: t[2], sel: this.state.tab === t[0], go: () => this.setState({ tab: t[0] }) }));
 
     const activeItems = [];
+    const applianceSwitches = new Set((this.cfg.appliances || []).map((a) => a.powerSwitch).filter(Boolean));
     Object.keys(this.state.st).forEach((id) => {
       const dom = id.split('.')[0];
       const s = this.s(id);
       if (dom === 'light' && s === 'on') {
         const b = this.at(id, 'brightness');
-        activeItems.push({ id, icon: '#i-bulb', name: this.fn(id), sub: b ? Math.round((b / 255) * 100) + '% luminosità' : 'accesa', off: () => this.call('light', 'turn_off', { entity_id: id }) });
-      } else if (dom === 'switch' && s === 'on') {
-        activeItems.push({ id, icon: '#i-plug', name: this.fn(id), sub: 'in funzione', off: () => this.call('switch', 'turn_off', { entity_id: id }) });
+        activeItems.push({ id, icon: '#i-bulb', name: this.fn(id), sub: b ? Math.round((b / 255) * 100) + '% ' + this.t('light.brightnessSuffix') : this.t('common.on'), off: () => this.call('light', 'turn_off', { entity_id: id }) });
+      } else if (dom === 'switch' && s === 'on' && !applianceSwitches.has(id)) {
+        activeItems.push({ id, icon: '#i-plug', name: this.fn(id), sub: this.t('switch.running'), off: () => this.call('switch', 'turn_off', { entity_id: id }) });
       } else if (dom === 'media_player' && s === 'playing') {
-        activeItems.push({ id, icon: '#i-tv', name: this.fn(id), sub: this.at(id, 'media_title') || 'in riproduzione', off: () => this.call('media_player', 'turn_off', { entity_id: id }) });
+        activeItems.push({ id, icon: '#i-tv', name: this.fn(id), sub: this.at(id, 'media_title') || this.t('media.playing'), off: () => this.call('media_player', 'turn_off', { entity_id: id }) });
       } else if (dom === 'vacuum' && (s === 'cleaning' || s === 'returning')) {
         activeItems.push({ id, icon: '#i-bot', name: this.t('vacuum.name'), sub: s === 'cleaning' ? this.t('vacuum.cleaning') : this.t('vacuum.returning'), off: () => this.call('vacuum', 'return_to_base', { entity_id: id }) });
       }
+    });
+    (this.cfg.appliances || []).forEach((a) => {
+      const { idle, label } = this.applianceState(a);
+      if (idle) return;
+      activeItems.push({
+        id: a.status, icon: a.icon || '#i-wash', name: a.name, sub: label,
+        off: a.powerSwitch ? () => this.call('switch', 'turn_off', { entity_id: a.powerSwitch }) : () => {}
+      });
     });
     activeItems.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -1424,10 +1470,11 @@ class Component extends DCLogic {
       const r = roomsResult.rooms.concat(roomsResult.overflow).filter((x) => x.id === this.state.room)[0];
       if (r) {
         const extraTuples = [].concat(r.climate || [], r.fan || [], r.vacuum || []);
+        const applianceItems = this.applianceItems(r.id);
         panel = {
           name: r.name, icon: r.icon, sub: this.roomSummary(r),
           hasLights: (r.lights || []).length > 0, hasCovers: (r.covers || []).length > 0,
-          hasAppliances: false, appliances: [],
+          hasAppliances: applianceItems.length > 0, appliances: applianceItems,
           hasSwitches: (r.switches || []).length > 0, hasSensors: (r.sensors || []).length > 0,
           hasMedia: (r.media || []).length > 0, hasExtras: extraTuples.length > 0,
           lights: (r.lights || []).map((id) => {

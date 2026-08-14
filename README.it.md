@@ -167,6 +167,35 @@ binary_sensor di avviso). È stata usata con un'installazione Mercedes
 comparabili (Volvo, Kia Connect, BMW Connected Drive, lettori OBD-II
 generici), dato che qui non c'è nulla di specifico per una marca.
 
+## Elettrodomestici (opzionale)
+
+Lavatrice, asciugatrice, o qualunque cosa dove "è in funzione" conta più di
+un semplice acceso/spento. Nemmeno qui c'è un dominio standard, quindi
+`config.appliances` è un elenco esplicito, ogni voce abbinata a una stanza
+risolvendo l'area della sua entità `status` (stessa regola di tutto il
+resto — nessun campo stanza separato da compilare).
+
+- `status` — qualunque `sensor.*`/`binary_sensor.*`. Il suo stato grezzo
+  viene mostrato così com'è a meno che tu non lo mappi con `stateLabels`
+  (consigliato per un sensore a stato testuale come `sensor.lavatrice_stato`,
+  il cui vocabolario è interamente specifico dell'integrazione — un
+  `binary_sensor` con `on`/`off` si legge bene anche senza).
+- `idleStates` — quali stati contano come "non in funzione" (default
+  `off`/`power_off`/`idle`/`unavailable`/`unknown`). Sovrascrivilo se la tua
+  integrazione usa parole diverse per "fermo".
+- `remaining` (minuti) ed `energyToday` sono entrambi opzionali e compaiono
+  solo nello stato per cui hanno senso — il tempo rimanente mentre è in
+  funzione, l'energia mentre è fermo.
+- `powerSwitch` è opzionale e aggiunge solo un pulsante di spegnimento — uno
+  switch "acceso" non viene trattato come "in funzione" (una lavatrice può
+  restare alimentata tra un ciclo e l'altro), quindi non decide mai cosa
+  viene mostrato. Se lo imposti, quello switch smette anche di comparire
+  come interruttore generico nella sua stanza, altrimenti si vedrebbe due
+  volte.
+
+Gli elettrodomestici in funzione compaiono anche in "cose accese adesso" in
+Casa e nel riepilogo della stanza, come una luce o un robot in pulizia.
+
 ## Telecamere (opzionale)
 
 Auto-discovery completo da ogni entità `camera.*` che Home Assistant
