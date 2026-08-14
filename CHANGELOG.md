@@ -3,6 +3,37 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.1] - 2026-08-14
+
+### Fixed
+
+- The Fotovoltaico ring's auto-discovery from Home Assistant's Energy
+  dashboard (`energy/get_prefs`, added in 1.4.0) could resolve production
+  but not grid import/export on real installs with more than one solar
+  array or more than one grid meter/contract — the mapping only ever kept
+  the first entry for each role and silently dropped the rest. It now sums
+  every entry HA reports for a role, which is what installs with a second
+  array or a second contract actually need.
+- A near-zero segment (e.g. an install feeding back a fraction of a percent
+  to the grid) could draw a small stray dot on the ring at the segment
+  boundary instead of just not showing, because `stroke-linecap: round`
+  still paints a dot for a zero-length dash. Segments this small now use
+  `stroke-linecap: butt` instead, which draws nothing for zero length, same
+  as intended.
+
+### Added
+
+- A `console.info` at boot naming, for each of production/grid-import/
+  grid-export: which tier resolved it (`config.js`, HA's Energy dashboard,
+  or auto-discovery), which entity/statistic it resolved to, and the value
+  read. A ring showing a wrong or missing number was previously
+  indistinguishable from one that couldn't find its sensors at all — this
+  makes the difference visible in the console without guessing.
+- A real `energy/get_prefs` failure (unsupported command, permissions) is
+  now logged with `console.warn` instead of being silently treated the same
+  as "no Energy dashboard configured" — the two cases were previously
+  indistinguishable from the console.
+
 ## [1.4.0] - 2026-08-14
 
 ### Changed

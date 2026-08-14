@@ -272,17 +272,28 @@ function discoverCameras(states, registries, config) {
 //       { type: 'grid', flow_from: [{ stat_energy_from: 'sensor.y' }],
 //                        flow_to:   [{ stat_energy_to: 'sensor.z' }] }
 //   ] }
-// Multiple solar arrays or multiple grid contracts are possible; only the
-// first of each is used here — good enough for the common single-meter,
-// single-array install this heuristic targets, not a hard requirement.
+// Multiple solar arrays and multiple grid contracts are both real, common
+// configurations (a second array, a second meter/tariff) — each one is its
+// own genuine contribution to the role's total, so every id found is kept
+// and summed later by the caller, not just the first. Returns arrays (never
+// bare strings, even for a single match) so the caller has one shape to
+// handle regardless of how many the install has. Source types other than
+// 'solar'/'grid' (battery, gas, water, low-carbon tracking, ...) are simply
+// not iterated — they can't be mistaken for one of these three roles.
 function mapEnergyPrefs(prefs) {
   if (!prefs || !Array.isArray(prefs.energy_sources)) return null;
-  const solar = prefs.energy_sources.find((s) => s.type === 'solar');
-  const grid = prefs.energy_sources.find((s) => s.type === 'grid');
-  const production = (solar && solar.stat_energy_from) || null;
-  const gridImport = (grid && Array.isArray(grid.flow_from) && grid.flow_from[0] && grid.flow_from[0].stat_energy_from) || null;
-  const gridExport = (grid && Array.isArray(grid.flow_to) && grid.flow_to[0] && grid.flow_to[0].stat_energy_to) || null;
-  if (!production && !gridImport && !gridExport) return null;
+  const production = [];
+  const gridImport = [];
+  const gridExport = [];
+  for (const src of prefs.energy_sources) {
+    if (src.type === 'solar') {
+      if (src.stat_energy_from) production.push(src.stat_energy_from);
+    } else if (src.type === 'grid') {
+      for (const f of src.flow_from || []) if (f.stat_energy_from) gridImport.push(f.stat_energy_from);
+      for (const f of src.flow_to || []) if (f.stat_energy_to) gridExport.push(f.stat_energy_to);
+    }
+  }
+  if (!production.length && !gridImport.length && !gridExport.length) return null;
   return { production, gridImport, gridExport };
 }
 

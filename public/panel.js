@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '1.4.0';
+const VERSION = '1.4.1';
 console.info(`[live_dashboard] v${VERSION}`);
 
 const FLUSH_MS = 600;
@@ -204,12 +204,17 @@ async function fetchHistory(hass, entityId, points) {
 // through the statistics `sum` diff (the same technique
 // fetchDailyCounterHistory falls back to), never the raw-last-sample path.
 async function fetchTodayStatsDelta(hass, entityId) {
-  const end = new Date();
-  const start = new Date(end.getTime() - 2 * 86400000);
+  const now = new Date();
+  // Anchored to local midnight (yesterday's, so the window always spans a
+  // full yesterday-bucket plus today's-so-far bucket) rather than a raw
+  // "48 hours ago" offset — a day/DST boundary can otherwise land the start
+  // time mid-bucket and leave `rows` one entry short of the two this needs.
+  const localMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const start = new Date(localMidnight.getTime() - 86400000);
   const stats = await hass.callWS({
     type: 'recorder/statistics_during_period',
     start_time: start.toISOString(),
-    end_time: end.toISOString(),
+    end_time: now.toISOString(),
     statistic_ids: [entityId],
     period: 'day',
     types: ['sum']

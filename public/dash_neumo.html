@@ -302,12 +302,12 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <svg viewBox="0 0 200 200" style="position:absolute;inset:8px;width:162px;height:162px">
 <g transform="rotate(-90 100 100)">
 <circle cx="100" cy="100" r="86" fill="none" stroke="var(--nu-d)" stroke-width="16" opacity="0.45"></circle>
-<circle cx="100" cy="100" r="86" fill="none" stroke="var(--sage)" stroke-width="16" stroke-linecap="round" stroke-dasharray="{{ outerSelfArc }}" stroke-dashoffset="{{ outerSelfOffset }}"></circle>
-<circle cx="100" cy="100" r="86" fill="none" stroke="var(--acc)" stroke-width="16" stroke-linecap="round" stroke-dasharray="{{ outerGridArc }}" stroke-dashoffset="{{ outerGridOffset }}"></circle>
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--sage)" stroke-width="16" stroke-linecap="{{ outerSelfCap }}" stroke-dasharray="{{ outerSelfArc }}" stroke-dashoffset="{{ outerSelfOffset }}"></circle>
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--acc)" stroke-width="16" stroke-linecap="{{ outerGridCap }}" stroke-dasharray="{{ outerGridArc }}" stroke-dashoffset="{{ outerGridOffset }}"></circle>
 <sc-if value="{{ hasInnerRing }}" hint-placeholder-val="{{ false }}">
 <circle cx="100" cy="100" r="62" fill="none" stroke="var(--nu-d)" stroke-width="14" opacity="0.35"></circle>
-<circle cx="100" cy="100" r="62" fill="none" stroke="var(--sage)" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{ innerSelfArc }}" stroke-dashoffset="{{ innerSelfOffset }}"></circle>
-<circle cx="100" cy="100" r="62" fill="none" stroke="var(--feed)" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{ innerFeedArc }}" stroke-dashoffset="{{ innerFeedOffset }}"></circle>
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--sage)" stroke-width="14" stroke-linecap="{{ innerSelfCap }}" stroke-dasharray="{{ innerSelfArc }}" stroke-dashoffset="{{ innerSelfOffset }}"></circle>
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--feed)" stroke-width="14" stroke-linecap="{{ innerFeedCap }}" stroke-dasharray="{{ innerFeedArc }}" stroke-dashoffset="{{ innerFeedOffset }}"></circle>
 </sc-if>
 </g>
 </svg>
@@ -368,12 +368,12 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <svg viewBox="0 0 200 200" style="position:absolute;inset:6px;width:112px;height:112px">
 <g transform="rotate(-90 100 100)">
 <circle cx="100" cy="100" r="86" fill="none" stroke="var(--nu-d)" stroke-width="16" opacity="0.45"></circle>
-<circle cx="100" cy="100" r="86" fill="none" stroke="var(--sage)" stroke-width="16" stroke-linecap="round" stroke-dasharray="{{ outerSelfArc }}" stroke-dashoffset="{{ outerSelfOffset }}"></circle>
-<circle cx="100" cy="100" r="86" fill="none" stroke="var(--acc)" stroke-width="16" stroke-linecap="round" stroke-dasharray="{{ outerGridArc }}" stroke-dashoffset="{{ outerGridOffset }}"></circle>
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--sage)" stroke-width="16" stroke-linecap="{{ outerSelfCap }}" stroke-dasharray="{{ outerSelfArc }}" stroke-dashoffset="{{ outerSelfOffset }}"></circle>
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--acc)" stroke-width="16" stroke-linecap="{{ outerGridCap }}" stroke-dasharray="{{ outerGridArc }}" stroke-dashoffset="{{ outerGridOffset }}"></circle>
 <sc-if value="{{ hasInnerRing }}" hint-placeholder-val="{{ false }}">
 <circle cx="100" cy="100" r="62" fill="none" stroke="var(--nu-d)" stroke-width="14" opacity="0.35"></circle>
-<circle cx="100" cy="100" r="62" fill="none" stroke="var(--sage)" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{ innerSelfArc }}" stroke-dashoffset="{{ innerSelfOffset }}"></circle>
-<circle cx="100" cy="100" r="62" fill="none" stroke="var(--feed)" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{ innerFeedArc }}" stroke-dashoffset="{{ innerFeedOffset }}"></circle>
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--sage)" stroke-width="14" stroke-linecap="{{ innerSelfCap }}" stroke-dasharray="{{ innerSelfArc }}" stroke-dashoffset="{{ innerSelfOffset }}"></circle>
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--feed)" stroke-width="14" stroke-linecap="{{ innerFeedCap }}" stroke-dasharray="{{ innerFeedArc }}" stroke-dashoffset="{{ innerFeedOffset }}"></circle>
 </sc-if>
 </g>
 </svg>
@@ -1130,42 +1130,77 @@ class Component extends DCLogic {
     const needProd = !cfgEn.productionToday;
     const needGrid = !cfgEn.gridToday;
     const needExport = !cfgEn.gridExportToday;
-    if (!needProd && !needGrid && !needExport) return null;
 
-    let prodId = null, gridId = null, exportId = null;
+    const source = {
+      production: needProd ? null : 'config',
+      gridImport: needGrid ? null : 'config',
+      gridExport: needExport ? null : 'config'
+    };
+    let prodIds = [], gridIds = [], exportIds = [];
 
-    if ((needProd || needGrid || needExport) && this.be.energyPrefs) {
-      try {
-        const prefs = await this.be.energyPrefs();
-        const mapped = this.discovery.mapEnergyPrefs ? this.discovery.mapEnergyPrefs(prefs) : null;
-        if (mapped) {
-          if (needProd && mapped.production) prodId = mapped.production;
-          if (needGrid && mapped.gridImport) gridId = mapped.gridImport;
-          if (needExport && mapped.gridExport) exportId = mapped.gridExport;
+    if (needProd || needGrid || needExport) {
+      if (this.be.energyPrefs) {
+        try {
+          const prefs = await this.be.energyPrefs();
+          const mapped = this.discovery.mapEnergyPrefs ? this.discovery.mapEnergyPrefs(prefs) : null;
+          if (mapped) {
+            if (needProd && mapped.production.length) { prodIds = mapped.production; source.production = 'ha-prefs'; }
+            if (needGrid && mapped.gridImport.length) { gridIds = mapped.gridImport; source.gridImport = 'ha-prefs'; }
+            if (needExport && mapped.gridExport.length) { exportIds = mapped.gridExport; source.gridExport = 'ha-prefs'; }
+          }
+        } catch (e) {
+          // A real failure (unsupported command, permissions, ...) —
+          // distinct from "call succeeded, no Energy dashboard configured"
+          // (mapped above is just null then, no exception). Worth logging:
+          // this one means auto-discovery has to carry the whole load, not
+          // just fill a gap HA prefs left.
+          console.warn('[live_dashboard] energy/get_prefs failed:', (e && e.message) || e);
         }
-      } catch (e) {
-        // Normal and common: most installs have no Energy dashboard set up.
+      }
+
+      if ((needProd && !prodIds.length) || (needGrid && !gridIds.length) || (needExport && !exportIds.length)) {
+        if (this.discovery.discoverEnergyEntities) {
+          const guess = this.discovery.discoverEnergyEntities(this.state.st, this.registries);
+          if (guess) {
+            if (needProd && !prodIds.length && guess.production) { prodIds = [guess.production]; source.production = 'auto'; }
+            if (needGrid && !gridIds.length && guess.gridImport) { gridIds = [guess.gridImport]; source.gridImport = 'auto'; }
+            if (needExport && !exportIds.length && guess.gridExport) { exportIds = [guess.gridExport]; source.gridExport = 'auto'; }
+          }
+        }
       }
     }
 
-    if (((needProd && !prodId) || (needGrid && !gridId) || (needExport && !exportId)) && this.discovery.discoverEnergyEntities) {
-      const guess = this.discovery.discoverEnergyEntities(this.state.st, this.registries);
-      if (guess) {
-        if (needProd && !prodId && guess.production) prodId = guess.production;
-        if (needGrid && !gridId && guess.gridImport) gridId = guess.gridImport;
-        if (needExport && !exportId && guess.gridExport) exportId = guess.gridExport;
-      }
-    }
-
-    if (!prodId && !gridId && !exportId) return null;
-
-    const fetchToday = async (id) => {
-      if (!id || !this.be.energyToday) return null;
-      try { return await this.be.energyToday(id); } catch (e) { return null; }
+    // Summed, not just the first id: HA prefs can legitimately list more
+    // than one solar array or grid contract feeding the same role, and
+    // each is a real contribution. A single id is just the n=1 case. A
+    // stats lookup that finds nothing for one particular id doesn't poison
+    // the sum — only "found nothing for any id" reports as unresolved.
+    const sumToday = async (ids) => {
+      if (!ids.length || !this.be.energyToday) return null;
+      const vals = await Promise.all(ids.map((id) => this.be.energyToday(id).catch(() => null)));
+      const known = vals.filter((v) => v != null);
+      return known.length ? known.reduce((a, b) => a + b, 0) : null;
     };
     const [prodToday, gridToday, gridExportToday] = await Promise.all([
-      fetchToday(prodId), fetchToday(gridId), fetchToday(exportId)
+      sumToday(prodIds), sumToday(gridIds), sumToday(exportIds)
     ]);
+
+    // One line per role naming exactly where it came from and what it
+    // resolved to — a ring showing a wrong or missing number is otherwise
+    // indistinguishable from one that couldn't find its sensors at all.
+    const fmtVal = (v) => v == null ? 'non risolto' : this.dec(v, 2) + ' kWh';
+    const line = (role, src, cfgId, ids, val) => {
+      if (src === 'config') return '  ' + role + ': config.js → ' + cfgId + ' (valore letto dal vivo)';
+      if (!src) return '  ' + role + ': nessuna fonte trovata';
+      return '  ' + role + ': ' + src + ' → ' + ids.join(' + ') + ' → ' + fmtVal(val);
+    };
+    console.info(
+      '[live_dashboard] energia\n' +
+      line('produzione', source.production, cfgEn.productionToday, prodIds, prodToday) + '\n' +
+      line('prelievo', source.gridImport, cfgEn.gridToday, gridIds, gridToday) + '\n' +
+      line('immissione', source.gridExport, cfgEn.gridExportToday, exportIds, gridExportToday)
+    );
+
     return { prodToday, gridToday, gridExportToday };
   }
 
@@ -1538,9 +1573,17 @@ class Component extends DCLogic {
     const hasNewRing = hasOuterRing;
 
     const RING_GAP = 5, ORC = 540.4, IRC = 389.6; // circumferences for r=86 / r=62
+    // A segment whose share is small enough that the gap eats the whole
+    // thing (dash length rounds down to 0) still needs *some* stroke-cap —
+    // "round" draws a full circular dot at that point regardless of how
+    // short the dash is (confirmed: an exactly-0 dash with a round cap is
+    // not invisible, it's a dot of diameter = stroke-width, sitting right
+    // on the ring at an arbitrary boundary point). "butt" draws nothing for
+    // a 0-length dash, which is what "no visible segment" should look like.
     const ringSeg = (value, shareTotal, C, offsetAcc) => {
       const full = shareTotal > 0 ? C * (Math.max(0, value || 0) / shareTotal) : 0;
-      return { dasharray: Math.max(0, full - RING_GAP).toFixed(1) + ' ' + C.toFixed(1), dashoffset: (-offsetAcc).toFixed(1), full };
+      const dash = Math.max(0, full - RING_GAP);
+      return { dasharray: dash.toFixed(1) + ' ' + C.toFixed(1), dashoffset: (-offsetAcc).toFixed(1), full, cap: dash > 0 ? 'round' : 'butt' };
     };
     let outerSelf = null, outerGrid = null, innerSelf = null, innerFeed = null;
     if (hasOuterRing) {
@@ -1805,10 +1848,10 @@ class Component extends DCLogic {
       camCountdown, closeCam: () => this._closeCam(),
       hasEnergy, energyCompact, energyNormal,
       hasNewRing, hasInnerRing, hasOldRing: !hasNewRing,
-      outerSelfArc: hasOuterRing ? outerSelf.dasharray : '', outerSelfOffset: hasOuterRing ? outerSelf.dashoffset : '0',
-      outerGridArc: hasOuterRing ? outerGrid.dasharray : '', outerGridOffset: hasOuterRing ? outerGrid.dashoffset : '0',
-      innerSelfArc: hasInnerRing ? innerSelf.dasharray : '', innerSelfOffset: hasInnerRing ? innerSelf.dashoffset : '0',
-      innerFeedArc: hasInnerRing ? innerFeed.dasharray : '', innerFeedOffset: hasInnerRing ? innerFeed.dashoffset : '0',
+      outerSelfArc: hasOuterRing ? outerSelf.dasharray : '', outerSelfOffset: hasOuterRing ? outerSelf.dashoffset : '0', outerSelfCap: hasOuterRing ? outerSelf.cap : 'butt',
+      outerGridArc: hasOuterRing ? outerGrid.dasharray : '', outerGridOffset: hasOuterRing ? outerGrid.dashoffset : '0', outerGridCap: hasOuterRing ? outerGrid.cap : 'butt',
+      innerSelfArc: hasInnerRing ? innerSelf.dasharray : '', innerSelfOffset: hasInnerRing ? innerSelf.dashoffset : '0', innerSelfCap: hasInnerRing ? innerSelf.cap : 'butt',
+      innerFeedArc: hasInnerRing ? innerFeed.dasharray : '', innerFeedOffset: hasInnerRing ? innerFeed.dashoffset : '0', innerFeedCap: hasInnerRing ? innerFeed.cap : 'butt',
       consumoCasaBig: consumoCasa === null ? '—' : this.dec(consumoCasa, 1),
       kwhConsumedLabel: this.t('energy.kwhConsumed'),
       ringLegend,
