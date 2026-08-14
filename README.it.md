@@ -68,7 +68,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.3.0
+       module_url: /local/community/live_dashboard/panel.js?v=1.3.1
        embed_iframe: true
        trust_external_script: false
    ```
@@ -79,7 +79,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    `live_dashboard`. Se non corrisponde, il pannello resta uno schermo
    vuoto/nero senza nulla in console.
 
-   Quel `?v=1.3.0` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.3.1` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -143,9 +143,12 @@ per questo restano spenti di default invece di tentare a caso.
 
 ### Configurare il resto
 
-Copia [`live_dashboard_config.js`](public/live_dashboard_config.js) e
-scommenta quello che ti serve — ogni chiave è documentata in linea nel
-file. Viene cercato in quest'ordine, vince il primo trovato:
+Copia [`live_dashboard_config.example.js`](public/live_dashboard_config.example.js)
+in uno dei percorsi qui sotto — **rinominandolo mentre lo copi**, dato che
+il file di esempio vive dentro la cartella del plugin e verrebbe cancellato
+al prossimo aggiornamento se modificato lì — e scommenta quello che ti
+serve; ogni chiave è documentata in linea nel file. Viene cercato in
+quest'ordine, vince il primo trovato:
 
 1. `config/www/live_dashboard_config.js` — **consigliato per ogni
    installazione, HACS o manuale.** Fuori da qualsiasi cartella gestita da
@@ -286,7 +289,7 @@ Casa e nel riepilogo della stanza, come una luce o un robot in pulizia.
 Auto-discovery completo da ogni entità `camera.*` che Home Assistant
 espone — area dal registry, movimento da un `binary_sensor` con
 `device_class: motion` sullo stesso device. `config.cameras` sovrascrive
-solo le eccezioni (vedi `live_dashboard_config.js`); non c'è nessun elenco di
+solo le eccezioni (vedi `live_dashboard_config.example.js`); non c'è nessun elenco di
 telecamere da mantenere a mano.
 
 - **Anteprime, non video.** Ogni tessera mostra uno snapshot da
@@ -359,5 +362,5 @@ anche quel comportamento.
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — pannello bianco, stanze vuote,
   grafici sbagliati, allarme senza pulsanti. (In inglese.)
 - [CHANGELOG.md](CHANGELOG.md)
-- [live_dashboard_config.js](public/live_dashboard_config.js) — ogni opzione, documentata
+- [live_dashboard_config.example.js](public/live_dashboard_config.example.js) — ogni opzione, documentata
   in linea.

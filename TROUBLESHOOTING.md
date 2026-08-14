@@ -142,5 +142,5 @@ that `config.alarm` is set to a real `alarm_control_panel.*` entity ID.
 That's by design when it isn't configured: `alarm`/`modes`/`energy`/
 `irrigation`/`vehicle` are all opt-in in `config.js` (`null` hides them);
 `people`/`weather`/`cameras` auto-discover but hide themselves if nothing is
-found. Nothing here indicates an error — see `live_dashboard_config.js` for what
+found. Nothing here indicates an error — see `live_dashboard_config.example.js` for what
 each section needs.

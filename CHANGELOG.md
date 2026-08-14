@@ -3,6 +3,18 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.1] - 2026-08-14
+
+### Fixed
+
+- The shipped example config file is renamed `live_dashboard_config.example.js`
+  (was `live_dashboard_config.js` in 1.3.0). It always was inert on its own —
+  the config lookup only ever checks for `config.js` or
+  `live_dashboard_config.js`, never a `.example.js` file — but sharing its
+  name with the file you're supposed to create in `config/www/` was an easy
+  trap: someone editing it in place, inside the plugin's own folder, would
+  see it work right up until the next update overwrote it.
+
 ## [1.3.0] - 2026-08-14
 
 ### Added

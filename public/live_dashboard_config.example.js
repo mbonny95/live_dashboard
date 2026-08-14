@@ -1,9 +1,13 @@
-// live_dashboard_config.js — local overrides for the auto-discovery defaults.
+// live_dashboard_config.example.js — local overrides for the auto-discovery
+// defaults.
 //
-// Recommended (HACS installs): copy this file, unchanged in name, to
-// config/www/live_dashboard_config.js — that's outside the community/
-// folder HACS overwrites on every update, so an update never wipes your
-// config out. It's also checked first regardless of install method.
+// Recommended (any install, HACS or manual): copy this file to
+// config/www/live_dashboard_config.js — dropping the `.example` — that's
+// outside the community/ folder HACS overwrites on every update, so an
+// update never wipes your config out. It's also checked first regardless
+// of install method. The rename matters: this file ships inside the
+// zip/plugin folder itself, so if you edit it in place instead of copying
+// it out, the next update erases your changes.
 //
 // Manual installs: copying it as config.js next to panel.js still works
 // (checked last, for back-compat) — see the "Installazione manuale" /

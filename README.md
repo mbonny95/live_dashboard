@@ -68,7 +68,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.3.0
+       module_url: /local/community/live_dashboard/panel.js?v=1.3.1
        embed_iframe: true
        trust_external_script: false
    ```
@@ -79,7 +79,7 @@ files live, which matters if you ever migrate from one to the other.
    `live_dashboard`. Get this wrong and the panel loads as a blank/black
    screen with nothing in the browser console.
 
-   The `?v=1.3.0` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.3.1` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -140,9 +140,11 @@ guessing wrong.
 
 ### Configuring the rest
 
-Copy [`live_dashboard_config.js`](public/live_dashboard_config.js) and
-uncomment what you need — every key is documented inline there. It's
-checked in this order, first one found wins:
+Copy [`live_dashboard_config.example.js`](public/live_dashboard_config.example.js)
+to one of the paths below — **renaming it as you copy it**, since the
+example file ships inside the plugin's own folder and would be erased by
+the next update if edited in place — and uncomment what you need; every key
+is documented inline there. Checked in this order, first one found wins:
 
 1. `config/www/live_dashboard_config.js` — **recommended for every install,
    HACS or manual.** Outside any folder HACS manages, so updates never
@@ -275,7 +277,7 @@ in the room summary, the same as lights or a vacuum in progress.
 Fully auto-discovered from every `camera.*` entity Home Assistant reports —
 area from the registry, motion from a `binary_sensor` with
 `device_class: motion` on the same device. `config.cameras` only overrides
-the defaults (see `live_dashboard_config.js`); there's no per-camera list to
+the defaults (see `live_dashboard_config.example.js`); there's no per-camera list to
 maintain.
 
 - **Previews, not video.** Each tile shows a still snapshot from
@@ -345,5 +347,5 @@ behavior too.
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — white panel, empty rooms, wrong
   charts, missing alarm buttons.
 - [CHANGELOG.md](CHANGELOG.md)
-- [live_dashboard_config.js](public/live_dashboard_config.js) — every override, documented
+- [live_dashboard_config.example.js](public/live_dashboard_config.example.js) — every override, documented
   inline.
