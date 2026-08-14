@@ -3,6 +3,38 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.2] - 2026-08-14
+
+### Fixed
+
+- **Every page load logged a red console error for each icon and camera
+  image the page hadn't loaded data for yet — 15+ of them, plus one for
+  the irrigation sparkline chart.** These looked like broken requests
+  (`GET /local/.../%7B%7B%20m.icon%20%7D%7D 404`) because they were: the
+  browser's own HTML parser fetches an `<img src>` or `<use href>` the
+  instant it sees the tag, before this page's own code has run at all, and
+  it doesn't know `{{ m.icon }}` is a placeholder waiting for real data —
+  it just tries to load that text as a URL. Confirmed happening within
+  ~30ms of navigation start, well before anything on the page could
+  reasonably have set a real value yet. Every one of these is now set
+  after the fact, once real data exists, instead of being written directly
+  into the page.
+- The same root cause made the irrigation soil-moisture chart occasionally
+  log `<polyline> attribute points: Expected number` — fixed the same way.
+- A separate, unrelated issue produced console warnings like `{{
+  S.onNow }} never resolved` on every load, for text that in fact always
+  ended up correct on screen — the page's very first render (before any
+  real data has loaded at all) used to leave a gap where some labels
+  briefly had no value yet, which is normal, but was being logged as if it
+  were permanent. That first render now resolves to nothing shown, rather
+  than to a warning, with no change to what appears once real data loads a
+  moment later.
+- Fixed a related timing gap from 1.4.0: whether a card like Energy or the
+  no-areas-assigned message showed up could very briefly disagree with
+  whether its text was ready, depending on exactly when Home Assistant's
+  next update arrived during startup. Both now always become ready
+  together.
+
 ## [1.4.1] - 2026-08-14
 
 ### Fixed

@@ -98,14 +98,14 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 <sc-if value="{{ hasWeather }}" hint-placeholder-val="{{ true }}">
 <button onClick="{{ goMeteo }}" title="{{ S.weatherStation }}" style="display:flex;align-items:center;gap:8px;height:46px;padding:0 14px 0 12px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);flex:none">
-<svg width="19" height="19" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ wxIcon }}"></use></svg>
+<svg width="19" height="19" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ wxIconRef }}"></use></svg>
 <span style="font:600 14px/1 var(--font-body)">{{ wxTemp }}</span>
 <span style="width:1px;height:16px;background:var(--nu-d);opacity:.5"></span>
 <span style="font:600 11px/1 var(--font-body);color:var(--tx2)">{{ wxHumidity }}</span>
 </button>
 </sc-if>
 <button onClick="{{ toggleTheme }}" title="{{ S.dayNight }}" style="width:46px;height:46px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
-<svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ themeIcon }}"></use></svg>
+<svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use ref="{{ themeIconRef }}"></use></svg>
 </button>
 </div>
 
@@ -118,7 +118,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div data-m="two" style="margin-top:12px">
 <sc-for list="{{ modes }}" as="m" hint-placeholder-count="4">
 <button onClick="{{ m.set }}" data-sel="{{ m.sel }}" style="height:50px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body);display:flex;align-items:center;justify-content:center;gap:8px">
-<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ m.icon }}"></use></svg>
+<svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use ref="{{ m.iconRef }}"></use></svg>
 {{ m.label }}
 </button>
 </sc-for>
@@ -151,7 +151,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div style="display:flex;flex-direction:column;gap:9px;margin-top:13px">
 <sc-for list="{{ activeItems }}" as="a" hint-placeholder-count="3">
 <div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:17px;padding:9px 11px">
-<svg width="18" height="18" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ a.icon }}"></use></svg>
+<svg width="18" height="18" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ a.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.name }}</div>
 <div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ a.sub }}</div>
@@ -189,7 +189,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <span data-m="three" style="margin-top:12px">
 <sc-for list="{{ nowCells }}" as="c" hint-placeholder-count="3">
 <span style="display:block;background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:11px 10px">
-<svg width="16" height="16" fill="none" stroke="{{ c.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ c.icon }}"></use></svg>
+<svg width="16" height="16" fill="none" stroke="{{ c.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use ref="{{ c.iconRef }}"></use></svg>
 <span style="display:block;font-family:var(--font-heading);font-size:15px;line-height:1.1;margin-top:7px">{{ c.val }}</span>
 <span style="display:block;font:500 10px/1.25 var(--font-body);color:var(--tx2);margin-top:3px">{{ c.label }}</span>
 </span>
@@ -201,7 +201,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <sc-if value="{{ hasCameras }}" hint-placeholder-val="{{ false }}">
 <button onClick="{{ camMain.open }}" style="position:relative;display:block;width:100%;aspect-ratio:16/8;border-radius:22px;background:var(--nu-d);box-shadow:var(--nu-ins);overflow:hidden;padding:0">
 <sc-if value="{{ camMain.showImg }}" hint-placeholder-val="{{ false }}">
-<img src="{{ camMain.src }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+<img ref="{{ camMain.srcRef }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
 </sc-if>
 <sc-if value="{{ camMain.showIcon }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;inset:0;display:grid;place-items:center;opacity:.4">
@@ -249,12 +249,12 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div data-on="{{ r.active }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:11px 12px">
 <div style="display:flex;align-items:center;gap:9px">
 <button onClick="{{ r.toggleOpen }}" style="flex:1;min-width:0;display:flex;align-items:center;gap:11px;background:transparent;box-shadow:none;padding:0;min-height:52px;text-align:left">
-<svg width="21" height="21" fill="none" stroke="{{ r.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ r.icon }}"></use></svg>
+<svg width="21" height="21" fill="none" stroke="{{ r.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ r.iconRef }}"></use></svg>
 <span style="flex:1;min-width:0">
 <span style="display:block;font:600 14px/1.2 var(--font-body)">{{ r.name }}</span>
 <span style="display:block;font:500 11.5px/1.35 var(--font-body);color:var(--tx2);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.sub }}</span>
 </span>
-<svg width="16" height="16" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ r.chev }}"></use></svg>
+<svg width="16" height="16" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ r.chevRef }}"></use></svg>
 </button>
 <sc-if value="{{ r.hasCovers }}" hint-placeholder-val="{{ true }}">
 <button onClick="{{ r.closeCovers }}" title="{{ S.closeCoversTitle }}" style="width:48px;height:48px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none">
@@ -326,7 +326,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 
 <sc-for list="{{ r.appliances }}" as="a" hint-placeholder-count="1">
 <div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
-<svg width="19" height="19" fill="none" stroke="{{ a.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ a.icon }}"></use></svg>
+<svg width="19" height="19" fill="none" stroke="{{ a.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ a.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body)">{{ a.name }}</div>
 <div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ a.sub }}</div>
@@ -341,7 +341,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 
 <sc-for list="{{ r.switches }}" as="w" hint-placeholder-count="1">
 <div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
-<svg width="19" height="19" fill="none" stroke="{{ w.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ w.icon }}"></use></svg>
+<svg width="19" height="19" fill="none" stroke="{{ w.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ w.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body)">{{ w.name }}</div>
 <div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ w.sub }}</div>
@@ -352,7 +352,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 
 <sc-for list="{{ r.appliances }}" as="a" hint-placeholder-count="1">
 <div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
-<svg width="19" height="19" fill="none" stroke="{{ a.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ a.icon }}"></use></svg>
+<svg width="19" height="19" fill="none" stroke="{{ a.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ a.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body)">{{ a.name }}</div>
 <div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ a.sub }}</div>
@@ -380,7 +380,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 
 <sc-for list="{{ r.extras }}" as="e" hint-placeholder-count="1">
 <div data-dim="{{ e.quiet }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:10px 13px">
-<svg width="17" height="17" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ e.icon }}"></use></svg>
+<svg width="17" height="17" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ e.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0;font:600 12.5px/1.2 var(--font-body)">{{ e.name }}</div>
 <div style="font:500 12px/1 var(--font-body);color:var(--tx2)">{{ e.val }}</div>
 </div>
@@ -414,7 +414,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <button onClick="{{ c.open }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:12px;display:flex;flex-direction:column;gap:10px;text-align:left;width:100%">
 <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;background:var(--nu-d);box-shadow:var(--nu-ins);overflow:hidden;flex:none">
 <sc-if value="{{ c.showImg }}" hint-placeholder-val="{{ false }}">
-<img src="{{ c.src }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+<img ref="{{ c.srcRef }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
 </sc-if>
 <sc-if value="{{ c.showIcon }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;inset:0;display:grid;place-items:center;opacity:.4">
@@ -508,7 +508,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <span>{{ S.soilMoisture48h }}</span><span>{{ z.soil }}</span>
 </div>
 <svg viewBox="0 0 240 54" preserveAspectRatio="none" style="display:block;width:100%;height:54px;overflow:visible">
-<polyline points="{{ z.spark }}" fill="none" stroke="var(--sage)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+<polyline ref="{{ z.sparkRef }}" fill="none" stroke="var(--sage)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
 </svg>
 </div>
 </sc-if>
@@ -568,7 +568,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div style="display:flex;flex-direction:column;gap:9px">
 <sc-for list="{{ nowCells }}" as="c" hint-placeholder-count="3">
 <div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:11px 13px">
-<svg width="18" height="18" fill="none" stroke="{{ c.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ c.icon }}"></use></svg>
+<svg width="18" height="18" fill="none" stroke="{{ c.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ c.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0;font:600 12.5px/1.2 var(--font-body)">{{ c.label }}</div>
 <div style="font-family:var(--font-heading);font-size:16px;line-height:1">{{ c.val }}</div>
 </div>
@@ -650,7 +650,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div style="display:flex;flex-direction:column;gap:8px">
 <sc-for list="{{ warnings }}" as="w" hint-placeholder-count="6">
 <div data-dim="{{ w.quiet }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:15px;padding:10px 13px">
-<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" data-tone="{{ w.tone }}" style="flex:none"><use href="{{ w.icon }}"></use></svg>
+<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" data-tone="{{ w.tone }}" style="flex:none"><use ref="{{ w.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0;font:600 12.5px/1.2 var(--font-body)">{{ w.label }}</div>
 <div data-tone="{{ w.tone }}" style="font:500 11px/1 var(--font-body)">{{ w.val }}</div>
 </div>
@@ -664,7 +664,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div data-m="col" data-screen-label="Meteo">
 
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px;display:flex;align-items:center;gap:14px">
-<svg width="30" height="30" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ wxIcon }}"></use></svg>
+<svg width="30" height="30" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ wxIconRef }}"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font-family:var(--font-heading);font-size:30px;line-height:1">{{ wxTemp }}</div>
 <div style="font:500 11.5px/1.35 var(--font-body);color:var(--tx2);margin-top:5px">{{ wxDetailLine }}</div>
@@ -674,7 +674,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div data-m="two">
 <sc-for list="{{ station }}" as="s" hint-placeholder-count="10">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:18px;padding:13px">
-<svg width="17" height="17" fill="none" stroke="var(--sage)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="{{ s.icon }}"></use></svg>
+<svg width="17" height="17" fill="none" stroke="var(--sage)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use ref="{{ s.iconRef }}"></use></svg>
 <div style="font-family:var(--font-heading);font-size:17px;line-height:1.1;margin-top:8px">{{ s.val }}</div>
 <div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:4px">{{ s.label }}</div>
 </div>
@@ -709,7 +709,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 <div style="position:relative;flex:1;min-height:0;border-radius:20px;background:var(--nu-d);box-shadow:var(--nu-ins);overflow:hidden">
 <sc-if value="{{ camHasStream }}" hint-placeholder-val="{{ false }}">
-<img src="{{ camStreamSrc }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain">
+<img ref="{{ camStreamSrcRef }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain">
 </sc-if>
 <sc-if value="{{ camNoStream }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;inset:0;display:grid;place-items:center;opacity:.4">
@@ -732,7 +732,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div style="max-width:540px;margin:0 auto;display:flex;gap:4px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px">
 <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
 <button onClick="{{ t.go }}" data-sel="{{ t.sel }}" style="flex:1;min-width:0;height:54px;border-radius:999px;background:transparent;color:var(--tx2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0 2px">
-<svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="{{ t.icon }}"></use></svg>
+<svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ t.iconRef }}"></use></svg>
 <span style="font:600 9.5px/1 var(--font-body);letter-spacing:.01em">{{ t.label }}</span>
 </button>
 </sc-for>
@@ -813,7 +813,8 @@ class Component extends DCLogic {
   registries = { areas: [], devices: [], entities: [] };
   discovery = null;
   t = (key) => key;
-  strings = {};
+  // See dash_neumo.html's copy of this field for why it's a Proxy, not {}.
+  strings = new Proxy({}, { get: () => '' });
 
   componentDidMount() {
     this.timer = setInterval(() => this.setState({ now: Date.now() }), 15000);
@@ -862,23 +863,35 @@ class Component extends DCLogic {
     ]);
     const userConfig = await loadUserConfig();
 
-    this.discovery = window.CasaDiscovery;
-    this.be = await window.CasaBackend.connect({
+    // See dash_neumo.html's copy of this block for the full explanation of
+    // why these are batched into one synchronous assignment instead of
+    // being set one at a time as each finishes.
+    const discovery = window.CasaDiscovery;
+    const be = await window.CasaBackend.connect({
       onStates: (s) => this.setState({ st: s }),
       onStatus: (s) => this.setState({ status: s }),
       onLanguage: (l) => this.setState({ hassLanguage: l })
     });
-    this.kind = this.be.kind;
-    this.cfg = mergeConfig(this.kind === 'demo' ? window.CasaBackendDemo.DEMO_CONFIG : userConfig);
-    if (this.be.registries) {
-      try { this.registries = await this.be.registries(); }
+    const kind = be.kind;
+    const cfg = mergeConfig(kind === 'demo' ? window.CasaBackendDemo.DEMO_CONFIG : userConfig);
+    let registries = { areas: [], devices: [], entities: [] };
+    if (be.registries) {
+      try { registries = await be.registries(); }
       catch (e) { console.warn('[casa] registries unavailable — rooms will stay empty', e); }
     }
-    const lang = window.CasaI18n.resolveLang(this.cfg, this.state.hassLanguage);
+    const lang = window.CasaI18n.resolveLang(cfg, this.state.hassLanguage);
     const strings = window.CasaI18n.getStrings(lang);
-    this.t = window.CasaI18n.makeT(strings);
+    const t = window.CasaI18n.makeT(strings);
+
+    this.discovery = discovery;
+    this.be = be;
+    this.kind = kind;
+    this.cfg = cfg;
+    this.registries = registries;
+    this.t = t;
     this.strings = strings;
     this.lang = lang;
+
     this.energyDaily = await this._resolveEnergyDaily().catch((e) => {
       console.warn('[casa] energy source resolution failed', e);
       return null;
@@ -1020,6 +1033,15 @@ class Component extends DCLogic {
     }).join(' ');
   }
 
+  // See dash_neumo.html's copy of this method for the full explanation.
+  _bindAttr(name, value) {
+    return (el) => {
+      if (!el) return;
+      if (value == null || value === '') el.removeAttribute(name);
+      else el.setAttribute(name, value);
+    };
+  }
+
   ROOMS_RESULT() {
     if (!this.discovery) return { rooms: [], overflow: [] };
     return this.discovery.discoverRooms(this.state.st, this.registries, this.cfg);
@@ -1080,8 +1102,9 @@ class Component extends DCLogic {
         const sub = idle
           ? (energy ? this.t('common.off') + ' · ' + this.t('appliance.energyToday', { val: energy }) : this.t('common.off'))
           : (remaining ? label + ' · ' + this.t('appliance.remainingMin', { n: Math.round(remaining) }) : label);
+        const applianceIcon = a.icon || '#i-wash';
         return {
-          name: a.name, icon: a.icon || '#i-wash', stroke: idle ? 'var(--tx2)' : 'var(--acc)', sub,
+          name: a.name, icon: applianceIcon, iconRef: this._bindAttr('href', applianceIcon), stroke: idle ? 'var(--tx2)' : 'var(--acc)', sub,
           hasPowerOff: !!a.powerSwitch,
           powerOff: a.powerSwitch ? () => this.call('switch', 'turn_off', { entity_id: a.powerSwitch }) : () => {}
         };
@@ -1125,7 +1148,7 @@ class Component extends DCLogic {
       }),
       switches: (r.switches || []).map((sw) => {
         const on = this.isOn(sw[0]);
-        return { name: sw[1], icon: sw[2], on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
+        return { name: sw[1], icon: sw[2], iconRef: this._bindAttr('href', sw[2]), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
           sub: on ? this.t('switch.running') : this.t('switch.off'),
           toggle: () => this.call('switch', on ? 'turn_off' : 'turn_on', { entity_id: sw[0] }) };
       }),
@@ -1139,7 +1162,7 @@ class Component extends DCLogic {
       extras: extraTuples.map((x) => {
         const s = this.s(x[0]);
         const live = s !== 'unavailable' && s !== 'unknown';
-        return { name: x[1], icon: x[2], quiet: !live, val: !live ? this.t('common.unreachable') : (this.unit(x[0]) ? this.val(x[0], 1) : s) };
+        return { name: x[1], icon: x[2], iconRef: this._bindAttr('href', x[2]), quiet: !live, val: !live ? this.t('common.unreachable') : (this.unit(x[0]) ? this.val(x[0], 1) : s) };
       })
     };
   }
@@ -1158,7 +1181,7 @@ class Component extends DCLogic {
     const cur = hasModes ? this.s(modesCfg.select) : null;
     const scriptId = hasModes ? modesCfg.script.split('.').slice(1).join('.') : null;
     const modes = hasModes ? (this.at(modesCfg.select, 'options') || []).map((o) => ({
-      label: o, icon: modeIcons[o] || '#i-sofa', sel: cur === o,
+      label: o, icon: modeIcons[o] || '#i-sofa', iconRef: this._bindAttr('href', modeIcons[o] || '#i-sofa'), sel: cur === o,
       set: () => this.call('script', scriptId, { mode: o })
     })) : [];
 
@@ -1226,15 +1249,16 @@ class Component extends DCLogic {
     const camList = camsRaw.map((c) => {
       const revealed = !!this.state.camRevealed[c.id];
       const showImg = !!c.picture && (!c.hidden || revealed);
+      const camSrc = showImg ? c.picture + (c.picture.indexOf('?') === -1 ? '?' : '&') + 't=' + snapTick : '';
       return {
         id: c.id, name: c.name, area: c.area, motion: c.motion, picture: c.picture,
         showImg, showIcon: !showImg,
-        src: showImg ? c.picture + (c.picture.indexOf('?') === -1 ? '?' : '&') + 't=' + snapTick : '',
+        src: camSrc, srcRef: this._bindAttr('src', camSrc),
         stamp: new Date(snapTick).toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
         open: () => { if (c.hidden && !revealed) this._revealCam(c.id); else this._openCam(c.id); }
       };
     });
-    const camMain = camList[0] || { name: '—', showImg: false, showIcon: true, motion: false, stamp: '', open: () => {} };
+    const camMain = camList[0] || { name: '—', showImg: false, showIcon: true, motion: false, stamp: '', srcRef: this._bindAttr('src', ''), open: () => {} };
     const camMotionOne = camList.find((c) => c.motion);
     const camHeadline = camMotionOne ? this.t('cameras.motionDetected', { name: camMotionOne.name }) : this.t('cameras.allQuiet');
     const camSub = this.t('cameras.tabSub', { n: camList.length, seconds: camCfg.snapshotInterval || 10 });
@@ -1251,20 +1275,21 @@ class Component extends DCLogic {
       const s = this.s(id);
       if (dom === 'light' && s === 'on') {
         const b = this.at(id, 'brightness');
-        activeItems.push({ icon: '#i-bulb', name: this.fn(id), sub: b ? Math.round((b / 255) * 100) + '% ' + this.t('light.brightnessSuffix') : this.t('common.on'), off: () => this.call('light', 'turn_off', { entity_id: id }) });
+        activeItems.push({ icon: '#i-bulb', iconRef: this._bindAttr('href', '#i-bulb'), name: this.fn(id), sub: b ? Math.round((b / 255) * 100) + '% ' + this.t('light.brightnessSuffix') : this.t('common.on'), off: () => this.call('light', 'turn_off', { entity_id: id }) });
       } else if (dom === 'switch' && s === 'on' && !applianceSwitches.has(id)) {
-        activeItems.push({ icon: '#i-plug', name: this.fn(id), sub: this.t('switch.running'), off: () => this.call('switch', 'turn_off', { entity_id: id }) });
+        activeItems.push({ icon: '#i-plug', iconRef: this._bindAttr('href', '#i-plug'), name: this.fn(id), sub: this.t('switch.running'), off: () => this.call('switch', 'turn_off', { entity_id: id }) });
       } else if (dom === 'media_player' && s === 'playing') {
-        activeItems.push({ icon: '#i-tv', name: this.fn(id), sub: this.at(id, 'media_title') || this.t('media.playing'), off: () => this.call('media_player', 'turn_off', { entity_id: id }) });
+        activeItems.push({ icon: '#i-tv', iconRef: this._bindAttr('href', '#i-tv'), name: this.fn(id), sub: this.at(id, 'media_title') || this.t('media.playing'), off: () => this.call('media_player', 'turn_off', { entity_id: id }) });
       } else if (dom === 'vacuum' && (s === 'cleaning' || s === 'returning')) {
-        activeItems.push({ icon: '#i-bot', name: this.t('vacuum.name'), sub: s === 'cleaning' ? this.t('vacuum.cleaning') : this.t('vacuum.returning'), off: () => this.call('vacuum', 'return_to_base', { entity_id: id }) });
+        activeItems.push({ icon: '#i-bot', iconRef: this._bindAttr('href', '#i-bot'), name: this.t('vacuum.name'), sub: s === 'cleaning' ? this.t('vacuum.cleaning') : this.t('vacuum.returning'), off: () => this.call('vacuum', 'return_to_base', { entity_id: id }) });
       }
     });
     (this.cfg.appliances || []).forEach((a) => {
       const { idle, label } = this.applianceState(a);
       if (idle) return;
+      const aIcon = a.icon || '#i-wash';
       activeItems.push({
-        icon: a.icon || '#i-wash', name: a.name, sub: label,
+        icon: aIcon, iconRef: this._bindAttr('href', aIcon), name: a.name, sub: label,
         off: a.powerSwitch ? () => this.call('switch', 'turn_off', { entity_id: a.powerSwitch }) : () => {}
       });
     });
@@ -1281,7 +1306,7 @@ class Component extends DCLogic {
     if (hasEnergy) tabDefs.push(['energia', this.t('tab.energy'), '#i-zap']);
     if (hasVehicle) tabDefs.push(['auto', this.t('tab.vehicle'), '#i-car']);
     if (hasWeather || hasStation) tabDefs.push(['meteo', this.t('tab.weather'), '#i-cloud']);
-    const tabs = tabDefs.map((t) => ({ label: t[1], icon: t[2], sel: tab === t[0], go: () => this.setState({ tab: t[0] }) }));
+    const tabs = tabDefs.map((t) => ({ label: t[1], icon: t[2], iconRef: this._bindAttr('href', t[2]), sel: tab === t[0], go: () => this.setState({ tab: t[0] }) }));
 
     const roomsResult = this.ROOMS_RESULT();
     const allRoomsFlat = roomsResult.rooms.concat(roomsResult.overflow);
@@ -1291,9 +1316,10 @@ class Component extends DCLogic {
       const isOpen = this.state.room === r.id;
       const lightOn = (r.lights || []).some((id) => this.isOn(id));
       const busy = lightOn || (r.switches || []).some((sw) => this.isOn(sw[0])) || (r.media || []).some((id) => this.s(id) === 'playing');
+      const chevIcon = isOpen ? '#i-up' : '#i-down';
       const base = {
-        id: r.id, name: r.name, icon: r.icon, sub: this.roomSummary(r), active: busy,
-        stroke: busy ? 'var(--acc)' : 'var(--tx2)', isOpen, chev: isOpen ? '#i-up' : '#i-down',
+        id: r.id, name: r.name, icon: r.icon, iconRef: this._bindAttr('href', r.icon), sub: this.roomSummary(r), active: busy,
+        stroke: busy ? 'var(--acc)' : 'var(--tx2)', isOpen, chev: chevIcon, chevRef: this._bindAttr('href', chevIcon),
         hasLight: (r.lights || []).length > 0, lightOn, hasCovers: (r.covers || []).length > 0,
         hasAppliances: false, appliances: [],
         toggleOpen: () => this.setState({ room: isOpen ? null : r.id }),
@@ -1354,9 +1380,9 @@ class Component extends DCLogic {
     }
 
     const nowCells = hasEnergy ? [
-      { icon: '#i-solar', stroke: 'var(--acc)', label: this.t('production'), val: this.val(en.production, 2, ' kW') },
-      { icon: '#i-house', stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.val(en.consumption, 2, ' kW') },
-      { icon: '#i-tower', stroke: 'var(--tx2)', label: this.t('fromGrid'), val: this.val(en.gridImport, 2, ' kW') }
+      { icon: '#i-solar', iconRef: this._bindAttr('href', '#i-solar'), stroke: 'var(--acc)', label: this.t('production'), val: this.val(en.production, 2, ' kW') },
+      { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.val(en.consumption, 2, ' kW') },
+      { icon: '#i-tower', iconRef: this._bindAttr('href', '#i-tower'), stroke: 'var(--tx2)', label: this.t('fromGrid'), val: this.val(en.gridImport, 2, ' kW') }
     ] : [];
 
     const price = hasEnergy && en.price ? this.n(en.price) : null;
@@ -1397,6 +1423,7 @@ class Component extends DCLogic {
         if (!isNaN(t)) last = t.toLocaleDateString(this.lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'short' }) + ' · ' + t.toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' });
       }
       const chartVisible = this.chartOn('zone' + i);
+      const zoneSpark = this.spark(this.state.hist ? this.state.hist['zone' + i] : null, 240, 54);
       return {
         name: z.name, advisory: adv || '—', tone: zoneTone(adv),
         urgenza: (z.advisory ? (this.at(z.advisory, 'urgenza') || '') : '') + (mins > 0 ? ' · ' + this.t('irrigation.recommendedMin', { n: mins }) : ''),
@@ -1406,7 +1433,7 @@ class Component extends DCLogic {
         lastRunLine: this.t('irrigation.lastRun', { when: last }),
         showChart: chartVisible, chartLabel: chartVisible ? this.t('chart.hide') : this.t('chart.show48h'),
         toggleChart: () => this.toggleChart('zone' + i),
-        spark: this.spark(this.state.hist ? this.state.hist['zone' + i] : null, 240, 54),
+        spark: zoneSpark, sparkRef: this._bindAttr('points', zoneSpark),
         // See dash_neumo.html for why there are two mechanisms here.
         buttons: (z.buttons && z.buttons.length)
           ? z.buttons.map((b) => ({ label: this.t('irrigation.minutes', { n: b.minutes }), run: () => this.call('input_button', 'press', { entity_id: b.entity }) }))
@@ -1426,7 +1453,7 @@ class Component extends DCLogic {
     if (stationRainId) stationDefs.push(['#i-rain', this.t('wx.rainToday'), this.val(stationRainId, 1, ' mm')]);
     if (stationIrradianceId) stationDefs.push(['#i-solar', this.t('wx.irradiance'), this.val(stationIrradianceId, 0, ' W/m²')]);
     if (stationEt0Id) stationDefs.push(['#i-sun', this.t('irrigation.et0Today'), this.val(stationEt0Id, 2, ' mm')]);
-    const station = stationDefs.map((x) => ({ icon: x[0], label: x[1], val: x[2] }));
+    const station = stationDefs.map((x) => ({ icon: x[0], iconRef: this._bindAttr('href', x[0]), label: x[1], val: x[2] }));
 
     const veh = this.cfg.vehicle || {};
     const fuel = hasVehicle && veh.fuel ? this.n(veh.fuel) : null;
@@ -1436,7 +1463,8 @@ class Component extends DCLogic {
     const warnings = hasVehicle ? (veh.warnings || []).map((w) => {
       const on = this.isOn(w.entity);
       const good = w.positiveIsGood ? on : !on;
-      return { label: w.label, icon: good ? '#i-check' : '#i-alert', tone: good ? 'ok' : 'alert', quiet: good, val: good ? this.t('vehicle.ok') : this.t('vehicle.check') };
+      const wIcon = good ? '#i-check' : '#i-alert';
+      return { label: w.label, icon: wIcon, iconRef: this._bindAttr('href', wIcon), tone: good ? 'ok' : 'alert', quiet: good, val: good ? this.t('vehicle.ok') : this.t('vehicle.check') };
     }) : [];
 
     const energyChart = this.chartOn('energia');
@@ -1446,6 +1474,7 @@ class Component extends DCLogic {
       theme, tabs,
       toggleTheme: () => this.setState({ theme: theme === 'night' ? 'day' : 'night' }),
       themeIcon: theme === 'night' ? '#i-moon' : '#i-sun',
+      themeIconRef: this._bindAttr('href', theme === 'night' ? '#i-moon' : '#i-sun'),
       greeting,
       dateStr: d.toLocaleDateString(this.lang === 'it' ? 'it-IT' : 'en-GB', { weekday: 'short', day: 'numeric', month: 'short' }),
       timeStr: d.toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' }),
@@ -1456,7 +1485,7 @@ class Component extends DCLogic {
       hasNoAreas, goToAreas,
       hasCameras, hasCamTab, camList, camMain, camHeadline, camSub,
       camOpen, camName: camCur ? camCur.name : '', camArea: camCur ? camCur.area : '',
-      camStreamSrc, camHasStream: !!camStreamSrc, camNoStream: !camStreamSrc,
+      camStreamSrc, camStreamSrcRef: this._bindAttr('src', camStreamSrc), camHasStream: !!camStreamSrc, camNoStream: !camStreamSrc,
       camCountdown, closeCam: () => this._closeCam(),
       goEnergia: () => this.setState({ tab: 'energia' }),
       goMeteo: () => this.setState({ tab: 'meteo' }),
@@ -1471,7 +1500,7 @@ class Component extends DCLogic {
       allCoversDown: () => this.call('cover', 'close_cover', { entity_id: ALL_COVERS }),
       coversOpenNote: this.t('quick.openFraction', { open: openCount, total: ALL_COVERS.length }),
       rooms,
-      wxIcon: wxi[0], wxLabel: wxi[1], wxTemp: outT === null ? '—' : this.dec(outT, 0) + '°',
+      wxIcon: wxi[0], wxIconRef: this._bindAttr('href', wxi[0]), wxLabel: wxi[1], wxTemp: outT === null ? '—' : this.dec(outT, 0) + '°',
       wxHumidity: outH === null ? '—' : this.dec(outH, 0) + '%',
       wxDetailLine: this.t('wx.humidityDetailLine', { label: wxi[1], humidity: outH === null ? '—' : this.dec(outH, 0) + '%' }),
       nowCells, invStatus,
