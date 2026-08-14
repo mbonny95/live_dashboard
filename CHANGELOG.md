@@ -3,6 +3,22 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.1] - 2026-08-14
+
+### Fixed
+
+- The "selected" state (`[data-sel="true"]`) — modes, tabs, alarm buttons,
+  range pickers, light/switch toggle chips — was completely inert
+  wherever a button's own inline `style` also set `background`/
+  `box-shadow`/`color`, which inline styles always win over a plain
+  stylesheet rule regardless of specificity. On mobile's mode buttons this
+  meant zero visible difference between the active mode and the others —
+  not subtle, literally no difference in computed style. Fixed with
+  `!important` on the override (verified against every affected surface on
+  both layouts) and, while touching it, made the state itself easier to
+  read at a glance: a soft tinted background alongside the existing
+  inset-shadow and accent-color change, instead of the shadow alone.
+
 ## [1.0.0] - 2026-08-13
 
 Validated end to end against a real Home Assistant installation, running
