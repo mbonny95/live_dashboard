@@ -106,6 +106,9 @@ const SEED = [
   entity('sensor.inverter_status', null, 'normal', { friendly_name: 'Stato inverter' }),
   entity('sensor.solar_energy_today', null, '9.8', { friendly_name: 'Prodotti oggi', unit_of_measurement: 'kWh' }),
   entity('sensor.grid_import_today', null, '1.4', { friendly_name: 'Prelevati oggi', unit_of_measurement: 'kWh' }),
+  // Plausible enough for the double ring to look real: ~63% self-consumption
+  // (autoconsumo = 9.8 - 3.6 = 6.2 kWh of the 9.8 produced).
+  entity('sensor.grid_export_today', null, '3.6', { friendly_name: 'Immessi oggi', unit_of_measurement: 'kWh' }),
   entity('sensor.electricity_price', null, '0.22', { friendly_name: 'Prezzo elettricità', unit_of_measurement: '€/kWh' }),
 
   // irrigation (Fase 3 — two zones, generic)
@@ -172,6 +175,7 @@ const DEMO_CONFIG = {
     battery: { soc: 'sensor.battery_soc', power: 'sensor.battery_power' },
     inverterStatus: 'sensor.inverter_status',
     productionToday: 'sensor.solar_energy_today', gridToday: 'sensor.grid_import_today',
+    gridExportToday: 'sensor.grid_export_today',
     price: 'sensor.electricity_price'
   },
   irrigation: {
@@ -333,6 +337,19 @@ async function connect(handlers) {
       registries: async function () {
         await new Promise((r) => setTimeout(r, 60));
         return registries;
+      },
+
+      // The demo's DEMO_CONFIG.energy above always sets production/
+      // gridToday/gridExportToday explicitly, which take precedence over
+      // both of these in the resolution cascade (see dash_neumo*.html) — so
+      // neither is ever actually called in demo mode. Implemented anyway
+      // for contract completeness, same as any other backend.
+      energyPrefs: async function () {
+        return null;
+      },
+
+      energyToday: async function () {
+        return null;
       },
 
       close: function () {

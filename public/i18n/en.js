@@ -45,6 +45,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'energy.takenFromGrid': 'Taken from grid', 'energy.selfConsumption': '{pct} self-consumption',
   'energy.selfConsumptionShort': 'self-consumption',
   'energy.gridNote': '{grid} from grid · {exportVal} kW exporting · {status}',
+  'energy.selfConsumptionLabel': 'Self-consumption', 'energy.feedIn': 'Fed to grid', 'energy.kwhConsumed': 'kWh consumed',
 
   'greeting.afternoon': 'Good afternoon', 'greeting.evening': 'Good evening', 'greeting.morning': 'Good morning', 'greeting.night': 'Night',
 

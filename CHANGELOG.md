@@ -3,6 +3,56 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.0] - 2026-08-14
+
+### Changed
+
+- **The Fotovoltaico ring is now two concentric rings, and the number in
+  the middle means something different than before.** The previous ring
+  compared today's solar production against today's grid import — two
+  numbers that were never meant to sum to anything, so the percentage it
+  showed didn't correspond to a real quantity. The new ring shows two real
+  totals instead: the outer ring is today's house consumption (self-used
+  solar + grid import), the inner ring is today's solar production
+  (self-used solar + fed back to the grid). The self-used-solar segment is
+  the same color and the same starting point in both, since it's the one
+  number shared between them. If you've been reading the old percentage
+  for a while, expect it to look different now — this isn't a restyle of
+  the same math, it's different math. See the README's "Enabling Energy"
+  section for the two identities behind it.
+- **Energy setup is optional if you've already configured it in Home
+  Assistant.** The ring now reads your solar/grid sensor mapping straight
+  from HA's own Energy dashboard (Settings -> Dashboards -> Energy) when
+  you have one set up, and falls back to a best-effort guess from
+  `device_class: energy` sensors when you don't — `config.js`'s `energy`
+  block is only needed to override either of those, not to see the ring at
+  all. Explicit `config.js` values still always win when set.
+- With no grid-export sensor available anywhere, the ring falls back to the
+  previous single-ring view rather than guessing or showing an empty inner
+  ring — see the README for the full set of fallback rules.
+
+### Added
+
+- `config.energy.gridExportToday` and `config.energy.consumptionToday`,
+  both optional, for installs that want to point the new ring at specific
+  sensors rather than let it derive or auto-discover them.
+- A install-time self-check for the single most common HACS/manual install
+  mistake: `panel_custom`'s `name:` not matching the folder the dashboard
+  is actually running from. Previously this produced a blank/black panel
+  with nothing in the console to explain why. It now prints a
+  `console.error` naming the `name:` it expected, and shows the same
+  message on the page itself for anyone who doesn't open dev tools.
+
+### Fixed
+
+- The README's manual-install section showed a "second copy side by side"
+  pattern (`casa` / `casa2`, picking your own `name:` per copy) that only
+  ever applied to manual installs — nothing marked it as such, so it read
+  as generally applicable and could lead a HACS install to a `name:`
+  mismatch (the exact failure the self-check above now catches). Both the
+  manual and HACS sections now say explicitly that HACS's folder — and
+  therefore its `name:` — isn't a per-install choice.
+
 ## [1.3.1] - 2026-08-14
 
 ### Fixed

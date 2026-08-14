@@ -66,6 +66,13 @@ window.CASA_CONFIG = {
   // Energy: independent of any specific inverter brand. Map your own
   // integration's sensors to these roles — see README.md for examples
   // (FusionSolar, SolarEdge, Fronius, Shelly EM, HA's own Energy Dashboard).
+  //
+  // None of this is required to see the Fotovoltaico ring at all: if you've
+  // already set up Home Assistant's own Energy dashboard (Settings ->
+  // Dashboards -> Energy), this dashboard reads your solar/grid mapping
+  // from there automatically, and falls back to guessing from
+  // device_class: energy sensors if you haven't. Only fill this in to
+  // override that, or if neither source finds anything.
   energy: null,
   // energy: {
   //   production: 'sensor.solar_power',        // instantaneous production, W or kW
@@ -76,6 +83,8 @@ window.CASA_CONFIG = {
   //   inverterStatus: null,                     // sensor.* with a text state, or null
   //   productionToday: 'sensor.solar_energy_today',   // daily counter, resets at midnight
   //   gridToday: 'sensor.grid_import_today',          // daily counter, resets at midnight
+  //   gridExportToday: 'sensor.grid_export_today',    // daily counter, resets at midnight — feeds the ring's inner "immissione" arc
+  //   consumptionToday: null,          // daily counter for *house* consumption, if you have one — preferred over deriving it from production/export when set
   //   price: null                               // sensor.* in currency/kWh, or null
   // },
 

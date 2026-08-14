@@ -250,6 +250,74 @@ function discoverCameras(states, registries, config) {
   return cams;
 }
 
+// --- energy -----------------------------------------------------------------
+// Two ways to find production/grid-import/grid-export sensors without the
+// user writing config.energy by hand — tried in order by the caller
+// (dash_neumo*.html), config.js explicit fields always winning over both:
+//
+//   1. mapEnergyPrefs()        reads what the user already told HA's own
+//                               Energy dashboard (config/energy panel).
+//   2. discoverEnergyEntities() a last-resort heuristic guess from
+//                               device_class/state_class + name, for
+//                               installs with no Energy dashboard set up
+//                               at all — same spirit as the room/weather/
+//                               people discovery above, just fuzzier since
+//                               there's no registry relationship to lean on
+//                               (energy sensors aren't tied to an area the
+//                               way a room's light is).
+
+// Shape of a websocket `energy/get_prefs` response (relevant parts only):
+//   { energy_sources: [
+//       { type: 'solar', stat_energy_from: 'sensor.x' },
+//       { type: 'grid', flow_from: [{ stat_energy_from: 'sensor.y' }],
+//                        flow_to:   [{ stat_energy_to: 'sensor.z' }] }
+//   ] }
+// Multiple solar arrays or multiple grid contracts are possible; only the
+// first of each is used here — good enough for the common single-meter,
+// single-array install this heuristic targets, not a hard requirement.
+function mapEnergyPrefs(prefs) {
+  if (!prefs || !Array.isArray(prefs.energy_sources)) return null;
+  const solar = prefs.energy_sources.find((s) => s.type === 'solar');
+  const grid = prefs.energy_sources.find((s) => s.type === 'grid');
+  const production = (solar && solar.stat_energy_from) || null;
+  const gridImport = (grid && Array.isArray(grid.flow_from) && grid.flow_from[0] && grid.flow_from[0].stat_energy_from) || null;
+  const gridExport = (grid && Array.isArray(grid.flow_to) && grid.flow_to[0] && grid.flow_to[0].stat_energy_to) || null;
+  if (!production && !gridImport && !gridExport) return null;
+  return { production, gridImport, gridExport };
+}
+
+const ENERGY_PROD_RE = /solar|pv|fotovolt|produzion|panel.*production/i;
+const ENERGY_EXPORT_RE = /export|immission|feed.?in|cedut|vendut|to.?grid|grid.?to/i;
+const ENERGY_IMPORT_RE = /import|prelie|prelev|acquist|from.?grid|grid.?import/i;
+
+// Every candidate is a lifetime-cumulative energy statistic (state_class
+// total_increasing, device_class energy) — that's necessary but not
+// sufficient to know its *role*, since production/import/export sensors
+// all share it. The name is the only signal left, so this is a best-effort
+// guess, not a guarantee: an unusually-named install may resolve nothing,
+// degrading gracefully to no ring rather than a wrong one (guessing a role
+// wrong would be worse than not guessing).
+function discoverEnergyEntities(states, registries) {
+  const entities = (registries && registries.entities) || [];
+  const ids = entities.length
+    ? entities.filter((e) => !isExcluded(e)).map((e) => e.entity_id)
+    : Object.keys(states);
+  const candidates = ids.filter((id) => {
+    if (domainOf(id) !== 'sensor') return false;
+    const st = states[id];
+    const attrs = st && st.attributes;
+    return !!attrs && attrs.device_class === 'energy' && attrs.state_class === 'total_increasing';
+  });
+  if (!candidates.length) return null;
+
+  const nameOf = (id) => id + ' ' + friendlyName(states, id, '');
+  const production = candidates.find((id) => ENERGY_PROD_RE.test(nameOf(id))) || null;
+  const gridExport = candidates.find((id) => ENERGY_EXPORT_RE.test(nameOf(id))) || null;
+  const gridImport = candidates.find((id) => ENERGY_IMPORT_RE.test(nameOf(id))) || null;
+  if (!production && !gridImport && !gridExport) return null;
+  return { production, gridImport, gridExport };
+}
+
 // --- alarm ------------------------------------------------------------------
 
 function discoverAlarm(states, config) {
@@ -292,7 +360,7 @@ function resolveEntityArea(entityId, registries) {
 // a global.
 window.CasaDiscovery = {
   discoverRooms, discoverAllOfDomain, discoverPeople, discoverWeather, discoverAlarm, discoverModes, discoverCameras,
-  resolveEntityArea,
+  resolveEntityArea, mapEnergyPrefs, discoverEnergyEntities,
   CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName
 };
 

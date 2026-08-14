@@ -7,16 +7,20 @@
 //    backend.call(domain, service, data) -> Promise<void>
 //    backend.history(entity_id, points) -> Promise<number[]>   oldest -> newest
 //    backend.registries() -> Promise<{ areas, devices, entities }>
+//    backend.energyPrefs() -> Promise<object|null>   raw energy/get_prefs response
+//    backend.energyToday(entity_id) -> Promise<number|null>   today's stats delta
 //    backend.close() -> void
 //
 //  This file runs INSIDE the iframe that panel.js (the casa-panel custom
 //  element) mounts, in its own window/realm — it has no direct reference to
 //  the real `hass` object, which lives in the parent document. Every call is
 //  therefore relayed to the parent via postMessage and awaited there:
-//    connect()     waits for the first 'casa:hass-states' message
-//    call()        posts 'casa:call'        -> parent runs hass.callService(...)
-//    history()     posts 'casa:history'     -> parent runs hass.callWS(...)
-//    registries()  posts 'casa:registries'  -> parent runs hass.callWS(...) x3
+//    connect()      waits for the first 'casa:hass-states' message
+//    call()         posts 'casa:call'          -> parent runs hass.callService(...)
+//    history()      posts 'casa:history'       -> parent runs hass.callWS(...)
+//    registries()   posts 'casa:registries'    -> parent runs hass.callWS(...) x3
+//    energyPrefs()  posts 'casa:energy-prefs'   -> parent runs hass.callWS('energy/get_prefs')
+//    energyToday()  posts 'casa:energy-today'   -> parent runs hass.callWS('recorder/statistics_during_period')
 //  panel.js answers with the matching '*-result' message, matched back up by
 //  a request id.
 //
@@ -60,7 +64,8 @@ async function connect(handlers, readyTimeoutMs) {
       if (handlers.onLanguage && d.language) handlers.onLanguage(d.language);
       return;
     }
-    if (d.type === 'casa:call-result' || d.type === 'casa:history-result' || d.type === 'casa:registries-result') {
+    if (d.type === 'casa:call-result' || d.type === 'casa:history-result' || d.type === 'casa:registries-result'
+      || d.type === 'casa:energy-prefs-result' || d.type === 'casa:energy-today-result') {
       const p = pending.get(d.id);
       if (!p) return;
       pending.delete(d.id);
@@ -123,6 +128,14 @@ async function connect(handlers, readyTimeoutMs) {
 
     registries: function () {
       return send('casa:registries', {});
+    },
+
+    energyPrefs: function () {
+      return send('casa:energy-prefs', {});
+    },
+
+    energyToday: function (entity_id) {
+      return send('casa:energy-today', { entity_id });
     },
 
     close: function () {

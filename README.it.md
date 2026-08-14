@@ -68,7 +68,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.3.1
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.0
        embed_iframe: true
        trust_external_script: false
    ```
@@ -77,9 +77,11 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    pannello si registra sotto `<cartella>-panel`, derivato dalla cartella in
    cui gira, e per un'installazione HACS quella cartella è sempre
    `live_dashboard`. Se non corrisponde, il pannello resta uno schermo
-   vuoto/nero senza nulla in console.
+   vuoto/nero — ma entro un paio di secondi ora ti dice esattamente perché,
+   sia come `console.error` sia come messaggio sulla pagina stessa, con il
+   `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.3.1` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.4.0` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -133,6 +135,15 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
 solo una, altrimenti il pannello continua a caricare la copia vecchia (o
 niente del tutto).
 
+**Il pattern in parallelo qui sopra (`casa` / `casa2`) vale solo per
+l'installazione manuale — non si applica a HACS.** Sotto HACS la cartella è
+sempre `live_dashboard`, quindi `name:` è sempre `live_dashboard-panel`, non
+qualcosa che scegli tu per ogni copia. Portarsi dietro dall'installazione
+manuale l'abitudine di scegliere il proprio `name:` è il modo più comune per
+ritrovarsi con un `name:` che non corrisponde alla cartella da cui il
+pannello si registra davvero — vedi la nota sotto "Via HACS" più sopra per
+come si presenta quando va storto.
+
 Fatto — senza nessun file di config, la dashboard scopre da sola le tue aree
 e ne mostra fino a 8 come tessere stanza, più le eventuali entità `person.*`
 e la prima `weather.*` che trova. Allarme, selettore di modalità casa,
@@ -168,10 +179,22 @@ i tuoi entity ID (il `.gitignore` fornito esclude già `config.js` sotto
 
 ## Attivare l'Energia
 
-Il blocco `energy` di `config.js` chiede i sensori per **ruolo**, non per
-marca, quindi funziona con qualunque integrazione li esponga.
-`productionToday` / `gridToday` devono essere contatori giornalieri che si
-azzerano a mezzanotte — vedi TROUBLESHOOTING.md se i grafici sembrano sbagliati.
+**Può darsi che tu non debba configurare nulla qui.** Se hai già impostato
+l'Energy Dashboard di Home Assistant (Impostazioni -> Cruscotti -> Energia)
+con i tuoi sensori solare e rete, questa dashboard legge quella mappatura
+in automatico e l'anello Fotovoltaico compare da solo. Senza Energy
+Dashboard, tenta comunque un'ipotesi da qualunque sensore con
+`device_class: energy` + `state_class: total_increasing` il cui nome somigli
+a produzione/prelievo/immissione. Il blocco `energy` di `config.js`, qui
+sotto, serve solo a correggere quell'ipotesi o a coprire ciò che nessuna
+delle due fonti trova — utile per i valori istantanei e per quando
+l'auto-discovery indovina male, ma l'anello in sé spesso non ne ha bisogno.
+
+Quando lo compili, i sensori si chiedono per **ruolo**, non per marca, quindi
+funziona con qualunque integrazione li esponga. `productionToday` /
+`gridToday` / `gridExportToday` devono essere contatori giornalieri che si
+azzerano a mezzanotte — vedi TROUBLESHOOTING.md se i numeri sembrano
+sbagliati.
 
 | Ruolo | Huawei FusionSolar | SolarEdge | Fronius | Shelly EM | Energy Dashboard di HA |
 | --- | --- | --- | --- | --- | --- |
@@ -181,6 +204,7 @@ azzerano a mezzanotte — vedi TROUBLESHOOTING.md se i grafici sembrano sbagliat
 | `gridExport` | `sensor.*_grid_injection_power` | stesso contatore, lato immissione | `sensor.meter_power` (negativo) | lo stesso, invertito | il tuo sensore di immissione |
 | `productionToday` | `sensor.*_panel_production_today` | `sensor.solaredge_lifetime_energy` (diff) | `sensor.energy_day` | Shelly EM non ha un contatore giornaliero — aggiungi un helper `utility_meter` | `sensor.solar_energy_today` |
 | `gridToday` | `sensor.*_grid_consumption_today` | via un helper `utility_meter` | `sensor.grid_energy_day` | via un helper `utility_meter` | `sensor.grid_import_today` |
+| `gridExportToday` | `sensor.*_grid_injection_today` | via un helper `utility_meter` | via un helper `utility_meter` | via un helper `utility_meter` | `sensor.grid_export_today` |
 | `battery` | `sensor.*_battery_soc` / `_power` | integrazione SolarEdge Battery | sensori batteria Fronius | — | — |
 | `inverterStatus` | `sensor.*_inverter_inverter_status` | `sensor.solaredge_status` | `sensor.status_code` | — | — |
 
@@ -189,18 +213,43 @@ aggiungi un helper
 [`utility_meter`](https://www.home-assistant.io/integrations/utility_meter/)
 in Home Assistant che si azzeri ogni giorno e punta `config.js` su quello.
 
-**L'anello Fotovoltaico e la sua seconda riga confrontano `productionToday`
-con `gridToday` — produzione contro energia *prelevata dalla rete*, non
-consumo totale della casa.** Se vieni da una dashboard scritta a mano che
-confrontava la produzione con un contatore "consumo casa oggi", aspettati
-qui un numero più piccolo e diverso: il prelievo dalla rete è solo la parte
-di consumo che la rete ha coperto, non tutto quello che la casa ha usato.
-Lo schema chiede solo questi due ruoli perché sono gli unici contatori
-giornalieri garantiti su tutte le integrazioni — un contatore "consumo casa
-oggi" non è universale come lo è per FusionSolar. Se la tua integrazione ne
-espone uno e vuoi quell'abbinamento, in questa release non c'è un campo di
-config per farlo — apri una issue o adatta direttamente la sezione energia
-in `dash_neumo*.html`.
+`consumptionToday` (un contatore giornaliero del consumo di *tutta la casa*)
+non ha una riga sopra perché nessuna di queste integrazioni ne espone uno
+direttamente — è abbastanza raro da essere puramente opzionale, per
+l'installazione occasionale che ne ha uno (es. dal tracciamento "consumo"
+dell'Energy Dashboard di HA, se l'hai collegato a parte). Impostalo se ce
+l'hai; altrimenti lascialo vuoto e l'anello deriva l'autoconsumo da
+produzione ed immissione, che è quello che fa quasi ogni installazione.
+
+### Come si legge l'anello
+
+L'anello Fotovoltaico è composto da due anelli concentrici, ciascuno che
+somma a qualcosa di reale:
+
+- **Anello esterno = consumo casa di oggi** — autoconsumo (fotovoltaico
+  autoconsumato) + prelievo (preso dalla rete).
+- **Anello interno = produzione FV di oggi** — lo stesso autoconsumo +
+  immissione (ceduta alla rete).
+
+L'autoconsumo è il numero condiviso da entrambi, per questo è disegnato
+dello stesso colore in entrambi gli anelli e i due anelli partono allineati
+in alto. Non è mai un sensore a sé — è derivato come `produzione − immissione`
+(oppure, se imposti `consumptionToday`, come `consumo − prelievo`, preferito
+quando disponibile perché non presuppone che produzione ed immissione si
+aggiornino in perfetto sincronismo).
+
+**Se sei abituato alla release precedente:** le versioni precedenti
+confrontavano direttamente `productionToday` con `gridToday` in un unico
+anello — produzione contro prelievo dalla rete, due numeri che non erano mai
+pensati per sommare a qualcosa, quindi la percentuale mostrata non
+corrispondeva a una quantità reale. Questo anello la sostituisce con due
+totali che sommano davvero al 100% di se stessi. Aspettati numeri diversi,
+non solo un restyling.
+
+Con solo `production` e `gridImport` noti (nessun sensore di immissione),
+l'anello ricade sulla vecchia vista a un anello singolo invece di mostrare
+un doppio anello sbagliato o vuoto — vedi TROUBLESHOOTING.md se ti aspetti
+il nuovo anello e non lo vedi.
 
 ## Attivare l'Irrigazione
 

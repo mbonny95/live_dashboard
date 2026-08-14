@@ -12,9 +12,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Caprasimo:wght@400&family=Figtree:wght@400;600;700&display=swap');
 :root{--font-heading:"Caprasimo",system-ui,sans-serif;--font-body:"Figtree",system-ui,sans-serif}
 :root,[data-theme="day"]{--page:#eaeef4;--gr:#e0e5ec;--nu-d:#a3b1c6;--nu-l:#ffffff;--tx:#2b303b;--tx2:#5a6377;
---acc:#c67139;--accT:#8c491a;--sage:#7a8a5e;--sageT:#4f5c39;--onAcc:#fff;--tint:rgba(198,113,57,.13);--warn:#b4741c;--alert:#a83e2b;--ok:#4f5c39}
+--acc:#c67139;--accT:#8c491a;--sage:#7a8a5e;--sageT:#4f5c39;--feed:#b3c194;--onAcc:#fff;--tint:rgba(198,113,57,.13);--warn:#b4741c;--alert:#a83e2b;--ok:#4f5c39}
 [data-theme="night"]{--page:#1a1e25;--gr:#23282f;--nu-d:#14171c;--nu-l:#2e343d;--tx:#e7ebf2;--tx2:#98a2b3;
---acc:#d98c53;--accT:#eeb283;--sage:#9aab79;--sageT:#b3c294;--onAcc:#1a1e25;--tint:rgba(217,140,83,.15);--warn:#e0a95c;--alert:#e08974;--ok:#b3c294}
+--acc:#d98c53;--accT:#eeb283;--sage:#9aab79;--sageT:#b3c294;--feed:#b3c294;--onAcc:#1a1e25;--tint:rgba(217,140,83,.15);--warn:#e0a95c;--alert:#e08974;--ok:#b3c294}
 *{box-sizing:border-box}
 body{margin:0;background:var(--page);font-family:var(--font-body),system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;color:inherit;border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -521,6 +521,35 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div data-m="col" data-screen-label="Energia">
 
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<sc-if value="{{ hasNewRing }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2)">{{ S.solar }}</div>
+<div style="position:relative;width:150px;height:150px;margin:14px auto;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center">
+<svg viewBox="0 0 200 200" style="position:absolute;inset:7px;width:136px;height:136px">
+<g transform="rotate(-90 100 100)">
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--nu-d)" stroke-width="16" opacity="0.45"></circle>
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--sage)" stroke-width="16" stroke-linecap="round" stroke-dasharray="{{ outerSelfArc }}" stroke-dashoffset="{{ outerSelfOffset }}"></circle>
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--acc)" stroke-width="16" stroke-linecap="round" stroke-dasharray="{{ outerGridArc }}" stroke-dashoffset="{{ outerGridOffset }}"></circle>
+<sc-if value="{{ hasInnerRing }}" hint-placeholder-val="{{ false }}">
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--nu-d)" stroke-width="14" opacity="0.35"></circle>
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--sage)" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{ innerSelfArc }}" stroke-dashoffset="{{ innerSelfOffset }}"></circle>
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--feed)" stroke-width="14" stroke-linecap="round" stroke-dasharray="{{ innerFeedArc }}" stroke-dashoffset="{{ innerFeedOffset }}"></circle>
+</sc-if>
+</g>
+</svg>
+<div style="position:relative;text-align:center">
+<div style="font-family:var(--font-heading);font-size:26px;line-height:1">{{ consumoCasaBig }}</div>
+<div style="font:600 10px/1.3 var(--font-body);color:var(--tx2);margin-top:4px">{{ kwhConsumedLabel }}</div>
+</div>
+</div>
+<sc-for list="{{ ringLegend }}" as="l" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+<span style="width:10px;height:10px;border-radius:999px;background:{{ l.color }};flex:none"></span>
+<span style="flex:1;font:500 12.5px/1 var(--font-body);color:var(--tx2)">{{ l.label }}</span>
+<span style="font:600 13px/1 var(--font-body)">{{ l.val }}</span>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ hasOldRing }}" hint-placeholder-val="{{ true }}">
 <div style="font:600 10.5px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2)">{{ S.producedToday }}</div>
 <div style="display:flex;align-items:flex-end;gap:9px;margin-top:9px">
 <span style="font-family:var(--font-heading);font-size:38px;line-height:1">{{ prodToday }}</span>
@@ -531,6 +560,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div style="font-family:var(--font-heading);font-size:16px;line-height:1.1">{{ gridToday }}</div>
 <div title="{{ S.fromGridHint }}" style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px;text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px;display:inline-block">{{ S.fromGrid }}</div>
 </div>
+</sc-if>
 </div>
 
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:16px">
@@ -849,9 +879,60 @@ class Component extends DCLogic {
     this.t = window.CasaI18n.makeT(strings);
     this.strings = strings;
     this.lang = lang;
+    this.energyDaily = await this._resolveEnergyDaily().catch((e) => {
+      console.warn('[casa] energy source resolution failed', e);
+      return null;
+    });
     this.setState({});
     this._loadHistory();
     this._startSnapTimer();
+  }
+
+  // See dash_neumo.html's copy of this method for the full explanation —
+  // kept identical between the two files, same as every other backend/
+  // discovery call in this class.
+  async _resolveEnergyDaily() {
+    const cfgEn = this.cfg.energy || {};
+    const needProd = !cfgEn.productionToday;
+    const needGrid = !cfgEn.gridToday;
+    const needExport = !cfgEn.gridExportToday;
+    if (!needProd && !needGrid && !needExport) return null;
+
+    let prodId = null, gridId = null, exportId = null;
+
+    if ((needProd || needGrid || needExport) && this.be.energyPrefs) {
+      try {
+        const prefs = await this.be.energyPrefs();
+        const mapped = this.discovery.mapEnergyPrefs ? this.discovery.mapEnergyPrefs(prefs) : null;
+        if (mapped) {
+          if (needProd && mapped.production) prodId = mapped.production;
+          if (needGrid && mapped.gridImport) gridId = mapped.gridImport;
+          if (needExport && mapped.gridExport) exportId = mapped.gridExport;
+        }
+      } catch (e) {
+        // Normal and common: most installs have no Energy dashboard set up.
+      }
+    }
+
+    if (((needProd && !prodId) || (needGrid && !gridId) || (needExport && !exportId)) && this.discovery.discoverEnergyEntities) {
+      const guess = this.discovery.discoverEnergyEntities(this.state.st, this.registries);
+      if (guess) {
+        if (needProd && !prodId && guess.production) prodId = guess.production;
+        if (needGrid && !gridId && guess.gridImport) gridId = guess.gridImport;
+        if (needExport && !exportId && guess.gridExport) exportId = guess.gridExport;
+      }
+    }
+
+    if (!prodId && !gridId && !exportId) return null;
+
+    const fetchToday = async (id) => {
+      if (!id || !this.be.energyToday) return null;
+      try { return await this.be.energyToday(id); } catch (e) { return null; }
+    };
+    const [prodToday, gridToday, gridExportToday] = await Promise.all([
+      fetchToday(prodId), fetchToday(gridId), fetchToday(exportId)
+    ]);
+    return { prodToday, gridToday, gridExportToday };
   }
 
   _loadHistory() {
@@ -1083,7 +1164,14 @@ class Component extends DCLogic {
     const statusMap = { connected: [this.t('status.connected'), 'ok'], connecting: [this.t('status.connecting'), 'warn'], error: [this.t('status.error'), 'alert'] };
     const stt = statusMap[this.state.status] || ['—', 'warn'];
 
-    const hasEnergy = !!(this.cfg.energy && this.cfg.energy.production);
+    // See dash_neumo.html's copy of this block for the full explanation.
+    const en = this.cfg.energy || {};
+    const edDaily = this.energyDaily || {};
+    const prodT = en.productionToday ? this.n(en.productionToday) : (edDaily.prodToday != null ? edDaily.prodToday : null);
+    const gridT = en.gridToday ? this.n(en.gridToday) : (edDaily.gridToday != null ? edDaily.gridToday : null);
+    const exportT = en.gridExportToday ? this.n(en.gridExportToday) : (edDaily.gridExportToday != null ? edDaily.gridExportToday : null);
+    const consT = en.consumptionToday ? this.n(en.consumptionToday) : null;
+    const hasEnergy = !!en.production || prodT != null || gridT != null;
     const hasIrrigation = !!(this.cfg.irrigation && this.cfg.irrigation.zones && this.cfg.irrigation.zones.length);
     const hasVehicle = !!(this.cfg.vehicle);
 
@@ -1206,11 +1294,40 @@ class Component extends DCLogic {
       if (supp & b[0]) alarmBtns.push({ label: b[3], sel: alarmSt === b[1], run: () => this.call('alarm_control_panel', b[2], { entity_id: alarmId }) });
     });
 
-    const en = this.cfg.energy || {};
-    const prodT = hasEnergy ? this.n(en.productionToday) : null;
-    const gridT = hasEnergy ? this.n(en.gridToday) : null;
     const invRaw = hasEnergy && en.inverterStatus ? this.s(en.inverterStatus) : null;
     const invStatus = invRaw == null ? '—' : /standby/i.test(invRaw) ? this.t('energy.inverterStandby') : /normal|grid|on.?grid/i.test(invRaw) ? this.t('energy.inverterProducing') : invRaw;
+
+    // See dash_neumo.html's copy of this block for the full explanation.
+    let autoconsumo = null;
+    if (consT != null && gridT != null) autoconsumo = Math.max(0, consT - gridT);
+    else if (prodT != null && exportT != null) autoconsumo = Math.max(0, prodT - exportT);
+    const consumoCasa = consT != null ? consT : (autoconsumo != null && gridT != null ? autoconsumo + gridT : null);
+    const hasOuterRing = prodT != null && gridT != null && autoconsumo != null && consumoCasa != null && consumoCasa > 0;
+    const hasInnerRing = hasOuterRing && exportT != null && prodT > 0;
+    const hasNewRing = hasOuterRing;
+    const RING_GAP = 5, ORC = 540.4, IRC = 389.6;
+    const ringSeg = (value, shareTotal, C, offsetAcc) => {
+      const full = shareTotal > 0 ? C * (Math.max(0, value || 0) / shareTotal) : 0;
+      return { dasharray: Math.max(0, full - RING_GAP).toFixed(1) + ' ' + C.toFixed(1), dashoffset: (-offsetAcc).toFixed(1), full };
+    };
+    let outerSelf = null, outerGrid = null, innerSelf = null, innerFeed = null;
+    if (hasOuterRing) {
+      outerSelf = ringSeg(autoconsumo, consumoCasa, ORC, 0);
+      outerGrid = ringSeg(gridT, consumoCasa, ORC, outerSelf.full);
+    }
+    if (hasInnerRing) {
+      innerSelf = ringSeg(autoconsumo, prodT, IRC, 0);
+      innerFeed = ringSeg(exportT, prodT, IRC, innerSelf.full);
+    }
+    const ringLegend = [];
+    if (hasOuterRing) {
+      ringLegend.push({ color: 'var(--sage)', label: this.t('energy.selfConsumptionLabel'), val: this.dec(autoconsumo, 1) + ' kWh' });
+      ringLegend.push({ color: 'var(--acc)', label: this.strings.fromGrid, val: this.dec(gridT, 1) + ' kWh' });
+    }
+    if (hasInnerRing) {
+      ringLegend.push({ color: 'var(--feed)', label: this.t('energy.feedIn'), val: this.dec(exportT, 1) + ' kWh' });
+    }
+
     const nowCells = hasEnergy ? [
       { icon: '#i-solar', stroke: 'var(--acc)', label: this.t('production'), val: this.val(en.production, 2, ' kW') },
       { icon: '#i-house', stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.val(en.consumption, 2, ' kW') },
@@ -1333,8 +1450,16 @@ class Component extends DCLogic {
       wxHumidity: outH === null ? '—' : this.dec(outH, 0) + '%',
       wxDetailLine: this.t('wx.humidityDetailLine', { label: wxi[1], humidity: outH === null ? '—' : this.dec(outH, 0) + '%' }),
       nowCells, invStatus,
+      hasNewRing, hasInnerRing, hasOldRing: !hasNewRing,
+      outerSelfArc: hasOuterRing ? outerSelf.dasharray : '', outerSelfOffset: hasOuterRing ? outerSelf.dashoffset : '0',
+      outerGridArc: hasOuterRing ? outerGrid.dasharray : '', outerGridOffset: hasOuterRing ? outerGrid.dashoffset : '0',
+      innerSelfArc: hasInnerRing ? innerSelf.dasharray : '', innerSelfOffset: hasInnerRing ? innerSelf.dashoffset : '0',
+      innerFeedArc: hasInnerRing ? innerFeed.dasharray : '', innerFeedOffset: hasInnerRing ? innerFeed.dashoffset : '0',
+      consumoCasaBig: consumoCasa === null ? '—' : this.dec(consumoCasa, 1),
+      kwhConsumedLabel: this.t('energy.kwhConsumed'),
+      ringLegend,
       prodToday: prodT === null ? '—' : this.dec(prodT, 1),
-      gridToday: hasEnergy ? this.val(en.gridToday, 2, ' kWh') : '—',
+      gridToday: gridT === null ? '—' : this.dec(gridT, 2) + ' kWh',
       selfRatio: hasEnergy && en.production && en.consumption ? (() => {
         const p = this.n(en.production), c = this.n(en.consumption);
         return p === null || c === null || c === 0 ? '—' : this.dec(Math.min(100, (p / c) * 100), 0) + '%';

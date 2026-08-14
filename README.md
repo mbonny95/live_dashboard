@@ -68,7 +68,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.3.1
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.0
        embed_iframe: true
        trust_external_script: false
    ```
@@ -76,10 +76,12 @@ files live, which matters if you ever migrate from one to the other.
    `name:` has to be exactly `live_dashboard-panel` — the panel element
    registers itself under `<folder>-panel`, derived from the folder it's
    running from, and for a HACS install that folder is always
-   `live_dashboard`. Get this wrong and the panel loads as a blank/black
-   screen with nothing in the browser console.
+   `live_dashboard`. Get this wrong and the panel loads blank/black — but
+   within a couple seconds it now tells you exactly why, both as a
+   `console.error` and as a message on the page itself, naming the `name:`
+   it expected and the folder it actually found itself running from.
 
-   The `?v=1.3.1` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.4.0` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -130,6 +132,14 @@ files live, which matters if you ever migrate from one to the other.
 above are different between the two — update both lines, not just one, or
 the panel will keep loading the old copy (or nothing at all).
 
+**The side-by-side pattern above (`casa` / `casa2`) is manual-install only —
+it doesn't apply to HACS.** Under HACS the folder is always `live_dashboard`,
+so `name:` is always `live_dashboard-panel`, not something you pick per
+copy. Carrying the manual habit of choosing your own `name:` over to a HACS
+install is the single most common way to end up with `name:` not matching
+the folder the panel actually registers itself from — see the note under
+"Via HACS" above for what that looks like when it goes wrong.
+
 That's it — with no config file at all, the dashboard auto-discovers your
 areas and shows up to 8 of them as room tiles, plus any `person.*` entities
 and the first `weather.*` entity it finds. Alarm, house-mode scene switcher,
@@ -162,10 +172,21 @@ under `public/`; a copy under `config/www/` is outside this repo entirely).
 
 ## Enabling Energy
 
-`config.js`'s `energy` block asks for sensors by **role**, not by brand, so
-it works with anything that exposes these. `productionToday` /
-`gridToday` must be daily counters that reset at midnight — see
-TROUBLESHOOTING.md if the charts look wrong.
+**You may not need to configure anything here at all.** If you've already
+set up Home Assistant's own Energy dashboard (Settings -> Dashboards ->
+Energy) with your solar and grid sensors, this dashboard reads that mapping
+automatically and the Fotovoltaico ring just appears. With no Energy
+dashboard either, it makes a best-effort guess from any sensor exposing
+`device_class: energy` + `state_class: total_increasing` with a name that
+looks like production/import/export. `config.js`'s `energy` block, below,
+is only for overriding that or filling in what neither source finds —
+useful for the instant-power readouts and anything auto-discovery guesses
+wrong, but the ring itself often needs none of it.
+
+When you do fill it in, sensors are asked for by **role**, not by brand, so
+it works with anything that exposes these. `productionToday` / `gridToday`
+/ `gridExportToday` must be daily counters that reset at midnight — see
+TROUBLESHOOTING.md if the numbers look wrong.
 
 | Role | Huawei FusionSolar | SolarEdge | Fronius | Shelly EM | HA Energy Dashboard |
 | --- | --- | --- | --- | --- | --- |
@@ -175,6 +196,7 @@ TROUBLESHOOTING.md if the charts look wrong.
 | `gridExport` | `sensor.*_grid_injection_power` | same meter, export side | `sensor.meter_power` (negative) | same, inverted | your grid export sensor |
 | `productionToday` | `sensor.*_panel_production_today` | `sensor.solaredge_lifetime_energy` (diffed) | `sensor.energy_day` | Shelly EM has no daily counter — add a `utility_meter` helper | `sensor.solar_energy_today` |
 | `gridToday` | `sensor.*_grid_consumption_today` | via a `utility_meter` helper | `sensor.grid_energy_day` | via a `utility_meter` helper | `sensor.grid_import_today` |
+| `gridExportToday` | `sensor.*_grid_injection_today` | via a `utility_meter` helper | via a `utility_meter` helper | via a `utility_meter` helper | `sensor.grid_export_today` |
 | `battery` | `sensor.*_battery_soc` / `_power` | SolarEdge Battery integration | Fronius battery sensors | — | — |
 | `inverterStatus` | `sensor.*_inverter_inverter_status` | `sensor.solaredge_status` | `sensor.status_code` | — | — |
 
@@ -182,17 +204,42 @@ If your integration doesn't expose a daily counter for a given role, add a
 [`utility_meter` helper](https://www.home-assistant.io/integrations/utility_meter/)
 in Home Assistant that resets daily and point `config.js` at that instead.
 
-**The Fotovoltaico ring and its second row compare `productionToday` against
-`gridToday` — production vs. energy *imported from the grid*, not total
-house consumption.** If you're coming from a hand-built dashboard that paired
-production against a "house load today" counter instead, expect a smaller,
-different number here: grid import is only the part of consumption the grid
-covered, not everything the house used. The schema only asks for these two
-roles because they're the only daily counters guaranteed to exist across
-integrations — a "house consumption today" counter isn't universal the way
-FusionSolar's happens to be. If your integration does expose one and you
-want that pairing instead, there's no config field for it in this release —
-open an issue or adapt `dash_neumo*.html`'s energy section directly.
+`consumptionToday` (a *whole-house* daily consumption counter) has no row
+above because none of these integrations expose one directly — it's rare
+enough that it's opt-in only, for the odd install that happens to have one
+(e.g. from HA's own Energy dashboard "consumption" tracking, if you've
+wired that up separately). Set it if you have it; leave it unset otherwise
+and the ring derives self-consumption from production and grid export
+instead, which is what almost every install ends up doing.
+
+### Reading the ring
+
+The Fotovoltaico ring is two concentric rings, each summing to something
+real:
+
+- **Outer ring = today's house consumption** — autoconsumo (self-consumed
+  solar) + prelievo (taken from the grid).
+- **Inner ring = today's solar production** — the same autoconsumo +
+  immissione (fed back to the grid).
+
+Autoconsumo is the number shared by both, which is why it's drawn in the
+same color in each ring and both rings start aligned at the top. It's never
+a sensor on its own — it's derived as `production − gridExport` (or, if you
+set `consumptionToday`, as `consumption − gridImport`, which is preferred
+when available since it doesn't assume production and export update in
+perfect lockstep).
+
+**If you're used to the previous release:** earlier versions compared
+`productionToday` against `gridToday` directly in a single ring — production
+vs. grid import, two numbers that were never meant to add up to anything,
+so the percentage shown didn't correspond to a real quantity. This ring
+replaces that with two totals that each genuinely sum to 100% of
+themselves. Expect the numbers to look different, not just restyled.
+
+With only `production` and `gridImport` known (no export sensor), the ring
+falls back to the old single-ring view rather than showing a wrong or empty
+double ring — see TROUBLESHOOTING.md if you expect the new ring and don't
+see it.
 
 ## Enabling Irrigation
 

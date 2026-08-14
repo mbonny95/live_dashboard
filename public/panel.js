@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '1.3.1';
+const VERSION = '1.4.0';
 console.info(`[live_dashboard] v${VERSION}`);
 
 const FLUSH_MS = 600;
@@ -38,7 +38,8 @@ const CALL_TIMEOUT_MS = 15000;
 // own folder (the same `config/www/<folder>/` the user picked when they
 // copied panel.js there) solves both at once with no config to keep in
 // sync: `panel_custom.name` just has to be `<folder>-panel`.
-const PANEL_TAG = new URL('.', import.meta.url).pathname.split('/').filter(Boolean).pop() + '-panel';
+const FOLDER_NAME = new URL('.', import.meta.url).pathname.split('/').filter(Boolean).pop();
+const PANEL_TAG = FOLDER_NAME + '-panel';
 
 // Below this width the phone layout (dash_neumo_mobile.html) loads instead
 // of the desktop one. Decided once at mount from the host's innerWidth (not
@@ -193,6 +194,33 @@ async function fetchHistory(hass, entityId, points) {
   return fetchRawHistory(hass, entityId, Math.max(1, points || 48));
 }
 
+// Today's delta for an entity sourced from HA's own Energy dashboard prefs
+// or found by device_class/state_class auto-discovery (see discovery.js).
+// Unlike an explicit config.js `*Today` field — which is assumed to be a
+// sensor whose live *state* already equals today's running total, read
+// directly with no fetch at all — these are always the Energy dashboard's
+// own lifetime-cumulative statistics sensors. Reading their raw state would
+// return the lifetime total, not today's share of it, so this always goes
+// through the statistics `sum` diff (the same technique
+// fetchDailyCounterHistory falls back to), never the raw-last-sample path.
+async function fetchTodayStatsDelta(hass, entityId) {
+  const end = new Date();
+  const start = new Date(end.getTime() - 2 * 86400000);
+  const stats = await hass.callWS({
+    type: 'recorder/statistics_during_period',
+    start_time: start.toISOString(),
+    end_time: end.toISOString(),
+    statistic_ids: [entityId],
+    period: 'day',
+    types: ['sum']
+  });
+  const rows = (stats && stats[entityId]) || [];
+  if (rows.length < 2) return null;
+  const a = rows[rows.length - 2].sum;
+  const b = rows[rows.length - 1].sum;
+  return a != null && b != null ? Math.max(0, b - a) : null;
+}
+
 // --- element ----------------------------------------------------------------
 
 class CasaPanel extends HTMLElement {
@@ -208,6 +236,7 @@ class CasaPanel extends HTMLElement {
 
   connectedCallback() {
     if (this._iframe) return;
+    CasaPanel._connected = true;
     // ha-panel-custom appends this element with no explicit height on any
     // ancestor, so height:100% has nothing to resolve against, and 100vh
     // overshoots below the HA toolbar. Anchor the host to the panel area
@@ -344,6 +373,45 @@ class CasaPanel extends HTMLElement {
     }
   }
 
+  // Home Assistant's own Energy dashboard config (config/energy panel) —
+  // when the user has already mapped their solar/grid sensors there, the
+  // Fotovoltaico ring reuses that instead of asking for it again in
+  // config.js. Cached the same way as registries: it's a per-session config
+  // read, not live telemetry, and doesn't need re-fetching on every request.
+  async _handleEnergyPrefs(msg) {
+    if (!this._hass) {
+      this._reply(msg.id, 'casa:energy-prefs-result', { ok: false, error: 'hass not ready' });
+      return;
+    }
+    try {
+      if (!this._energyPrefsPromise) {
+        this._energyPrefsPromise = this._hass.callWS({ type: 'energy/get_prefs' });
+        this._energyPrefsPromise.catch(() => { this._energyPrefsPromise = null; });
+      }
+      const result = await this._energyPrefsPromise;
+      this._reply(msg.id, 'casa:energy-prefs-result', { ok: true, result });
+    } catch (e) {
+      // Not an error worth logging: this throws whenever the installation
+      // has no Energy dashboard configured at all, which is a normal,
+      // common case (falls through to auto-discovery, then to no ring).
+      this._energyPrefsPromise = null;
+      this._reply(msg.id, 'casa:energy-prefs-result', { ok: false, error: (e && e.message) || String(e) });
+    }
+  }
+
+  async _handleEnergyToday(msg) {
+    if (!this._hass) {
+      this._reply(msg.id, 'casa:energy-today-result', { ok: false, error: 'hass not ready' });
+      return;
+    }
+    try {
+      const result = await fetchTodayStatsDelta(this._hass, msg.entity_id);
+      this._reply(msg.id, 'casa:energy-today-result', { ok: true, result });
+    } catch (e) {
+      this._reply(msg.id, 'casa:energy-today-result', { ok: false, error: (e && e.message) || String(e) });
+    }
+  }
+
   _onMessage(e) {
     if (!this._iframe || e.source !== this._iframe.contentWindow) return;
     const d = e.data;
@@ -357,8 +425,36 @@ class CasaPanel extends HTMLElement {
       this._handleHistory(d);
     } else if (d.type === 'casa:registries') {
       this._handleRegistries(d);
+    } else if (d.type === 'casa:energy-prefs') {
+      this._handleEnergyPrefs(d);
+    } else if (d.type === 'casa:energy-today') {
+      this._handleEnergyToday(d);
     }
   }
 }
 
 customElements.define(PANEL_TAG, CasaPanel);
+
+// Self-diagnosis for the single most common install mistake: `name:` in
+// panel_custom not matching PANEL_TAG. When that happens, Home Assistant
+// creates a DOM element under a tag nothing here has defined — connected-
+// Callback above never runs at all, so nothing inside the class could ever
+// report the problem. This has to live here instead: module scope, checked
+// against a flag connectedCallback sets on success, on a timer. Loading
+// module_url itself doesn't depend on name: matching (that's a separate
+// step HA does after), so this code always runs even when the mismatch is
+// exactly what's wrong — turning a blank/black panel with an empty console
+// into a message that names the fix.
+setTimeout(() => {
+  if (CasaPanel._connected) return;
+  const msg = `[live_dashboard] nessun <${PANEL_TAG}> istanziato dopo 2s — ` +
+    `verifica che name: in panel_custom sia esattamente "${PANEL_TAG}" ` +
+    `(cartella rilevata: ${FOLDER_NAME})`;
+  console.error(msg);
+  try {
+    const banner = document.createElement('div');
+    banner.textContent = msg;
+    banner.style.cssText = 'position:fixed;top:16px;left:16px;z-index:2147483647;max-width:min(520px,calc(100vw - 32px));background:#a83e2b;color:#fff;font:600 13px/1.5 system-ui,sans-serif;padding:14px 16px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.35);white-space:pre-line';
+    document.body.appendChild(banner);
+  } catch (e) { /* document.body not ready — the console.error above still ran */ }
+}, 2000);
