@@ -3,6 +3,25 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.3] - 2026-08-14
+
+### Fixed
+
+- **On installs with a single grid meter, the Energy ring showed
+  production but never prelievo (grid import) or immissione (grid
+  export), even though Home Assistant's own Energy dashboard had both.**
+  Home Assistant reports a grid source's import/export sensors two
+  different ways depending on the install: some list them under
+  `flow_from`/`flow_to` (handled since 1.4.1), others put them directly
+  on the source — the shape this project hadn't handled at all until
+  now. Both are read equally now, and if an install somehow reports a
+  sensor both ways, it's only counted once rather than doubled.
+- If a future install reports its grid or solar source in a shape this
+  page still doesn't recognize, the diagnostic log (`[live_dashboard]
+  energia`, printed on every load) now also lists the field names it
+  did find on that source — enough to tell at a glance what's different,
+  instead of just "not found".
+
 ## [1.4.2] - 2026-08-14
 
 ### Fixed

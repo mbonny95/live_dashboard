@@ -1168,11 +1168,13 @@ class Component extends DCLogic {
       gridExport: needExport ? null : 'config'
     };
     let prodIds = [], gridIds = [], exportIds = [];
+    let rawSources = [];
 
     if (needProd || needGrid || needExport) {
       if (this.be.energyPrefs) {
         try {
           const prefs = await this.be.energyPrefs();
+          if (prefs && Array.isArray(prefs.energy_sources)) rawSources = prefs.energy_sources;
           const mapped = this.discovery.mapEnergyPrefs ? this.discovery.mapEnergyPrefs(prefs) : null;
           if (mapped) {
             if (needProd && mapped.production.length) { prodIds = mapped.production; source.production = 'ha-prefs'; }
@@ -1219,17 +1221,34 @@ class Component extends DCLogic {
     // One line per role naming exactly where it came from and what it
     // resolved to — a ring showing a wrong or missing number is otherwise
     // indistinguishable from one that couldn't find its sensors at all.
+    // When a role stays unresolved, "nessuna fonte trovata" alone doesn't
+    // tell the user *why* — so if energy/get_prefs did return a source of
+    // the right type but this code didn't recognize its shape, list the
+    // keys actually present on it. Lets an install with a schema we don't
+    // know about yet self-diagnose instead of filing a silent issue, same
+    // spirit as the panel_custom tag-mismatch guard.
+    const keysFor = (type) => {
+      const matches = rawSources.filter((s) => s && s.type === type);
+      if (!matches.length) return null;
+      const keys = new Set();
+      matches.forEach((s) => Object.keys(s).forEach((k) => keys.add(k)));
+      return Array.from(keys).join(', ');
+    };
     const fmtVal = (v) => v == null ? 'non risolto' : this.dec(v, 2) + ' kWh';
-    const line = (role, src, cfgId, ids, val) => {
+    const line = (role, src, cfgId, ids, val, diagType) => {
       if (src === 'config') return '  ' + role + ': config.js → ' + cfgId + ' (valore letto dal vivo)';
-      if (!src) return '  ' + role + ': nessuna fonte trovata';
+      if (!src) {
+        const keys = keysFor(diagType);
+        return '  ' + role + ': nessuna fonte trovata' +
+          (keys ? '\n    sorgente ' + diagType + ' trovata, chiavi: ' + keys : '');
+      }
       return '  ' + role + ': ' + src + ' → ' + ids.join(' + ') + ' → ' + fmtVal(val);
     };
     console.info(
       '[live_dashboard] energia\n' +
-      line('produzione', source.production, cfgEn.productionToday, prodIds, prodToday) + '\n' +
-      line('prelievo', source.gridImport, cfgEn.gridToday, gridIds, gridToday) + '\n' +
-      line('immissione', source.gridExport, cfgEn.gridExportToday, exportIds, gridExportToday)
+      line('produzione', source.production, cfgEn.productionToday, prodIds, prodToday, 'solar') + '\n' +
+      line('prelievo', source.gridImport, cfgEn.gridToday, gridIds, gridToday, 'grid') + '\n' +
+      line('immissione', source.gridExport, cfgEn.gridExportToday, exportIds, gridExportToday, 'grid')
     );
 
     return { prodToday, gridToday, gridExportToday };

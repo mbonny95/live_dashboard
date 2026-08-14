@@ -266,12 +266,23 @@ function discoverCameras(states, registries, config) {
 //                               (energy sensors aren't tied to an area the
 //                               way a room's light is).
 
-// Shape of a websocket `energy/get_prefs` response (relevant parts only):
+// Shape of a websocket `energy/get_prefs` response (relevant parts only) —
+// two real, both-observed variants for the grid source, not one:
 //   { energy_sources: [
 //       { type: 'solar', stat_energy_from: 'sensor.x' },
+//       // flat grid (single meter, no flow_from/flow_to array — confirmed
+//       // on a real install; the nested form below was the only one this
+//       // originally handled, which is why flat installs resolved solar
+//       // fine but never found prelievo/immissione at all):
+//       { type: 'grid', stat_energy_from: 'sensor.y', stat_energy_to: 'sensor.z' },
+//       // nested grid (the array form, also real — multiple contracts):
 //       { type: 'grid', flow_from: [{ stat_energy_from: 'sensor.y' }],
 //                        flow_to:   [{ stat_energy_to: 'sensor.z' }] }
 //   ] }
+// Both forms are accepted unconditionally, for solar too in case a nested
+// variant ever shows up there — and if an install genuinely has both on the
+// same source object, every id is still counted only once (deduped by
+// statistic_id) rather than double-summed.
 // Multiple solar arrays and multiple grid contracts are both real, common
 // configurations (a second array, a second meter/tariff) — each one is its
 // own genuine contribution to the role's total, so every id found is kept
@@ -285,12 +296,19 @@ function mapEnergyPrefs(prefs) {
   const production = [];
   const gridImport = [];
   const gridExport = [];
+  const seenProd = new Set();
+  const seenImport = new Set();
+  const seenExport = new Set();
+  const add = (arr, seen, id) => { if (id && !seen.has(id)) { seen.add(id); arr.push(id); } };
   for (const src of prefs.energy_sources) {
     if (src.type === 'solar') {
-      if (src.stat_energy_from) production.push(src.stat_energy_from);
+      add(production, seenProd, src.stat_energy_from);
+      for (const f of src.flow_from || []) add(production, seenProd, f.stat_energy_from);
     } else if (src.type === 'grid') {
-      for (const f of src.flow_from || []) if (f.stat_energy_from) gridImport.push(f.stat_energy_from);
-      for (const f of src.flow_to || []) if (f.stat_energy_to) gridExport.push(f.stat_energy_to);
+      add(gridImport, seenImport, src.stat_energy_from);
+      for (const f of src.flow_from || []) add(gridImport, seenImport, f.stat_energy_from);
+      add(gridExport, seenExport, src.stat_energy_to);
+      for (const f of src.flow_to || []) add(gridExport, seenExport, f.stat_energy_to);
     }
   }
   if (!production.length && !gridImport.length && !gridExport.length) return null;
