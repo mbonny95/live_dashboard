@@ -3,6 +3,23 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.2] - 2026-08-14
+
+### Fixed
+
+- An entity already wired into a specialized module — an appliance's
+  `powerSwitch`, an irrigation zone's `valve`, the weather-station sensors
+  used for ET0 — could also show up as a plain generic control or room
+  "environment" pill if it happened to be assigned to an area, duplicating
+  it with unrelated context. Found on a real installation: a weather
+  station's outdoor temperature/humidity (already driving irrigation math)
+  was cluttering its area's room card as a generic sensor reading, right
+  alongside genuinely unrelated numbers like an inverter's internal
+  temperature. `discoverRooms()` now excludes any entity referenced
+  anywhere in `config.js`, not just appliance switches, from the generic
+  per-room lists — one config-schema-agnostic exclusion instead of a
+  hardcoded field list to keep in sync as modules grow.
+
 ## [1.1.1] - 2026-08-14
 
 ### Fixed

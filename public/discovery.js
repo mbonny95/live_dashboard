@@ -56,6 +56,24 @@ function friendlyName(states, entityId, fallback) {
   return (e && e.attributes && e.attributes.friendly_name) || fallback || entityId;
 }
 
+// Entity IDs look like `domain.object_id` (lowercase, dot-separated) — text
+// values elsewhere in config.js (labels, icons like "mdi:sofa", area names)
+// never match this shape, so walking the whole config tree for strings that
+// do is a safe, config-schema-agnostic way to find every entity a specialized
+// module already claims, without hardcoding a field list here that has to be
+// kept in sync as new modules (or fields) are added.
+const ENTITY_ID_RE = /^[a-z_]+\.[a-z0-9_]+$/;
+
+function collectConfiguredEntities(config) {
+  const ids = new Set();
+  (function walk(node) {
+    if (typeof node === 'string') { if (ENTITY_ID_RE.test(node)) ids.add(node); return; }
+    if (Array.isArray(node)) { node.forEach(walk); return; }
+    if (node && typeof node === 'object') { Object.values(node).forEach(walk); }
+  })(config);
+  return ids;
+}
+
 // --- rooms -------------------------------------------------------------
 
 function discoverRooms(states, registries, config) {
@@ -67,11 +85,15 @@ function discoverRooms(states, registries, config) {
 
   const deviceById = new Map(devices.map((d) => [d.id, d]));
   const areaById = new Map(areas.map((a) => [a.area_id, a]));
-  // A switch already represented as an appliance's powerSwitch (see
-  // applianceState()/applianceItems() in dash_neumo*.html) shouldn't also
-  // show up as a plain "Interruttori" toggle — it'd be the same physical
-  // control shown twice, once generic and once with real cycle status.
-  const excludeSwitches = new Set(((config && config.appliances) || []).map((a) => a.powerSwitch).filter(Boolean));
+  // Any entity already wired into a specialized module (an appliance's
+  // powerSwitch, an irrigation zone's valve, the weather-station sensors
+  // used for ET0, ...) shouldn't also show up as a plain generic control or
+  // room "environment" pill — same physical thing shown twice, once generic
+  // and once with real purpose-built context. Found via a real installation:
+  // a weather station's outdoor temperature/humidity, already used for
+  // irrigation math, was also cluttering its area's room card as a generic
+  // sensor pill.
+  const claimedEntities = collectConfiguredEntities(config);
 
   const byArea = new Map(areas.map((a) => [a.area_id, {
     id: a.area_id, name: a.name,
@@ -89,8 +111,10 @@ function discoverRooms(states, registries, config) {
     const dom = domainOf(ent.entity_id);
     const name = friendlyName(states, ent.entity_id);
 
+    if (claimedEntities.has(ent.entity_id)) continue;
+
     if (dom === 'light') room.lights.push(ent.entity_id);
-    else if (dom === 'switch') { if (!excludeSwitches.has(ent.entity_id)) room.switches.push([ent.entity_id, name, '#i-plug']); }
+    else if (dom === 'switch') room.switches.push([ent.entity_id, name, '#i-plug']);
     else if (dom === 'cover') room.covers.push(ent.entity_id);
     else if (dom === 'media_player') room.media.push(ent.entity_id);
     else if (dom === 'climate') room.climate.push([ent.entity_id, name, '#i-therm']);
