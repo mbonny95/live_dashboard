@@ -10,9 +10,9 @@
     "semantic_hash": "b293caf878454007a41b77770bd1ca17"
   },
   "public/ha-backend-demo.js": {
-    "mtime": 1786729321.4776645,
-    "ast_hash": "66e57446f1802fac9682aeeb56aee33a",
-    "semantic_hash": "66e57446f1802fac9682aeeb56aee33a"
+    "mtime": 1786782344.7095091,
+    "ast_hash": "09368b26f06df70fadae764c8f795c31",
+    "semantic_hash": "09368b26f06df70fadae764c8f795c31"
   },
   "public/ha-backend-panel.js": {
     "mtime": 1786729297.4590771,
@@ -30,24 +30,24 @@
     "semantic_hash": "f085ec6bdcc047587c9e8fda616fed43"
   },
   "public/i18n/en.js": {
-    "mtime": 1786729380.6703048,
-    "ast_hash": "ed2e472cf510ca1a16abb888951405f3",
-    "semantic_hash": "ed2e472cf510ca1a16abb888951405f3"
+    "mtime": 1786784271.6938925,
+    "ast_hash": "b47a5f5c0324bf24caaebb93fbe05c4b",
+    "semantic_hash": "b47a5f5c0324bf24caaebb93fbe05c4b"
   },
   "public/i18n/it.js": {
-    "mtime": 1786729376.6090786,
-    "ast_hash": "70a26f8056c6bfd0c25e0730f20486ab",
-    "semantic_hash": "70a26f8056c6bfd0c25e0730f20486ab"
+    "mtime": 1786784267.0305176,
+    "ast_hash": "cb9e6f88a6274fc14c4272b6d48972dd",
+    "semantic_hash": "cb9e6f88a6274fc14c4272b6d48972dd"
   },
   "public/live_dashboard_config.example.js": {
-    "mtime": 1786729852.4218981,
-    "ast_hash": "1bbc37e2d4d16664258f5f6268903d78",
-    "semantic_hash": "1bbc37e2d4d16664258f5f6268903d78"
+    "mtime": 1786782289.7470264,
+    "ast_hash": "578f8cb005ab882844c1cd7b9fd93148",
+    "semantic_hash": "578f8cb005ab882844c1cd7b9fd93148"
   },
   "public/panel.js": {
-    "mtime": 1786735273.552762,
-    "ast_hash": "97d36939656141691ba137c5548e241d",
-    "semantic_hash": "97d36939656141691ba137c5548e241d"
+    "mtime": 1786784904.3885024,
+    "ast_hash": "b8983be61cd269edcf650b9ecb19ba2e",
+    "semantic_hash": "b8983be61cd269edcf650b9ecb19ba2e"
   },
   "public/support.js": {
     "mtime": 1786560396.1043806,
@@ -65,19 +65,19 @@
     "semantic_hash": "6719db3df8abacac7cc567ed9e6fe6e8"
   },
   "CHANGELOG.md": {
-    "mtime": 1786735284.6106963,
-    "ast_hash": "ea42ef00e0ce43fba53383b8b4b98912",
-    "semantic_hash": "ea42ef00e0ce43fba53383b8b4b98912"
+    "mtime": 1786784924.4337935,
+    "ast_hash": "76b2e8ba6fd0d849c53af7a77fc12eb8",
+    "semantic_hash": "76b2e8ba6fd0d849c53af7a77fc12eb8"
   },
   "README.it.md": {
-    "mtime": 1786735273.567151,
-    "ast_hash": "0230e46b39c2c481c3fa425f3d6f6420",
-    "semantic_hash": "0230e46b39c2c481c3fa425f3d6f6420"
+    "mtime": 1786784914.9478843,
+    "ast_hash": "01650434065c640a8d9e958460ec9376",
+    "semantic_hash": "01650434065c640a8d9e958460ec9376"
   },
   "README.md": {
-    "mtime": 1786735273.56348,
-    "ast_hash": "4ea666827a83e99c10f69d52ee705191",
-    "semantic_hash": "4ea666827a83e99c10f69d52ee705191"
+    "mtime": 1786784911.456518,
+    "ast_hash": "25a4f750f82212911cc978134569f2f9",
+    "semantic_hash": "25a4f750f82212911cc978134569f2f9"
   },
   "TROUBLESHOOTING.md": {
     "mtime": 1786721798.5146346,
@@ -85,14 +85,14 @@
     "semantic_hash": "b6563e06de984c12def3c790c61b31c3"
   },
   "public/dash_neumo.html": {
-    "mtime": 1786735094.073849,
-    "ast_hash": "3b0bd5d5bd31218aefa9c22d7b90e6d3",
-    "semantic_hash": "3b0bd5d5bd31218aefa9c22d7b90e6d3"
+    "mtime": 1786784661.4857914,
+    "ast_hash": "8a7f35187dcfbd644205ed00d14fe93c",
+    "semantic_hash": "8a7f35187dcfbd644205ed00d14fe93c"
   },
   "public/dash_neumo_mobile.html": {
-    "mtime": 1786735108.8826559,
-    "ast_hash": "e33be36e2fb4c3a2b524523e28b06772",
-    "semantic_hash": "e33be36e2fb4c3a2b524523e28b06772"
+    "mtime": 1786784419.89191,
+    "ast_hash": "e4dd84543fd084244865ba9bee2b1d4c",
+    "semantic_hash": "e4dd84543fd084244865ba9bee2b1d4c"
   },
   "assets/icon-256.png": {
     "mtime": 1786733001.0,
@@ -115,9 +115,9 @@
     "semantic_hash": "4660bcab367746497c94f606ff5ba98c"
   },
   "docs/screenshots/casa.png": {
-    "mtime": 1786570339.9507978,
-    "ast_hash": "3a6ceb4f8c79aa9a672fbc131cecedb9",
-    "semantic_hash": "3a6ceb4f8c79aa9a672fbc131cecedb9"
+    "mtime": 1786784983.071492,
+    "ast_hash": "2dcac6c36a583ecbecd6ab57d162d9f5",
+    "semantic_hash": "2dcac6c36a583ecbecd6ab57d162d9f5"
   },
   "docs/screenshots/energia.png": {
     "mtime": 1786566805.9724855,
@@ -133,5 +133,10 @@
     "mtime": 1786566805.975466,
     "ast_hash": "a20634e6f1b1089956f23649806dee17",
     "semantic_hash": "a20634e6f1b1089956f23649806dee17"
+  },
+  "CLAUDE.md": {
+    "mtime": 1786785425.1373518,
+    "ast_hash": "7000f357a90ad115caad60c938980906",
+    "semantic_hash": "7000f357a90ad115caad60c938980906"
   }
 }

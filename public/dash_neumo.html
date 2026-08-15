@@ -382,7 +382,16 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <div style="font:600 9.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">kWh</div>
 </div>
 </div>
-<div style="font:600 12px/1.3 var(--font-body);color:var(--accT)">{{ ringCompactSummary }}</div>
+<div style="display:grid;grid-template-columns:{{ ringLegendCols }};gap:7px">
+<sc-for list="{{ ringLegend }}" as="l" hint-placeholder-count="3">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:15px;padding:9px 8px;display:flex;flex-direction:column;gap:5px;align-items:center">
+<span style="width:7px;height:7px;border-radius:999px;background:{{ l.color }}"></span>
+<span style="font-family:var(--font-heading);font-size:15px;line-height:1">{{ l.num }}</span>
+<span style="font:500 10.5px/1.2 var(--font-body);color:var(--tx2);text-align:center">{{ l.short }}</span>
+</div>
+</sc-for>
+</div>
+<div style="font:500 11px/1.35 var(--font-body);color:var(--tx2);text-align:center;margin-top:9px">{{ ringCompactSummary }}</div>
 </sc-if>
 <sc-if value="{{ hasOldRing }}" hint-placeholder-val="{{ true }}">
 <div style="position:relative;width:124px;height:124px;margin:0 auto 11px;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center;flex:none">
@@ -602,13 +611,19 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <div style="flex:1;min-width:12px"></div>
 <div style="display:flex;align-items:center;gap:16px;margin-bottom:5px">
 <div style="display:flex;align-items:center;gap:7px">
-<span style="width:10px;height:10px;border-radius:3px;background:var(--acc)"></span>
+<span style="width:10px;height:10px;border-radius:3px;background:var(--sage)"></span>
 <span style="font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ S.produced }}</span>
 </div>
 <div style="display:flex;align-items:center;gap:7px">
-<span style="width:10px;height:10px;border-radius:3px;background:var(--sage)"></span>
+<span style="width:10px;height:10px;border-radius:3px;background:var(--acc)"></span>
 <span title="{{ S.fromGridHint }}" style="font:500 11.5px/1 var(--font-body);color:var(--tx2);text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px">{{ S.fromGrid }}</span>
 </div>
+<sc-if value="{{ hasExportBars }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:7px">
+<span style="width:10px;height:10px;border-radius:3px;background:var(--feed)"></span>
+<span style="font:500 11.5px/1 var(--font-body);color:var(--tx2)">{{ feedInLabel }}</span>
+</div>
+</sc-if>
 </div>
 <div style="display:flex;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px;margin-bottom:4px">
 <sc-for list="{{ ranges }}" as="g" hint-placeholder-count="3">
@@ -630,8 +645,11 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <div title="{{ b.title }}" style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:8px;justify-content:flex-end">
 <div style="position:relative;width:100%;flex:1;min-height:0">
 <div style="position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:3px">
-<div style="width:42%;max-width:17px;border-radius:6px 6px 3px 3px;background:var(--acc);box-shadow:2px 2px 5px var(--nu-d);height:{{ b.hp }}"></div>
-<div style="width:42%;max-width:17px;border-radius:6px 6px 3px 3px;background:var(--sage);box-shadow:2px 2px 5px var(--nu-d);height:{{ b.hg }}"></div>
+<div style="width:{{ barWidthPct }};max-width:{{ barMaxWidth }};border-radius:6px 6px 3px 3px;background:var(--sage);box-shadow:2px 2px 5px var(--nu-d);height:{{ b.hp }}"></div>
+<div style="width:{{ barWidthPct }};max-width:{{ barMaxWidth }};border-radius:6px 6px 3px 3px;background:var(--acc);box-shadow:2px 2px 5px var(--nu-d);height:{{ b.hg }}"></div>
+<sc-if value="{{ hasExportBars }}" hint-placeholder-val="{{ false }}">
+<div style="width:{{ barWidthPct }};max-width:{{ barMaxWidth }};border-radius:6px 6px 3px 3px;background:var(--feed);box-shadow:2px 2px 5px var(--nu-d);height:{{ b.he }}"></div>
+</sc-if>
 </div>
 </div>
 <span style="font:500 10px/1 var(--font-body);color:var(--tx2);white-space:nowrap;flex:none">{{ b.label }}</span>
@@ -1263,6 +1281,7 @@ class Component extends DCLogic {
     const en = this.cfg.energy;
     if (en && en.productionToday) jobs.push(this.be.history(en.productionToday, 30).then((v) => ['prod', v]));
     if (en && en.gridToday) jobs.push(this.be.history(en.gridToday, 30).then((v) => ['grid', v]));
+    if (en && en.gridExportToday) jobs.push(this.be.history(en.gridExportToday, 30).then((v) => ['exp', v]));
     Promise.all(jobs).then((results) => {
       const hist = {};
       results.forEach((pair) => { hist[pair[0]] = pair[1]; });
@@ -1669,12 +1688,17 @@ class Component extends DCLogic {
     }
     const ringLegend = [];
     if (hasOuterRing) {
-      ringLegend.push({ color: 'var(--sage)', label: this.t('energy.selfConsumptionLabel'), val: this.dec(autoconsumo, 1) + ' kWh' });
-      ringLegend.push({ color: 'var(--acc)', label: this.strings.fromGrid, val: this.dec(gridT, 1) + ' kWh' });
+      ringLegend.push({ color: 'var(--sage)', label: this.t('energy.selfConsumptionLabel'), val: this.dec(autoconsumo, 1) + ' kWh', num: this.dec(autoconsumo, 1), short: this.t('energy.selfShort') });
+      ringLegend.push({ color: 'var(--acc)', label: this.strings.fromGrid, val: this.dec(gridT, 1) + ' kWh', num: this.dec(gridT, 1), short: this.t('energy.gridShort') });
     }
     if (hasInnerRing) {
-      ringLegend.push({ color: 'var(--feed)', label: this.t('energy.feedIn'), val: this.dec(exportT, 1) + ' kWh' });
+      ringLegend.push({ color: 'var(--feed)', label: this.t('energy.feedIn'), val: this.dec(exportT, 1) + ' kWh', num: this.dec(exportT, 1), short: this.t('energy.feedShort') });
     }
+    // Compact card (energyCompact, camera install): the 3-tile grid below
+    // the ring reuses this same list, so the column count always matches
+    // however many entries are actually available (2 without an export
+    // sensor, per the "single ring fallback" degradation).
+    const ringLegendCols = 'repeat(' + ringLegend.length + ', 1fr)';
 
     const nowCells = hasEnergy ? [
       { icon: '#i-solar', iconRef: this._bindAttr('href', '#i-solar'), stroke: 'var(--acc)', label: this.t('energy.productionNow'), val: this.val(en.production, 2, ' kW') },
@@ -1687,7 +1711,12 @@ class Component extends DCLogic {
     const ranges = [7, 14, 30].map((v) => ({ label: this.t('energy.days', { n: v }), sel: R === v, set: () => this.setState({ range: v }) }));
     const hp = this.state.hist && this.state.hist.prod ? this.state.hist.prod.slice(-R) : [];
     const hg = this.state.hist && this.state.hist.grid ? this.state.hist.grid.slice(-R) : [];
-    const bMax = Math.max.apply(null, [1].concat(hp, hg));
+    // Absent (not a zero-filled array) when the install has no export
+    // sensor mapped, or the sensor is mapped but its history came back
+    // empty — either way there's nothing real to draw a third bar from.
+    const he = this.state.hist && this.state.hist.exp ? this.state.hist.exp.slice(-R) : [];
+    const hasExportBars = he.length > 0;
+    const bMax = Math.max.apply(null, [1].concat(hp, hg, hasExportBars ? he : []));
     // Nice round axis ceiling (1/2/5 × a power of ten) instead of the raw
     // max, so the y-axis reads in sensible steps — same idea as any charting
     // library's default tick picker. Needed on touch devices, which have no
@@ -1705,25 +1734,39 @@ class Component extends DCLogic {
     for (let i = axisTickCount; i >= 0; i--) {
       axisTicks.push({ val: this.dec(axisStep * i, axisDecimals), pct: ((i / axisTickCount) * 100).toFixed(2) + '%' });
     }
+    // 3 bars don't fit at the 2-bar width — see the markup's width/max-width
+    // styles, computed once here from the same hasExportBars flag driving
+    // the data. Two separate values, not one combined "width:x;max-width:y"
+    // string: the template compiler parses a style attribute's static
+    // "key:" text at compile time, so a {{ }} token has to sit right after
+    // a literal key it can see in the source — a token whose *substituted*
+    // value itself contains the "key:" breaks that parse silently.
+    const barWidthPct = hasExportBars ? '30%' : '42%';
+    const barMaxWidth = hasExportBars ? '13px' : '17px';
     const step = Math.ceil(hp.length / 7) || 1;
     const bars = hp.map((v, i) => {
       const g = hg[i] || 0;
+      const e = hasExportBars ? (he[i] || 0) : 0;
       const dt = new Date(this.state.now - (hp.length - 1 - i) * 86400000);
       return {
         hp: Math.max(3, (v / axisMax) * 100).toFixed(1) + '%',
         hg: Math.max(3, (g / axisMax) * 100).toFixed(1) + '%',
+        he: Math.max(3, (e / axisMax) * 100).toFixed(1) + '%',
         label: (hp.length <= 14 || i % step === 0) ? dt.getDate() + '/' + (dt.getMonth() + 1) : '',
         title: dt.toLocaleDateString(this.lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'long' }) + ' · ' + this.t('energy.producedShort') + ' ' + this.dec(v, 2) + ' kWh · ' + this.t('energy.fromGridShort') + ' ' + this.dec(g, 2) + ' kWh'
+          + (hasExportBars ? ' · ' + this.t('energy.feedIn') + ' ' + this.dec(e, 2) + ' kWh' : '')
       };
     });
     const totP = hp.reduce((a, b) => a + b, 0);
     const totG = hg.reduce((a, b) => a + b, 0);
+    const totE = he.reduce((a, b) => a + b, 0);
     const periodCells = hasEnergy ? [
       { label: this.t('energy.producedPeriod'), val: this.dec(totP, 1) + ' kWh' },
       { label: this.t('energy.takenFromGrid'), val: this.dec(totG, 1) + ' kWh' },
+    ].concat(hasExportBars ? [{ label: this.t('energy.feedIn'), val: this.dec(totE, 1) + ' kWh' }] : []).concat([
       { label: this.t('energy.gridCost'), val: price === null ? '—' : this.dec(totG * price, 2) + ' €' },
       { label: this.t('energy.avgPerDay'), val: hp.length ? this.dec(totP / hp.length, 2) + ' kWh' : '—' }
-    ] : [];
+    ]) : [];
 
     // irrigation (Fase 3 — zone-by-zone, degrades gracefully: only moisture +
     // valve are required, everything else is extra if configured) ----------
@@ -1930,10 +1973,9 @@ class Component extends DCLogic {
       innerFeedArc: hasInnerRing ? innerFeed.dasharray : '', innerFeedOffset: hasInnerRing ? innerFeed.dashoffset : '0', innerFeedCap: hasInnerRing ? innerFeed.cap : 'butt',
       consumoCasaBig: consumoCasa === null ? '—' : this.dec(consumoCasa, 1),
       kwhConsumedLabel: this.t('energy.kwhConsumed'),
-      ringLegend,
+      ringLegend, ringLegendCols,
       ringCompactSummary: hasOuterRing
-        ? this.t('energy.selfConsumption', { pct: consumoCasa ? this.dec(Math.min(100, (autoconsumo / consumoCasa) * 100), 0) + '%' : '—' })
-          + ' · ' + this.dec(gridT, 1) + ' kWh ' + this.t('energy.fromGridShort')
+        ? this.t('energy.compactSummary', { pct: consumoCasa ? this.dec(Math.min(100, (autoconsumo / consumoCasa) * 100), 0) + '%' : '—' })
         : '',
       selfConsumptionShort: this.t('energy.selfConsumptionShort'), fromGridShort: this.t('energy.fromGridShort'),
       ringProd: arc(prodT, C1), ringLoad: arc(gridT, C2),
@@ -1949,7 +1991,8 @@ class Component extends DCLogic {
       }),
       invStatus,
       goEnergia: () => this.setState({ tab: 'energia' }),
-      nowCells, ranges, bars, axisTicks, periodCells,
+      nowCells, ranges, bars, axisTicks, periodCells, hasExportBars, barWidthPct, barMaxWidth,
+      feedInLabel: this.t('energy.feedIn'),
       prodPeriod: this.dec(totP, 1) + ' kWh',
       periodNote: this.t('energy.periodNote', { n: R, grid: this.dec(totG, 1) }),
       hasIrrigation, irrSummary: hasIrrigation ? (this.cfg.irrigation.summary ? this.s(this.cfg.irrigation.summary) : this.t('irrigation.defaultSummary', { n: zones.length })) : '',

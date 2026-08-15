@@ -1,141 +1,137 @@
 # Graph Report - .  (2026-08-15)
 
 ## Corpus Check
-- 27 files · ~77,751 words
+- 28 files · ~79,033 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 226 nodes · 332 edges · 35 communities (20 shown, 15 thin omitted)
-- Extraction: 89% EXTRACTED · 11% INFERRED · 0% AMBIGUOUS · INFERRED: 38 edges (avg confidence: 0.87)
-- Token cost: 322,890 input · 0 output
+- 298 nodes · 453 edges · 33 communities (20 shown, 13 thin omitted)
+- Extraction: 86% EXTRACTED · 14% INFERRED · 0% AMBIGUOUS · INFERRED: 62 edges (avg confidence: 0.88)
+- Token cost: 305,848 input · 0 output
 
 ## Community Hubs (Navigation)
 - DCLogic Component Runtime
+- Changelog: Early Fixes & Modules
+- Changelog: v1.3-1.4.5 Presentation Fixes
 - Home Assistant Panel Bridge
-- Dashboard Boot & Cache-Bust
+- Changelog: Energy Auto-Discovery & Double-Ring
 - Entity Auto-Discovery
-- Install & Setup Docs
-- DC Template Parser
-- Casa Dashboard View
+- Energy Chart & Ring Data Pipeline
+- Casa Dashboard Screenshot
+- Early Release Modules & i18n
 - Mobile Dashboard View
 - Demo Backend Mock
 - Energy Prefs Test Suite
-- Fotovoltaico Double-Ring Design
-- Cameras Module
 - Release Packaging Workflow
 - README Header Banner
-- Known Limits & Early Release
 - Energia Dashboard View
 - Irrigazione Dashboard View
 - Live HA Backend Bridge
+- Panel HA Backend Bridge
 - App Icon (256px)
-- Irrigation Timed Buttons
-- Appliances Module
-- Weather Station Module
-- Irrigation Valve Runner
 - Release Zip & Attach Job
 - App Icon (512px)
 - Transparent App Icon
-- Selected-State CSS Fix
-- discoverRooms Exclusion Fix
-- Render-Order Fix
-- Flat Grid Source Fix
-- Kiosk Mode for Tablets
-- Vehicle Module
+- Camera Tile Troubleshooting
+- Connecting/Demo Fallback Troubleshooting
+- Troubleshooting Guide
+- Energy Charts Troubleshooting
+- Rooms Empty Troubleshooting
+- Surveillance Tab Troubleshooting
+- White/Blank Panel Troubleshooting
 
 ## God Nodes (most connected - your core abstractions)
 1. `CasaPanel` - 17 edges
 2. `walk()` - 10 edges
-3. `discoverRooms()` - 9 edges
-4. `walkXImport()` - 9 edges
-5. `walkElement()` - 9 edges
-6. `createRuntime()` - 9 edges
-7. `Component._boot()` - 9 edges
-8. `getReact()` - 8 edges
-9. `walkChildren()` - 8 edges
-10. `Casa (Home) Dashboard View Screenshot` - 8 edges
+3. `walkXImport()` - 9 edges
+4. `walkElement()` - 9 edges
+5. `createRuntime()` - 9 edges
+6. `getReact()` - 8 edges
+7. `walkChildren()` - 8 edges
+8. `domainOf()` - 7 edges
+9. `discoverRooms()` - 7 edges
+10. `boot()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Changelog v1.1.1 - Script Cache-Bust Chain Fix` --conceptually_related_to--> `module_url ?v= Cache-Bust Requirement`  [INFERRED]
+- `Verify by screenshot/DOM, not by rereading code` --semantically_similar_to--> `Fotovoltaico compact-card legend fix`  [INFERRED] [semantically similar]
+  CLAUDE.md → CHANGELOG.md
+- `Verify by screenshot/DOM, not by rereading code` --semantically_similar_to--> `Placeholder-URL 404/native-parse fix`  [INFERRED] [semantically similar]
+  CLAUDE.md → CHANGELOG.md
+- `HACS support` --references--> `HACS installation`  [INFERRED]
   CHANGELOG.md → README.md
-- `ASSET_VERSION Cache-Bust Chain Design` --conceptually_related_to--> `module_url ?v= Cache-Bust Requirement`  [INFERRED]
-  public/dash_neumo.html → README.md
-- `Component.ROOMS_RESULT() (mobile)` --calls--> `discoverRooms()`  [EXTRACTED]
-  public/dash_neumo_mobile.html → public/discovery.js
-- `Component.ROOMS_RESULT()` --calls--> `discoverRooms()`  [EXTRACTED]
-  public/dash_neumo.html → public/discovery.js
-- `Component._boot()` --calls--> `casaResolveLang()`  [EXTRACTED]
-  public/dash_neumo.html → public/i18n.js
+- `HACS installation` --conceptually_related_to--> `Installazione via HACS`  [INFERRED]
+  README.md → README.it.md
+- `Irrigation module` --conceptually_related_to--> `Modulo Irrigazione`  [INFERRED]
+  README.md → README.it.md
 
 ## Import Cycles
 - None detected.
 
 ## Hyperedges (group relationships)
-- **Desktop/Mobile Dual-Layout Shared Architecture** — public_dash_neumo_component, public_dash_neumo_mobile_component, public_dash_neumo_mergeconfig, public_dash_neumo_mobile_mergeconfig, public_dash_neumo_boot, public_dash_neumo_mobile_boot [INFERRED 0.90]
-- **Config-Referenced Entities Excluded From Generic Room Lists** — changelog_v1_1_2, readme_appliances, readme_vehicle, readme_weather_station [INFERRED 0.75]
-- **ASSET_VERSION Cache-Bust Chain Across Docs and Code** — public_dash_neumo_asset_cache_bust_chain, readme_cache_bust_module_url, changelog_v1_1_1, troubleshooting_white_blank_panel [INFERRED 0.85]
+- **Fotovoltaico double-ring energy model** — changelog_md_double_ring_fotovoltaico, readme_md_fotovoltaico_double_ring, readme_md_autoconsumo_derivation, claude_md_energy_color_convention, claude_md_flat_grid_energy_schema [INFERRED 0.85]
+- **Templating constraints found on the field** — claude_md_style_literal_constraint, claude_md_dynamic_src_href_points_constraint, claude_md_window_casa_config_global, claude_md_panel_custom_tag_from_folder [EXTRACTED 1.00]
+- **HACS-safe config persistence pattern** — readme_md_config_search_order, changelog_md_config_www_location, changelog_md_live_dashboard_config_example_js_rename, claude_md_release_process [INFERRED 0.85]
+- **3-tile compact energy legend feature** — public_dash_neumo_ringlegendtilegrid, public_dash_neumo_ringlegend, public_dash_neumo_fotovoltaicoringcompact [INFERRED 0.85]
+- **3-bar Energy chart (production/grid/export), desktop + mobile** — public_dash_neumo_bars, public_dash_neumo_mobile_bars, public_dash_neumo_energybarchart, public_dash_neumo_mobile_energybarchart [INFERRED 0.85]
+- **Fotovoltaico double-ring data pipeline (desktop)** — public_dash_neumo_ringseg, public_dash_neumo_ringlegend, public_dash_neumo_fotovoltaicoringnormal [INFERRED 0.80]
 
-## Communities (35 total, 15 thin omitted)
+## Communities (33 total, 13 thin omitted)
 
 ### Community 0 - "DCLogic Component Runtime"
-Cohesion: 0.08
-Nodes (42): cdnScriptFor(), collectProps(), compileAttr(), compileTemplate(), contentKey(), createComponentFactory(), createExternalModules(), createHelmetManager() (+34 more)
+Cohesion: 0.07
+Nodes (52): boot(), cdnScriptFor(), collectProps(), compileAttr(), compileTemplate(), contentKey(), createComponentFactory(), createExternalModules() (+44 more)
 
-### Community 1 - "Home Assistant Panel Bridge"
+### Community 1 - "Changelog: Early Fixes & Modules"
+Cohesion: 0.05
+Nodes (52): Appliances module, Cameras module, [data-sel=true] !important fix, discoverRooms() config-referenced-entity exclusion, Duplicate appliance render fix, Empty-state guidance for zero HA areas, Irrigation buttons field (input_button), loadScript() cache-bust chain fix (+44 more)
+
+### Community 2 - "Changelog: v1.3-1.4.5 Presentation Fixes"
+Cohesion: 0.09
+Nodes (27): config/www/live_dashboard_config.js location, Energy chart color-swap fix (sage/terracotta), First-render readiness timing fix, Fotovoltaico compact-card legend fix, Grid-export bar (fed-to-grid), HACS support, Irrigation sparkline SVG points fix, Renaming to live_dashboard_config.example.js (+19 more)
+
+### Community 3 - "Home Assistant Panel Bridge"
 Cohesion: 0.14
 Nodes (9): CasaPanel, fetchDailyCounterHistory(), fetchDailyLastSample(), fetchHistory(), fetchRawHistory(), fetchTodayStatsDelta(), FOLDER_NAME, isoDay() (+1 more)
 
-### Community 2 - "Dashboard Boot & Cache-Bust"
-Cohesion: 0.11
-Nodes (23): Changelog v1.3.1 - Example Config Renamed, ASSET_VERSION Cache-Bust Chain Design, Component._boot(), bust(), Component class (extends DCLogic), CONFIG_PATHS Fallback-Order Design, loadScript(), loadUserConfig() (+15 more)
+### Community 4 - "Changelog: Energy Auto-Discovery & Double-Ring"
+Cohesion: 0.13
+Nodes (20): config.energy.consumptionToday, config.energy.gridExportToday, console.info energy-source diagnostic logging, console.warn on real get_prefs failure, Diagnostic log field-name listing, Double-ring Fotovoltaico visualization, Energy auto-discovery from HA Energy dashboard, energy/get_prefs multi-entry summing fix (+12 more)
 
-### Community 3 - "Entity Auto-Discovery"
-Cohesion: 0.20
-Nodes (14): Component.ROOMS_RESULT() (mobile), Component.ROOMS_RESULT(), collectConfiguredEntities(), discoverAllOfDomain(), discoverCameras(), discoverEnergyEntities(), discoverPeople(), discoverRooms() (+6 more)
+### Community 5 - "Entity Auto-Discovery"
+Cohesion: 0.24
+Nodes (12): collectConfiguredEntities(), discoverAllOfDomain(), discoverCameras(), discoverEnergyEntities(), discoverPeople(), discoverRooms(), discoverWeather(), domainOf() (+4 more)
 
-### Community 4 - "Install & Setup Docs"
-Cohesion: 0.18
-Nodes (15): Changelog, Changelog v0.1.0 - First Public Release, Changelog v0.2.1 - Dynamic panel.js Tag Registration, Changelog v1.1.1 - Script Cache-Bust Chain Fix, Changelog v1.3.0 - HACS Support Added, module_url ?v= Cache-Bust Requirement, Demo Mode, Live Dashboard README (English) (+7 more)
-
-### Community 5 - "DC Template Parser"
+### Community 6 - "Energy Chart & Ring Data Pipeline"
 Cohesion: 0.22
-Nodes (10): boot(), createStreamTracker(), dcNameFromPath(), getReactDOM(), init(), parseDataProps(), parseDcDocument(), parseDcText() (+2 more)
+Nodes (14): bars array (desktop energy chart data), 3-bar Energy chart (desktop), Energy color convention (desktop), Fotovoltaico ring, compact mode, Fotovoltaico ring, normal mode, bars array (mobile energy chart data), 3-bar Energy chart (mobile, collapsible), Energy color convention (mobile) (+6 more)
 
-### Community 6 - "Casa Dashboard View"
-Cohesion: 0.28
-Nodes (9): Allarme (Alarm) Status Card, "Azioni Rapide" (Quick Actions) List, "Cose Accese Adesso" (Currently On) Quick List, Fotovoltaico (Solar PV) Double-Ring Card, Casa (Home) Dashboard View Screenshot, Greeting and Mode Selector Header (Casa/Fuori/Notte/Cinema), Sorveglianza (Surveillance) Camera Card, Stanze (Rooms) Card Grid (+1 more)
+### Community 7 - "Casa Dashboard Screenshot"
+Cohesion: 0.25
+Nodes (11): Casa Dashboard Screenshot, Allarme (Alarm) Card, Double-Ring Energy Gauge (7,6 kWh), Autoconsumo Tile (6,2 kWh), Dalla Rete Tile (1,4 kWh), Immessi in Rete Tile (3,6 kWh), Three-Tile Compact Energy Legend, Fotovoltaico Compact Card Layout (+3 more)
 
-### Community 7 - "Mobile Dashboard View"
+### Community 8 - "Early Release Modules & i18n"
+Cohesion: 0.29
+Nodes (7): Demo mode, Energy module, First public release, Italian/English UI (i18n), Irrigation module, v0.1.0, Vehicle module
+
+### Community 9 - "Mobile Dashboard View"
 Cohesion: 0.40
 Nodes (6): Cose Accese Adesso (Active Devices List), Bottom Navigation Bar (Casa/Stanze/Irrigazione/Energia/Auto/Meteo), Modalità Casa (Home Mode Selector), Mobile Dashboard View (Screenshot), Chi è in Casa (Presence Tracker), Weather Widget (19°, Sunny)
 
-### Community 8 - "Demo Backend Mock"
+### Community 10 - "Demo Backend Mock"
 Cohesion: 0.53
 Nodes (4): buildRegistries(), cloneStates(), connect(), rand()
 
-### Community 9 - "Energy Prefs Test Suite"
+### Community 11 - "Energy Prefs Test Suite"
 Cohesion: 0.33
 Nodes (3): __dirname, sandbox, src
 
-### Community 10 - "Fotovoltaico Double-Ring Design"
-Cohesion: 0.40
-Nodes (5): Changelog v1.4.0 - Double-Ring Fotovoltaico, Changelog v1.4.1 - Multi-Entry Energy Role Fix, Enabling Energy (Role-Based Sensor Mapping), Fotovoltaico Double-Ring Design, Energy Charts Empty or Wrong Section
-
-### Community 11 - "Cameras Module"
-Cohesion: 0.50
-Nodes (4): Changelog v0.2.0 - Cameras Module Added, Cameras Module, Camera Tile Icon-Only Section, Surveillance Tab Missing Section
-
-### Community 12 - "Release Packaging Workflow"
+### Community 13 - "Release Packaging Workflow"
 Cohesion: 0.67
 Nodes (3): Attach to Release Step, Build live_dashboard.zip Step, HACS zip_release content_in_root Convention
 
-### Community 13 - "README Header Banner"
+### Community 14 - "README Header Banner"
 Cohesion: 1.00
 Nodes (3): Live Dashboard README Header Banner, Home Assistant, Live Dashboard
-
-### Community 14 - "Known Limits & Early Release"
-Cohesion: 0.67
-Nodes (3): Changelog v1.0.0 - First Validated Release, Known Limits, Rooms Are Empty Section
 
 ### Community 15 - "Energia Dashboard View"
 Cohesion: 1.00
@@ -146,22 +142,24 @@ Cohesion: 1.00
 Nodes (3): Irrigazione (Irrigation) Dashboard View, Zona 1 Irrigation Card, Zona 2 Irrigation Card
 
 ## Knowledge Gaps
-- **41 isolated node(s):** `FOLDER_NAME`, `__dirname`, `src`, `sandbox`, `zip-and-attach Release Job` (+36 more)
+- **40 isolated node(s):** `FOLDER_NAME`, `__dirname`, `src`, `sandbox`, `zip-and-attach Release Job` (+35 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `walk()` connect `DCLogic Component Runtime` to `Entity Auto-Discovery`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **Why does `collectConfiguredEntities()` connect `Entity Auto-Discovery` to `DCLogic Component Runtime`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+- **Why does `v0.1.0` connect `Early Release Modules & i18n` to `Changelog: Early Fixes & Modules`?**
+  _High betweenness centrality (0.014) - this node is a cross-community bridge._
 - **What connects `FOLDER_NAME`, `__dirname`, `src` to the rest of the system?**
-  _41 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _40 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `DCLogic Component Runtime` be split into smaller, more focused modules?**
-  _Cohesion score 0.07946127946127945 - nodes in this community are weakly interconnected._
-- **Should `Home Assistant Panel Bridge` be split into smaller, more focused modules?**
-  _Cohesion score 0.13846153846153847 - nodes in this community are weakly interconnected._
-- **Should `Dashboard Boot & Cache-Bust` be split into smaller, more focused modules?**
-  _Cohesion score 0.11333333333333333 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.0673076923076923 - nodes in this community are weakly interconnected._
+- **Should `Changelog: Early Fixes & Modules` be split into smaller, more focused modules?**
+  _Cohesion score 0.05387205387205387 - nodes in this community are weakly interconnected._
+- **Should `Changelog: v1.3-1.4.5 Presentation Fixes` be split into smaller, more focused modules?**
+  _Cohesion score 0.08994708994708994 - nodes in this community are weakly interconnected._

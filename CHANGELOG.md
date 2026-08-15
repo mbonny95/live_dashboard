@@ -3,6 +3,34 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.5] - 2026-08-15
+
+### Fixed
+
+- **The three home-screen energy values (self-consumption, grid, fed to
+  grid) were invisible whenever surveillance cameras were also
+  configured.** The compact Fotovoltaico card — the layout used on any
+  install with cameras, so the normal case — swapped the three-line
+  legend for a one-line summary instead of dropping the values
+  somewhere else; they simply weren't in the markup. Replaced with
+  three small tiles under the ring, showing the same numbers the
+  full-size card already had, with a shortened summary line underneath.
+- **The Energy view's chart colored production and grid import the
+  opposite way from the home-screen ring** — sage meant solar there and
+  terracotta meant grid, but the chart had them backwards. Fixed
+  alongside adding the fed-to-grid bar (see below), since correcting
+  one without the other would have left the two views agreeing on
+  nothing.
+
+### Added
+
+- **A third bar for energy fed back to the grid**, next to production
+  and grid import, in both the desktop chart and the mobile
+  stick-chart — the daily total the ring already tracks but the trend
+  chart never showed. Installs without an export sensor mapped keep
+  the original two-bar layout; no sensor means no bar, not a bar stuck
+  at zero.
+
 ## [1.4.4] - 2026-08-15
 
 ### Fixed

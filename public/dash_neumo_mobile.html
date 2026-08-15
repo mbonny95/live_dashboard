@@ -577,16 +577,22 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <sc-for list="{{ bars }}" as="b" hint-placeholder-count="7">
 <div title="{{ b.title }}" style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%">
 <div style="flex:1;min-height:0;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:2px">
-<span style="width:5px;height:{{ b.hp }};border-radius:999px;background:var(--acc)"></span>
-<span style="width:5px;height:{{ b.hg }};border-radius:999px;background:var(--tx2);opacity:.5"></span>
+<span style="width:5px;height:{{ b.hp }};border-radius:999px;background:var(--sage)"></span>
+<span style="width:5px;height:{{ b.hg }};border-radius:999px;background:var(--acc)"></span>
+<sc-if value="{{ hasExportBars }}" hint-placeholder-val="{{ false }}">
+<span style="width:5px;height:{{ b.he }};border-radius:999px;background:var(--feed)"></span>
+</sc-if>
 </div>
 <span style="font:500 9px/1 var(--font-body);color:var(--tx2);white-space:nowrap;flex:none">{{ b.label }}</span>
 </div>
 </sc-for>
 </div>
 <div style="display:flex;gap:14px;font:500 10.5px/1 var(--font-body);color:var(--tx2);margin-top:11px">
-<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--acc)"></span>{{ S.produced }}</span>
-<span title="{{ S.fromGridHint }}" style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--tx2);opacity:.5"></span><span style="text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px">{{ S.fromGrid }}</span></span>
+<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--sage)"></span>{{ S.produced }}</span>
+<span title="{{ S.fromGridHint }}" style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--acc)"></span><span style="text-decoration:underline;text-decoration-style:dotted;text-decoration-color:var(--nu-d);text-underline-offset:3px">{{ S.fromGrid }}</span></span>
+<sc-if value="{{ hasExportBars }}" hint-placeholder-val="{{ false }}">
+<span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--feed)"></span>{{ feedInLabel }}</span>
+</sc-if>
 </div>
 <div data-m="two" style="margin-top:14px">
 <sc-for list="{{ periodCells }}" as="c" hint-placeholder-count="4">
@@ -984,6 +990,7 @@ class Component extends DCLogic {
     const en = this.cfg.energy;
     if (en && en.productionToday) jobs.push(this.be.history(en.productionToday, 30).then((v) => ['prod', v]));
     if (en && en.gridToday) jobs.push(this.be.history(en.gridToday, 30).then((v) => ['grid', v]));
+    if (en && en.gridExportToday) jobs.push(this.be.history(en.gridExportToday, 30).then((v) => ['exp', v]));
     Promise.all(jobs).then((results) => {
       const hist = {};
       results.forEach((pair) => { hist[pair[0]] = pair[1]; });
@@ -1393,26 +1400,35 @@ class Component extends DCLogic {
     const ranges = [7, 14, 30].map((v) => ({ label: this.t('energy.days', { n: v }), sel: R === v, set: () => this.setState({ range: v }) }));
     const hp = this.state.hist && this.state.hist.prod ? this.state.hist.prod.slice(-R) : [];
     const hg = this.state.hist && this.state.hist.grid ? this.state.hist.grid.slice(-R) : [];
-    const bMax = Math.max.apply(null, [1].concat(hp, hg));
+    // See dash_neumo.html's copy of this field for why it's not zero-filled
+    // when absent.
+    const he = this.state.hist && this.state.hist.exp ? this.state.hist.exp.slice(-R) : [];
+    const hasExportBars = he.length > 0;
+    const bMax = Math.max.apply(null, [1].concat(hp, hg, hasExportBars ? he : []));
     const barStep = Math.ceil(hp.length / 7) || 1;
     const bars = hp.map((v, i) => {
       const g = hg[i] || 0;
+      const e = hasExportBars ? (he[i] || 0) : 0;
       const dt = new Date(this.state.now - (hp.length - 1 - i) * 86400000);
       return {
         hp: Math.max(3, (v / bMax) * 100).toFixed(1) + '%',
         hg: Math.max(3, (g / bMax) * 100).toFixed(1) + '%',
+        he: Math.max(3, (e / bMax) * 100).toFixed(1) + '%',
         label: (hp.length <= 14 || i % barStep === 0) ? dt.getDate() + '/' + (dt.getMonth() + 1) : '',
         title: dt.toLocaleDateString(this.lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'long' }) + ' · ' + this.t('energy.producedShort') + ' ' + this.dec(v, 2) + ' kWh · ' + this.t('energy.fromGridShort') + ' ' + this.dec(g, 2) + ' kWh'
+          + (hasExportBars ? ' · ' + this.t('energy.feedIn') + ' ' + this.dec(e, 2) + ' kWh' : '')
       };
     });
     const totP = hp.reduce((a, b) => a + b, 0);
     const totG = hg.reduce((a, b) => a + b, 0);
+    const totE = he.reduce((a, b) => a + b, 0);
     const periodCells = hasEnergy ? [
       { label: this.t('energy.producedPeriod'), val: this.dec(totP, 1) + ' kWh' },
       { label: this.t('energy.takenFromGrid'), val: this.dec(totG, 1) + ' kWh' },
+    ].concat(hasExportBars ? [{ label: this.t('energy.feedIn'), val: this.dec(totE, 1) + ' kWh' }] : []).concat([
       { label: this.t('energy.gridCost'), val: price === null ? '—' : this.dec(totG * price, 2) + ' €' },
       { label: this.t('energy.avgPerDay'), val: hp.length ? this.dec(totP / hp.length, 2) + ' kWh' : '—' }
-    ] : [];
+    ]) : [];
 
     const irrZones = hasIrrigation ? this.cfg.irrigation.zones : [];
     const zoneTone = (txt) => /stress/i.test(txt || '') ? 'alert' : new RegExp(this.t('irrigation.needsWaterMatch'), 'i').test(txt || '') ? 'warn' : 'ok';
@@ -1531,7 +1547,8 @@ class Component extends DCLogic {
       showEnergyChart: energyChart,
       energyChartLabel: energyChart ? this.t('chart.hide') : this.t('chart.show'),
       toggleEnergyChart: () => this.toggleChart('energia'),
-      ranges, bars, periodCells,
+      ranges, bars, periodCells, hasExportBars,
+      feedInLabel: this.t('energy.feedIn'),
       hasResetButton: hasIrrigation && !!this.cfg.irrigation.resetButton,
       irrSummary: hasIrrigation ? (this.cfg.irrigation.summary ? this.s(this.cfg.irrigation.summary) : this.t('irrigation.defaultSummary', { n: zones.length })) : '',
       irrSub: hasIrrigation
