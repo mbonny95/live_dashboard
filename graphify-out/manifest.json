@@ -45,9 +45,9 @@
     "semantic_hash": "578f8cb005ab882844c1cd7b9fd93148"
   },
   "public/panel.js": {
-    "mtime": 1786784904.3885024,
-    "ast_hash": "b8983be61cd269edcf650b9ecb19ba2e",
-    "semantic_hash": "b8983be61cd269edcf650b9ecb19ba2e"
+    "mtime": 1786803066.1921644,
+    "ast_hash": "4969d75b928c2a937373b205b0c7bce8",
+    "semantic_hash": "4969d75b928c2a937373b205b0c7bce8"
   },
   "public/support.js": {
     "mtime": 1786560396.1043806,
@@ -65,19 +65,19 @@
     "semantic_hash": "6719db3df8abacac7cc567ed9e6fe6e8"
   },
   "CHANGELOG.md": {
-    "mtime": 1786784924.4337935,
-    "ast_hash": "76b2e8ba6fd0d849c53af7a77fc12eb8",
-    "semantic_hash": "76b2e8ba6fd0d849c53af7a77fc12eb8"
+    "mtime": 1786803087.3306108,
+    "ast_hash": "9bffe7dfbf6d000ef17e993fbed21fce",
+    "semantic_hash": "9bffe7dfbf6d000ef17e993fbed21fce"
   },
   "README.it.md": {
-    "mtime": 1786784914.9478843,
-    "ast_hash": "01650434065c640a8d9e958460ec9376",
-    "semantic_hash": "01650434065c640a8d9e958460ec9376"
+    "mtime": 1786803080.2861335,
+    "ast_hash": "723ce06750ff52a341d2053a25baf7b5",
+    "semantic_hash": "723ce06750ff52a341d2053a25baf7b5"
   },
   "README.md": {
-    "mtime": 1786784911.456518,
-    "ast_hash": "25a4f750f82212911cc978134569f2f9",
-    "semantic_hash": "25a4f750f82212911cc978134569f2f9"
+    "mtime": 1786803076.1555488,
+    "ast_hash": "0c9c0dae18a82415f15bb01d666baa3c",
+    "semantic_hash": "0c9c0dae18a82415f15bb01d666baa3c"
   },
   "TROUBLESHOOTING.md": {
     "mtime": 1786721798.5146346,
@@ -85,9 +85,9 @@
     "semantic_hash": "b6563e06de984c12def3c790c61b31c3"
   },
   "public/dash_neumo.html": {
-    "mtime": 1786784661.4857914,
-    "ast_hash": "8a7f35187dcfbd644205ed00d14fe93c",
-    "semantic_hash": "8a7f35187dcfbd644205ed00d14fe93c"
+    "mtime": 1786802881.2559865,
+    "ast_hash": "f7c633883f8c2d48fc4eb13531576bc6",
+    "semantic_hash": "f7c633883f8c2d48fc4eb13531576bc6"
   },
   "public/dash_neumo_mobile.html": {
     "mtime": 1786784419.89191,

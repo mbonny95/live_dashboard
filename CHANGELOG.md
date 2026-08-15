@@ -3,6 +3,22 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.6] - 2026-08-15
+
+### Fixed
+
+- **Card shadows were visibly cut off at the four edges of the page**,
+  reported by a user on Reddit. The root container's padding (16px
+  top/bottom, 18px left/right) was smaller than the neumorphic shadow's
+  own reach (up to 22px), so any card sitting flush against the page
+  edge had its shadow clipped by the root's `overflow:hidden` instead
+  of fading out — most visible exactly where the gradient should have
+  been softest. Padding is now 22px/24px, matching the shadow's reach;
+  nothing else changed (gaps, card padding, and the scrollable inner
+  areas — where a clipped edge reads as scrolling, not a defect — are
+  untouched). Mobile wasn't affected: its page isn't clipped in the
+  first place, so there was nothing to fix there.
+
 ## [1.4.5] - 2026-08-15
 
 ### Fixed
