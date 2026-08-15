@@ -1,0 +1,137 @@
+{
+  "hacs.json": {
+    "mtime": 1786719869.1305442,
+    "ast_hash": "f3a898cfb7958593760d547fb1ecb19c",
+    "semantic_hash": "f3a898cfb7958593760d547fb1ecb19c"
+  },
+  "public/discovery.js": {
+    "mtime": 1786735076.9492457,
+    "ast_hash": "b293caf878454007a41b77770bd1ca17",
+    "semantic_hash": "b293caf878454007a41b77770bd1ca17"
+  },
+  "public/ha-backend-demo.js": {
+    "mtime": 1786729321.4776645,
+    "ast_hash": "66e57446f1802fac9682aeeb56aee33a",
+    "semantic_hash": "66e57446f1802fac9682aeeb56aee33a"
+  },
+  "public/ha-backend-panel.js": {
+    "mtime": 1786729297.4590771,
+    "ast_hash": "638d7856105d0cbc352669ce7befaca6",
+    "semantic_hash": "638d7856105d0cbc352669ce7befaca6"
+  },
+  "public/ha-backend.js": {
+    "mtime": 1786566636.0360527,
+    "ast_hash": "e25a5470e00f1ba497ad512b57e685d4",
+    "semantic_hash": "e25a5470e00f1ba497ad512b57e685d4"
+  },
+  "public/i18n.js": {
+    "mtime": 1786566580.7651412,
+    "ast_hash": "f085ec6bdcc047587c9e8fda616fed43",
+    "semantic_hash": "f085ec6bdcc047587c9e8fda616fed43"
+  },
+  "public/i18n/en.js": {
+    "mtime": 1786729380.6703048,
+    "ast_hash": "ed2e472cf510ca1a16abb888951405f3",
+    "semantic_hash": "ed2e472cf510ca1a16abb888951405f3"
+  },
+  "public/i18n/it.js": {
+    "mtime": 1786729376.6090786,
+    "ast_hash": "70a26f8056c6bfd0c25e0730f20486ab",
+    "semantic_hash": "70a26f8056c6bfd0c25e0730f20486ab"
+  },
+  "public/live_dashboard_config.example.js": {
+    "mtime": 1786729852.4218981,
+    "ast_hash": "1bbc37e2d4d16664258f5f6268903d78",
+    "semantic_hash": "1bbc37e2d4d16664258f5f6268903d78"
+  },
+  "public/panel.js": {
+    "mtime": 1786735273.552762,
+    "ast_hash": "97d36939656141691ba137c5548e241d",
+    "semantic_hash": "97d36939656141691ba137c5548e241d"
+  },
+  "public/support.js": {
+    "mtime": 1786560396.1043806,
+    "ast_hash": "951ae391b8ae72ef12e671c2fad23353",
+    "semantic_hash": "951ae391b8ae72ef12e671c2fad23353"
+  },
+  "tests/mapEnergyPrefs.test.mjs": {
+    "mtime": 1786735146.1085238,
+    "ast_hash": "b3b0b55a2b39ac4b79056a2a348fd65c",
+    "semantic_hash": "b3b0b55a2b39ac4b79056a2a348fd65c"
+  },
+  ".github/workflows/release.yml": {
+    "mtime": 1786719880.7250504,
+    "ast_hash": "6719db3df8abacac7cc567ed9e6fe6e8",
+    "semantic_hash": "6719db3df8abacac7cc567ed9e6fe6e8"
+  },
+  "CHANGELOG.md": {
+    "mtime": 1786735284.6106963,
+    "ast_hash": "ea42ef00e0ce43fba53383b8b4b98912",
+    "semantic_hash": "ea42ef00e0ce43fba53383b8b4b98912"
+  },
+  "README.it.md": {
+    "mtime": 1786735273.567151,
+    "ast_hash": "0230e46b39c2c481c3fa425f3d6f6420",
+    "semantic_hash": "0230e46b39c2c481c3fa425f3d6f6420"
+  },
+  "README.md": {
+    "mtime": 1786735273.56348,
+    "ast_hash": "4ea666827a83e99c10f69d52ee705191",
+    "semantic_hash": "4ea666827a83e99c10f69d52ee705191"
+  },
+  "TROUBLESHOOTING.md": {
+    "mtime": 1786721798.5146346,
+    "ast_hash": "b6563e06de984c12def3c790c61b31c3",
+    "semantic_hash": "b6563e06de984c12def3c790c61b31c3"
+  },
+  "public/dash_neumo.html": {
+    "mtime": 1786735094.073849,
+    "ast_hash": "3b0bd5d5bd31218aefa9c22d7b90e6d3",
+    "semantic_hash": "3b0bd5d5bd31218aefa9c22d7b90e6d3"
+  },
+  "public/dash_neumo_mobile.html": {
+    "mtime": 1786735108.8826559,
+    "ast_hash": "e33be36e2fb4c3a2b524523e28b06772",
+    "semantic_hash": "e33be36e2fb4c3a2b524523e28b06772"
+  },
+  "assets/icon-256.png": {
+    "mtime": 1786733001.0,
+    "ast_hash": "562220111605eb34e3e48f8cb56b3d56",
+    "semantic_hash": "562220111605eb34e3e48f8cb56b3d56"
+  },
+  "assets/icon-512.png": {
+    "mtime": 1786733001.0,
+    "ast_hash": "76f622f483f2dfc7c696336c998243a2",
+    "semantic_hash": "76f622f483f2dfc7c696336c998243a2"
+  },
+  "assets/icon-transparent-256.png": {
+    "mtime": 1786733001.0,
+    "ast_hash": "799dbc1ece90b5369679b18bdf72f6a8",
+    "semantic_hash": "799dbc1ece90b5369679b18bdf72f6a8"
+  },
+  "assets/readme-header.png": {
+    "mtime": 1786721146.9291716,
+    "ast_hash": "4660bcab367746497c94f606ff5ba98c",
+    "semantic_hash": "4660bcab367746497c94f606ff5ba98c"
+  },
+  "docs/screenshots/casa.png": {
+    "mtime": 1786570339.9507978,
+    "ast_hash": "3a6ceb4f8c79aa9a672fbc131cecedb9",
+    "semantic_hash": "3a6ceb4f8c79aa9a672fbc131cecedb9"
+  },
+  "docs/screenshots/energia.png": {
+    "mtime": 1786566805.9724855,
+    "ast_hash": "9a1291feb5be416e0169919cd82807d5",
+    "semantic_hash": "9a1291feb5be416e0169919cd82807d5"
+  },
+  "docs/screenshots/irrigazione.png": {
+    "mtime": 1786566805.9690833,
+    "ast_hash": "5dacab1febc492a8b9e9eaf849c311f5",
+    "semantic_hash": "5dacab1febc492a8b9e9eaf849c311f5"
+  },
+  "docs/screenshots/mobile.png": {
+    "mtime": 1786566805.975466,
+    "ast_hash": "a20634e6f1b1089956f23649806dee17",
+    "semantic_hash": "a20634e6f1b1089956f23649806dee17"
+  }
+}

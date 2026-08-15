@@ -68,7 +68,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.3
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.4
        embed_iframe: true
        trust_external_script: false
    ```
@@ -81,7 +81,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.4.3` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.4.4` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -307,9 +307,7 @@ fill in).
 - `idleStates` — which states count as "not running" (defaults to
   `off`/`power_off`/`idle`/`unavailable`/`unknown`). Override it if your
   integration uses different words for idle.
-- `remaining` (minutes) and `energyToday` are both optional and only shown
-  in the state they're relevant for — remaining while running, energy while
-  idle.
+- `energyToday` is optional and only shown while idle.
 - `powerSwitch` is optional and only adds an off button — a switch being
   "on" isn't treated as "running" (a washer can stay powered between
   cycles), so it never drives what's shown. If set, that switch also stops

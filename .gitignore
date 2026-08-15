@@ -12,3 +12,14 @@ uploads/
 
 # Local scratch
 *.log
+
+# Esclude i costi locali di graphify
+graphify-out/cost.json
+
+# OPZIONALE: Sblocca questa riga se preferisci non committare la cache locale
+graphify-out/cache/
+
+# Stato locale di graphify (percorso Python, cartella scansionata) — specifico
+# della macchina, non portabile tra installazioni
+graphify-out/.graphify_python
+graphify-out/.graphify_root

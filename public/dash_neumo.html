@@ -1359,11 +1359,10 @@ class Component extends DCLogic {
       .filter((a) => this.discovery.resolveEntityArea(a.status, this.registries) === roomId)
       .map((a) => {
         const { idle, label } = this.applianceState(a);
-        const remaining = a.remaining ? this.n(a.remaining) : null;
         const energy = a.energyToday ? this.val(a.energyToday, 0) : null;
         const sub = idle
           ? (energy ? this.t('common.off') + ' · ' + this.t('appliance.energyToday', { val: energy }) : this.t('common.off'))
-          : (remaining ? label + ' · ' + this.t('appliance.remainingMin', { n: Math.round(remaining) }) : label);
+          : label;
         const applianceIcon = a.icon || '#i-wash';
         return {
           name: a.name, icon: applianceIcon, iconRef: this._bindAttr('href', applianceIcon), stroke: idle ? 'var(--tx2)' : 'var(--acc)', sub,

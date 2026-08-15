@@ -3,6 +3,29 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.4] - 2026-08-15
+
+### Fixed
+
+- **On mobile, every appliance (Lavatrice, Asciugatrice) was rendered
+  twice inside its room card.** `dash_neumo_mobile.html` had two
+  identical loops over the appliance list — a copy-paste leftover the
+  desktop layout never had. The duplicate loop is gone; each appliance
+  now appears once, same as desktop.
+
+### Changed
+
+- **Removed the "N min remaining" text shown next to a running
+  appliance.** Home Assistant integrations report a washer/dryer's
+  remaining-time sensor inconsistently enough (units, absolute vs.
+  relative values) that it could render nonsense on some installs — a
+  running Lavatrice showing "2026 min remaining" on one setup, for
+  example. Rather than add per-integration guessing, the appliance card
+  now just shows its state label (e.g. "Lavaggio") while running; the
+  optional `remaining` config field, its i18n string, and the demo
+  sensor for it are removed. `energyToday` (shown while idle) is
+  unaffected.
+
 ## [1.4.3] - 2026-08-14
 
 ### Fixed

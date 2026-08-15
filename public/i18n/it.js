@@ -26,7 +26,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'alarm.btnAway': 'Fuori', 'alarm.btnHome': 'In casa', 'alarm.btnNight': 'Notte', 'alarm.btnVacation': 'Vacanza',
   'alarm.disarmed': 'Disinserito', 'alarm.pending': 'In attesa…', 'alarm.triggered': 'ALLARME IN CORSO',
 
-  'appliance.remainingMin': '{n} min rimanenti', 'appliance.energyToday': '{val} oggi',
+  'appliance.energyToday': '{val} oggi',
 
   'cameras.motionDetected': 'Movimento rilevato · {name}', 'cameras.allQuiet': 'Tutto tranquillo',
   'cameras.tabSub': '{n} telecamere · anteprime aggiornate ogni {seconds} secondi',

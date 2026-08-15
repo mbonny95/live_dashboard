@@ -64,7 +64,6 @@ const SEED = [
   // appliances (Fase successiva — nessun dominio HA generico per "in corso",
   // quindi mappatura esplicita via config.appliances; vedi DEMO_CONFIG sotto)
   entity('sensor.lavatrice_stato', 'lavanderia', 'lavaggio', { friendly_name: 'Lavatrice stato' }),
-  entity('sensor.lavatrice_tempo_rimanente', 'lavanderia', '38', { friendly_name: 'Lavatrice tempo rimanente' }),
   entity('sensor.lavatrice_energia_oggi', 'lavanderia', '340', { friendly_name: 'Lavatrice energia oggi', unit_of_measurement: 'Wh' }),
   entity('binary_sensor.asciugatrice_stato', 'lavanderia', 'off', { friendly_name: 'Asciugatrice stato' }),
 
@@ -208,7 +207,7 @@ const DEMO_CONFIG = {
   appliances: [
     { name: 'Lavatrice', icon: '#i-wash', status: 'sensor.lavatrice_stato',
       stateLabels: { lavaggio: 'Lavaggio' },
-      remaining: 'sensor.lavatrice_tempo_rimanente', energyToday: 'sensor.lavatrice_energia_oggi',
+      energyToday: 'sensor.lavatrice_energia_oggi',
       powerSwitch: 'switch.lavatrice' },
     { name: 'Asciugatrice', icon: '#i-dryer', status: 'binary_sensor.asciugatrice_stato' }
   ]

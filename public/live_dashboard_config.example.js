@@ -160,7 +160,6 @@ window.CASA_CONFIG = {
   //     status: 'sensor.washer_state',        // any sensor/binary_sensor — its raw state is shown as-is unless mapped below
   //     idleStates: ['off', 'power_off', 'idle', 'unavailable', 'unknown'],  // states that count as "not running"; override if your integration's vocabulary differs
   //     stateLabels: { washing: 'Washing', rinsing: 'Rinsing', spinning: 'Spin' },  // optional — translates raw states into nicer text; unmapped states show as-is
-  //     remaining: 'sensor.washer_remaining_time',  // optional, minutes — shown only while running
   //     energyToday: 'sensor.washer_energy_today',  // optional — shown only while idle
   //     powerSwitch: 'switch.washer_power'    // optional — adds an off button; a switch "on" isn't the same as "running", so this never drives the status shown
   //   }

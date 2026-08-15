@@ -350,21 +350,6 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-for>
 
-<sc-for list="{{ r.appliances }}" as="a" hint-placeholder-count="1">
-<div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
-<svg width="19" height="19" fill="none" stroke="{{ a.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ a.iconRef }}"></use></svg>
-<div style="flex:1;min-width:0">
-<div style="font:600 13px/1.2 var(--font-body)">{{ a.name }}</div>
-<div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:2px">{{ a.sub }}</div>
-</div>
-<sc-if value="{{ a.hasPowerOff }}" hint-placeholder-val="{{ false }}">
-<button onClick="{{ a.powerOff }}" title="{{ S.turnOff }}" style="width:44px;height:44px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none">
-<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-power"></use></svg>
-</button>
-</sc-if>
-</div>
-</sc-for>
-
 <sc-for list="{{ r.media }}" as="m" hint-placeholder-count="1">
 <div data-dim="{{ m.quiet }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
 <svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-tv"></use></svg>
@@ -1116,11 +1101,10 @@ class Component extends DCLogic {
       .filter((a) => this.discovery.resolveEntityArea(a.status, this.registries) === roomId)
       .map((a) => {
         const { idle, label } = this.applianceState(a);
-        const remaining = a.remaining ? this.n(a.remaining) : null;
         const energy = a.energyToday ? this.val(a.energyToday, 0) : null;
         const sub = idle
           ? (energy ? this.t('common.off') + ' · ' + this.t('appliance.energyToday', { val: energy }) : this.t('common.off'))
-          : (remaining ? label + ' · ' + this.t('appliance.remainingMin', { n: Math.round(remaining) }) : label);
+          : label;
         const applianceIcon = a.icon || '#i-wash';
         return {
           name: a.name, icon: applianceIcon, iconRef: this._bindAttr('href', applianceIcon), stroke: idle ? 'var(--tx2)' : 'var(--acc)', sub,

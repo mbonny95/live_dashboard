@@ -68,7 +68,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.3
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.4
        embed_iframe: true
        trust_external_script: false
    ```
@@ -81,7 +81,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    sia come `console.error` sia come messaggio sulla pagina stessa, con il
    `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.4.3` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.4.4` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -320,9 +320,7 @@ resto — nessun campo stanza separato da compilare).
 - `idleStates` — quali stati contano come "non in funzione" (default
   `off`/`power_off`/`idle`/`unavailable`/`unknown`). Sovrascrivilo se la tua
   integrazione usa parole diverse per "fermo".
-- `remaining` (minuti) ed `energyToday` sono entrambi opzionali e compaiono
-  solo nello stato per cui hanno senso — il tempo rimanente mentre è in
-  funzione, l'energia mentre è fermo.
+- `energyToday` è opzionale e compare solo mentre è fermo.
 - `powerSwitch` è opzionale e aggiunge solo un pulsante di spegnimento — uno
   switch "acceso" non viene trattato come "in funzione" (una lavatrice può
   restare alimentata tra un ciclo e l'altro), quindi non decide mai cosa
