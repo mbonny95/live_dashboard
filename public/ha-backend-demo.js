@@ -36,6 +36,13 @@ const SEED = [
   entity('media_player.soggiorno_tv', 'soggiorno', 'playing', { friendly_name: 'TV soggiorno', media_title: 'Demo channel' }),
   entity('sensor.soggiorno_temperatura', 'soggiorno', '21.4', { friendly_name: 'Temperatura soggiorno', device_class: 'temperature', unit_of_measurement: '°C' }),
   entity('sensor.soggiorno_umidita', 'soggiorno', '48', { friendly_name: 'Umidità soggiorno', device_class: 'humidity', unit_of_measurement: '%' }),
+  // Extra room-card pill candidates (see v1.4.8 fix ticket, B2/B3): more than
+  // 4 compete here on purpose, to prove the card actually caps at 4 and
+  // respects the allarmi/aperture/presenza/temperatura/umidità/resto order
+  // instead of just showing whichever sensor happened to be discovered first.
+  entity('binary_sensor.soggiorno_finestra', 'soggiorno', 'on', { friendly_name: 'Finestra soggiorno', device_class: 'window' }),
+  entity('sensor.soggiorno_illuminamento', 'soggiorno', '240', { friendly_name: 'Luminosità soggiorno', device_class: 'illuminance', unit_of_measurement: 'lx' }),
+  entity('sensor.soggiorno_telecomando_batteria', 'soggiorno', '12', { friendly_name: 'Telecomando TV batteria', device_class: 'battery', unit_of_measurement: '%' }),
 
   entity('light.camera', 'camera', 'off', { friendly_name: 'Camera' }),
   entity('cover.camera_tapparella', 'camera', 'closed', { friendly_name: 'Tapparella camera', current_position: 0 }),
@@ -46,9 +53,16 @@ const SEED = [
 
   entity('light.cucina', 'cucina', 'on', { friendly_name: 'Cucina', brightness: 255 }),
   entity('switch.cucina_forno', 'cucina', 'off', { friendly_name: 'Forno' }),
+  // Same device as the oven switch — proves a switch shows its own device's
+  // wattage in the room panel (B4) without becoming a pill or a row of its
+  // own (see DEVICE_LINKS below).
+  entity('sensor.cucina_forno_potenza', 'cucina', '38', { friendly_name: 'Forno potenza', device_class: 'power', unit_of_measurement: 'W' }),
+  entity('binary_sensor.cucina_movimento', 'cucina', 'on', { friendly_name: 'Movimento cucina', device_class: 'motion' }),
 
   entity('light.bagno', 'bagno', 'off', { friendly_name: 'Bagno' }),
   entity('cover.bagno_tapparella', 'bagno', 'open', { friendly_name: 'Tapparella bagno', current_position: 100 }),
+  entity('humidifier.bagno_deumidificatore', 'bagno', 'off', { friendly_name: 'Deumidificatore bagno' }),
+  entity('binary_sensor.bagno_allagamento', 'bagno', 'on', { friendly_name: 'Sensore allagamento bagno', device_class: 'moisture' }),
 
   entity('light.studio', 'studio', 'on', { friendly_name: 'Studio', brightness: 180 }),
   entity('switch.studio_stampante', 'studio', 'off', { friendly_name: 'Stampante' }),
@@ -57,6 +71,7 @@ const SEED = [
   entity('cover.ingresso_tapparella_1', 'ingresso', 'open', { friendly_name: 'Tapparella ingresso 1', current_position: 100 }),
   entity('cover.ingresso_tapparella_2', 'ingresso', 'open', { friendly_name: 'Tapparella ingresso 2', current_position: 100 }),
   entity('sensor.ingresso_temperatura', 'ingresso', '19.8', { friendly_name: 'Temperatura ingresso', device_class: 'temperature', unit_of_measurement: '°C' }),
+  entity('lock.ingresso_porta', 'ingresso', 'unlocked', { friendly_name: 'Porta ingresso' }),
 
   entity('switch.lavatrice', 'lavanderia', 'off', { friendly_name: 'Lavatrice' }),
   entity('vacuum.robot_aspirapolvere', 'lavanderia', 'docked', { friendly_name: 'Robot aspirapolvere' }),
@@ -74,6 +89,8 @@ const SEED = [
   entity('cover.garage_portone', 'garage', 'closed', { friendly_name: 'Portone garage', current_position: 0 }),
 
   entity('light.corridoio', 'corridoio', 'off', { friendly_name: 'Corridoio' }),
+  entity('sensor.corridoio_co2', 'corridoio', '640', { friendly_name: 'CO₂ corridoio', device_class: 'carbon_dioxide', unit_of_measurement: 'ppm' }),
+  entity('sensor.corridoio_pm25', 'corridoio', '9', { friendly_name: 'PM2.5 corridoio', device_class: 'pm25', unit_of_measurement: 'µg/m³' }),
 
   // A diagnostic entity in an otherwise-normal area, to prove the
   // disabled_by/hidden_by/entity_category filters actually apply in the
@@ -149,7 +166,9 @@ const SEED = [
 // other demo entity has no device at all (buildRegistries defaults to null).
 const DEVICE_LINKS = {
   'camera.cancello': 'device_cancello',
-  'binary_sensor.cancello_motion': 'device_cancello'
+  'binary_sensor.cancello_motion': 'device_cancello',
+  'switch.cucina_forno': 'device_forno',
+  'sensor.cucina_forno_potenza': 'device_forno'
 };
 
 const AREA_NAMES = {
@@ -303,6 +322,10 @@ async function connect(handlers) {
             setState(id, 'returning');
             setTimeout(() => { setState(id, 'docked'); emit(); }, 3000);
           }
+        } else if (domain === 'lock') {
+          for (const id of targets) setState(id, service === 'unlock' ? 'unlocked' : 'locked');
+        } else if (domain === 'humidifier') {
+          for (const id of targets) setState(id, service === 'turn_on' ? 'on' : 'off');
         } else if (domain === 'alarm_control_panel') {
           const map = { alarm_disarm: 'disarmed', alarm_arm_home: 'armed_home', alarm_arm_away: 'armed_away', alarm_arm_night: 'armed_night', alarm_arm_vacation: 'armed_vacation' };
           for (const id of targets) if (map[service]) setState(id, map[service]);

@@ -3,6 +3,45 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.8] - 2026-08-16
+
+### Fixed
+
+- **Room tiles stretched to fill the leftover column height instead of
+  sizing to their own content** — reported by a user on Reddit, alongside
+  a side-by-side comparison against Dwains Dashboard: a room with one light
+  ended up the same 190px-tall tile as one with six devices. `[data-r="rooms"]`
+  now sizes each row to `min-content` instead of splitting the flex
+  container's leftover space across rows; the column scrolls once it's
+  full. `rooms.max` (an explicit config value always wins) defaults to 12
+  instead of 8, since rows no longer need a fixed height to look
+  intentional.
+
+### Added
+
+- **Rooms now discover seven more domains**: `humidifier`, `lock`,
+  `water_heater`, `valve`, `lawn_mower`, `siren` — each with its own icon,
+  room-panel toggle row, and busy/active semantics (a lock is "active" when
+  unlocked, a valve when open, a siren when sounding — not the on/off
+  inverse of that).
+- **Room cards show status pills** for `binary_sensor` device classes that
+  say something worth knowing: door/window/opening/garage_door (open),
+  motion/occupancy/presence, and moisture/smoke/gas — the last shown in
+  the accent color. A closed door or an empty room produces no pill, same
+  as before; presence counts toward a room being "active", an open
+  door/window on its own doesn't.
+- **Three more sensor pills**: `illuminance`, `carbon_dioxide`, `pm25`, and
+  a `battery` pill that only appears under 20% — a charged battery isn't
+  news. Room cards cap at four pills, in priority order (alarms, openings,
+  presence, temperature, humidity, everything else); the room panel shows
+  the rest.
+- **A switch on the same device as a `device_class: power` sensor shows its
+  instantaneous wattage inline in the room panel** (e.g. "BroadlinkSP4L ·
+  42 W") — same device→entity relationship already used for cameras and
+  their motion sensor. Voltage, current and energy/counter sensors are
+  still deliberately never shown, on a switch's row or anywhere else — see
+  the README's "Known limits" for the full discovered-domains list.
+
 ## [1.4.7] - 2026-08-15
 
 ### Fixed

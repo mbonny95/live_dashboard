@@ -16,12 +16,47 @@
 // and collide with another file's (e.g. two files both declaring `connect`).
 (function () {
 
-const CONTROLLABLE_DOMAINS = ['light', 'switch', 'cover', 'media_player', 'climate', 'fan', 'vacuum'];
+const CONTROLLABLE_DOMAINS = ['light', 'switch', 'cover', 'media_player', 'climate', 'fan', 'vacuum',
+  'humidifier', 'lock', 'water_heater', 'valve', 'lawn_mower', 'siren'];
 
 const DOMAIN_ICON = {
   light: '#i-bulb', switch: '#i-plug', cover: '#i-shutter-close', media_player: '#i-tv',
-  climate: '#i-therm', fan: '#i-wind', vacuum: '#i-bot'
+  climate: '#i-therm', fan: '#i-wind', vacuum: '#i-bot',
+  humidifier: '#i-drop', lock: '#i-lock', water_heater: '#i-therm', valve: '#i-drop',
+  lawn_mower: '#i-bot', siren: '#i-alert'
 };
+
+// binary_sensor device_class -> pill. Only entities currently `on` ever
+// produce a pill (see discoverRooms) — a closed window or an empty room is
+// the normal state and would just be noise. `group` drives both the card's
+// pill priority order and whether the pill counts toward a room being
+// "busy" — see discoverRooms and dash_neumo*.html's buildRoom.
+const BINARY_PILL_CLASS = {
+  door: { icon: '#i-door', group: 'openings' },
+  garage_door: { icon: '#i-door', group: 'openings' },
+  window: { icon: '#i-window', group: 'openings' },
+  opening: { icon: '#i-window', group: 'openings' },
+  motion: { icon: '#i-motion', group: 'presence' },
+  occupancy: { icon: '#i-motion', group: 'presence' },
+  presence: { icon: '#i-motion', group: 'presence' },
+  moisture: { icon: '#i-drop', group: 'alarm' },
+  smoke: { icon: '#i-alert', group: 'alarm' },
+  gas: { icon: '#i-alert', group: 'alarm' }
+};
+
+// sensor device_class -> room "Ambiente" pill. `unit` is a literal string
+// override (undefined = use the entity's own unit_of_measurement); `kind`
+// is only used for the room card's pill priority ordering.
+const NUMERIC_SENSOR_CLASS = {
+  temperature: { icon: '#i-therm', decimals: 1, unit: '°', kind: 'temperature' },
+  humidity: { icon: '#i-drop', decimals: 0, unit: '%', kind: 'humidity' },
+  illuminance: { icon: '#i-lux', decimals: 0, unit: ' lx', kind: 'illuminance' },
+  carbon_dioxide: { icon: '#i-cloud', decimals: 0, unit: ' ppm', kind: 'co2' },
+  pm25: { icon: '#i-wind', decimals: 0, unit: undefined, kind: 'pm25' },
+  // battery is handled separately below — only shown under 20%.
+  battery: { icon: '#i-battery', decimals: 0, unit: '%', kind: 'battery' }
+};
+const LOW_BATTERY_PCT = 20;
 
 const AREA_ICON_RULES = [
   [/letto|bed(?!.*bimb)|dormitor|master/i, '#i-bed'],
@@ -98,8 +133,24 @@ function discoverRooms(states, registries, config) {
   const byArea = new Map(areas.map((a) => [a.area_id, {
     id: a.area_id, name: a.name,
     icon: (cfg.icons && cfg.icons[a.area_id]) || (a.icon ? mapMdiIcon(a.icon) : null) || guessAreaIcon(a.name),
-    lights: [], switches: [], covers: [], media: [], climate: [], fan: [], vacuum: [], sensors: []
+    lights: [], switches: [], covers: [], media: [], climate: [], fan: [], vacuum: [],
+    humidifier: [], lock: [], waterHeater: [], valve: [], lawnMower: [], siren: [],
+    sensors: [], status: []
   }]));
+
+  // Device -> its own `device_class: power` sensor, for switches only (see
+  // B4 in the fix ticket): a plug's instantaneous wattage is worth showing
+  // next to the switch itself, but the sensor never becomes a pill or a row
+  // of its own — same "same physical thing, don't show it twice" reasoning
+  // as claimedEntities above, just keyed by device instead of by config.
+  const powerSensorByDevice = new Map();
+  for (const e of entities) {
+    if (isExcluded(e) || domainOf(e.entity_id) !== 'sensor' || !e.device_id) continue;
+    const st = states[e.entity_id];
+    if (!st || !(e.entity_id in states)) continue;
+    if ((st.attributes && st.attributes.device_class) !== 'power') continue;
+    if (!powerSensorByDevice.has(e.device_id)) powerSensorByDevice.set(e.device_id, e.entity_id);
+  }
 
   for (const ent of entities) {
     if (isExcluded(ent)) continue;
@@ -110,20 +161,47 @@ function discoverRooms(states, registries, config) {
     const room = byArea.get(areaId);
     const dom = domainOf(ent.entity_id);
     const name = friendlyName(states, ent.entity_id);
+    const st = states[ent.entity_id];
 
     if (claimedEntities.has(ent.entity_id)) continue;
 
     if (dom === 'light') room.lights.push(ent.entity_id);
-    else if (dom === 'switch') room.switches.push([ent.entity_id, name, '#i-plug']);
+    else if (dom === 'switch') {
+      const powerId = ent.device_id ? powerSensorByDevice.get(ent.device_id) : null;
+      room.switches.push([ent.entity_id, name, '#i-plug', powerId || null]);
+    }
     else if (dom === 'cover') room.covers.push(ent.entity_id);
     else if (dom === 'media_player') room.media.push(ent.entity_id);
     else if (dom === 'climate') room.climate.push([ent.entity_id, name, '#i-therm']);
     else if (dom === 'fan') room.fan.push([ent.entity_id, name, '#i-wind']);
     else if (dom === 'vacuum') room.vacuum.push([ent.entity_id, name, '#i-bot']);
+    else if (dom === 'humidifier') room.humidifier.push([ent.entity_id, name, DOMAIN_ICON.humidifier]);
+    else if (dom === 'lock') room.lock.push([ent.entity_id, name, DOMAIN_ICON.lock]);
+    else if (dom === 'water_heater') room.waterHeater.push([ent.entity_id, name, DOMAIN_ICON.water_heater]);
+    else if (dom === 'valve') room.valve.push([ent.entity_id, name, DOMAIN_ICON.valve]);
+    else if (dom === 'lawn_mower') room.lawnMower.push([ent.entity_id, name, DOMAIN_ICON.lawn_mower]);
+    else if (dom === 'siren') room.siren.push([ent.entity_id, name, DOMAIN_ICON.siren]);
+    else if (dom === 'binary_sensor') {
+      const dc = st.attributes && st.attributes.device_class;
+      const meta = BINARY_PILL_CLASS[dc];
+      // Only "on" ever becomes a pill — a closed door/empty room is the
+      // normal state and would just be noise (see B2 in the fix ticket).
+      if (meta && st.state === 'on') room.status.push([ent.entity_id, name, meta.icon, dc, meta.group]);
+    }
     else if (dom === 'sensor') {
-      const dc = states[ent.entity_id].attributes && states[ent.entity_id].attributes.device_class;
-      if (dc === 'temperature') room.sensors.push([ent.entity_id, name, '#i-therm', 1]);
-      else if (dc === 'humidity') room.sensors.push([ent.entity_id, name, '#i-drop', 0]);
+      const dc = st.attributes && st.attributes.device_class;
+      if (dc === 'battery') {
+        const pct = parseFloat(st.state);
+        // A charged battery isn't news, a low one is (see B3) — filtered
+        // here, not in the render layer, so the card and panel agree.
+        if (!isNaN(pct) && pct < LOW_BATTERY_PCT) {
+          const m = NUMERIC_SENSOR_CLASS.battery;
+          room.sensors.push([ent.entity_id, name, m.icon, m.decimals, m.unit, m.kind]);
+        }
+      } else {
+        const m = NUMERIC_SENSOR_CLASS[dc];
+        if (m) room.sensors.push([ent.entity_id, name, m.icon, m.decimals, m.unit, m.kind]);
+      }
     }
   }
 
@@ -131,11 +209,12 @@ function discoverRooms(states, registries, config) {
   let list = [...byArea.values()].filter((r) => !hideSet.has(r.id) && !hideSet.has(r.name));
 
   const richness = (r) => r.lights.length + r.switches.length + r.covers.length + r.media.length
-    + r.climate.length + r.fan.length + r.vacuum.length;
-  // Drop areas with nothing controllable and no room-worthy sensors — an
-  // area that only holds a diagnostic device would otherwise show as an
+    + r.climate.length + r.fan.length + r.vacuum.length
+    + r.humidifier.length + r.lock.length + r.waterHeater.length + r.valve.length + r.lawnMower.length + r.siren.length;
+  // Drop areas with nothing controllable and no room-worthy sensors/status —
+  // an area that only holds a diagnostic device would otherwise show as an
   // empty tile.
-  list = list.filter((r) => richness(r) > 0 || r.sensors.length > 0);
+  list = list.filter((r) => richness(r) > 0 || r.sensors.length > 0 || r.status.length > 0);
 
   const order = (cfg.order || []).map(String);
   const pinned = [];
@@ -146,7 +225,12 @@ function discoverRooms(states, registries, config) {
   list.sort((a, b) => richness(b) - richness(a));
   const ranked = pinned.concat(list);
 
-  const max = cfg.max || 8;
+  // Rows now size to their own content instead of stretching to fill the
+  // column (see dash_neumo.html's [data-r="rooms"] CSS), so there's real
+  // room for more than the old fixed-height default of 8 without the grid
+  // looking sparse — the column just scrolls once it's full. An explicit
+  // cfg.max always wins.
+  const max = cfg.max || 12;
   return { rooms: ranked.slice(0, max), overflow: ranked.slice(max) };
 }
 

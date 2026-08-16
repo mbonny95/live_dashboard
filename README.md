@@ -77,7 +77,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.7
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.8
        embed_iframe: true
        trust_external_script: false
    ```
@@ -90,7 +90,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.4.7` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.4.8` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -389,6 +389,18 @@ behavior too.
   that's not a bug to report: it's Home Assistant's own `Settings ->
   Areas` waiting to be filled in, not something this dashboard can guess
   for you.
+- **Rooms show what you'd act on or ask about out loud, not every entity in
+  the area.** Discovered domains: `light`, `switch`, `cover`, `media_player`,
+  `climate`, `fan`, `vacuum`, `humidifier`, `lock`, `water_heater`, `valve`,
+  `lawn_mower`, `siren`. Sensor pills: `temperature`, `humidity`,
+  `illuminance`, `carbon_dioxide`, `pm25`, and `battery` (only under 20% —
+  a charged battery isn't news), plus door/window/opening/garage_door,
+  motion/occupancy/presence and moisture/smoke/gas `binary_sensor` pills,
+  shown only while they're actually "on" — a closed window is the normal
+  state. `voltage`, `current`, `energy` and other power-metering sensors are
+  deliberately never shown as pills or rows; a switch's own device wattage
+  shows inline in its room-panel row instead, when a `device_class: power`
+  sensor exists on the same device.
 - Built for a landscape wall tablet first; the mobile page is complete but
   secondary, not the primary design target.
 - Not a Lovelace replacement — no card picker, no drag-and-drop layout, no

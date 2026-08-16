@@ -59,9 +59,17 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
 
   'light.brightnessSuffix': 'brightness',
 
+  'lock.locked': 'locked', 'lock.unlocked': 'unlocked',
+  'lock.lockAction': 'Lock', 'lock.unlockAction': 'Unlock',
+
   'media.playing': 'playing',
 
   'people.away': 'away', 'people.home': 'home',
+
+  // room card pills, keyed by binary_sensor device_class (see B2/discovery.js)
+  'pill.door': 'open', 'pill.window': 'open', 'pill.opening': 'open', 'pill.garage_door': 'open',
+  'pill.motion': 'motion', 'pill.occupancy': 'occupied', 'pill.presence': 'presence',
+  'pill.moisture': 'flooding', 'pill.smoke': 'smoke', 'pill.gas': 'gas',
 
   'quick.all': 'all', 'quick.alreadyOff': 'already off', 'quick.coversDown': 'Covers down',
   'quick.coversUp': 'Covers up', 'quick.lightsOff': 'Turn off all lights', 'quick.onCount': '{n} on',
@@ -73,9 +81,14 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
 
   'rooms.overflow': '+{n} rooms',
 
+  'siren.sounding': 'sounding',
+
   'status.connected': 'Connected', 'status.connecting': 'Connecting…', 'status.error': 'Not connected',
 
   'switch.off': 'off', 'switch.running': 'running',
+
+  'valve.open': 'open', 'valve.closed': 'closed',
+  'valve.openAction': 'Open', 'valve.closeAction': 'Close',
 
   'tab.casa': 'Home', 'tab.cameras': 'Surveillance', 'tab.energy': 'Energy', 'tab.irrigation': 'Irrigation', 'tab.vehicle': 'Vehicle', 'tab.weather': 'Weather',
 

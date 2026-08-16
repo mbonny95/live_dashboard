@@ -34,7 +34,7 @@ window.CASA_CONFIG = {
   rooms: {
     order: [],   // area IDs (or names) to pin first, in this order — e.g. ['soggiorno', 'cucina']
     hide: [],    // area IDs (or names) to exclude entirely
-    max: 8,      // tiles on the Casa view grid — the layout is fixed at 4 columns and does not scroll, so keep this at 8 unless you also changed the grid
+    max: 12,     // tiles on the Casa view grid — 2 columns, rows sized to content, the column scrolls once it's full
     icons: {}    // area ID -> icon id, to override the guessed icon — e.g. { cucina: '#i-house' }
   },
 

@@ -59,9 +59,17 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   'light.brightnessSuffix': 'luminosità',
 
+  'lock.locked': 'bloccata', 'lock.unlocked': 'sbloccata',
+  'lock.lockAction': 'Blocca', 'lock.unlockAction': 'Sblocca',
+
   'media.playing': 'in riproduzione',
 
   'people.away': 'fuori', 'people.home': 'in casa',
+
+  // room card pills, keyed by binary_sensor device_class (see B2/discovery.js)
+  'pill.door': 'aperta', 'pill.window': 'aperta', 'pill.opening': 'aperta', 'pill.garage_door': 'aperto',
+  'pill.motion': 'movimento', 'pill.occupancy': 'presenza', 'pill.presence': 'presenza',
+  'pill.moisture': 'allagamento', 'pill.smoke': 'fumo', 'pill.gas': 'gas',
 
   'quick.all': 'tutte', 'quick.alreadyOff': 'già spente', 'quick.coversDown': 'Tapparelle giù',
   'quick.coversUp': 'Tapparelle su', 'quick.lightsOff': 'Spegni tutte le luci', 'quick.onCount': '{n} accese',
@@ -73,9 +81,14 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   'rooms.overflow': '+{n} stanze',
 
+  'siren.sounding': 'in suono',
+
   'status.connected': 'Collegato', 'status.connecting': 'Connessione…', 'status.error': 'Non collegato',
 
   'switch.off': 'spenta', 'switch.running': 'in funzione',
+
+  'valve.open': 'aperta', 'valve.closed': 'chiusa',
+  'valve.openAction': 'Apri', 'valve.closeAction': 'Chiudi',
 
   'tab.casa': 'Casa', 'tab.cameras': 'Sorveglianza', 'tab.energy': 'Energia', 'tab.irrigation': 'Irrigazione', 'tab.vehicle': 'Auto', 'tab.weather': 'Meteo',
 

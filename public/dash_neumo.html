@@ -23,7 +23,7 @@ a{color:var(--accT);text-decoration:none}a:hover{color:var(--acc)}
 --nu-in:inset 5px 5px 10px var(--nu-d),inset -5px -5px 10px var(--nu-l);--nu-ins:inset 3px 3px 7px var(--nu-d),inset -3px -3px 7px var(--nu-l)}
 [data-sel="true"]{box-shadow:inset 4px 4px 9px var(--nu-d),inset -4px -4px 9px var(--nu-l)!important;background:var(--tint)!important;color:var(--accT)!important}
 [data-on="true"]{background:var(--tint)}
-[data-tone="warn"]{color:var(--warn)}[data-tone="alert"]{color:var(--alert)}[data-tone="ok"]{color:var(--ok)}
+[data-tone="warn"]{color:var(--warn)}[data-tone="alert"]{color:var(--alert)}[data-tone="ok"]{color:var(--ok)}[data-tone="acc"]{color:var(--acc)}
 [data-dim="true"]{opacity:.42}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:34px;background:transparent;margin:0}
 input[type=range]::-webkit-slider-runnable-track{height:34px;border-radius:999px;background:var(--gr);
@@ -35,7 +35,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 [data-r="casa"]{display:grid;gap:14px;grid-template-columns:minmax(0,.86fr) minmax(0,1.3fr) minmax(0,.94fr);min-height:100%}
 [data-r="hgroup"]{display:flex;align-items:center;gap:9px;flex:none}
-[data-r="rooms"]{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(148px,auto);flex:1;min-height:0}
+[data-r="rooms"]{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:min-content;align-content:start;flex:1;min-height:0;overflow-y:auto}
 [data-r="mini"]{display:grid;gap:11px;grid-template-columns:repeat(2,minmax(0,1fr))}
 [data-r="two"]{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr));flex:none}
 [data-r="two"][data-cols="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -101,6 +101,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11A8 8 0 0 0 6.3 6.3L4 8.5"/><path d="M4 4v4.5h4.5"/><path d="M4 13a8 8 0 0 0 13.7 4.7L20 15.5"/><path d="M20 20v-4.5h-4.5"/></symbol>
 <symbol id="i-cam" viewBox="0 0 24 24"><path d="M3 8.5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="m15 11 5-3v8l-5-3Z"/></symbol>
 <symbol id="i-motion" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M6.5 6.5a7.8 7.8 0 0 0 0 11M17.5 6.5a7.8 7.8 0 0 1 0 11M3.5 3.5a12 12 0 0 0 0 17M20.5 3.5a12 12 0 0 1 0 17"/></symbol>
+<symbol id="i-window" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 12h16M12 3v18"/></symbol>
+<symbol id="i-lux" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 4v1.4M12 18.6V20M6.2 6.2l1 1M16.8 16.8l1 1M3.2 12h1.4M19.4 12h1.4M6.2 17.8l1-1M16.8 7.2l1-1"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M7.5 11V7.5a4.5 4.5 0 0 1 9 0V11"/></symbol>
 </defs></svg>
 
 <div data-nu="1" data-theme="{{ theme }}" style="height:100vh;background:var(--page);color:var(--tx);padding:22px 24px;display:flex;flex-direction:column;gap:12px;overflow:hidden">
@@ -234,7 +237,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <sc-if value="{{ r.hasQuick }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;gap:6px;flex-wrap:wrap;flex:none">
 <sc-for list="{{ r.quick }}" as="q" hint-placeholder-count="2">
-<span style="display:flex;align-items:center;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px 9px;font:600 10.5px/1 var(--font-body);color:var(--tx2)">
+<span data-tone="{{ q.tone }}" style="display:flex;align-items:center;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px 9px;font:600 10.5px/1 var(--font-body);color:var(--tx2)">
 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ q.iconRef }}"></use></svg>
 {{ q.val }}
 </span>
@@ -1022,7 +1025,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 // Defaults mirror live_dashboard_config.example.js — see that file for what each key does.
 // A missing/broken config.js degrades to this, never to a crash.
 const DEFAULT_CONFIG = {
-  rooms: { order: [], hide: [], max: 8, icons: {} },
+  rooms: { order: [], hide: [], max: 12, icons: {} },
   alarm: null, modes: null, people: [], weather: null, quickActions: null,
   energy: null, irrigation: null, vehicle: null, appliances: null, cameras: null, weatherStation: null, language: null
 };
@@ -1623,13 +1626,40 @@ class Component extends DCLogic {
     }
 
     const roomsResult = this.ROOMS_RESULT();
+    // Card pill priority — allarmi, aperture, presenza, temperatura, umidità,
+    // il resto (illuminance/co2/pm25/battery) — see B3 in the fix ticket.
+    // `kind` comes from discovery.js: a status pill's group, or a numeric
+    // sensor's kind.
+    const PILL_PRIORITY = { alarm: 0, openings: 1, presence: 2, temperature: 3, humidity: 4 };
+    const pillPriority = (kind) => PILL_PRIORITY[kind] !== undefined ? PILL_PRIORITY[kind] : 5;
     const buildRoom = (r) => {
       const lightOn = (r.lights || []).some((id) => this.isOn(id));
       const climateOn = (r.climate || []).some((c) => this.s(c[0]) !== 'off' && this.s(c[0]) !== 'unavailable');
       const fanOn = (r.fan || []).some((f) => this.isOn(f[0]));
       const vacuumOn = (r.vacuum || []).some((v) => this.s(v[0]) === 'cleaning');
-      const busy = lightOn || (r.switches || []).some((sw) => this.isOn(sw[0])) || (r.media || []).some((id) => this.s(id) === 'playing') || climateOn || fanOn || vacuumOn;
-      const quickChips = (r.sensors || []).map((s) => ({ icon: s[2], iconRef: this._bindAttr('href', s[2]), val: this.val(s[0], s[3], s[3] === 0 ? '%' : '°') })).filter((q) => q.val !== '—');
+      const humidifierOn = (r.humidifier || []).some((h) => this.isOn(h[0]));
+      // Per-domain "active" semantics (see B1): a lock is active when
+      // unlocked (not when closed), a valve when open, a siren when
+      // sounding — the opposite predicate would make "off" look busy.
+      const lockUnlocked = (r.lock || []).some((l) => this.s(l[0]) === 'unlocked');
+      const waterHeaterOn = (r.waterHeater || []).some((w) => this.s(w[0]) !== 'off' && this.s(w[0]) !== 'unavailable' && this.s(w[0]) !== 'unknown');
+      const valveOpen = (r.valve || []).some((v) => this.s(v[0]) === 'open');
+      const lawnMowerOn = (r.lawnMower || []).some((m) => this.s(m[0]) === 'mowing');
+      const sirenOn = (r.siren || []).some((s) => this.isOn(s[0]));
+      // A room with someone in it is an active room; an open door/window on
+      // its own isn't (see B2) — same distinction the pill table draws.
+      const presenceOn = (r.status || []).some((p) => p[4] === 'presence');
+      const busy = lightOn || (r.switches || []).some((sw) => this.isOn(sw[0])) || (r.media || []).some((id) => this.s(id) === 'playing')
+        || climateOn || fanOn || vacuumOn || humidifierOn || lockUnlocked || waterHeaterOn || valveOpen || lawnMowerOn || sirenOn || presenceOn;
+      const statusPills = (r.status || []).map((p) => ({
+        icon: p[2], iconRef: this._bindAttr('href', p[2]), val: this.t('pill.' + p[3]),
+        tone: p[4] === 'alarm' ? 'acc' : undefined, prio: pillPriority(p[4])
+      }));
+      const sensorPills = (r.sensors || []).map((s) => ({
+        icon: s[2], iconRef: this._bindAttr('href', s[2]), val: this.val(s[0], s[3], s[4]),
+        tone: s[5] === 'battery' ? 'acc' : undefined, prio: pillPriority(s[5])
+      })).filter((q) => q.val !== '—');
+      const quickChips = statusPills.concat(sensorPills).sort((a, b) => a.prio - b.prio).slice(0, 4);
       return {
         id: r.id, name: r.name, icon: r.icon, iconRef: this._bindAttr('href', r.icon), sub: this.roomSummary(r),
         quick: quickChips, hasQuick: quickChips.length > 0,
@@ -1929,13 +1959,50 @@ class Component extends DCLogic {
     if (this.state.room) {
       const r = roomsResult.rooms.concat(roomsResult.overflow).filter((x) => x.id === this.state.room)[0];
       if (r) {
-        const extraTuples = [].concat(r.climate || [], r.fan || [], r.vacuum || []);
+        const extraTuples = [].concat(r.climate || [], r.fan || [], r.vacuum || [], r.waterHeater || [], r.lawnMower || []);
         const applianceItems = this.applianceItems(r.id);
+        // Switch-like toggles all share one panel section (see B1): a real
+        // switch, a humidifier, a lock (locked/unlocked instead of off/on),
+        // a valve (closed/open) and a siren — same row shape, per-domain
+        // service call and on/off wording.
+        const switchTuples = (r.switches || []).map((sw) => {
+          const on = this.isOn(sw[0]);
+          const powerId = sw[3];
+          const watts = powerId ? this.val(powerId, 0, ' W') : null;
+          return { name: sw[1], icon: sw[2], iconRef: this._bindAttr('href', sw[2]), on, stroke: on ? 'var(--acc)' : 'var(--tx2)',
+            sub: (on ? this.t('switch.running') : this.t('switch.off')) + (watts && watts !== '—' ? ' · ' + watts : ''),
+            toggle: () => this.call('switch', on ? 'turn_off' : 'turn_on', { entity_id: sw[0] }) };
+        });
+        const humidifierTuples = (r.humidifier || []).map((h) => {
+          const on = this.isOn(h[0]);
+          return { name: h[1], icon: h[2], iconRef: this._bindAttr('href', h[2]), on, stroke: on ? 'var(--acc)' : 'var(--tx2)',
+            sub: on ? this.t('switch.running') : this.t('switch.off'),
+            toggle: () => this.call('humidifier', on ? 'turn_off' : 'turn_on', { entity_id: h[0] }) };
+        });
+        const lockTuples = (r.lock || []).map((l) => {
+          const unlocked = this.s(l[0]) === 'unlocked';
+          return { name: l[1], icon: l[2], iconRef: this._bindAttr('href', l[2]), on: unlocked, stroke: unlocked ? 'var(--acc)' : 'var(--tx2)',
+            sub: unlocked ? this.t('lock.unlocked') : this.t('lock.locked'),
+            toggle: () => this.call('lock', unlocked ? 'lock' : 'unlock', { entity_id: l[0] }) };
+        });
+        const valveTuples = (r.valve || []).map((v) => {
+          const open = this.s(v[0]) === 'open';
+          return { name: v[1], icon: v[2], iconRef: this._bindAttr('href', v[2]), on: open, stroke: open ? 'var(--acc)' : 'var(--tx2)',
+            sub: open ? this.t('valve.open') : this.t('valve.closed'),
+            toggle: () => this.call('valve', open ? 'close_valve' : 'open_valve', { entity_id: v[0] }) };
+        });
+        const sirenTuples = (r.siren || []).map((s) => {
+          const on = this.isOn(s[0]);
+          return { name: s[1], icon: s[2], iconRef: this._bindAttr('href', s[2]), on, stroke: on ? 'var(--acc)' : 'var(--tx2)',
+            sub: on ? this.t('siren.sounding') : this.t('switch.off'),
+            toggle: () => this.call('siren', on ? 'turn_off' : 'turn_on', { entity_id: s[0] }) };
+        });
+        const switchesAll = switchTuples.concat(humidifierTuples, lockTuples, valveTuples, sirenTuples);
         panel = {
           name: r.name, icon: r.icon, iconRef: this._bindAttr('href', r.icon), sub: this.roomSummary(r),
           hasLights: (r.lights || []).length > 0, hasCovers: (r.covers || []).length > 0,
           hasAppliances: applianceItems.length > 0, appliances: applianceItems,
-          hasSwitches: (r.switches || []).length > 0, hasSensors: (r.sensors || []).length > 0,
+          hasSwitches: switchesAll.length > 0, hasSensors: (r.sensors || []).length > 0,
           hasMedia: (r.media || []).length > 0, hasExtras: extraTuples.length > 0,
           lights: (r.lights || []).map((id) => {
             const on = this.isOn(id);
@@ -1974,13 +2041,8 @@ class Component extends DCLogic {
               // for this slider goes out.
               setPos: (e) => this.cover(id, 'set_cover_position', { position: Number(e.target.value) }) };
           }),
-          switches: (r.switches || []).map((sw) => {
-            const on = this.isOn(sw[0]);
-            return { name: sw[1], icon: sw[2], iconRef: this._bindAttr('href', sw[2]), on, stroke: on ? 'var(--acc)' : 'var(--tx2)',
-              sub: on ? this.t('switch.running') : this.t('switch.off'),
-              toggle: () => this.call('switch', on ? 'turn_off' : 'turn_on', { entity_id: sw[0] }) };
-          }),
-          sensors: (r.sensors || []).map((s) => ({ label: s[1], icon: s[2], iconRef: this._bindAttr('href', s[2]), val: this.val(s[0], s[3], s[3] === 0 ? '%' : '°') })),
+          switches: switchesAll,
+          sensors: (r.sensors || []).map((s) => ({ label: s[1], icon: s[2], iconRef: this._bindAttr('href', s[2]), val: this.val(s[0], s[3], s[4]) })),
           media: (r.media || []).map((id) => {
             const s = this.s(id);
             const live = s !== 'unavailable' && s !== 'unknown';

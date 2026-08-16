@@ -68,7 +68,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.7
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.8
        embed_iframe: true
        trust_external_script: false
    ```
@@ -81,7 +81,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    sia come `console.error` sia come messaggio sulla pagina stessa, con il
    `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.4.7` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.4.8` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -396,6 +396,19 @@ anche quel comportamento.
   non è un bug da segnalare: è `Impostazioni -> Aree` di Home Assistant che
   aspetta di essere compilato, cosa che questa dashboard non può indovinare
   al posto tuo.
+- **Le stanze mostrano ciò su cui agisci o che chiederesti a voce, non ogni
+  entità dell'area.** Domini raccolti: `light`, `switch`, `cover`,
+  `media_player`, `climate`, `fan`, `vacuum`, `humidifier`, `lock`,
+  `water_heater`, `valve`, `lawn_mower`, `siren`. Pillole sensore:
+  `temperature`, `humidity`, `illuminance`, `carbon_dioxide`, `pm25` e
+  `battery` (solo sotto il 20% — una batteria carica non è notizia), più le
+  pillole `binary_sensor` porta/finestra/apertura/portone garage,
+  movimento/presenza e allagamento/fumo/gas, mostrate solo quando sono
+  effettivamente "on" — una finestra chiusa è lo stato normale. `voltage`,
+  `current`, `energy` e gli altri sensori di misura elettrica non diventano
+  mai pillole né righe: il wattaggio istantaneo di uno switch compare invece
+  nella sua riga del pannello stanza, quando esiste un sensore
+  `device_class: power` sullo stesso device.
 - Pensata prima di tutto per un tablet a muro in orizzontale; la pagina
   mobile è completa ma secondaria, non l'obiettivo primario del design.
 - Non sostituisce Lovelace: nessun selettore di card, nessun layout
