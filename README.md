@@ -7,6 +7,15 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-c67139)](LICENSE)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2022.x%2B-c67139)](#requirements)
 
+### Support this project
+
+If you find Live Dashboard for Home Assistant useful, you can support my work on Ko-fi:
+
+<a href="https://ko-fi.com/mbonny95" target="_blank">
+  <img src="https://img.shields.io/badge/Support%20me%20on%20Ko--fi-ff5e5b?logo=ko-fi&logoColor=white"
+       alt="Support me on Ko-fi" />
+</a>
+
 *[Leggi in italiano](README.it.md)*
 
 A hand-written, single-page Home Assistant dashboard for a wall-mounted
@@ -68,7 +77,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.6
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.7
        embed_iframe: true
        trust_external_script: false
    ```
@@ -81,7 +90,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.4.6` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.4.7` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you

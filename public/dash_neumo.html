@@ -589,6 +589,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <sc-if value="{{ tabEnergia }}" hint-placeholder-val="{{ false }}">
 <div data-screen-label="Energia" style="display:flex;flex-direction:column;gap:14px;height:100%;min-height:0">
 
+<sc-if value="{{ hasPowerCells }}" hint-placeholder-val="{{ true }}">
 <div data-r="cells" style="flex:none">
 <sc-for list="{{ nowCells }}" as="c" hint-placeholder-count="4">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:14px 16px;display:flex;align-items:center;gap:12px">
@@ -600,6 +601,45 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-for>
 </div>
+</sc-if>
+
+<sc-if value="{{ energyTabFallback }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:22px 24px;flex:none;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+<div style="position:relative;width:186px;height:186px;margin:0 auto;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center;flex:none">
+<svg viewBox="0 0 200 200" style="position:absolute;inset:8px;width:170px;height:170px">
+<g transform="rotate(-90 100 100)">
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--nu-d)" stroke-width="16" opacity="0.45"></circle>
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--sage)" stroke-width="16" stroke-linecap="{{ outerSelfCap }}" stroke-dasharray="{{ outerSelfArc }}" stroke-dashoffset="{{ outerSelfOffset }}"></circle>
+<circle cx="100" cy="100" r="86" fill="none" stroke="var(--acc)" stroke-width="16" stroke-linecap="{{ outerGridCap }}" stroke-dasharray="{{ outerGridArc }}" stroke-dashoffset="{{ outerGridOffset }}"></circle>
+<sc-if value="{{ hasInnerRing }}" hint-placeholder-val="{{ false }}">
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--nu-d)" stroke-width="14" opacity="0.35"></circle>
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--sage)" stroke-width="14" stroke-linecap="{{ innerSelfCap }}" stroke-dasharray="{{ innerSelfArc }}" stroke-dashoffset="{{ innerSelfOffset }}"></circle>
+<circle cx="100" cy="100" r="62" fill="none" stroke="var(--feed)" stroke-width="14" stroke-linecap="{{ innerFeedCap }}" stroke-dasharray="{{ innerFeedArc }}" stroke-dashoffset="{{ innerFeedOffset }}"></circle>
+</sc-if>
+</g>
+</svg>
+<div style="position:relative;text-align:center">
+<div style="font-family:var(--font-heading);font-size:28px;line-height:1">{{ consumoCasaBig }}</div>
+<div style="font:600 10px/1.3 var(--font-body);color:var(--tx2);margin-top:4px">{{ kwhConsumedLabel }}</div>
+</div>
+</div>
+<div style="display:flex;gap:10px;flex:1;min-width:220px">
+<sc-for list="{{ ringLegend }}" as="l" hint-placeholder-count="3">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:14px 10px;display:flex;flex-direction:column;gap:7px;align-items:center;flex:1;min-width:0">
+<span style="width:8px;height:8px;border-radius:999px;background:{{ l.color }};flex:none"></span>
+<span style="font-family:var(--font-heading);font-size:26px;line-height:1;white-space:nowrap">{{ l.num }}<span style="font:500 14px/1 var(--font-body);color:var(--tx2)"> kWh</span></span>
+<span style="font:500 11px/1.2 var(--font-body);color:var(--tx2);text-align:center">{{ l.label }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+<span style="font:600 12px/1.3 var(--font-body);color:var(--accT)">{{ energyTabSelfPctLine }}</span>
+<span style="font:500 12px/1.3 var(--font-body);color:var(--tx2)">{{ S.production }} <strong style="color:var(--tx)">{{ prodTodayFull }}</strong></span>
+</div>
+</div>
+</sc-if>
 
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:20px 22px;flex:1;min-height:0;display:flex;flex-direction:column">
 <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;flex:none">
@@ -632,6 +672,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </div>
 
+<sc-if value="{{ hasHistory }}" hint-placeholder-val="{{ true }}">
 <div style="display:flex;align-items:stretch;gap:10px;flex:1;min-height:172px;box-shadow:var(--nu-ins);border-radius:22px;padding:18px 16px;margin-top:16px">
 <div style="display:flex;flex-direction:column;gap:8px;flex:none">
 <div style="position:relative;flex:1;min-height:0;width:34px">
@@ -656,6 +697,12 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-for>
 </div>
+</sc-if>
+<sc-if value="{{ noHistory }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;justify-content:center;flex:1;min-height:172px;box-shadow:var(--nu-ins);border-radius:22px;padding:18px 16px;margin-top:16px">
+<span style="font:500 12.5px/1.4 var(--font-body);color:var(--tx2);text-align:center">{{ noHistoryLabel }}</span>
+</div>
+</sc-if>
 
 <div data-r="cells" style="margin-top:15px;flex:none">
 <sc-for list="{{ periodCells }}" as="c" hint-placeholder-count="4">
@@ -1705,6 +1752,18 @@ class Component extends DCLogic {
       { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.val(en.consumption, 2, ' kW') },
       { icon: '#i-tower', iconRef: this._bindAttr('href', '#i-tower'), stroke: 'var(--tx2)', label: this.t('energy.gridImportNow'), val: this.val(en.gridImport, 2, ' kW') }
     ] : [];
+    // Power (kW) sensors only ever come from config.js — energy/get_prefs
+    // exposes energy counters, not power, and auto-discovery looks for
+    // state_class: total_increasing, so it can't find them either. nowCells
+    // itself isn't a reliable signal (it's always 3 placeholder cells
+    // whenever hasEnergy, each individually showing '—' if unresolved), so
+    // check the underlying config fields directly. Zero-config installs
+    // (HA Energy dashboard auto-discovered, no config.energy at all) fall
+    // through to the daily-totals view the ring already built, instead of
+    // opening on four empty cells.
+    const hasPowerCells = !!(en.production || en.consumption || en.gridImport);
+    const energyTabFallback = !hasPowerCells && hasNewRing;
+    const dailySelfPct = hasOuterRing && consumoCasa ? this.dec(Math.min(100, (autoconsumo / consumoCasa) * 100), 0) + '%' : '—';
 
     const price = hasEnergy && en.price ? this.n(en.price) : null;
     const R = this.state.range;
@@ -1760,6 +1819,12 @@ class Component extends DCLogic {
     const totP = hp.reduce((a, b) => a + b, 0);
     const totG = hg.reduce((a, b) => a + b, 0);
     const totE = he.reduce((a, b) => a + b, 0);
+    // A flat/empty chart reads as "you produce nothing", not "no data yet" —
+    // a zero-config install (see hasPowerCells above) never gets history
+    // either, since _loadHistory() only queries the config.js *Today
+    // entities, so this is the direct companion to the header fallback.
+    const hasHistory = bars.length > 0;
+    const noHistory = !hasHistory;
     const periodCells = hasEnergy ? [
       { label: this.t('energy.producedPeriod'), val: this.dec(totP, 1) + ' kWh' },
       { label: this.t('energy.takenFromGrid'), val: this.dec(totG, 1) + ' kWh' },
@@ -1974,9 +2039,7 @@ class Component extends DCLogic {
       consumoCasaBig: consumoCasa === null ? '—' : this.dec(consumoCasa, 1),
       kwhConsumedLabel: this.t('energy.kwhConsumed'),
       ringLegend, ringLegendCols,
-      ringCompactSummary: hasOuterRing
-        ? this.t('energy.compactSummary', { pct: consumoCasa ? this.dec(Math.min(100, (autoconsumo / consumoCasa) * 100), 0) + '%' : '—' })
-        : '',
+      ringCompactSummary: hasOuterRing ? this.t('energy.compactSummary', { pct: dailySelfPct }) : '',
       selfConsumptionShort: this.t('energy.selfConsumptionShort'), fromGridShort: this.t('energy.fromGridShort'),
       ringProd: arc(prodT, C1), ringLoad: arc(gridT, C2),
       prodToday: prodT === null ? '—' : this.dec(prodT, 1),
@@ -1992,6 +2055,9 @@ class Component extends DCLogic {
       invStatus,
       goEnergia: () => this.setState({ tab: 'energia' }),
       nowCells, ranges, bars, axisTicks, periodCells, hasExportBars, barWidthPct, barMaxWidth,
+      hasPowerCells, energyTabFallback, dailySelfPct,
+      energyTabSelfPctLine: this.t('energy.selfConsumption', { pct: dailySelfPct }),
+      hasHistory, noHistory, noHistoryLabel: this.t('energy.noHistory'),
       feedInLabel: this.t('energy.feedIn'),
       prodPeriod: this.dec(totP, 1) + ' kWh',
       periodNote: this.t('energy.periodNote', { n: R, grid: this.dec(totG, 1) }),

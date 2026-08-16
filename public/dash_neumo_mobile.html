@@ -548,6 +548,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-if>
 </div>
 
+<sc-if value="{{ hasPowerCells }}" hint-placeholder-val="{{ true }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:16px">
 <div style="font:600 10.5px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin-bottom:12px">{{ S.now }}</div>
 <div style="display:flex;flex-direction:column;gap:9px">
@@ -560,6 +561,25 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 </div>
 </div>
+</sc-if>
+
+<sc-if value="{{ energyTabFallback }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;gap:8px">
+<sc-for list="{{ ringLegend }}" as="l" hint-placeholder-count="3">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:14px;padding:11px 8px;display:flex;flex-direction:column;gap:5px;align-items:center;flex:1;min-width:0">
+<span style="width:7px;height:7px;border-radius:999px;background:{{ l.color }};flex:none"></span>
+<span style="font-family:var(--font-heading);font-size:18px;line-height:1;white-space:nowrap">{{ l.num }}<span style="font:500 12px/1 var(--font-body);color:var(--tx2)"> kWh</span></span>
+<span style="font:500 12px/1.2 var(--font-body);color:var(--tx2);text-align:center">{{ l.short }}</span>
+</div>
+</sc-for>
+</div>
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:14px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+<span style="font:600 12px/1.3 var(--font-body);color:var(--accT)">{{ energyTabSelfPctLine }}</span>
+<span style="font:500 12px/1.3 var(--font-body);color:var(--tx2)">{{ S.production }} <strong style="color:var(--tx)">{{ prodTodayFull }}</strong></span>
+</div>
+</div>
+</sc-if>
 
 <button onClick="{{ toggleEnergyChart }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--tx2)">
 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"></use></svg>
@@ -573,6 +593,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <button onClick="{{ r.set }}" data-sel="{{ r.sel }}" style="flex:1;height:40px;border-radius:999px;background:transparent;color:var(--tx2);font:600 12px/1 var(--font-body)">{{ r.label }}</button>
 </sc-for>
 </div>
+<sc-if value="{{ hasHistory }}" hint-placeholder-val="{{ true }}">
 <div style="display:flex;align-items:flex-end;gap:3px;height:136px;margin-top:15px">
 <sc-for list="{{ bars }}" as="b" hint-placeholder-count="7">
 <div title="{{ b.title }}" style="flex:1;min-width:0;align-self:stretch;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%">
@@ -594,6 +615,12 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:999px;background:var(--feed)"></span>{{ feedInLabel }}</span>
 </sc-if>
 </div>
+</sc-if>
+<sc-if value="{{ noHistory }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;justify-content:center;height:136px;margin-top:15px;padding:0 8px">
+<span style="font:500 12px/1.4 var(--font-body);color:var(--tx2);text-align:center">{{ noHistoryLabel }}</span>
+</div>
+</sc-if>
 <div data-m="two" style="margin-top:14px">
 <sc-for list="{{ periodCells }}" as="c" hint-placeholder-count="4">
 <div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:11px 13px">
@@ -1382,11 +1409,11 @@ class Component extends DCLogic {
     }
     const ringLegend = [];
     if (hasOuterRing) {
-      ringLegend.push({ color: 'var(--sage)', label: this.t('energy.selfConsumptionLabel'), val: this.dec(autoconsumo, 1) + ' kWh' });
-      ringLegend.push({ color: 'var(--acc)', label: this.strings.fromGrid, val: this.dec(gridT, 1) + ' kWh' });
+      ringLegend.push({ color: 'var(--sage)', label: this.t('energy.selfConsumptionLabel'), val: this.dec(autoconsumo, 1) + ' kWh', num: this.dec(autoconsumo, 1), short: this.t('energy.selfShort') });
+      ringLegend.push({ color: 'var(--acc)', label: this.strings.fromGrid, val: this.dec(gridT, 1) + ' kWh', num: this.dec(gridT, 1), short: this.t('energy.gridShort') });
     }
     if (hasInnerRing) {
-      ringLegend.push({ color: 'var(--feed)', label: this.t('energy.feedIn'), val: this.dec(exportT, 1) + ' kWh' });
+      ringLegend.push({ color: 'var(--feed)', label: this.t('energy.feedIn'), val: this.dec(exportT, 1) + ' kWh', num: this.dec(exportT, 1), short: this.t('energy.feedShort') });
     }
 
     const nowCells = hasEnergy ? [
@@ -1394,6 +1421,12 @@ class Component extends DCLogic {
       { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.val(en.consumption, 2, ' kW') },
       { icon: '#i-tower', iconRef: this._bindAttr('href', '#i-tower'), stroke: 'var(--tx2)', label: this.t('fromGrid'), val: this.val(en.gridImport, 2, ' kW') }
     ] : [];
+    // See dash_neumo.html's copy of this block for the full explanation
+    // (power sensors only ever come from config.js; zero-config installs
+    // relying on HA's own Energy dashboard never get them).
+    const hasPowerCells = !!(en.production || en.consumption || en.gridImport);
+    const energyTabFallback = !hasPowerCells && hasNewRing;
+    const dailySelfPct = hasOuterRing && consumoCasa ? this.dec(Math.min(100, (autoconsumo / consumoCasa) * 100), 0) + '%' : '—';
 
     const price = hasEnergy && en.price ? this.n(en.price) : null;
     const R = this.state.range;
@@ -1422,6 +1455,9 @@ class Component extends DCLogic {
     const totP = hp.reduce((a, b) => a + b, 0);
     const totG = hg.reduce((a, b) => a + b, 0);
     const totE = he.reduce((a, b) => a + b, 0);
+    // See dash_neumo.html's copy of this block for the full explanation.
+    const hasHistory = bars.length > 0;
+    const noHistory = !hasHistory;
     const periodCells = hasEnergy ? [
       { label: this.t('energy.producedPeriod'), val: this.dec(totP, 1) + ' kWh' },
       { label: this.t('energy.takenFromGrid'), val: this.dec(totG, 1) + ' kWh' },
@@ -1522,7 +1558,8 @@ class Component extends DCLogic {
       wxIcon: wxi[0], wxIconRef: this._bindAttr('href', wxi[0]), wxLabel: wxi[1], wxTemp: outT === null ? '—' : this.dec(outT, 0) + '°',
       wxHumidity: outH === null ? '—' : this.dec(outH, 0) + '%',
       wxDetailLine: this.t('wx.humidityDetailLine', { label: wxi[1], humidity: outH === null ? '—' : this.dec(outH, 0) + '%' }),
-      nowCells, invStatus,
+      nowCells, invStatus, hasPowerCells, energyTabFallback,
+      energyTabSelfPctLine: this.t('energy.selfConsumption', { pct: dailySelfPct }),
       hasNewRing, hasInnerRing, hasOldRing: !hasNewRing,
       outerSelfArc: hasOuterRing ? outerSelf.dasharray : '', outerSelfOffset: hasOuterRing ? outerSelf.dashoffset : '0', outerSelfCap: hasOuterRing ? outerSelf.cap : 'butt',
       outerGridArc: hasOuterRing ? outerGrid.dasharray : '', outerGridOffset: hasOuterRing ? outerGrid.dashoffset : '0', outerGridCap: hasOuterRing ? outerGrid.cap : 'butt',
@@ -1532,6 +1569,7 @@ class Component extends DCLogic {
       kwhConsumedLabel: this.t('energy.kwhConsumed'),
       ringLegend,
       prodToday: prodT === null ? '—' : this.dec(prodT, 1),
+      prodTodayFull: prodT === null ? '—' : this.dec(prodT, 2) + ' kWh',
       gridToday: gridT === null ? '—' : this.dec(gridT, 2) + ' kWh',
       selfRatio: hasEnergy && en.production && en.consumption ? (() => {
         const p = this.n(en.production), c = this.n(en.consumption);
@@ -1548,6 +1586,7 @@ class Component extends DCLogic {
       energyChartLabel: energyChart ? this.t('chart.hide') : this.t('chart.show'),
       toggleEnergyChart: () => this.toggleChart('energia'),
       ranges, bars, periodCells, hasExportBars,
+      hasHistory, noHistory, noHistoryLabel: this.t('energy.noHistory'),
       feedInLabel: this.t('energy.feedIn'),
       hasResetButton: hasIrrigation && !!this.cfg.irrigation.resetButton,
       irrSummary: hasIrrigation ? (this.cfg.irrigation.summary ? this.s(this.cfg.irrigation.summary) : this.t('irrigation.defaultSummary', { n: zones.length })) : '',

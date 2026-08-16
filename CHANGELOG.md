@@ -3,6 +3,27 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.7] - 2026-08-15
+
+### Fixed
+
+- **On a zero-config install (HA's own Energy dashboard auto-discovered,
+  no `config.energy` block), the Energy tab opened on four empty cells
+  even though the home screen's Fotovoltaico card worked fine** —
+  reported by a user on Reddit ("On the homescreen I see the solar but
+  not on the energy tab"). Those instant-power (kW) cells only ever
+  come from `config.energy` — `energy/get_prefs` and auto-discovery
+  both work in energy (kWh) counters, not power — so an install relying
+  on either of those two now sees the same double-ring and daily
+  totals the home screen already resolved, instead of a broken-looking
+  blank header. Installs with power sensors configured see no change.
+- **The trend chart drew a flat row of zero-height bars when there was
+  no history yet**, which reads as "you produce nothing" rather than
+  "no data yet" — a zero-config install never gets chart history either
+  (the same `config.energy` gap above), so this was almost certainly
+  part of what the reporting user saw. Replaced with a plain message
+  when the chosen period has no data for any series.
+
 ## [1.4.6] - 2026-08-15
 
 ### Fixed

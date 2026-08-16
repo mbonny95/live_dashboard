@@ -48,6 +48,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'energy.selfConsumptionLabel': 'Autoconsumo', 'energy.feedIn': 'Immissione', 'energy.kwhConsumed': 'kWh consumati',
   'energy.selfShort': 'autocons.', 'energy.gridShort': 'dalla rete', 'energy.feedShort': 'immessi',
   'energy.compactSummary': 'kWh oggi · {pct} di autoconsumo',
+  'energy.noHistory': 'Nessun dato storico per questo periodo',
 
   'greeting.afternoon': 'Buon pomeriggio', 'greeting.evening': 'Buonasera', 'greeting.morning': 'Buongiorno', 'greeting.night': 'Notte',
 
