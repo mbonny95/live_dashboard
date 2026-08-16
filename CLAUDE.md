@@ -71,3 +71,20 @@ trovi installato, disinstallalo.
 Config utente in `config/www/live_dashboard_config.js`, **fuori** dalla cartella
 gestita da HACS, così gli update non la sovrascrivono. `VERSION` unica in
 `public/panel.js` per il cache-busting. Tag con prefisso `v`.
+
+**Un tag non è una release.** Ogni volta che crei un tag, nello stesso passaggio:
+
+1. `git push origin <tag>` — un tag locale non esiste per nessun altro.
+2. Crea la **release su GitHub** su quel tag (`gh release create v1.5.1 --title … --notes …`), con le note prese dalla voce corrispondente del `CHANGELOG.md`.
+
+HACS mostra agli utenti le *release*, non i tag: un tag pushato senza release
+non arriva a nessuno, e la dashboard di chi ha già installato non propone
+l'aggiornamento. Se il workflow di release allega `live_dashboard.zip`,
+verifica che l'asset ci sia davvero prima di considerare fatta la pubblicazione.
+
+## Diagnostica
+
+La maggior parte degli utenti sta su companion app o tablet a muro: **per loro
+`console.log` non esiste**. Ogni messaggio diagnostico pensato per l'utente
+finale deve avere una controparte visibile in dashboard (sezione Diagnostica
+del pannello impostazioni). La console resta, ma è per noi, non per loro.

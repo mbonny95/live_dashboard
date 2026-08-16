@@ -79,7 +79,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.5.0
+       module_url: /local/community/live_dashboard/panel.js?v=1.5.1
        embed_iframe: true
        trust_external_script: false
    ```
@@ -92,7 +92,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.5.0` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.5.1` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -433,6 +433,10 @@ behavior too.
 
 ## More
 
+- Before opening an issue, open Settings → Diagnostica in the app itself and
+  paste what it shows — it names the config path that loaded (or didn't),
+  what each energy sensor resolved to, and why, without needing the browser
+  console. A "Copy diagnostics" button puts all of it on the clipboard.
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — white panel, empty rooms, wrong
   charts, missing alarm buttons.
 - [CHANGELOG.md](CHANGELOG.md)

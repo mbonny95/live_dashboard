@@ -1140,6 +1140,91 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <button onClick="{{ settingsExportRun }}" style="flex:1;height:44px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 12.5px/1 var(--font-body)">{{ S.settingsExport }}</button>
 <button onClick="{{ settingsResetRun }}" style="flex:1;height:44px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ S.settingsReset }}</button>
 </div>
+
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:22px 2px 9px">{{ S.diagTitle }}</div>
+
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagConfigHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;font:500 11.5px/1.4 var(--font-body);color:var(--tx)">{{ diagConfigSummary }}</div>
+<sc-if value="{{ diagConfigOutsideIframe }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;font:500 10.5px/1.4 var(--font-body)" data-tone="warn">{{ S.diagConfigOutsideIframe }}</div>
+</sc-if>
+<sc-if value="{{ hasDiagConfigAttempts }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ diagConfigAttempts }}" as="a" hint-placeholder-count="1">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx2);white-space:normal;overflow-wrap:break-word;flex:1;min-width:0">{{ a.path }}</span>
+<span data-tone="{{ a.tone }}" style="font:600 10.5px/1.4 var(--font-body);color:var(--tx2);flex:none">{{ a.verdictLabel }}</span>
+</div>
+</sc-for>
+</sc-if>
+</div>
+
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagEnergyInstantHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-for list="{{ diagEnergyInstantRows }}" as="row" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:3px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<div style="font:600 11px/1.3 var(--font-body);color:var(--tx)">{{ row.roleLabel }}</div>
+<div style="font:500 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx2);white-space:normal;overflow-wrap:break-word">{{ row.idLabel }}</div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;margin-top:1px">
+<span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ row.valueLabel }}</span>
+<span data-tone="{{ row.tone }}" style="font:600 10.5px/1.4 var(--font-body);color:var(--tx)">{{ row.verdictLabel }}</span>
+</div>
+<sc-if value="{{ row.unitWarn }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 10px/1.4 var(--font-body);margin-top:2px" data-tone="warn">{{ S.diagUnitMismatch }}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagEnergyDailyHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-if value="{{ diagPrefsFailed }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;font:500 10.5px/1.4 var(--font-body)" data-tone="warn">{{ S.diagPrefsFailedMsg }}</div>
+</sc-if>
+<sc-for list="{{ diagEnergyDailyRows }}" as="row" hint-placeholder-count="3">
+<div style="display:flex;flex-direction:column;gap:3px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<div style="font:600 11px/1.3 var(--font-body);color:var(--tx)">{{ row.roleLabel }}</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2)">{{ row.sourceLabel }}</div>
+<div style="font:500 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx2);white-space:normal;overflow-wrap:break-word">{{ row.idsLabel }}</div>
+<div style="font:500 11px/1.4 var(--font-body);color:var(--tx)">{{ row.valueLabel }}</div>
+<sc-if value="{{ row.counterWarn }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 10px/1.4 var(--font-body);margin-top:2px" data-tone="warn">{{ S.diagCounterWarn }}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.environment }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-for list="{{ diagEnvRows }}" as="row" hint-placeholder-count="5">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ row.label }}</span>
+<span style="font:600 11px/1.4 var(--font-body);color:var(--tx);text-align:right">{{ row.value }}</span>
+</div>
+</sc-for>
+</div>
+
+<button onClick="{{ diagCopyRun }}" style="width:100%;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx);font:600 12.5px/1 var(--font-body)">{{ S.diagCopyButton }}</button>
+<div style="font:500 10px/1.4 var(--font-body);color:var(--tx2);margin:8px 2px 0">{{ S.diagCopyPrivacyNote }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ diagOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ diagClose }}" style="position:fixed;inset:0;background:rgba(20,24,30,.52);backdrop-filter:blur(3px);z-index:50;animation:fade .18s ease"></div>
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;z-index:51;inset:0;display:grid;place-items:center;padding:30px;pointer-events:none;color:var(--tx)">
+<div style="width:min(560px,92vw);max-height:80vh;overflow-y:auto;background:var(--page);box-shadow:0 22px 54px rgba(20,24,30,.3);border-radius:26px;padding:22px;pointer-events:auto;animation:rise .22s cubic-bezier(.2,.8,.3,1)">
+<div style="font-family:var(--font-heading);font-size:19px;line-height:1.2;margin-bottom:10px">{{ S.diagCopyButton }}</div>
+<sc-if value="{{ diagCopied }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 12px/1.4 var(--font-body);color:var(--tx);margin-bottom:10px">{{ S.settingsExportCopied }}</div>
+</sc-if>
+<sc-if value="{{ diagNotCopied }}" hint-placeholder-val="{{ true }}">
+<div style="font:600 12px/1.4 var(--font-body);color:var(--tx2);margin-bottom:10px">{{ S.settingsExportSelect }}</div>
+</sc-if>
+<textarea value="{{ diagText }}" onChange="{{ diagTextChange }}" onClick="{{ diagTextClick }}" style="width:100%;height:260px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:14px;border:0;padding:12px;font:500 10.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx);resize:vertical"></textarea>
+<div style="display:flex;margin-top:16px">
+<button onClick="{{ diagClose }}" style="flex:1;height:44px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ S.settingsBack }}</button>
+</div>
+</div>
 </div>
 </sc-if>
 
@@ -1275,25 +1360,42 @@ function loadScript(src) {
 const CONFIG_PATHS = window.parent !== window
   ? ['/local/live_dashboard_config.js', '/local/community/live_dashboard/config.js', './config.js']
   : ['./config.js'];
+// Captures the same trail the console.info below already announced, as
+// plain data instead of a formatted string — the Diagnostica panel (v1.5.1)
+// renders this without re-running any of the loading logic. `defined: null`
+// on an attempt means loadScript itself returned false (404 at that path,
+// never got the chance to define CASA_CONFIG); `defined: false` with
+// `loadScript: true` is the "file served but not executed" case (a syntax
+// error still fires the script tag's `load` event — the fetch succeeded,
+// only parsing failed).
 async function loadUserConfig() {
+  const attempts = [];
   for (const path of CONFIG_PATHS) {
-    if (await loadScript(bust(path)) && window.CASA_CONFIG) {
+    const loaded = await loadScript(bust(path));
+    const defined = loaded ? !!window.CASA_CONFIG : null;
+    attempts.push({ path, loadScript: loaded, defined });
+    if (loaded && window.CASA_CONFIG) {
       console.info(`[live_dashboard] config caricata da ${path}`);
-      return window.CASA_CONFIG;
+      return { config: window.CASA_CONFIG, diag: { attempts, resolvedPath: path, insideIframe: window.parent !== window } };
     }
   }
-  return {};
+  return { config: {}, diag: { attempts, resolvedPath: null, insideIframe: window.parent !== window } };
 }
 
 class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: 'casa', room: null, allRooms: false, theme: null, hist: null, range: 7, weather: false, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
-    settingsOpen: false, settingsRoom: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null };
+    settingsOpen: false, settingsRoom: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null };
   // Safe synchronous defaults: the first render happens before
   // componentDidMount's dynamic imports resolve, so these must already be
   // usable — _boot() below replaces them and forces a re-render via setState.
   cfg = mergeConfig({});
   registries = { areas: [], devices: [], entities: [] };
   discovery = null;
+  // Diagnostica panel (v1.5.1) — null until _boot() resolves, and the panel
+  // must render something sensible even if it never does (discovery/backend
+  // failure is exactly the case this screen exists for).
+  configDiag = null;
+  energyDiag = null;
   t = (key) => key;
   // Static-label dictionary, exposed to the template as `S`. A Proxy
   // returning '' for any key — not a plain {} — because the real i18n
@@ -1369,7 +1471,7 @@ class Component extends DCLogic {
       loadScript(bust('./ha-backend-demo.js')),
       loadScript(bust('./ha-backend.js'))
     ]);
-    const userConfig = await loadUserConfig();
+    const { config: userConfig, diag: configDiag } = await loadUserConfig();
 
     const discovery = window.CasaDiscovery;
     const be = await window.CasaBackend.connect({
@@ -1408,11 +1510,13 @@ class Component extends DCLogic {
     this.t = t;
     this.strings = strings; // exposed to the template as `S` for static labels — see renderVals()
     this.lang = lang;
+    this.configDiag = configDiag; // Diagnostica panel (v1.5.1) — see loadUserConfig()
 
     this.energyDaily = await this._resolveEnergyDaily().catch((e) => {
       console.warn('[casa] energy source resolution failed', e);
       return null;
     });
+    this.energyDiag = this.energyDaily && this.energyDaily.diag; // Diagnostica panel (v1.5.1)
     const { prefs, storage } = await window.CasaPrefs.load(be).catch(() => ({ prefs: { v: 1 }, storage: 'local' }));
     this.setState({ prefs, prefsStorage: storage }); // force a re-render now that cfg/registries/t/prefs are real
     this._loadHistory();
@@ -1446,6 +1550,7 @@ class Component extends DCLogic {
     };
     let prodIds = [], gridIds = [], exportIds = [];
     let rawSources = [];
+    let prefsFailed = false; // Diagnostica panel (v1.5.1) — read below, not used to change resolution
 
     if (needProd || needGrid || needExport) {
       if (this.be.energyPrefs) {
@@ -1464,6 +1569,7 @@ class Component extends DCLogic {
           // (mapped above is just null then, no exception). Worth logging:
           // this one means auto-discovery has to carry the whole load, not
           // just fill a gap HA prefs left.
+          prefsFailed = true;
           console.warn('[live_dashboard] energy/get_prefs failed:', (e && e.message) || e);
         }
       }
@@ -1528,7 +1634,17 @@ class Component extends DCLogic {
       line('immissione', source.gridExport, cfgEn.gridExportToday, exportIds, gridExportToday, 'grid')
     );
 
-    return { prodToday, gridToday, gridExportToday };
+    // Diagnostica panel (v1.5.1) — the same facts the console.info above
+    // just formatted into a string, captured as plain data instead so the
+    // panel can render them without re-running any resolution logic.
+    const diag = {
+      source: Object.assign({}, source),
+      cfgIds: { production: cfgEn.productionToday || null, gridImport: cfgEn.gridToday || null, gridExport: cfgEn.gridExportToday || null },
+      resolvedIds: { production: prodIds, gridImport: gridIds, gridExport: exportIds },
+      values: { production: prodToday, gridImport: gridToday, gridExport: gridExportToday },
+      rawSources, prefsFailed
+    };
+    return { prodToday, gridToday, gridExportToday, diag };
   }
 
   _loadHistory() {
@@ -1766,6 +1882,74 @@ class Component extends DCLogic {
   ALL_CAMERAS_RESULT() {
     if (!this.discovery) return [];
     return this.discovery.discoverCameras(this.state.st, this.registries, this.cfg, { isHidden: () => false, isTapGated: () => false });
+  }
+
+  // --- Diagnostica panel (v1.5.1) --------------------------------------------
+  // Three independent read-only reports, each tolerant of everything it
+  // reads being at its pre-boot default — this screen exists specifically
+  // for when discovery/backend/config didn't come up cleanly, so it can
+  // never assume the happy path already ran.
+
+  // One row per instantaneous energy role. Exactly four verdicts:
+  // 'ok' · 'unconfigured' · 'missing' (id not a key in states — a refuso,
+  // almost always) · 'unavailable' (exists but unavailable/unknown). The
+  // kWh-on-a-power-role check rides along as `unitWarn` on an otherwise-'ok'
+  // row rather than as a fifth verdict.
+  diagEnergyInstant() {
+    const en = this.cfg.energy || {};
+    const roles = [
+      ['production', en.production], ['consumption', en.consumption],
+      ['gridImport', en.gridImport], ['gridExport', en.gridExport],
+      ['battery.power', en.battery && en.battery.power], ['battery.soc', en.battery && en.battery.soc],
+      ['inverterStatus', en.inverterStatus]
+    ];
+    return roles.map(([role, id]) => {
+      if (!id) return { role, id: null, valueLabel: '—', verdict: 'unconfigured', unitWarn: false };
+      if (!(id in this.state.st)) return { role, id, valueLabel: '—', verdict: 'missing', unitWarn: false };
+      const s = this.s(id);
+      if (s === 'unavailable' || s === 'unknown') return { role, id, valueLabel: s, verdict: 'unavailable', unitWarn: false };
+      const isPowerRole = role !== 'battery.soc' && role !== 'inverterStatus';
+      const unitWarn = isPowerRole && this.at(id, 'device_class') === 'energy';
+      return { role, id, valueLabel: this.unit(id) ? this.val(id, 2) : s, verdict: 'ok', unitWarn };
+    });
+  }
+
+  // Turns this.energyDiag (captured by _resolveEnergyDaily(), see there) into
+  // rows — no re-resolution, just reading what's already been decided. Only
+  // the three roles that function actually resolves (production/gridImport/
+  // gridExport) — consumptionToday has no fallback-resolution behind it
+  // today, same as the live ring/tiles.
+  diagEnergyDaily() {
+    const ed = this.energyDiag;
+    if (!ed) return { prefsFailed: false, rows: [] };
+    const rows = ['production', 'gridImport', 'gridExport'].map((role) => {
+      const src = ed.source[role];
+      const ids = src === 'config' ? (ed.cfgIds[role] ? [ed.cfgIds[role]] : []) : ed.resolvedIds[role];
+      const counterWarn = ids.some((id) => this.at(id, 'state_class') === 'total_increasing' && !this.at(id, 'last_reset'));
+      // config source is read live off the sensor's raw state (see renderVals
+      // — `en.productionToday ? this.n(en.productionToday) : edDaily.prodToday`),
+      // never through ed.values — that field only ever gets filled by the
+      // ha-prefs/auto fallbacks, so reading it for a 'config' row would show
+      // "—" on a sensor that's actually working fine.
+      const value = src === 'config' ? (ids[0] ? this.n(ids[0]) : null) : ed.values[role];
+      return { role, source: src, ids, value, counterWarn };
+    });
+    return { prefsFailed: ed.prefsFailed, rows };
+  }
+
+  diagEnvironment() {
+    const roomsRes = this.ALL_ROOMS_RESULT(); // already null-guards on !this.discovery, above
+    return {
+      version: ASSET_V || null,
+      backend: this.kind || null,
+      insideIframe: window.parent !== window,
+      lang: this.lang || null,
+      areaCount: (this.registries.areas || []).length,
+      entityCount: (this.registries.entities || []).length,
+      roomCount: roomsRes.rooms.length + roomsRes.overflow.length,
+      cameraCount: this.ALL_CAMERAS_RESULT().length,
+      prefsOutcome: !this.energyDiag ? 'unknown' : this.energyDiag.prefsFailed ? 'failed' : 'ok'
+    };
   }
 
   // Appliances (washer/dryer/...) have no generic HA domain, so unlike
@@ -2574,6 +2758,84 @@ class Component extends DCLogic {
         this.setState({ exportSheet: { text, copied } });
       };
     }
+
+    // --- diagnostics panel (v1.5.1) -----------------------------------------
+    // Deliberately its own `if`, not folded into the block above: that one
+    // is gated on `this.discovery` because rooms/cameras/modules have
+    // nothing to show without it, but Diagnostica's whole reason to exist is
+    // explaining *why* discovery/config/energy resolution came up empty —
+    // it must compute regardless of whether any of that succeeded. Still
+    // gated on `settingsOpen` alone, same "don't redo this on every 15s
+    // clock tick" reasoning as the block above.
+    let diagConfigAttempts = [], diagConfigSummary = '', diagConfigOutsideIframe = false;
+    let diagEnergyInstantRows = [], diagEnergyDailyRows = [], diagPrefsFailed = false, diagEnvRows = [];
+    let doDiag = () => {};
+    if (this.state.settingsOpen) {
+      const S = this.strings;
+      const roleLabelKeys = { production: 'diagRoleProduction', consumption: 'diagRoleConsumption', gridImport: 'diagRoleGridImport', gridExport: 'diagRoleGridExport',
+        'battery.power': 'diagRoleBatteryPower', 'battery.soc': 'diagRoleBatterySoc', inverterStatus: 'diagRoleInverterStatus' };
+      const verdictLabelKeys = { ok: 'diagVerdictOk', unconfigured: 'diagVerdictUnconfigured', missing: 'diagVerdictMissing', unavailable: 'diagVerdictUnavailable' };
+      const sourceLabelKeys = { config: 'diagSourceConfig', 'ha-prefs': 'diagSourceHaPrefs', auto: 'diagSourceAuto' };
+
+      const cd = this.configDiag;
+      diagConfigAttempts = cd ? cd.attempts.map((a) => ({
+        path: a.path,
+        verdictLabel: a.defined === null ? S.diagConfigVerdictMissing : a.defined ? S.diagConfigVerdictOk : S.diagConfigVerdictNotExecuted,
+        tone: a.loadScript && a.defined === false ? 'warn' : ''
+      })) : [];
+      const notExecuted = !!cd && !cd.resolvedPath && cd.attempts.some((a) => a.loadScript && a.defined === false);
+      diagConfigSummary = !cd ? '' : cd.resolvedPath ? this.t('diag.configResolved', { path: cd.resolvedPath }) : notExecuted ? S.diagConfigNotExecutedMsg : S.diagConfigNotFound;
+      diagConfigOutsideIframe = !!cd && !cd.insideIframe;
+
+      diagEnergyInstantRows = this.diagEnergyInstant().map((r) => ({
+        role: r.role, roleLabel: S[roleLabelKeys[r.role]],
+        idLabel: r.id || S.diagNotConfiguredLabel,
+        valueLabel: r.valueLabel, verdictLabel: S[verdictLabelKeys[r.verdict]],
+        tone: (r.verdict === 'missing' || r.verdict === 'unavailable') ? 'warn' : '',
+        unitWarn: r.unitWarn
+      }));
+
+      const dailyRaw = this.diagEnergyDaily();
+      diagPrefsFailed = dailyRaw.prefsFailed;
+      diagEnergyDailyRows = dailyRaw.rows.map((r) => ({
+        role: r.role, roleLabel: S[roleLabelKeys[r.role]],
+        sourceLabel: r.source ? S[sourceLabelKeys[r.source]] : S.diagSourceNone,
+        idsLabel: r.ids.length ? r.ids.join(' + ') : S.diagNotConfiguredLabel,
+        valueLabel: r.value == null ? '—' : this.dec(r.value, 2) + ' kWh',
+        counterWarn: r.counterWarn
+      }));
+
+      const env = this.diagEnvironment();
+      diagEnvRows = [
+        { label: S.diagEnvVersion, value: env.version || S.diagEnvVersionDev },
+        { label: S.diagEnvBackend, value: env.backend === 'demo' ? S.diagEnvBackendDemo : env.backend === 'panel' ? S.diagEnvBackendPanel : (env.backend || '—') },
+        { label: S.diagEnvIframe, value: env.insideIframe ? S.diagEnvIframeYes : S.diagEnvIframeNo },
+        { label: S.diagEnvLang, value: env.lang || '—' },
+        { label: S.diagEnvAreas, value: String(env.areaCount) },
+        { label: S.diagEnvEntities, value: String(env.entityCount) },
+        { label: S.diagEnvRooms, value: String(env.roomCount) },
+        { label: S.diagEnvCameras, value: String(env.cameraCount) },
+        { label: S.diagEnvPrefsOutcome, value: env.prefsOutcome === 'ok' ? S.diagEnvPrefsOk : env.prefsOutcome === 'failed' ? S.diagEnvPrefsFailed : S.diagEnvPrefsUnknown }
+      ];
+
+      doDiag = async () => {
+        const text = window.CasaPrefs.diagText({
+          configHeading: S.diagConfigHeading, configSummary: diagConfigSummary,
+          configAttempts: diagConfigAttempts.map((a) => ({ pathLabel: a.path, verdictLabel: a.verdictLabel })),
+          configOutsideIframeNote: diagConfigOutsideIframe ? S.diagConfigOutsideIframe : null,
+          instantHeading: S.diagEnergyInstantHeading,
+          instantRows: diagEnergyInstantRows.map((r) => ({ roleLabel: r.roleLabel, idLabel: r.idLabel, valueLabel: r.valueLabel, verdictLabel: r.verdictLabel, unitWarnLabel: r.unitWarn ? S.diagUnitMismatch : null })),
+          dailyHeading: S.diagEnergyDailyHeading,
+          dailyPrefsFailedNote: diagPrefsFailed ? S.diagPrefsFailedMsg : null,
+          dailyRows: diagEnergyDailyRows.map((r) => ({ roleLabel: r.roleLabel, sourceLabel: r.sourceLabel, idsLabel: r.idsLabel, valueLabel: r.valueLabel, counterWarnLabel: r.counterWarn ? S.diagCounterWarn : null })),
+          envHeading: S.environment,
+          envRows: diagEnvRows
+        });
+        const copied = await window.CasaPrefs.copyToClipboard(text);
+        this.setState({ diagSheet: { text, copied } });
+      };
+    }
+    const diagSheet = this.state.diagSheet;
     const exportSheet = this.state.exportSheet;
     const longMenuId = this.state.longMenu;
 
@@ -2687,7 +2949,18 @@ class Component extends DCLogic {
       exportClearOverrides: () => { this.SETTINGS_RESET(); this.setState({ exportSheet: null }); },
       longMenuOpen: !!longMenuId, longMenuName: longMenuId ? this.fn(longMenuId) : '',
       longMenuHide: () => { if (longMenuId) this.SETTINGS_LONG_HIDE(longMenuId); },
-      longMenuClose: () => this.setState({ longMenu: null })
+      longMenuClose: () => this.setState({ longMenu: null }),
+
+      // diagnostics panel (v1.5.1)
+      diagConfigAttempts, hasDiagConfigAttempts: diagConfigAttempts.length > 0,
+      diagConfigSummary, diagConfigOutsideIframe,
+      diagEnergyInstantRows, diagEnergyDailyRows, diagPrefsFailed,
+      diagEnvRows,
+      diagCopyRun: doDiag,
+      diagOpen: !!diagSheet, diagText: diagSheet ? diagSheet.text : '',
+      diagCopied: diagSheet ? diagSheet.copied : false, diagNotCopied: diagSheet ? !diagSheet.copied : false,
+      diagClose: () => this.setState({ diagSheet: null }),
+      diagTextChange: () => {}, diagTextClick: (e) => e.target.select()
     };
   }
 }

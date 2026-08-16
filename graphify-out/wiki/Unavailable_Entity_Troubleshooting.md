@@ -1,10 +1,10 @@
-# Connecting/Demo Fallback Troubleshooting
+# Unavailable Entity Troubleshooting
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Stuck on Connecting / Demo Fallback Section** (0 connections) — `TROUBLESHOOTING.md`
+- **Entities show unavailable in grey (intentional)** (0 connections) — `TROUBLESHOOTING.md`
 
 ## Relationships
 

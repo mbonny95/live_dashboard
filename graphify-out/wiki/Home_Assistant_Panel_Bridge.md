@@ -1,13 +1,13 @@
 # Home Assistant Panel Bridge
 
-> 26 nodes · cohesion 0.14
+> 28 nodes · cohesion 0.13
 
 ## Key Concepts
 
-- **CasaPanel** (17 connections) — `public/panel.js`
+- **CasaPanel** (19 connections) — `public/panel.js`
 - **panel.js** (9 connections) — `public/panel.js`
-- **._onMessage()** (7 connections) — `public/panel.js`
-- **._reply()** (6 connections) — `public/panel.js`
+- **._onMessage()** (9 connections) — `public/panel.js`
+- **._reply()** (8 connections) — `public/panel.js`
 - **._flush()** (4 connections) — `public/panel.js`
 - **._handleEnergyToday()** (4 connections) — `public/panel.js`
 - **._handleHistory()** (4 connections) — `public/panel.js`
@@ -15,6 +15,8 @@
 - **._handleCall()** (3 connections) — `public/panel.js`
 - **._handleEnergyPrefs()** (3 connections) — `public/panel.js`
 - **._handleRegistries()** (3 connections) — `public/panel.js`
+- **._handleUserDataGet()** (3 connections) — `public/panel.js`
+- **._handleUserDataSet()** (3 connections) — `public/panel.js`
 - **._schedule()** (3 connections) — `public/panel.js`
 - **fetchDailyCounterHistory()** (3 connections) — `public/panel.js`
 - **fetchDailyLastSample()** (3 connections) — `public/panel.js`
@@ -27,9 +29,7 @@
 - **.constructor()** (1 connections) — `public/panel.js`
 - **.disconnectedCallback()** (1 connections) — `public/panel.js`
 - **.narrow()** (1 connections) — `public/panel.js`
-- **.panel()** (1 connections) — `public/panel.js`
-- **.route()** (1 connections) — `public/panel.js`
-- *... and 1 more nodes in this community*
+- *... and 3 more nodes in this community*
 
 ## Relationships
 
@@ -41,7 +41,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 88 (98%)
+- EXTRACTED: 100 (98%)
 - INFERRED: 2 (2%)
 - AMBIGUOUS: 0 (0%)
 

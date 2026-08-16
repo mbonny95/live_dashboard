@@ -1,10 +1,10 @@
-# Surveillance Tab Troubleshooting
+# Release Zip Job (single)
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Surveillance Tab Missing Section** (0 connections) — `TROUBLESHOOTING.md`
+- **zip-and-attach Release Job** (0 connections) — `.github/workflows/release.yml`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `TROUBLESHOOTING.md`
+- `.github/workflows/release.yml`
 
 ## Audit Trail
 

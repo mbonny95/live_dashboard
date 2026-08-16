@@ -71,7 +71,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.5.0
+       module_url: /local/community/live_dashboard/panel.js?v=1.5.1
        embed_iframe: true
        trust_external_script: false
    ```
@@ -84,7 +84,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    sia come `console.error` sia come messaggio sulla pagina stessa, con il
    `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.5.0` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.5.1` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -445,6 +445,11 @@ anche quel comportamento.
 
 ## Altro
 
+- Prima di aprire una issue, apri Impostazioni → Diagnostica nell'app e
+  incolla quello che mostra — dice da quale percorso è stata caricata la
+  config (o perché no), a cosa si è risolto ogni sensore energia e da quale
+  fonte, senza bisogno della console del browser. Il bottone "Copia
+  diagnostica" mette tutto negli appunti in un colpo solo.
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) — pannello bianco, stanze vuote,
   grafici sbagliati, allarme senza pulsanti. (In inglese.)
 - [CHANGELOG.md](CHANGELOG.md)

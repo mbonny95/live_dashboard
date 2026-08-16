@@ -1,10 +1,10 @@
-# White/Blank Panel Troubleshooting
+# Camera Reveal Handler
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **White/Blank Panel Section** (0 connections) — `TROUBLESHOOTING.md`
+- **Component._revealCam(id)** (0 connections) — `public/dash_neumo.html`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `TROUBLESHOOTING.md`
+- `public/dash_neumo.html`
 
 ## Audit Trail
 

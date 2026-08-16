@@ -1,10 +1,11 @@
-# Camera Tile Troubleshooting
+# Changelog Format Convention
 
-> 1 nodes · cohesion 1.00
+> 2 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Camera Tile Icon-Only Section** (0 connections) — `TROUBLESHOOTING.md`
+- **CHANGELOG.md** (1 connections) — `CHANGELOG.md`
+- **Keep a Changelog Format** (1 connections) — `CHANGELOG.md`
 
 ## Relationships
 
@@ -12,11 +13,11 @@
 
 ## Source Files
 
-- `TROUBLESHOOTING.md`
+- `CHANGELOG.md`
 
 ## Audit Trail
 
-- EXTRACTED: 0 (0%)
+- EXTRACTED: 2 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

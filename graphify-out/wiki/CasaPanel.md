@@ -1,6 +1,6 @@
 # CasaPanel
 
-> God node · 17 connections · `public/panel.js`
+> God node · 19 connections · `public/panel.js`
 
 **Community:** [Home Assistant Panel Bridge](Home_Assistant_Panel_Bridge.md)
 
@@ -18,6 +18,8 @@
 - ._handleCall() `EXTRACTED`
 - ._handleEnergyPrefs() `EXTRACTED`
 - ._handleRegistries() `EXTRACTED`
+- ._handleUserDataGet() `EXTRACTED`
+- ._handleUserDataSet() `EXTRACTED`
 - ._schedule() `EXTRACTED`
 - .hass() `EXTRACTED`
 - .connectedCallback() `EXTRACTED`

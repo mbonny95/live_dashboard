@@ -3,6 +3,63 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.1] - 2026-08-16
+
+### Added
+
+- **Diagnostics panel**, the new last section of the settings panel (gear
+  icon → Diagnostica) — prompted by a real support case: a user with a Shelly
+  EM saw correct daily totals and ring but every instantaneous energy tile
+  stuck on "—". Getting to the cause took six messages, because every clue
+  the dashboard already computes — which `config.js` path loaded, which
+  entity resolved for each energy role, from which source (config, Home
+  Assistant's own Energy dashboard, or auto-discovery) — only ever reached
+  `console.info`, and this project's actual audience is companion-app/wall-
+  tablet users who have no console to open. This release adds no new
+  configuration; it only explains what's already being decided:
+  - **Config**: the exact path `config.js` loaded from, or "no config
+    found" with every path tried, in order. Distinguishes a genuinely
+    missing file (404) from the far more confusing case of a file that
+    *is* being served but never runs — a syntax error still fires the
+    `<script>` tag's `load` event, so that failure mode used to degrade
+    silently into "just auto-discovery" with no hint why. Also flags when
+    the page isn't running inside the Home Assistant panel at all, since
+    then the `/local/` paths are never even attempted.
+  - **Energy — instantaneous values**: one row per role (production,
+    consumption, gridImport, gridExport, battery power/SoC, inverter
+    status) with the configured entity ID, its live value, and one of four
+    plain verdicts — ok, not configured (neutral, not an error), entity
+    doesn't exist (almost always a typo), or unavailable. A fifth check
+    layered on top flags the single most common mix-up: an energy-in-kWh
+    sensor wired into a role that expects power in W/kW — a plausible-
+    looking but wrong number.
+  - **Energy — daily totals**: renders the same resolution the ring
+    already computes (`_resolveEnergyDaily`), source spelled out in plain
+    language ("from config.js" / "from Home Assistant's Energy dashboard"
+    / "guessed from the sensor name" / "no source found"), and says so
+    explicitly when `energy/get_prefs` itself failed. Also catches the
+    exact bug that triggered this release: a `*Today` field pointed at a
+    lifetime-cumulative sensor (`state_class: total_increasing` with no
+    `last_reset`) instead of a real daily counter — it never resets at
+    midnight, so "produced today" only ever grows.
+  - **Environment**: version, active backend (panel/demo), whether the
+    page is running inside the HA panel iframe, detected language, and
+    area/entity/room/camera counts from discovery.
+  - **Copy diagnostics**, a full-width button (not an icon) that puts all
+    four blocks on the clipboard as plain text, with a selectable-text
+    fallback for browsers/companion apps that deny clipboard access from
+    an iframe — a bug report becomes a paste instead of six back-and-forth
+    messages, with version, paths and entity IDs already included. Entity
+    IDs are never truncated with an ellipsis, since the point is being
+    able to paste them straight into Developer Tools.
+  - Opens and renders even when discovery, the backend, or config loading
+    failed entirely — that's exactly the situation it exists for. Works
+    in demo mode from `file://` with the built-in fake data, same as the
+    rest of the settings panel.
+  - No new configuration keys, no entity resolution changes, no behavior
+    changes — this release only surfaces what the dashboard already
+    decides internally.
+
 ## [1.5.0] - 2026-08-16
 
 ### Added

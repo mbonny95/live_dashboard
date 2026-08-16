@@ -1,5 +1,16 @@
 # Troubleshooting
 
+### Start here: Settings → Diagnostica
+
+If the panel loads at all (you can reach the gear icon), open **Settings →
+Diagnostica** before working through the sections below — it's built to
+answer most of what's here without the browser console: which `config.js`
+path loaded (or why none did), what each energy sensor resolved to and from
+which source, and counts from auto-discovery. A **Copy diagnostics** button
+puts all of it on the clipboard as plain text, so a bug report can be a
+paste instead of a back-and-forth. It only helps once something has
+rendered, though — for a genuinely blank/black panel, see the next section.
+
 ### White / blank panel
 
 - **Check `panel_custom.name` first, especially with a second/parallel
@@ -85,6 +96,14 @@ Assistant itself has lost contact with that entity.
 
 ### Energy charts are empty or look wrong
 
+- **Open Settings → Diagnostica first.** Its "Energy — instantaneous values"
+  and "Energy — daily totals" blocks name the exact entity ID behind every
+  role, where it came from (`config.js`, Home Assistant's own Energy
+  dashboard, or auto-discovery), and flag the two mistakes this section used
+  to require reading console.info to catch: a power role wired to a
+  kWh/energy sensor instead of a W/kW one, and a `*Today` field pointed at a
+  lifetime-cumulative sensor (`state_class: total_increasing`, no
+  `last_reset`) instead of a real daily counter.
 - The bar chart and the 7/14/30-day totals need `energy.productionToday` /
   `energy.gridToday` to be **daily counters that reset to 0 at midnight**,
   not running totals and not instantaneous power. If you point them at the

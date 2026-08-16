@@ -1,10 +1,12 @@
 # Release Zip & Attach Job
 
-> 1 nodes · cohesion 1.00
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
-- **zip-and-attach Release Job** (0 connections) — `.github/workflows/release.yml`
+- **Build live_dashboard.zip Step** (2 connections) — `.github/workflows/release.yml`
+- **Attach to Release Step** (1 connections) — `.github/workflows/release.yml`
+- **HACS zip_release content_in_root Convention** (1 connections) — `.github/workflows/release.yml`
 
 ## Relationships
 
@@ -16,7 +18,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 0 (0%)
+- EXTRACTED: 4 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

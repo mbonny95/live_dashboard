@@ -29,6 +29,31 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   settingsExportSelect: 'Seleziona e copia il testo qui sotto', settingsExportOffer: 'Azzero gli override ora che sono nel file?',
   settingsExportKeep: 'Mantieni', settingsExportClear: 'Azzera',
 
+  // diagnostics panel (v1.5.1), static labels
+  diagTitle: 'Diagnostica', diagConfigHeading: 'Config',
+  diagConfigOutsideIframe: 'La pagina non gira dentro il pannello di Home Assistant: i percorsi /local/ non vengono nemmeno tentati, quindi la tua config.js non può essere vista da qui.',
+  diagConfigNotFound: 'Nessuna config trovata.',
+  diagConfigNotExecutedMsg: 'live_dashboard_config.js trovato ma non eseguito. Errore di sintassi nel file (parentesi o virgola mancante), oppure manca "window.CASA_CONFIG =" all’inizio. La dashboard sta girando con la sola auto-discovery.',
+  diagConfigVerdictMissing: 'assente (404)', diagConfigVerdictOk: 'trovata', diagConfigVerdictNotExecuted: 'trovata ma non eseguita',
+  diagEnergyInstantHeading: 'Energia — valori istantanei',
+  diagRoleProduction: 'production', diagRoleConsumption: 'consumption', diagRoleGridImport: 'gridImport', diagRoleGridExport: 'gridExport',
+  diagRoleBatteryPower: 'battery.power', diagRoleBatterySoc: 'battery.soc', diagRoleInverterStatus: 'inverterStatus',
+  diagVerdictOk: 'ok', diagVerdictUnconfigured: 'non configurato', diagVerdictMissing: 'entità inesistente', diagVerdictUnavailable: 'non disponibile',
+  diagUnitMismatch: 'Questa entità è in kWh (device_class energy): qui serve un sensore di potenza (W/kW), probabile ruolo sbagliato.',
+  diagNotConfiguredLabel: '(non configurato)',
+  diagEnergyDailyHeading: 'Energia — totali giornalieri',
+  diagSourceConfig: 'da config.js', diagSourceHaPrefs: 'dalla dashboard Energia di Home Assistant',
+  diagSourceAuto: 'indovinata dal nome del sensore', diagSourceNone: 'nessuna fonte trovata',
+  diagPrefsFailedMsg: 'energy/get_prefs è fallito: qui sotto arriva solo quello che l’auto-discovery per nome sensore riesce a indovinare.',
+  diagCounterWarn: 'Questo sensore è un totale di vita (state_class total_increasing) senza last_reset: non si azzera a mezzanotte, quindi crescerà sempre.',
+  diagEnvVersion: 'Versione', diagEnvVersionDev: 'sviluppo/demo (nessun ?v=)',
+  diagEnvBackend: 'Backend', diagEnvBackendPanel: 'pannello', diagEnvBackendDemo: 'demo',
+  diagEnvIframe: 'Dentro il pannello HA', diagEnvIframeYes: 'sì', diagEnvIframeNo: 'no',
+  diagEnvLang: 'Lingua rilevata', diagEnvAreas: 'Aree viste da discovery', diagEnvEntities: 'Entità viste da discovery',
+  diagEnvRooms: 'Stanze risultanti', diagEnvCameras: 'Telecamere risultanti', diagEnvPrefsOutcome: 'Esito energy/get_prefs',
+  diagEnvPrefsOk: 'ok', diagEnvPrefsFailed: 'fallito', diagEnvPrefsUnknown: 'non tentato',
+  diagCopyButton: 'Copia diagnostica', diagCopyPrivacyNote: 'Contiene i nomi delle tue entità e stanze, nessuna password.',
+
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Inserito · fuori', 'alarm.armedHome': 'Inserito · in casa', 'alarm.armedNight': 'Inserito · notte',
   'alarm.armedVacation': 'Inserito · vacanza', 'alarm.arming': 'In inserimento…',
@@ -93,6 +118,8 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   'settings.entityCount': '{n} entità · {m} nascoste', 'settings.reasonDomain': 'dominio {domain}',
   'settings.reasonDeviceClass': 'device_class {dc}',
+
+  'diag.configResolved': 'Config caricata da {path}.',
 
   'siren.sounding': 'in suono',
 

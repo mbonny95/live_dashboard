@@ -88,6 +88,47 @@ function exportText(cfg, prefs, known) {
   return `window.CASA_CONFIG = ${body};\n`;
 }
 
+// Plain-text serialization for the Diagnostica panel's "Copia diagnostica"
+// button (v1.5.1) — lives here, not in dash_neumo*.html, because both
+// template files already load this file as a shared script and each would
+// otherwise duplicate the exact same formatting logic. Callers do all the
+// i18n (`t()`) themselves and pass in already-resolved label strings — this
+// function only lays them out, so it stays language-agnostic like the rest
+// of this file.
+function padCol(s, w) { s = String(s == null ? '' : s); return s.length >= w ? s + '  ' : s + ' '.repeat(w - s.length); }
+
+function diagRowLine(cols, widths) {
+  return cols.map((c, i) => i === cols.length - 1 ? c : padCol(c, widths[i])).join('');
+}
+
+function diagText(d) {
+  const lines = [];
+  lines.push(d.configHeading, d.configSummary);
+  d.configAttempts.forEach((a) => lines.push('  ' + diagRowLine([a.pathLabel, a.verdictLabel], [40])));
+  if (d.configOutsideIframeNote) lines.push(d.configOutsideIframeNote);
+  lines.push('');
+
+  lines.push(d.instantHeading);
+  d.instantRows.forEach((r) => {
+    lines.push(diagRowLine([r.roleLabel, r.idLabel, r.valueLabel, r.verdictLabel], [14, 34, 14]));
+    if (r.unitWarnLabel) lines.push('  ⚠ ' + r.unitWarnLabel);
+  });
+  lines.push('');
+
+  lines.push(d.dailyHeading);
+  if (d.dailyPrefsFailedNote) lines.push(d.dailyPrefsFailedNote);
+  d.dailyRows.forEach((r) => {
+    lines.push(diagRowLine([r.roleLabel, r.sourceLabel, r.idsLabel, r.valueLabel], [14, 34, 34]));
+    if (r.counterWarnLabel) lines.push('  ⚠ ' + r.counterWarnLabel);
+  });
+  lines.push('');
+
+  lines.push(d.envHeading);
+  d.envRows.forEach((r) => lines.push('  ' + padCol(r.label, 28) + r.value));
+
+  return lines.join('\n') + '\n';
+}
+
 // Resolves true only on an actual successful copy — a caller must still
 // have a `<textarea readonly>` fallback ready for `false`/rejection
 // (insecure context over plain HTTP, permission denied, or the API simply
@@ -102,6 +143,6 @@ async function copyToClipboard(text) {
   }
 }
 
-window.CasaPrefs = { DEFAULT_PREFS, USER_DATA_KEY, load, save, exportText, copyToClipboard };
+window.CasaPrefs = { DEFAULT_PREFS, USER_DATA_KEY, load, save, exportText, diagText, copyToClipboard };
 
 })();

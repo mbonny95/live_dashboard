@@ -1,6 +1,6 @@
 # DCLogic Component Runtime
 
-> 65 nodes · cohesion 0.07
+> 64 nodes · cohesion 0.07
 
 ## Key Concepts
 
@@ -29,10 +29,11 @@
 - **compileTemplate()** (3 connections) — `public/support.js`
 - **createComponentFactory()** (3 connections) — `public/support.js`
 - **createPseudoSheet()** (3 connections) — `public/support.js`
-- *... and 40 more nodes in this community*
+- *... and 39 more nodes in this community*
 
 ## Relationships
 
+- [prefs.js Persistence & Diagnostics Text](prefs.js_Persistence_%26_Diagnostics_Text.md) (2 shared connections)
 - [Entity Auto-Discovery](Entity_Auto-Discovery.md) (1 shared connections)
 
 ## Source Files
@@ -41,7 +42,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 278 (99%)
+- EXTRACTED: 276 (99%)
 - INFERRED: 3 (1%)
 - AMBIGUOUS: 0 (0%)
 
