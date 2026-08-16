@@ -25,11 +25,33 @@
 5. **Schema energia di Home Assistant piatto** per la sorgente `grid`:
    `stat_energy_from` al top level, non annidato in `flow_from[]`.
 
+## Densità prima del "sta tutto in una schermata"
+
+Il vincolo storico «la view Casa sta in 1280×800 senza scroll» **è stato
+ritirato** (v1.4.9). Con 12 stanze e 4 telecamere lo scroll interno delle
+colonne è normale e accettato. La regola che lo sostituisce: mai comprimere
+tipografia, bersagli tattili o spaziature per far entrare più roba nella prima
+schermata — si scorre. Minimi non negoziabili: 44 px sui bersagli, 10 px sul
+testo.
+
 ## Colori dei ruoli energia (non negoziabili)
 
 Famiglia salvia = sole, terracotta = rete. Autoconsumo `--sage`, prelievo
 `--acc`, immissione `--feed` (salvia schiarita). Anello e barre devono usare la
 stessa grammatica: se una vista si discosta, è un bug.
+
+## All'inizio di ogni sessione
+
+Orientati prima di scrivere, non ricostruire a memoria dove sta una cosa:
+
+- `graphify-out/wiki/index.md` se c'è — è la versione pensata per essere
+  navigata leggendo file, un articolo per area del repo. Genera con
+  `/graphify . --wiki`.
+- altrimenti `graphify-out/GRAPH_REPORT.md` (nodi centrali, connessioni,
+  domande che il grafo sa già rispondere).
+- per una domanda puntuale, `/graphify query "…"` invece di aprire mezzo repo.
+- poi la voce più recente del `CHANGELOG.md`, per sapere cosa è cambiato
+  nell'ultima release.
 
 ## Prima di ogni commit
 
@@ -38,6 +60,11 @@ modifiche al codice. Non è un artefatto di build da ignorare: è la mappa del
 repo che si legge per orientarsi, e se resta indietro descrive una versione che
 non esiste più. Un commit che tocca `public/` e lascia `graphify-out/` vecchia
 va rifatto.
+
+**Niente hook post-commit in questo repo.** Rigenera a mano prima del commit. Il
+hook di graphify fa un rebuild solo-AST *dopo* il commit e sovrascrive il grafo
+semantico con uno più povero (visto sul campo: 254 nodi al posto di 298). Se lo
+trovi installato, disinstallalo.
 
 ## Release
 

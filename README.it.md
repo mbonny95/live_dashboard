@@ -27,8 +27,11 @@ vedi [Modalità demo](#modalità-demo) più sotto.
 - Una pagina singola che vive in un proprio pannello `panel_custom`, non una
   dashboard Lovelace e non una card. Non cerca di essere nessuna delle due.
 - Pensata per un **tablet a muro, in orizzontale**, a una dimensione fissa
-  di circa 1200×800 senza scroll nella view Casa — è un vincolo voluto (vedi
-  "Modalità kiosk" più sotto), non un difetto.
+  di circa 1200×800 — è un vincolo voluto (vedi "Modalità kiosk" più sotto),
+  non un difetto. Le singole colonne (stanze, telecamere) dimensionano le
+  tessere sul contenuto invece di stirarsi per riempire la pagina, e
+  scorrono al loro interno se un'installazione ne ha abbastanza da superare
+  l'altezza disponibile.
 - La pagina mobile (`dash_neumo_mobile.html`) è un secondo layout completo
   per telefono, ma è secondario: le scelte di design (densità della griglia,
   niente scroll) sono pensate prima di tutto per il tablet a muro.
@@ -68,7 +71,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.8
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.9
        embed_iframe: true
        trust_external_script: false
    ```
@@ -81,7 +84,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    sia come `console.error` sia come messaggio sulla pagina stessa, con il
    `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.4.8` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.4.9` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -145,7 +148,7 @@ pannello si registra davvero — vedi la nota sotto "Via HACS" più sopra per
 come si presenta quando va storto.
 
 Fatto — senza nessun file di config, la dashboard scopre da sola le tue aree
-e ne mostra fino a 8 come tessere stanza, più le eventuali entità `person.*`
+e ne mostra fino a 12 come tessere stanza, più le eventuali entità `person.*`
 e la prima `weather.*` che trova. Allarme, selettore di modalità casa,
 Energia, Irrigazione e Auto restano nascosti finché non li attivi (vedi
 sotto) — non c'è modo di indovinare l'accoppiata giusta per uno script

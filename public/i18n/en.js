@@ -30,6 +30,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
 
   'cameras.motionDetected': 'Motion detected · {name}', 'cameras.allQuiet': 'All quiet',
   'cameras.tabSub': '{n} cameras · previews refresh every {seconds} seconds',
+  'cameras.moreCount': '+{n} more',
 
   'chart.hide': 'Hide trend', 'chart.show': 'Show trend', 'chart.show48h': 'Show 48h trend',
 

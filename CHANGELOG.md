@@ -3,6 +3,30 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.4.9] - 2026-08-16
+
+### Fixed
+
+- **The Casa view's Sorveglianza card always showed a single camera, even
+  when the Sorveglianza tab itself listed several** — reported by a user on
+  Reddit ("The surveillance tab shows all my cams but the home dash only
+  one"). The card rendered `camList[0]` and stopped there, a reasonable
+  default with one camera and the wrong one with four. It now adapts to the
+  camera count: 1 stays the unchanged hero card; 2 become side-by-side
+  tiles; 3 become two tiles on top and one spanning the full width below
+  (instead of leaving the fourth grid cell empty); 4 fill a 2×2 grid; 5+
+  show the top 3 plus a "+N altre"/"+N more" tile that opens the
+  Sorveglianza tab. Tiles are sorted motion-first (stable, so the rest keeps
+  `camList`'s existing order), carry the same accent outline + motion pill
+  the tab already uses, and hidden cameras still show their icon instead of
+  a snapshot — tapping any tile opens its stream exactly as before. Mobile
+  gets the same motion-first logic but never a 2×2 grid: it caps at 2 tiles
+  side by side, with the second becoming the "+N altre" counter past 2
+  cameras. The snapshot refresh interval is unchanged — the Sorveglianza tab
+  has already fired one simultaneous request per camera on the same timer
+  since cameras shipped, so up to 4 parallel requests from the home card is
+  smaller than what the tab already does routinely, not a new ceiling.
+
 ## [1.4.8] - 2026-08-16
 
 ### Fixed

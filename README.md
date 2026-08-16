@@ -36,8 +36,10 @@ no Home Assistant required. It shows invented data and a `DEMO` badge; see
 - A single page that lives in its own `panel_custom` panel, not a Lovelace
   dashboard and not a card. It doesn't try to be either.
 - Built for a **tablet mounted on a wall, in landscape**, at a fixed
-  1200×800-ish size with no scrolling on the main Casa view — that constraint
-  is deliberate (see "Kiosk mode" below), not a bug.
+  1200×800-ish size — that constraint is deliberate (see "Kiosk mode" below),
+  not a bug. Individual columns (rooms, cameras) size their tiles to content
+  rather than stretching to fill the page, and scroll internally if an
+  install has enough of them to exceed the available height.
 - The mobile page (`dash_neumo_mobile.html`) is a real, complete second layout
   for phones, but it's secondary: the design decisions (grid density, no
   scroll) are made for the wall tablet first.
@@ -77,7 +79,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.8
+       module_url: /local/community/live_dashboard/panel.js?v=1.4.9
        embed_iframe: true
        trust_external_script: false
    ```
@@ -90,7 +92,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.4.8` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.4.9` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -150,7 +152,7 @@ the folder the panel actually registers itself from — see the note under
 "Via HACS" above for what that looks like when it goes wrong.
 
 That's it — with no config file at all, the dashboard auto-discovers your
-areas and shows up to 8 of them as room tiles, plus any `person.*` entities
+areas and shows up to 12 of them as room tiles, plus any `person.*` entities
 and the first `weather.*` entity it finds. Alarm, house-mode scene switcher,
 Energy, Irrigation and Vehicle stay hidden until you opt into them (see
 below) — there's no way to guess a "house mode" script pairing or which of

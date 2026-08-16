@@ -158,7 +158,13 @@ const SEED = [
   entity('camera.cancello', 'giardino', 'idle', { friendly_name: 'Cancello' }),
   entity('binary_sensor.cancello_motion', 'giardino', 'on', { friendly_name: 'Movimento cancello', device_class: 'motion' }),
   entity('camera.ingresso', 'ingresso', 'idle', { friendly_name: 'Ingresso' }),
-  entity('camera.corridoio', 'corridoio', 'idle', { friendly_name: 'Corridoio' })
+  entity('camera.corridoio', 'corridoio', 'idle', { friendly_name: 'Corridoio' }),
+  // Three more, purely to exercise the home card's adaptive grid (v1.4.9) at
+  // 4 and 6 cameras — a real install's count is whatever HA reports, but the
+  // demo needs enough of them to prove the 2x2 and the "+N altre" fallback.
+  entity('camera.soggiorno', 'soggiorno', 'idle', { friendly_name: 'Soggiorno' }),
+  entity('camera.cucina', 'cucina', 'idle', { friendly_name: 'Cucina' }),
+  entity('camera.garage', 'garage', 'idle', { friendly_name: 'Garage' })
 ];
 
 // entity_id -> device_id, only for the pairs that need to prove the

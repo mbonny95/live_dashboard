@@ -30,6 +30,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   'cameras.motionDetected': 'Movimento rilevato · {name}', 'cameras.allQuiet': 'Tutto tranquillo',
   'cameras.tabSub': '{n} telecamere · anteprime aggiornate ogni {seconds} secondi',
+  'cameras.moreCount': '+{n} altre',
 
   'chart.hide': 'Nascondi andamento', 'chart.show': 'Vedi andamento', 'chart.show48h': 'Vedi andamento 48h',
 
