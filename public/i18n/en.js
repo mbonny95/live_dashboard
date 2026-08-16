@@ -20,6 +20,15 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   noAreasBody: "This dashboard builds itself from Home Assistant's areas: assign your entities to an area to see rooms here.",
   fromGridHint: 'Energy drawn from the grid today — not total house consumption',
 
+  // settings panel (v1.5.0), static labels
+  settings: 'Settings', settingsBack: 'Back', settingsCameras: 'Cameras', settingsSections: 'Sections',
+  settingsExport: 'Export as config.js', settingsReset: 'Reset', settingsSavedHass: 'Saved to your Home Assistant account',
+  settingsSavedLocal: 'Saved only on this device', settingsSectionsNote: "A section with nothing configured stays hidden either way.",
+  settingsHideUntilTap: 'Icon until tapped', settingsDiffFromConfig: 'differs from config.js',
+  settingsLongPressHide: 'Hide this', settingsExportCopied: 'Copied to clipboard',
+  settingsExportSelect: 'Select and copy the text below', settingsExportOffer: 'Clear the overrides now that they’re in the file?',
+  settingsExportKeep: 'Keep', settingsExportClear: 'Clear',
+
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Armed · away', 'alarm.armedHome': 'Armed · home', 'alarm.armedNight': 'Armed · night',
   'alarm.armedVacation': 'Armed · vacation', 'alarm.arming': 'Arming…',
@@ -81,6 +90,9 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'room.switchRunning': '{name} running', 'room.tvOn': 'TV on', 'room.vacuumRunning': 'vacuum cleaning',
 
   'rooms.overflow': '+{n} rooms',
+
+  'settings.entityCount': '{n} entities · {m} hidden', 'settings.reasonDomain': 'domain {domain}',
+  'settings.reasonDeviceClass': 'device_class {dc}',
 
   'siren.sounding': 'sounding',
 

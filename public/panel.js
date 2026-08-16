@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '1.4.9';
+const VERSION = '1.5.0';
 console.info(`[live_dashboard] v${VERSION}`);
 
 const FLUSH_MS = 600;
@@ -417,6 +417,36 @@ class CasaPanel extends HTMLElement {
     }
   }
 
+  // frontend/get_user_data returns { value } (null if the key was never
+  // set) rather than the value directly — HA's own convention for this
+  // websocket command, unlike callWS results elsewhere in this file that
+  // return their payload bare.
+  async _handleUserDataGet(msg) {
+    if (!this._hass) {
+      this._reply(msg.id, 'casa:user-data-get-result', { ok: false, error: 'hass not ready' });
+      return;
+    }
+    try {
+      const result = await this._hass.callWS({ type: 'frontend/get_user_data', key: 'live_dashboard' });
+      this._reply(msg.id, 'casa:user-data-get-result', { ok: true, result: (result && result.value) || null });
+    } catch (e) {
+      this._reply(msg.id, 'casa:user-data-get-result', { ok: false, error: (e && e.message) || String(e) });
+    }
+  }
+
+  async _handleUserDataSet(msg) {
+    if (!this._hass) {
+      this._reply(msg.id, 'casa:user-data-set-result', { ok: false, error: 'hass not ready' });
+      return;
+    }
+    try {
+      await this._hass.callWS({ type: 'frontend/set_user_data', key: 'live_dashboard', value: msg.value });
+      this._reply(msg.id, 'casa:user-data-set-result', { ok: true });
+    } catch (e) {
+      this._reply(msg.id, 'casa:user-data-set-result', { ok: false, error: (e && e.message) || String(e) });
+    }
+  }
+
   _onMessage(e) {
     if (!this._iframe || e.source !== this._iframe.contentWindow) return;
     const d = e.data;
@@ -434,6 +464,10 @@ class CasaPanel extends HTMLElement {
       this._handleEnergyPrefs(d);
     } else if (d.type === 'casa:energy-today') {
       this._handleEnergyToday(d);
+    } else if (d.type === 'casa:user-data-get') {
+      this._handleUserDataGet(d);
+    } else if (d.type === 'casa:user-data-set') {
+      this._handleUserDataSet(d);
     }
   }
 }

@@ -71,7 +71,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.9
+       module_url: /local/community/live_dashboard/panel.js?v=1.5.0
        embed_iframe: true
        trust_external_script: false
    ```
@@ -84,7 +84,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    sia come `console.error` sia come messaggio sulla pagina stessa, con il
    `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.4.9` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.5.0` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -179,6 +179,23 @@ quest'ordine, vince il primo trovato:
 Qualunque percorso tu usi, tienilo fuori dal controllo di versione — contiene
 i tuoi entity ID (il `.gitignore` fornito esclude già `config.js` sotto
 `public/`; una copia sotto `config/www/` è comunque fuori da questo repo).
+
+**Da v1.5.0, `config.js` non è più l'unico modo per nascondere o riordinare
+quello che vedi.** L'ingranaggio nell'intestazione apre un pannello
+impostazioni (stanze, entità, telecamere, sezioni) che salva per utente
+tramite l'archivio account di Home Assistant, così due dispositivi
+(tablet a muro e telefono) collegati con lo stesso utente restano
+sincronizzati senza che nessuno dei due tocchi `config.js`. I due non
+entrano mai in conflitto: `config.js` resta l'unica autorità per
+*risolvere* quale sensore fa quale ruolo (produzione, allarme, stato
+elettrodomestico, ...) — il pannello decide solo cosa è *visibile*, sopra
+quello. Una riga che il pannello sovrascrive rispetto a quanto dice
+`config.js` mostra una piccola pillola "diverso dal config" con un
+bersaglio dedicato per togliere la sovrascrittura e tornare a obbedire al
+file. Il bottone "Esporta come config.js" del pannello trasforma le scelte
+attuali in un blocco pronto da incollare in quel file, per chi preferisce
+versionare il layout o applicarlo a tutti gli utenti di casa invece che al
+solo proprio account.
 
 ## Attivare l'Energia
 
@@ -417,6 +434,12 @@ anche quel comportamento.
 - Non sostituisce Lovelace: nessun selettore di card, nessun layout
   drag-and-drop, nessuna dashboard YAML. È una pagina che riflette i tuoi
   registri.
+- Il pannello impostazioni (ingranaggio, v1.5.0) nasconde, mostra e
+  riordina ciò che l'auto-discovery ha già trovato — non compone un layout
+  da zero. In particolare non fa: riposizionamento libero delle card,
+  scelta della colonna di una stanza, editor di temi/colori, o creazione
+  di nuove viste. Lovelace fa già tutto questo, ed è lo strumento giusto
+  quando è quello che cerchi.
 - `panel_custom` è l'unico metodo di installazione supportato in questa
   release — vedi CHANGELOG.md.
 

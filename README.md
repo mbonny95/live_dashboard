@@ -79,7 +79,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.4.9
+       module_url: /local/community/live_dashboard/panel.js?v=1.5.0
        embed_iframe: true
        trust_external_script: false
    ```
@@ -92,7 +92,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.4.9` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.5.0` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -180,6 +180,21 @@ is documented inline there. Checked in this order, first one found wins:
 Whichever path you use, keep the file out of version control — it holds
 your own entity IDs (the provided `.gitignore` already excludes `config.js`
 under `public/`; a copy under `config/www/` is outside this repo entirely).
+
+**Since v1.5.0, `config.js` is no longer the only way to hide or reorder
+what's on screen.** The gear icon in the header opens a settings panel
+(rooms, entities, cameras, sections) that saves per-user via Home
+Assistant's own account storage, so two tablets/phones logged in as the
+same person stay in sync without either one touching `config.js`. The two
+never conflict: `config.js` still has the only say in *resolving* which
+sensor plays which role (production, alarm, appliance status, ...) — the
+panel only ever decides what's *visible*, layered on top. A row the panel
+overrides against what `config.js` says shows a small "differs from
+config.js" pill with its own one-tap target to drop the override and go
+back to obeying the file. The panel's own "Export as config.js" button
+turns your current picks into a paste-ready block for that file, for
+anyone who'd rather version their layout or apply it to every user in the
+house instead of just their own account.
 
 ## Enabling Energy
 
@@ -407,6 +422,12 @@ behavior too.
   secondary, not the primary design target.
 - Not a Lovelace replacement — no card picker, no drag-and-drop layout, no
   YAML dashboard config. It's one page that reflects your registries.
+- The settings panel (gear icon, v1.5.0) hides, shows and reorders what
+  auto-discovery already found — it doesn't compose a layout from scratch.
+  Specifically not in it: free repositioning of cards, choosing which
+  column a room lands in, a theme/color editor, or creating new views.
+  Lovelace already does all of that, and is the right tool when that's what
+  you want.
 - `panel_custom` is the only supported install method in this release — see
   CHANGELOG.md.
 

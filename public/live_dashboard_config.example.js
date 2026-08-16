@@ -165,6 +165,17 @@ window.CASA_CONFIG = {
   //   }
   // ],
 
+  // Entities: hide individual entities from the whole dashboard (room
+  // cards, room panel, "on now" list) regardless of which room they're in.
+  // This is the config-file half of the settings panel's per-entity hide —
+  // set it here to apply the same hide to every user, or leave it to the
+  // panel (gear icon -> a room -> tap an entity) for a per-user choice.
+  // Either way, a hide made from the panel always wins over this list for
+  // that user, including un-hiding something listed here (see README).
+  entities: {
+    hide: []   // ['sensor.some_diagnostic_entity']
+  },
+
   // Cameras: fully auto-discovered from every camera.* entity Home Assistant
   // reports (area from the registry, motion from a binary_sensor with
   // device_class "motion" on the same device) — this block only overrides
@@ -172,11 +183,22 @@ window.CASA_CONFIG = {
   // "Surveillance" tab don't exist. The tab itself only appears with 2+
   // cameras; with exactly one there's just the card in Casa and the tap-to
   // fullscreen overlay.
-  cameras: null
+  cameras: null,
   // cameras: {
   //   primary: null,        // entity_id featured in the Casa card; null = auto (first with motion, else first found)
+  //   hide: [],              // entity_ids excluded from the dashboard entirely (settings panel can override per user)
   //   hideUntilTap: [],     // entity_ids that show an icon instead of a live preview until tapped — for indoor cameras on a hallway tablet
   //   snapshotInterval: 10, // seconds between preview refreshes; suspended while the tab/page isn't visible
   //   gridTab: 6             // camera count above which the Sorveglianza grid switches from 2 to 3 columns
   // }
+
+  // Sections: turn a whole tab/module off for every user, regardless of
+  // whether its sensors are configured — a section with nothing configured
+  // is already hidden on its own (see the module descriptions above), so
+  // this is only for hiding one you *do* have data for. Keys match the
+  // config blocks above 1:1. Same settings-panel override relationship as
+  // entities/cameras: a per-user choice from the panel wins over this list.
+  modules: {
+    hide: []   // ['vehicle', 'appliances']
+  }
 };

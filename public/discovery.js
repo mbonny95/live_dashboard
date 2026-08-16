@@ -111,7 +111,19 @@ function collectConfiguredEntities(config) {
 
 // --- rooms -------------------------------------------------------------
 
-function discoverRooms(states, registries, config) {
+// `opts` (all optional) lets a caller layer runtime overrides on top of
+// config.js without this function knowing anything about where those
+// overrides come from — the settings panel (v1.5.0) is the only caller
+// that passes them today:
+//   opts.isHidden(room) -> bool   replaces the cfg.hide check entirely
+//     when provided (default: today's `hideSet.has(id/name)` behavior).
+//     Needed because a config-hidden room must still be computed in full
+//     (not dropped before this function's caller can even see it) so the
+//     panel can re-show it — see room.catalog below for the same reasoning
+//     applied to entities.
+//   opts.order -> string[]        replaces cfg.order for pinning when
+//     provided (default: cfg.order).
+function discoverRooms(states, registries, config, opts) {
   const cfg = (config && config.rooms) || {};
   const areas = (registries && registries.areas) || [];
   const devices = (registries && registries.devices) || [];
@@ -135,7 +147,18 @@ function discoverRooms(states, registries, config) {
     icon: (cfg.icons && cfg.icons[a.area_id]) || (a.icon ? mapMdiIcon(a.icon) : null) || guessAreaIcon(a.name),
     lights: [], switches: [], covers: [], media: [], climate: [], fan: [], vacuum: [],
     humidifier: [], lock: [], waterHeater: [], valve: [], lawnMower: [], siren: [],
-    sensors: [], status: []
+    sensors: [], status: [],
+    // Every entity that is *structurally* eligible for this room — domain
+    // match, or a recognized sensor/binary_sensor device_class — regardless
+    // of its current on/off state or (for battery) its percentage. Unlike
+    // the arrays above, this never reacts to live state, so it's stable
+    // enough to drive the settings panel's per-room entity list (v1.5.0):
+    // a closed window's sensor still needs to be listed and hidable, not
+    // just while it happens to be open. { id, name, reasonKind: 'domain'|
+    // 'device_class', reasonValue } — reasonValue is always the raw HA
+    // vocabulary (domain name or device_class string), never a translated
+    // or internal shorthand, since it's shown to the user as-is.
+    catalog: []
   }]));
 
   // Device -> its own `device_class: power` sensor, for switches only (see
@@ -165,48 +188,63 @@ function discoverRooms(states, registries, config) {
 
     if (claimedEntities.has(ent.entity_id)) continue;
 
-    if (dom === 'light') room.lights.push(ent.entity_id);
+    const catalogEntry = (reasonKind, reasonValue) =>
+      room.catalog.push({ id: ent.entity_id, name, reasonKind, reasonValue });
+
+    if (dom === 'light') { room.lights.push(ent.entity_id); catalogEntry('domain', 'light'); }
     else if (dom === 'switch') {
       const powerId = ent.device_id ? powerSensorByDevice.get(ent.device_id) : null;
       room.switches.push([ent.entity_id, name, '#i-plug', powerId || null]);
+      catalogEntry('domain', 'switch');
     }
-    else if (dom === 'cover') room.covers.push(ent.entity_id);
-    else if (dom === 'media_player') room.media.push(ent.entity_id);
-    else if (dom === 'climate') room.climate.push([ent.entity_id, name, '#i-therm']);
-    else if (dom === 'fan') room.fan.push([ent.entity_id, name, '#i-wind']);
-    else if (dom === 'vacuum') room.vacuum.push([ent.entity_id, name, '#i-bot']);
-    else if (dom === 'humidifier') room.humidifier.push([ent.entity_id, name, DOMAIN_ICON.humidifier]);
-    else if (dom === 'lock') room.lock.push([ent.entity_id, name, DOMAIN_ICON.lock]);
-    else if (dom === 'water_heater') room.waterHeater.push([ent.entity_id, name, DOMAIN_ICON.water_heater]);
-    else if (dom === 'valve') room.valve.push([ent.entity_id, name, DOMAIN_ICON.valve]);
-    else if (dom === 'lawn_mower') room.lawnMower.push([ent.entity_id, name, DOMAIN_ICON.lawn_mower]);
-    else if (dom === 'siren') room.siren.push([ent.entity_id, name, DOMAIN_ICON.siren]);
+    else if (dom === 'cover') { room.covers.push(ent.entity_id); catalogEntry('domain', 'cover'); }
+    else if (dom === 'media_player') { room.media.push(ent.entity_id); catalogEntry('domain', 'media_player'); }
+    else if (dom === 'climate') { room.climate.push([ent.entity_id, name, '#i-therm']); catalogEntry('domain', 'climate'); }
+    else if (dom === 'fan') { room.fan.push([ent.entity_id, name, '#i-wind']); catalogEntry('domain', 'fan'); }
+    else if (dom === 'vacuum') { room.vacuum.push([ent.entity_id, name, '#i-bot']); catalogEntry('domain', 'vacuum'); }
+    else if (dom === 'humidifier') { room.humidifier.push([ent.entity_id, name, DOMAIN_ICON.humidifier]); catalogEntry('domain', 'humidifier'); }
+    else if (dom === 'lock') { room.lock.push([ent.entity_id, name, DOMAIN_ICON.lock]); catalogEntry('domain', 'lock'); }
+    else if (dom === 'water_heater') { room.waterHeater.push([ent.entity_id, name, DOMAIN_ICON.water_heater]); catalogEntry('domain', 'water_heater'); }
+    else if (dom === 'valve') { room.valve.push([ent.entity_id, name, DOMAIN_ICON.valve]); catalogEntry('domain', 'valve'); }
+    else if (dom === 'lawn_mower') { room.lawnMower.push([ent.entity_id, name, DOMAIN_ICON.lawn_mower]); catalogEntry('domain', 'lawn_mower'); }
+    else if (dom === 'siren') { room.siren.push([ent.entity_id, name, DOMAIN_ICON.siren]); catalogEntry('domain', 'siren'); }
     else if (dom === 'binary_sensor') {
       const dc = st.attributes && st.attributes.device_class;
       const meta = BINARY_PILL_CLASS[dc];
-      // Only "on" ever becomes a pill — a closed door/empty room is the
-      // normal state and would just be noise (see B2 in the fix ticket).
-      if (meta && st.state === 'on') room.status.push([ent.entity_id, name, meta.icon, dc, meta.group]);
+      if (meta) {
+        // Structurally eligible regardless of current state — see the
+        // `catalog` field comment above for why this must not gate on
+        // st.state the way the `status` pill (next line) does.
+        catalogEntry('device_class', dc);
+        // Only "on" ever becomes a pill — a closed door/empty room is the
+        // normal state and would just be noise (see B2 in the fix ticket).
+        if (st.state === 'on') room.status.push([ent.entity_id, name, meta.icon, dc, meta.group]);
+      }
     }
     else if (dom === 'sensor') {
       const dc = st.attributes && st.attributes.device_class;
       if (dc === 'battery') {
+        const m = NUMERIC_SENSOR_CLASS.battery;
+        catalogEntry('device_class', 'battery');
         const pct = parseFloat(st.state);
         // A charged battery isn't news, a low one is (see B3) — filtered
         // here, not in the render layer, so the card and panel agree.
         if (!isNaN(pct) && pct < LOW_BATTERY_PCT) {
-          const m = NUMERIC_SENSOR_CLASS.battery;
           room.sensors.push([ent.entity_id, name, m.icon, m.decimals, m.unit, m.kind]);
         }
       } else {
         const m = NUMERIC_SENSOR_CLASS[dc];
-        if (m) room.sensors.push([ent.entity_id, name, m.icon, m.decimals, m.unit, m.kind]);
+        if (m) {
+          room.sensors.push([ent.entity_id, name, m.icon, m.decimals, m.unit, m.kind]);
+          catalogEntry('device_class', dc);
+        }
       }
     }
   }
 
   const hideSet = new Set((cfg.hide || []).map(String));
-  let list = [...byArea.values()].filter((r) => !hideSet.has(r.id) && !hideSet.has(r.name));
+  const isHidden = (opts && opts.isHidden) || ((r) => hideSet.has(r.id) || hideSet.has(r.name));
+  let list = [...byArea.values()].filter((r) => !isHidden(r));
 
   const richness = (r) => r.lights.length + r.switches.length + r.covers.length + r.media.length
     + r.climate.length + r.fan.length + r.vacuum.length
@@ -216,7 +254,7 @@ function discoverRooms(states, registries, config) {
   // empty tile.
   list = list.filter((r) => richness(r) > 0 || r.sensors.length > 0 || r.status.length > 0);
 
-  const order = (cfg.order || []).map(String);
+  const order = ((opts && opts.order) || cfg.order || []).map(String);
   const pinned = [];
   for (const key of order) {
     const idx = list.findIndex((r) => r.id === key || r.name === key);
@@ -283,7 +321,13 @@ function discoverWeather(states, config) {
 // the only relation Home Assistant exposes is "same device". So: resolve
 // each camera's device_id from the registry, then look for a binary_sensor
 // on that same device whose device_class is motion.
-function discoverCameras(states, registries, config) {
+// `opts` (both optional, v1.5.0 settings panel):
+//   opts.isHidden(camId) -> bool     true excludes the camera entirely
+//     (default: never — there's no config-level "true hide" for cameras
+//     before this version, only the tap-gate below).
+//   opts.isTapGated(camId) -> bool   replaces the inline hideUntilTap
+//     check (default: cfg.cameras.hideUntilTap membership, unchanged).
+function discoverCameras(states, registries, config, opts) {
   const cfg = (config && config.cameras) || {};
   const entities = (registries && registries.entities) || [];
   const areas = (registries && registries.areas) || [];
@@ -292,7 +336,9 @@ function discoverCameras(states, registries, config) {
   const areaById = new Map(areas.map((a) => [a.area_id, a]));
   const areaNameOf = (areaId) => (areaId && areaById.has(areaId) ? areaById.get(areaId).name : '');
 
-  const camEntities = entities.filter((e) => !isExcluded(e) && domainOf(e.entity_id) === 'camera' && e.entity_id in states);
+  const isHidden = (opts && opts.isHidden) || (() => false);
+  const camEntities = entities.filter((e) => !isExcluded(e) && domainOf(e.entity_id) === 'camera'
+    && e.entity_id in states && !isHidden(e.entity_id));
   if (!camEntities.length) return [];
 
   const motionByDevice = new Map();
@@ -304,7 +350,8 @@ function discoverCameras(states, registries, config) {
     else if (!motionByDevice.has(e.device_id)) motionByDevice.set(e.device_id, false);
   }
 
-  const hideUntilTap = new Set((cfg.hideUntilTap || []).map(String));
+  const hideUntilTapSet = new Set((cfg.hideUntilTap || []).map(String));
+  const isTapGated = (opts && opts.isTapGated) || ((id) => hideUntilTapSet.has(id));
 
   const cams = camEntities.map((e) => {
     const device = e.device_id ? deviceById.get(e.device_id) : null;
@@ -317,7 +364,7 @@ function discoverCameras(states, registries, config) {
       area: areaNameOf(areaId),
       motion: e.device_id ? !!motionByDevice.get(e.device_id) : false,
       picture,
-      hidden: hideUntilTap.has(e.entity_id)
+      hidden: isTapGated(e.entity_id)
     };
   });
 
@@ -465,6 +512,75 @@ function resolveEntityArea(entityId, registries) {
   return null;
 }
 
+// --- settings panel (v1.5.0) — visibility overrides ------------------------
+// Pure helpers shared by dash_neumo.html and dash_neumo_mobile.html so the
+// two layouts can never disagree about what a room/entity/camera/section's
+// resolved visibility is. None of this touches HA or the DOM — persistence
+// (Home Assistant's frontend/set_user_data, with a localStorage fallback)
+// lives in prefs.js; this file only knows how to combine what it's given.
+
+// The three-state override rule from the settings panel spec: a key absent
+// from `prefsMap` means "not decided by the panel" (config.js decides,
+// default visible if config.js doesn't mention it either); present means
+// the panel's choice always wins, even against a config.js that hides the
+// same key — that's how a user can re-show something config.js hides
+// without editing config.js. A plain hidden-list can only ever add
+// exclusions; this three-value shape is what makes "un-hide from the
+// panel" possible at all.
+function resolveVisible(key, prefsMap, configHiddenSet) {
+  if (prefsMap && Object.prototype.hasOwnProperty.call(prefsMap, key)) return !!prefsMap[key];
+  return !(configHiddenSet && configHiddenSet.has(key));
+}
+
+// Every per-domain array a room object can carry (see discoverRooms above)
+// — `catalog` is deliberately excluded: the settings panel's room-detail
+// screen needs to keep listing hidden entities (greyed, toggle-able back
+// on), so only the arrays that actually drive rendering get filtered.
+const ROOM_ENTITY_ARRAYS = ['lights', 'switches', 'covers', 'media', 'climate', 'fan', 'vacuum',
+  'humidifier', 'lock', 'waterHeater', 'valve', 'lawnMower', 'siren', 'sensors', 'status'];
+
+// Entries are either a bare entity_id (lights/covers/media) or a tuple with
+// the id first (every other array) — see discoverRooms's per-domain pushes.
+function applyEntityVisibility(room, hiddenIds) {
+  const idOf = (x) => (typeof x === 'string' ? x : x[0]);
+  for (const key of ROOM_ENTITY_ARRAYS) {
+    room[key] = room[key].filter((x) => !hiddenIds.has(idOf(x)));
+  }
+  return room;
+}
+
+// Section/tab toggle keys — fixed, not discovered, since they mirror the
+// config.js top-level module keys 1:1 (see live_dashboard_config.example.js).
+const MODULE_KEYS = ['energy', 'irrigation', 'cameras', 'appliances', 'vehicle'];
+
+// Builds the plain-object config that reflects *resolved* state (config.js
+// merged with the panel's current overrides) rather than either alone —
+// this is what "Esporta come config.js" serializes. `known` supplies every
+// id the resolver needs to decide over (the panel can only export a hide
+// list for ids it actually knows about): { roomIds, entityIds, cameraIds }.
+function buildExportedConfig(cfg, prefs, known) {
+  const p = prefs || {};
+  const k = known || {};
+  const configRoomHidden = new Set(((cfg.rooms && cfg.rooms.hide) || []).map(String));
+  const configEntityHidden = new Set((cfg.entities && cfg.entities.hide) || []);
+  const configCameraHidden = new Set((cfg.cameras && cfg.cameras.hide) || []);
+  const configModuleHidden = new Set((cfg.modules && cfg.modules.hide) || []);
+
+  const roomsHide = (k.roomIds || []).filter((id) => !resolveVisible(id, p.rooms, configRoomHidden));
+  const entitiesHide = (k.entityIds || []).filter((id) => !resolveVisible(id, p.entities, configEntityHidden));
+  const camerasHide = (k.cameraIds || []).filter((id) => !resolveVisible(id, p.cameras, configCameraHidden));
+  const modulesHide = MODULE_KEYS.filter((key) => !resolveVisible(key, p.modules, configModuleHidden));
+  const roomsOrder = (p.order && p.order.rooms && p.order.rooms.length) ? p.order.rooms : ((cfg.rooms && cfg.rooms.order) || []);
+  const hideUntilTap = p.hideUntilTap !== undefined ? p.hideUntilTap : ((cfg.cameras && cfg.cameras.hideUntilTap) || []);
+
+  return Object.assign({}, cfg, {
+    rooms: Object.assign({}, cfg.rooms, { hide: roomsHide, order: roomsOrder }),
+    entities: Object.assign({}, cfg.entities, { hide: entitiesHide }),
+    cameras: Object.assign({}, cfg.cameras, { hide: camerasHide, hideUntilTap }),
+    modules: Object.assign({}, cfg.modules, { hide: modulesHide })
+  });
+}
+
 // Classic script, not an ES module: dynamic `import()` of separate files is
 // blocked by Chrome's CORS policy when the page is opened from file:// (each
 // file: URL is a unique opaque origin), which breaks the "must open from
@@ -474,6 +590,7 @@ function resolveEntityArea(entityId, registries) {
 window.CasaDiscovery = {
   discoverRooms, discoverAllOfDomain, discoverPeople, discoverWeather, discoverAlarm, discoverModes, discoverCameras,
   resolveEntityArea, mapEnergyPrefs, discoverEnergyEntities,
+  resolveVisible, applyEntityVisibility, buildExportedConfig, MODULE_KEYS,
   CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName
 };
 

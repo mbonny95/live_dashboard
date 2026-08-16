@@ -20,6 +20,15 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   noAreasBody: "Questa dashboard si costruisce dalle aree di Home Assistant: assegna le tue entità a un'area per vedere le stanze qui.",
   fromGridHint: 'Energia prelevata dalla rete oggi — non è il consumo totale della casa',
 
+  // settings panel (v1.5.0), static labels
+  settings: 'Impostazioni', settingsBack: 'Indietro', settingsCameras: 'Telecamere', settingsSections: 'Sezioni',
+  settingsExport: 'Esporta come config.js', settingsReset: 'Ripristina', settingsSavedHass: 'Salvate sul tuo utente di Home Assistant',
+  settingsSavedLocal: 'Salvate solo su questo dispositivo', settingsSectionsNote: 'Una sezione senza sensori configurati resta comunque nascosta.',
+  settingsHideUntilTap: 'Icona finché non la tocchi', settingsDiffFromConfig: 'diverso dal config',
+  settingsLongPressHide: 'Nascondi questa', settingsExportCopied: 'Copiato negli appunti',
+  settingsExportSelect: 'Seleziona e copia il testo qui sotto', settingsExportOffer: 'Azzero gli override ora che sono nel file?',
+  settingsExportKeep: 'Mantieni', settingsExportClear: 'Azzera',
+
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Inserito · fuori', 'alarm.armedHome': 'Inserito · in casa', 'alarm.armedNight': 'Inserito · notte',
   'alarm.armedVacation': 'Inserito · vacanza', 'alarm.arming': 'In inserimento…',
@@ -81,6 +90,9 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'room.switchRunning': '{name} in corso', 'room.tvOn': 'TV accesa', 'room.vacuumRunning': 'aspirapolvere in pulizia',
 
   'rooms.overflow': '+{n} stanze',
+
+  'settings.entityCount': '{n} entità · {m} nascoste', 'settings.reasonDomain': 'dominio {domain}',
+  'settings.reasonDeviceClass': 'device_class {dc}',
 
   'siren.sounding': 'in suono',
 

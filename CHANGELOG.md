@@ -3,6 +3,55 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.0] - 2026-08-16
+
+### Added
+
+- **Settings panel**, reached from a new gear icon next to the day/night
+  toggle — two independent Facebook-group reports asked for the same thing:
+  no way to hide/un-hide a room or an entity without editing `config.js`
+  over SSH/Samba, and auto-discovery occasionally pulling in an irrelevant
+  entity (a diagnostic sensor, say) alongside the real ones in a room. The
+  panel never resolves *which* entity plays a role — `config.js` keeps that
+  job entirely — it only decides what's *visible* and in what order, as a
+  layer on top:
+  - **Rooms**: show/hide, reorder with up/down arrows, and — the point of
+    the exercise — a room `config.js` hides can be shown again from here,
+    something a plain hidden-list could never do (needed a per-key
+    true/false/unset override, not just an exclusion list).
+  - **Entities**: tap into a room from the panel for the full list of
+    everything it contributes, each with a pill naming *why* it's there
+    (`domain light`, `device_class temperature`, ...) — the exact
+    information needed to spot and hide the one that doesn't belong.
+    A long-press (600ms) or right-click on any row directly in the
+    dashboard does the same thing without opening the panel at all.
+  - **Cameras**: hide entirely, or flip the existing "icon until tapped"
+    privacy gate per camera.
+  - **Sections**: turn Energy/Irrigation/Surveillance/Appliances/Vehicle
+    off outright, independent of whether they'd otherwise have data to
+    show.
+  - Any row the panel overrides against what `config.js` says carries a
+    "differs from config.js" pill with its own tap target to drop just
+    that override.
+  - **Export as config.js**: turns the current picks into a paste-ready
+    `window.CASA_CONFIG` block, copied to the clipboard (falling back to
+    selectable text where the Clipboard API isn't available), with an
+    offer afterward to clear the now-redundant overrides.
+  - Persists via Home Assistant's own per-user `frontend/set_user_data` —
+    follows you from the wall tablet to your phone — with a `localStorage`
+    fallback (demo mode, older Home Assistant, no permission), surfaced in
+    the panel's own header instead of failing silently.
+  - Desktop gets a 420px slide-over drawer with a second screen for a
+    room's entity list; mobile gets a full-page view instead, matching how
+    the two layouts already diverge for the room panel and camera view.
+  - New optional `config.js` keys backing all of this — `entities.hide`,
+    `cameras.hide`, `modules.hide` — same shape and spirit as the existing
+    `rooms.hide`/`rooms.order`.
+  - Not in this version, on purpose: free repositioning of cards, choosing
+    which column a room lands in, a theme/color editor, new views. This
+    panel filters and reorders what auto-discovery found; composing a
+    layout from scratch is Lovelace's job, not this one's.
+
 ## [1.4.9] - 2026-08-16
 
 ### Fixed

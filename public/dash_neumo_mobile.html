@@ -89,6 +89,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <symbol id="i-window" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 12h16M12 3v18"/></symbol>
 <symbol id="i-lux" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M12 4v1.4M12 18.6V20M6.2 6.2l1 1M16.8 16.8l1 1M3.2 12h1.4M19.4 12h1.4M6.2 17.8l1-1M16.8 7.2l1-1"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M7.5 11V7.5a4.5 4.5 0 0 1 9 0V11"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 </defs></svg>
 
 <div data-nu="1" data-theme="{{ theme }}" style="min-height:100dvh;background:var(--page);color:var(--tx);max-width:560px;margin:0 auto;padding:14px 14px calc(134px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px">
@@ -109,6 +112,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <span style="font:600 11px/1 var(--font-body);color:var(--tx2)">{{ wxHumidity }}</span>
 </button>
 </sc-if>
+<button onClick="{{ openSettings }}" title="{{ S.settings }}" style="width:46px;height:46px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cog"></use></svg>
+</button>
 <button onClick="{{ toggleTheme }}" title="{{ S.dayNight }}" style="width:46px;height:46px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
 <svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use ref="{{ themeIconRef }}"></use></svg>
 </button>
@@ -280,7 +286,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-if>
 
 <sc-if value="{{ tabStanze }}" hint-placeholder-val="{{ false }}">
-<div data-m="col" data-screen-label="Stanze" style="gap:10px">
+<div onPointerDown="{{ panelLpDown }}" onPointerUp="{{ panelLpUp }}" onPointerLeave="{{ panelLpUp }}" onContextMenu="{{ panelLpMenu }}" data-m="col" data-screen-label="Stanze" style="gap:10px">
 <sc-for list="{{ rooms }}" as="r" hint-placeholder-count="8">
 <div data-on="{{ r.active }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:11px 12px">
 <div style="display:flex;align-items:center;gap:9px">
@@ -324,7 +330,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <sc-if value="{{ r.hasSensors }}" hint-placeholder-val="{{ false }}">
 <div data-m="two">
 <sc-for list="{{ r.sensors }}" as="s" hint-placeholder-count="2">
-<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:11px 13px">
+<div data-entity-id="{{ s.id }}" style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:11px 13px">
 <div style="font-family:var(--font-heading);font-size:17px;line-height:1.1">{{ s.val }}</div>
 <div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ s.label }}</div>
 </div>
@@ -333,7 +339,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-if>
 
 <sc-for list="{{ r.lights }}" as="l" hint-placeholder-count="1">
-<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
+<div data-entity-id="{{ l.id }}" style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
 <div style="display:flex;align-items:center;gap:11px">
 <svg width="19" height="19" fill="none" stroke="{{ l.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-bulb"></use></svg>
 <div style="flex:1;min-width:0">
@@ -349,7 +355,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 
 <sc-for list="{{ r.covers }}" as="c" hint-placeholder-count="1">
-<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
+<div data-entity-id="{{ c.id }}" style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
 <div style="display:flex;align-items:center;gap:10px">
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body)">{{ c.name }}</div>
@@ -372,7 +378,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 
 <sc-for list="{{ r.appliances }}" as="a" hint-placeholder-count="1">
-<div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
+<div data-entity-id="{{ a.id }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
 <svg width="19" height="19" fill="none" stroke="{{ a.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ a.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body)">{{ a.name }}</div>
@@ -387,7 +393,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 
 <sc-for list="{{ r.switches }}" as="w" hint-placeholder-count="1">
-<div style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
+<div data-entity-id="{{ w.id }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
 <svg width="19" height="19" fill="none" stroke="{{ w.stroke }}" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ w.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body)">{{ w.name }}</div>
@@ -398,7 +404,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 
 <sc-for list="{{ r.media }}" as="m" hint-placeholder-count="1">
-<div data-dim="{{ m.quiet }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
+<div data-dim="{{ m.quiet }}" data-entity-id="{{ m.id }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
 <svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-tv"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</div>
@@ -411,7 +417,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 
 <sc-for list="{{ r.extras }}" as="e" hint-placeholder-count="1">
-<div data-dim="{{ e.quiet }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:10px 13px">
+<div data-dim="{{ e.quiet }}" data-entity-id="{{ e.id }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:10px 13px">
 <svg width="17" height="17" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ e.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0;font:600 12.5px/1.2 var(--font-body)">{{ e.name }}</div>
 <div style="font:500 12px/1 var(--font-body);color:var(--tx2)">{{ e.val }}</div>
@@ -793,6 +799,156 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ settingsScreen1 }}" hint-placeholder-val="{{ false }}">
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;inset:0;z-index:44;background:var(--page);color:var(--tx);overflow-y:auto;padding:calc(14px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom))">
+<div style="display:flex;align-items:center;gap:13px;margin-bottom:8px">
+<div style="width:48px;height:48px;border-radius:18px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="21" height="21" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cog"></use></svg>
+</div>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-size:22px;line-height:1.1">{{ S.settings }}</div>
+<div style="font:500 11.5px/1.4 var(--font-body);color:var(--tx2);margin-top:3px">{{ prefsStorageNote }}</div>
+</div>
+<button onClick="{{ closeSettings }}" style="width:44px;height:44px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="18" height="18" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+
+<sc-if value="{{ hasSettingsRooms }}" hint-placeholder-val="{{ true }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:14px 2px 9px">{{ S.rooms }}</div>
+<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:20px">
+<sc-for list="{{ settingsRooms }}" as="r" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:7px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:7px 9px">
+<svg width="18" height="18" fill="none" stroke="{{ r.stroke }}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ r.iconRef }}"></use></svg>
+<div onClick="{{ r.open }}" style="flex:1;min-width:0;text-align:left">
+<div style="font:600 13px/1.2 var(--font-body);color:{{ r.stroke }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div>
+<sc-if value="{{ r.diff }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ r.clearDiff }}" style="display:inline-flex;align-items:center;min-height:44px;padding:0;background:transparent;font:600 10.5px/1.3 var(--font-body);color:var(--accT);text-align:left">{{ S.settingsDiffFromConfig }}</button>
+</sc-if>
+<sc-if value="{{ r.diffOff }}" hint-placeholder-val="{{ true }}">
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.countLabel }}</div>
+</sc-if>
+</div>
+<button onClick="{{ r.up }}" title="{{ S.up }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none;opacity:{{ r.upOpacity }}">
+<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-up"></use></svg>
+</button>
+<button onClick="{{ r.down }}" title="{{ S.down }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none;opacity:{{ r.downOpacity }}">
+<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"></use></svg>
+</button>
+<button onClick="{{ r.toggle }}" style="width:44px;height:26px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-ins);flex:none;position:relative">
+<span style="position:absolute;top:2px;left:{{ r.thumbLeft }};width:22px;height:22px;border-radius:999px;background:var(--acc);box-shadow:var(--nu-sm)"></span>
+</button>
+<button onClick="{{ r.open }}" title="{{ S.details }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none">
+<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chev"></use></svg>
+</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasSettingsCameras }}" hint-placeholder-val="{{ true }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsCameras }}</div>
+<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:20px">
+<sc-for list="{{ settingsCameras }}" as="c" hint-placeholder-count="1">
+<div style="display:flex;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:7px 9px">
+<svg width="18" height="18" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-cam"></use></svg>
+<div style="flex:1;min-width:0">
+<div style="font:600 13px/1.2 var(--font-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.name }}</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:3px">
+<sc-if value="{{ c.diff }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ c.clearDiff }}" style="display:inline-flex;align-items:center;min-height:44px;padding:0;background:transparent;font:600 10.5px/1.3 var(--font-body);color:var(--accT)">{{ S.settingsDiffFromConfig }}</button>
+</sc-if>
+<sc-if value="{{ c.visible }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ c.toggleTapGate }}" data-sel="{{ c.tapGated }}" style="background:var(--nu-ins);box-shadow:var(--nu-ins);border-radius:999px;padding:2px 9px;min-height:22px;font:600 10px/1.4 var(--font-body);color:var(--tx2)">{{ S.settingsHideUntilTap }}</button>
+</sc-if>
+</div>
+</div>
+<button onClick="{{ c.toggle }}" style="width:44px;height:26px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-ins);flex:none;position:relative">
+<span style="position:absolute;top:2px;left:{{ c.thumbLeft }};width:22px;height:22px;border-radius:999px;background:var(--acc);box-shadow:var(--nu-sm)"></span>
+</button>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsSections }}</div>
+<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px">
+<sc-for list="{{ settingsModules }}" as="m" hint-placeholder-count="5">
+<button onClick="{{ m.toggle }}" data-sel="{{ m.active }}" style="border-radius:999px;padding:0 14px;height:36px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12px/1 var(--font-body)">{{ m.label }}</button>
+</sc-for>
+</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:20px">{{ S.settingsSectionsNote }}</div>
+
+<div style="display:flex;gap:9px;margin-top:6px">
+<button onClick="{{ settingsExportRun }}" style="flex:1;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 12.5px/1 var(--font-body)">{{ S.settingsExport }}</button>
+<button onClick="{{ settingsResetRun }}" style="flex:1;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ S.settingsReset }}</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ settingsScreen2 }}" hint-placeholder-val="{{ false }}">
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;inset:0;z-index:44;background:var(--page);color:var(--tx);overflow-y:auto;padding:calc(14px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom))">
+<div style="display:flex;align-items:center;gap:9px;margin-bottom:18px">
+<button onClick="{{ settingsBack }}" title="{{ S.settingsBack }}" style="width:44px;height:44px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="17" height="17" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate(180deg)"><use href="#i-chev"></use></svg>
+</button>
+<svg width="22" height="22" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ settingsRoomDetail.iconRef }}"></use></svg>
+<div style="flex:1;min-width:0;font-family:var(--font-heading);font-size:19px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ settingsRoomDetail.name }}</div>
+<button onClick="{{ closeSettings }}" style="width:44px;height:44px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="17" height="17" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ settingsRoomDetail.entities }}" as="en" hint-placeholder-count="4">
+<div style="display:flex;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<div style="flex:1;min-width:0">
+<div style="font:600 13px/1.2 var(--font-body);color:{{ en.nameColor }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ en.name }}</div>
+<div style="font:500 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ en.id }}</div>
+<div style="margin-top:4px;display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+<span style="display:inline-block;background:var(--nu-ins);box-shadow:var(--nu-ins);border-radius:999px;padding:2px 9px;font:600 10.5px/1.4 var(--font-body);color:var(--accT);white-space:nowrap">{{ en.reason }}</span>
+<sc-if value="{{ en.diff }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ en.clearDiff }}" style="display:inline-flex;align-items:center;min-height:44px;padding:0;background:transparent;font:600 10.5px/1.3 var(--font-body);color:var(--accT)">{{ S.settingsDiffFromConfig }}</button>
+</sc-if>
+</div>
+</div>
+<button onClick="{{ en.toggle }}" style="width:44px;height:26px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-ins);flex:none;position:relative">
+<span style="position:absolute;top:2px;left:{{ en.thumbLeft }};width:22px;height:22px;border-radius:999px;background:var(--acc);box-shadow:var(--nu-sm)"></span>
+</button>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ longMenuOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ longMenuClose }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:50;animation:fade .18s ease"></div>
+<div style="position:fixed;z-index:51;left:50%;bottom:32px;transform:translateX(-50%);width:min(320px,calc(100vw - 32px));background:var(--page);border-radius:22px;box-shadow:0 18px 44px rgba(20,24,30,.3);padding:16px">
+<div style="font:600 13px/1.3 var(--font-body);color:var(--tx2);margin-bottom:10px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ longMenuName }}</div>
+<button onClick="{{ longMenuHide }}" style="width:100%;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 13px/1 var(--font-body)">{{ S.settingsLongPressHide }}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ exportOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ exportClose }}" style="position:fixed;inset:0;background:rgba(20,24,30,.52);backdrop-filter:blur(3px);z-index:50;animation:fade .18s ease"></div>
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;z-index:51;inset:0;display:grid;place-items:center;padding:18px;pointer-events:none;color:var(--tx)">
+<div style="width:min(520px,100%);max-height:82vh;overflow-y:auto;background:var(--page);box-shadow:0 22px 54px rgba(20,24,30,.3);border-radius:24px;padding:18px;pointer-events:auto;animation:fade .18s ease">
+<div style="font-family:var(--font-heading);font-size:18px;line-height:1.2;margin-bottom:10px">{{ S.settingsExport }}</div>
+<sc-if value="{{ exportCopied }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 12px/1.4 var(--font-body);color:var(--accT);margin-bottom:10px">{{ S.settingsExportCopied }}</div>
+</sc-if>
+<sc-if value="{{ exportNotCopied }}" hint-placeholder-val="{{ true }}">
+<div style="font:600 12px/1.4 var(--font-body);color:var(--tx2);margin-bottom:10px">{{ S.settingsExportSelect }}</div>
+</sc-if>
+<textarea value="{{ exportText }}" onChange="{{ exportTextChange }}" onClick="{{ exportTextClick }}" style="width:100%;height:200px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:14px;border:0;padding:12px;font:500 10.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx);resize:vertical"></textarea>
+<div style="font:600 12px/1.4 var(--font-body);margin-top:14px;margin-bottom:10px">{{ S.settingsExportOffer }}</div>
+<div style="display:flex;gap:9px">
+<button onClick="{{ exportClearOverrides }}" style="flex:1;height:46px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 12.5px/1 var(--font-body)">{{ S.settingsExportClear }}</button>
+<button onClick="{{ exportKeepOverrides }}" style="flex:1;height:46px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ S.settingsExportKeep }}</button>
+</div>
+</div>
+</div>
+</sc-if>
+
 <div style="position:fixed;left:0;right:0;bottom:0;background:var(--page);padding:8px 10px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 18px rgba(0,0,0,.06);z-index:5">
 <div style="max-width:540px;margin:0 auto;display:flex;gap:4px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px">
 <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
@@ -811,11 +967,19 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 const DEFAULT_CONFIG = {
   rooms: { order: [], hide: [], max: 12, icons: {} },
   alarm: null, modes: null, people: [], weather: null, quickActions: null,
-  energy: null, irrigation: null, vehicle: null, appliances: null, cameras: null, weatherStation: null, language: null
+  energy: null, irrigation: null, vehicle: null, appliances: null, cameras: null, weatherStation: null, language: null,
+  // Settings-panel-related (v1.5.0): config-level hide lists the panel's
+  // per-user overrides layer on top of — see the note in
+  // live_dashboard_config.example.js for how the two relate.
+  entities: { hide: [] }, modules: { hide: [] }
 };
 function mergeConfig(user) {
   const u = user || {};
-  return Object.assign({}, DEFAULT_CONFIG, u, { rooms: Object.assign({}, DEFAULT_CONFIG.rooms, u.rooms || {}) });
+  return Object.assign({}, DEFAULT_CONFIG, u, {
+    rooms: Object.assign({}, DEFAULT_CONFIG.rooms, u.rooms || {}),
+    entities: Object.assign({}, DEFAULT_CONFIG.entities, u.entities || {}),
+    modules: Object.assign({}, DEFAULT_CONFIG.modules, u.modules || {})
+  });
 }
 // Classic <script> tag injection instead of dynamic import(): Chrome blocks
 // ES module fetches (including import()) from file:// origins entirely
@@ -873,7 +1037,8 @@ async function loadUserConfig() {
 }
 
 class Component extends DCLogic {
-  state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now() };
+  state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
+    settingsOpen: false, settingsRoom: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null };
   cfg = mergeConfig({});
   registries = { areas: [], devices: [], entities: [] };
   discovery = null;
@@ -922,6 +1087,7 @@ class Component extends DCLogic {
   async _boot() {
     await Promise.all([
       loadScript(bust('./discovery.js')),
+      loadScript(bust('./prefs.js')),
       loadScript(bust('./i18n.js')),
       loadScript(bust('./i18n/it.js')),
       loadScript(bust('./i18n/en.js')),
@@ -964,7 +1130,8 @@ class Component extends DCLogic {
       console.warn('[casa] energy source resolution failed', e);
       return null;
     });
-    this.setState({});
+    const { prefs, storage } = await window.CasaPrefs.load(be).catch(() => ({ prefs: { v: 1 }, storage: 'local' }));
+    this.setState({ prefs, prefsStorage: storage });
     this._loadHistory();
     this._startSnapTimer();
   }
@@ -1132,7 +1299,123 @@ class Component extends DCLogic {
 
   ROOMS_RESULT() {
     if (!this.discovery) return { rooms: [], overflow: [] };
-    return this.discovery.discoverRooms(this.state.st, this.registries, this.cfg);
+    const prefs = this.PREFS(), ch = this.CONFIG_HIDDEN(), d = this.discovery;
+    return d.discoverRooms(this.state.st, this.registries, this.cfg, {
+      isHidden: (r) => !d.resolveVisible(r.id, prefs.rooms, ch.rooms),
+      order: (prefs.order && prefs.order.rooms && prefs.order.rooms.length) ? prefs.order.rooms : undefined
+    });
+  }
+
+  // --- settings panel (v1.5.0) — see dash_neumo.html's copy of this whole
+  // block for the full explanation; kept identical on purpose so desktop and
+  // mobile can never disagree about what's hidden.
+  PREFS() { return this.state.prefs || { v: 1 }; }
+  CONFIG_HIDDEN() {
+    const cfg = this.cfg;
+    return {
+      rooms: new Set(((cfg.rooms && cfg.rooms.hide) || []).map(String)),
+      entities: new Set((cfg.entities && cfg.entities.hide) || []),
+      cameras: new Set((cfg.cameras && cfg.cameras.hide) || []),
+      modules: new Set((cfg.modules && cfg.modules.hide) || [])
+    };
+  }
+  MODULE_VISIBLE(key) {
+    if (!this.discovery) return true;
+    return this.discovery.resolveVisible(key, this.PREFS().modules, this.CONFIG_HIDDEN().modules);
+  }
+  ENTITY_HIDDEN_SET() {
+    const prefs = this.PREFS(), ch = this.CONFIG_HIDDEN(), d = this.discovery;
+    return { has: (id) => !!d && !d.resolveVisible(id, prefs.entities, ch.entities) };
+  }
+  SAVE_PREFS(prefs) {
+    this.setState({ prefs });
+    if (this.be) {
+      window.CasaPrefs.save(this.be, prefs).then((storage) => this.setState({ prefsStorage: storage }));
+    }
+  }
+  _lpEntityId(e) {
+    const el = e.target && e.target.closest && e.target.closest('[data-entity-id]');
+    return el ? el.getAttribute('data-entity-id') : null;
+  }
+  _panelLpDown(e) {
+    const id = this._lpEntityId(e);
+    if (!id) return;
+    if (this._lpTimer) clearTimeout(this._lpTimer);
+    this._lpTimer = setTimeout(() => this.setState({ longMenu: id }), 600);
+  }
+  _panelLpUp() {
+    if (this._lpTimer) { clearTimeout(this._lpTimer); this._lpTimer = null; }
+  }
+  _panelLpMenu(e) {
+    const id = this._lpEntityId(e);
+    if (!id) return;
+    e.preventDefault();
+    this._panelLpUp();
+    this.setState({ longMenu: id });
+  }
+  SETTINGS_SET_ROOM(id, val) {
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { rooms: Object.assign({}, p.rooms, { [id]: val }) }));
+  }
+  SETTINGS_CLEAR_ROOM(id) {
+    const p = this.PREFS();
+    const rooms = Object.assign({}, p.rooms); delete rooms[id];
+    this.SAVE_PREFS(Object.assign({}, p, { rooms }));
+  }
+  SETTINGS_MOVE_ROOM(orderIds, id, dir) {
+    const idx = orderIds.indexOf(id);
+    const j = idx + dir;
+    if (idx < 0 || j < 0 || j >= orderIds.length) return;
+    const next = orderIds.slice();
+    const tmp = next[idx]; next[idx] = next[j]; next[j] = tmp;
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { order: Object.assign({}, p.order, { rooms: next }) }));
+  }
+  SETTINGS_SET_ENTITY(id, val) {
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { entities: Object.assign({}, p.entities, { [id]: val }) }));
+  }
+  SETTINGS_CLEAR_ENTITY(id) {
+    const p = this.PREFS();
+    const entities = Object.assign({}, p.entities); delete entities[id];
+    this.SAVE_PREFS(Object.assign({}, p, { entities }));
+  }
+  SETTINGS_SET_CAMERA(id, val) {
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { cameras: Object.assign({}, p.cameras, { [id]: val }) }));
+  }
+  SETTINGS_CLEAR_CAMERA(id) {
+    const p = this.PREFS();
+    const cameras = Object.assign({}, p.cameras); delete cameras[id];
+    this.SAVE_PREFS(Object.assign({}, p, { cameras }));
+  }
+  SETTINGS_TOGGLE_TAPGATE(id, cfgTapGatedList) {
+    const p = this.PREFS();
+    const cur = p.hideUntilTap !== undefined ? p.hideUntilTap : cfgTapGatedList;
+    const now = cur.includes(id);
+    const next = now ? cur.filter((x) => x !== id) : cur.concat([id]);
+    this.SAVE_PREFS(Object.assign({}, p, { hideUntilTap: next }));
+  }
+  SETTINGS_SET_MODULE(key, val) {
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { modules: Object.assign({}, p.modules, { [key]: val }) }));
+  }
+  SETTINGS_RESET() { this.SAVE_PREFS({ v: 1 }); }
+  SETTINGS_LONG_HIDE(id) {
+    this.SETTINGS_SET_ENTITY(id, false);
+    this.setState({ longMenu: null });
+  }
+  ALL_ROOMS_RESULT() {
+    if (!this.discovery) return { rooms: [], overflow: [] };
+    const prefs = this.PREFS(), d = this.discovery;
+    return d.discoverRooms(this.state.st, this.registries, this.cfg, {
+      isHidden: () => false,
+      order: (prefs.order && prefs.order.rooms && prefs.order.rooms.length) ? prefs.order.rooms : undefined
+    });
+  }
+  ALL_CAMERAS_RESULT() {
+    if (!this.discovery) return [];
+    return this.discovery.discoverCameras(this.state.st, this.registries, this.cfg, { isHidden: () => false, isTapGated: () => false });
   }
 
   roomSummary(r) {
@@ -1148,7 +1431,7 @@ class Component extends DCLogic {
     (r.switches || []).forEach((sw) => { if (this.isOn(sw[0])) bits.push(this.t('room.switchRunning', { name: sw[1] })); });
     if ((r.media || []).some((id) => this.s(id) === 'playing')) bits.push(this.t('room.tvOn'));
     if ((r.vacuum || []).some((v) => this.s(v[0]) === 'cleaning')) bits.push(this.t('room.vacuumRunning'));
-    (this.cfg.appliances || []).forEach((a) => {
+    (this.MODULE_VISIBLE('appliances') ? (this.cfg.appliances || []) : []).forEach((a) => {
       if (this.discovery && this.discovery.resolveEntityArea(a.status, this.registries) === r.id && !this.applianceState(a).idle) {
         bits.push(this.t('room.switchRunning', { name: a.name }));
       }
@@ -1180,7 +1463,7 @@ class Component extends DCLogic {
   }
 
   applianceItems(roomId) {
-    if (!this.discovery) return [];
+    if (!this.discovery || !this.MODULE_VISIBLE('appliances')) return [];
     return (this.cfg.appliances || [])
       .filter((a) => this.discovery.resolveEntityArea(a.status, this.registries) === roomId)
       .map((a) => {
@@ -1191,7 +1474,7 @@ class Component extends DCLogic {
           : label;
         const applianceIcon = a.icon || '#i-wash';
         return {
-          name: a.name, icon: applianceIcon, iconRef: this._bindAttr('href', applianceIcon), stroke: idle ? 'var(--tx2)' : 'var(--acc)', sub,
+          id: a.status, name: a.name, icon: applianceIcon, iconRef: this._bindAttr('href', applianceIcon), stroke: idle ? 'var(--tx2)' : 'var(--acc)', sub,
           hasPowerOff: !!a.powerSwitch,
           powerOff: a.powerSwitch ? () => this.call('switch', 'turn_off', { entity_id: a.powerSwitch }) : () => {}
         };
@@ -1207,31 +1490,31 @@ class Component extends DCLogic {
       const on = this.isOn(sw[0]);
       const powerId = sw[3];
       const watts = powerId ? this.val(powerId, 0, ' W') : null;
-      return { name: sw[1], icon: sw[2], iconRef: this._bindAttr('href', sw[2]), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
+      return { id: sw[0], name: sw[1], icon: sw[2], iconRef: this._bindAttr('href', sw[2]), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
         sub: (on ? this.t('switch.running') : this.t('switch.off')) + (watts && watts !== '—' ? ' · ' + watts : ''),
         toggle: () => this.call('switch', on ? 'turn_off' : 'turn_on', { entity_id: sw[0] }) };
     });
     const humidifierTuples = (r.humidifier || []).map((h) => {
       const on = this.isOn(h[0]);
-      return { name: h[1], icon: h[2], iconRef: this._bindAttr('href', h[2]), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
+      return { id: h[0], name: h[1], icon: h[2], iconRef: this._bindAttr('href', h[2]), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
         sub: on ? this.t('switch.running') : this.t('switch.off'),
         toggle: () => this.call('humidifier', on ? 'turn_off' : 'turn_on', { entity_id: h[0] }) };
     });
     const lockTuples = (r.lock || []).map((l) => {
       const unlocked = this.s(l[0]) === 'unlocked';
-      return { name: l[1], icon: l[2], iconRef: this._bindAttr('href', l[2]), on: unlocked, action: unlocked ? this.t('lock.lockAction') : this.t('lock.unlockAction'), stroke: unlocked ? 'var(--acc)' : 'var(--tx2)',
+      return { id: l[0], name: l[1], icon: l[2], iconRef: this._bindAttr('href', l[2]), on: unlocked, action: unlocked ? this.t('lock.lockAction') : this.t('lock.unlockAction'), stroke: unlocked ? 'var(--acc)' : 'var(--tx2)',
         sub: unlocked ? this.t('lock.unlocked') : this.t('lock.locked'),
         toggle: () => this.call('lock', unlocked ? 'lock' : 'unlock', { entity_id: l[0] }) };
     });
     const valveTuples = (r.valve || []).map((v) => {
       const open = this.s(v[0]) === 'open';
-      return { name: v[1], icon: v[2], iconRef: this._bindAttr('href', v[2]), on: open, action: open ? this.t('valve.closeAction') : this.t('valve.openAction'), stroke: open ? 'var(--acc)' : 'var(--tx2)',
+      return { id: v[0], name: v[1], icon: v[2], iconRef: this._bindAttr('href', v[2]), on: open, action: open ? this.t('valve.closeAction') : this.t('valve.openAction'), stroke: open ? 'var(--acc)' : 'var(--tx2)',
         sub: open ? this.t('valve.open') : this.t('valve.closed'),
         toggle: () => this.call('valve', open ? 'close_valve' : 'open_valve', { entity_id: v[0] }) };
     });
     const sirenTuples = (r.siren || []).map((s) => {
       const on = this.isOn(s[0]);
-      return { name: s[1], icon: s[2], iconRef: this._bindAttr('href', s[2]), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
+      return { id: s[0], name: s[1], icon: s[2], iconRef: this._bindAttr('href', s[2]), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
         sub: on ? this.t('siren.sounding') : this.t('switch.off'),
         toggle: () => this.call('siren', on ? 'turn_off' : 'turn_on', { entity_id: s[0] }) };
     });
@@ -1239,11 +1522,11 @@ class Component extends DCLogic {
     return {
       hasAppliances: applianceItems.length > 0, appliances: applianceItems,
       hasSensors: (r.sensors || []).length > 0,
-      sensors: (r.sensors || []).map((s) => ({ label: s[1], icon: s[2], val: this.val(s[0], s[3], s[4]) })),
+      sensors: (r.sensors || []).map((s) => ({ id: s[0], label: s[1], icon: s[2], val: this.val(s[0], s[3], s[4]) })),
       lights: (r.lights || []).map((id) => {
         const on = this.isOn(id);
         const b = this.at(id, 'brightness') || 200;
-        return { name: this.fn(id), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
+        return { id, name: this.fn(id), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
           sub: on ? Math.round((b / 255) * 100) + '% ' + this.t('light.brightnessSuffix') : this.t('common.off'),
           bri: Math.max(1, Math.round((b / 255) * 100)),
           toggle: () => this.call('light', on ? 'turn_off' : 'turn_on', { entity_id: id }),
@@ -1260,7 +1543,7 @@ class Component extends DCLogic {
           delete d[id];
           this.setState({ coverDrag: d });
         };
-        return { name: this.fn(id), pos,
+        return { id, name: this.fn(id), pos,
           sub: live === undefined ? this.s(id) : pos === 0 ? this.t('cover.closed') : pos === 100 ? this.t('cover.fullyOpen') : this.t('cover.openAt', { pct: pos }),
           up: () => { clearDrag(); this.cover(id, 'open_cover'); },
           down: () => { clearDrag(); this.cover(id, 'close_cover'); },
@@ -1272,14 +1555,14 @@ class Component extends DCLogic {
       media: (r.media || []).map((id) => {
         const s = this.s(id);
         const live = s !== 'unavailable' && s !== 'unknown';
-        return { name: this.fn(id), quiet: !live,
+        return { id, name: this.fn(id), quiet: !live,
           sub: !live ? this.t('common.unreachable') : s === 'playing' ? (this.at(id, 'media_title') || this.t('media.playing')) : s === 'off' ? this.t('common.off') : s,
           toggle: () => this.call('media_player', s === 'off' ? 'turn_on' : 'turn_off', { entity_id: id }) };
       }),
       extras: extraTuples.map((x) => {
         const s = this.s(x[0]);
         const live = s !== 'unavailable' && s !== 'unknown';
-        return { name: x[1], icon: x[2], iconRef: this._bindAttr('href', x[2]), quiet: !live, val: !live ? this.t('common.unreachable') : (this.unit(x[0]) ? this.val(x[0], 1) : s) };
+        return { id: x[0], name: x[1], icon: x[2], iconRef: this._bindAttr('href', x[2]), quiet: !live, val: !live ? this.t('common.unreachable') : (this.unit(x[0]) ? this.val(x[0], 1) : s) };
       })
     };
   }
@@ -1334,9 +1617,9 @@ class Component extends DCLogic {
     const gridT = en.gridToday ? this.n(en.gridToday) : (edDaily.gridToday != null ? edDaily.gridToday : null);
     const exportT = en.gridExportToday ? this.n(en.gridExportToday) : (edDaily.gridExportToday != null ? edDaily.gridExportToday : null);
     const consT = en.consumptionToday ? this.n(en.consumptionToday) : null;
-    const hasEnergy = !!en.production || prodT != null || gridT != null;
-    const hasIrrigation = !!(this.cfg.irrigation && this.cfg.irrigation.zones && this.cfg.irrigation.zones.length);
-    const hasVehicle = !!(this.cfg.vehicle);
+    const hasEnergy = (!!en.production || prodT != null || gridT != null) && this.MODULE_VISIBLE('energy');
+    const hasIrrigation = !!(this.cfg.irrigation && this.cfg.irrigation.zones && this.cfg.irrigation.zones.length) && this.MODULE_VISIBLE('irrigation');
+    const hasVehicle = !!(this.cfg.vehicle) && this.MODULE_VISIBLE('vehicle');
 
     // config.weatherStation is optional, on top of what irrigation.weather
     // already maps — an install with irrigation configured doesn't have to
@@ -1359,7 +1642,14 @@ class Component extends DCLogic {
 
     // cameras — see dash_neumo.html for the full explanation of this block.
     const camCfg = this.cfg.cameras || {};
-    const camsRaw = this.discovery ? this.discovery.discoverCameras(this.state.st, this.registries, this.cfg) : [];
+    const camsRaw = (this.discovery && this.MODULE_VISIBLE('cameras')) ? (() => {
+      const prefs = this.PREFS(), ch = this.CONFIG_HIDDEN(), d = this.discovery;
+      const cfgTapGated = new Set((camCfg.hideUntilTap || []).map(String));
+      return d.discoverCameras(this.state.st, this.registries, this.cfg, {
+        isHidden: (id) => !d.resolveVisible(id, prefs.cameras, ch.cameras),
+        isTapGated: (id) => (prefs.hideUntilTap !== undefined ? prefs.hideUntilTap.includes(id) : cfgTapGated.has(id))
+      });
+    })() : [];
     const hasCameras = camsRaw.length > 0;
     const hasCamTab = camsRaw.length >= 2;
     const snapTick = this.state.snapTick;
@@ -1407,7 +1697,9 @@ class Component extends DCLogic {
 
     const activeItems = [];
     const applianceSwitches = new Set((this.cfg.appliances || []).map((a) => a.powerSwitch).filter(Boolean));
+    const entityHiddenForActive = this.ENTITY_HIDDEN_SET();
     Object.keys(this.state.st).forEach((id) => {
+      if (entityHiddenForActive.has(id)) return;
       const dom = id.split('.')[0];
       const s = this.s(id);
       if (dom === 'light' && s === 'on') {
@@ -1421,7 +1713,7 @@ class Component extends DCLogic {
         activeItems.push({ icon: '#i-bot', iconRef: this._bindAttr('href', '#i-bot'), name: this.t('vacuum.name'), sub: s === 'cleaning' ? this.t('vacuum.cleaning') : this.t('vacuum.returning'), off: () => this.call('vacuum', 'return_to_base', { entity_id: id }) });
       }
     });
-    (this.cfg.appliances || []).forEach((a) => {
+    (this.MODULE_VISIBLE('appliances') ? (this.cfg.appliances || []) : []).forEach((a) => {
       const { idle, label } = this.applianceState(a);
       if (idle) return;
       const aIcon = a.icon || '#i-wash';
@@ -1447,6 +1739,13 @@ class Component extends DCLogic {
 
     const roomsResult = this.ROOMS_RESULT();
     const allRoomsFlat = roomsResult.rooms.concat(roomsResult.overflow);
+    // Settings-panel entity hide — see dash_neumo.html's copy of this same
+    // step for the full explanation. room.catalog is left untouched so the
+    // settings screen's own room-detail view can still list hidden entities.
+    if (this.discovery) {
+      const entityHidden = this.ENTITY_HIDDEN_SET();
+      allRoomsFlat.forEach((r) => this.discovery.applyEntityVisibility(r, entityHidden));
+    }
     const hasNoAreas = !this.registries.areas || this.registries.areas.length === 0;
     const goToAreas = () => { try { window.top.location.href = '/config/areas/dashboard'; } catch (e) {} };
     // See dash_neumo.html for the pill priority order (allarmi, aperture,
@@ -1649,6 +1948,97 @@ class Component extends DCLogic {
 
     const energyChart = this.chartOn('energia');
 
+    // --- settings panel (v1.5.0) — see dash_neumo.html's copy of this whole
+    // block for the full explanation; kept logically identical (same
+    // discovery.js/prefs.js calls) so the two layouts never disagree.
+    const prefsNow = this.PREFS();
+    const chNow = this.CONFIG_HIDDEN();
+    let settingsRooms = [], settingsCameras = [], settingsModules = [], settingsRoomDetail = null;
+    let doExport = () => {};
+    if (this.state.settingsOpen && this.discovery) {
+      const d = this.discovery;
+      const allRoomsRes = this.ALL_ROOMS_RESULT();
+      const allSettingsRooms = allRoomsRes.rooms.concat(allRoomsRes.overflow);
+      const roomOrderIds = allSettingsRooms.map((r) => r.id);
+      const allCamsList = this.ALL_CAMERAS_RESULT();
+      const camCfgNow = this.cfg.cameras || {};
+      const cfgTapGatedList = (camCfgNow.hideUntilTap || []).map(String);
+      const diffFrom = (prefsMap, key, configHiddenSet) =>
+        !!prefsMap && Object.prototype.hasOwnProperty.call(prefsMap, key) && prefsMap[key] !== !configHiddenSet.has(key);
+
+      settingsRooms = allSettingsRooms.map((r, idx) => {
+        const visible = d.resolveVisible(r.id, prefsNow.rooms, chNow.rooms);
+        const total = (r.catalog || []).length;
+        const hidden = (r.catalog || []).filter((e) => !d.resolveVisible(e.id, prefsNow.entities, chNow.entities)).length;
+        const diff = diffFrom(prefsNow.rooms, r.id, chNow.rooms);
+        const canUp = idx > 0, canDown = idx < allSettingsRooms.length - 1;
+        return {
+          id: r.id, name: r.name, icon: r.icon, iconRef: this._bindAttr('href', r.icon),
+          stroke: visible ? 'var(--acc)' : 'var(--tx2)',
+          countLabel: this.t('settings.entityCount', { n: total, m: hidden }),
+          visible, toggle: () => this.SETTINGS_SET_ROOM(r.id, !visible),
+          thumbLeft: visible ? '20px' : '2px',
+          diff, diffOff: !diff, clearDiff: (e) => { if (e) e.stopPropagation(); this.SETTINGS_CLEAR_ROOM(r.id); },
+          upOpacity: canUp ? '1' : '.35', downOpacity: canDown ? '1' : '.35',
+          up: () => this.SETTINGS_MOVE_ROOM(roomOrderIds, r.id, -1),
+          down: () => this.SETTINGS_MOVE_ROOM(roomOrderIds, r.id, 1),
+          open: () => this.setState({ settingsRoom: r.id })
+        };
+      });
+
+      settingsCameras = allCamsList.map((c) => {
+        const visible = d.resolveVisible(c.id, prefsNow.cameras, chNow.cameras);
+        const tapGated = prefsNow.hideUntilTap !== undefined ? prefsNow.hideUntilTap.includes(c.id) : cfgTapGatedList.includes(c.id);
+        const diff = diffFrom(prefsNow.cameras, c.id, chNow.cameras);
+        return {
+          id: c.id, name: c.name, area: c.area,
+          visible, toggle: () => this.SETTINGS_SET_CAMERA(c.id, !visible),
+          thumbLeft: visible ? '20px' : '2px',
+          diff, diffOff: !diff, clearDiff: () => this.SETTINGS_CLEAR_CAMERA(c.id),
+          tapGated, toggleTapGate: () => this.SETTINGS_TOGGLE_TAPGATE(c.id, cfgTapGatedList)
+        };
+      });
+
+      const moduleLabels = { energy: this.t('tab.energy'), irrigation: this.t('tab.irrigation'), cameras: this.t('tab.cameras'),
+        appliances: this.strings.appliances, vehicle: this.t('tab.vehicle') };
+      settingsModules = window.CasaDiscovery.MODULE_KEYS.map((key) => {
+        const active = d.resolveVisible(key, prefsNow.modules, chNow.modules);
+        return { key, label: moduleLabels[key], active, toggle: () => this.SETTINGS_SET_MODULE(key, !active) };
+      });
+
+      if (this.state.settingsRoom) {
+        const r = allSettingsRooms.find((x) => x.id === this.state.settingsRoom);
+        if (r) {
+          const entities = (r.catalog || []).map((e) => {
+            const visible = d.resolveVisible(e.id, prefsNow.entities, chNow.entities);
+            const reason = e.reasonKind === 'domain'
+              ? this.t('settings.reasonDomain', { domain: e.reasonValue })
+              : this.t('settings.reasonDeviceClass', { dc: e.reasonValue });
+            const diff = diffFrom(prefsNow.entities, e.id, chNow.entities);
+            return {
+              id: e.id, name: e.name, reason, visible, nameColor: visible ? 'var(--tx)' : 'var(--tx2)',
+              toggle: () => this.SETTINGS_SET_ENTITY(e.id, !visible), thumbLeft: visible ? '20px' : '2px',
+              diff, diffOff: !diff, clearDiff: () => this.SETTINGS_CLEAR_ENTITY(e.id)
+            };
+          }).sort((a, b) => a.name.localeCompare(b.name));
+          settingsRoomDetail = { id: r.id, name: r.name, icon: r.icon, iconRef: this._bindAttr('href', r.icon), entities, hasEntities: entities.length > 0 };
+        }
+      }
+
+      doExport = async () => {
+        const known = {
+          roomIds: allSettingsRooms.map((r) => r.id),
+          entityIds: Array.from(new Set(allSettingsRooms.reduce((acc, r) => acc.concat((r.catalog || []).map((e) => e.id)), []))),
+          cameraIds: allCamsList.map((c) => c.id)
+        };
+        const text = window.CasaPrefs.exportText(this.cfg, prefsNow, known);
+        const copied = await window.CasaPrefs.copyToClipboard(text);
+        this.setState({ exportSheet: { text, copied } });
+      };
+    }
+    const exportSheet = this.state.exportSheet;
+    const longMenuId = this.state.longMenu;
+
     return {
       S: this.strings, isDemo: this.kind === 'demo',
       theme, tabs,
@@ -1731,7 +2121,31 @@ class Component extends DCLogic {
       fuelPct: gaugePct === null ? '—' : this.dec(gaugePct, 0) + '%',
       fuelWidth: (gaugePct === null ? 0 : Math.max(2, Math.min(100, gaugePct))) + '%',
       fuelTone: gaugePct === null ? 'ok' : gaugePct < 20 ? 'alert' : gaugePct < 40 ? 'warn' : 'ok',
-      carCells, warnings
+      carCells, warnings,
+      panelLpDown: (e) => this._panelLpDown(e), panelLpUp: () => this._panelLpUp(), panelLpMenu: (e) => this._panelLpMenu(e),
+
+      // settings panel (v1.5.0)
+      openSettings: () => this.setState({ settingsOpen: true, settingsRoom: null }),
+      closeSettings: () => this.setState({ settingsOpen: false, settingsRoom: null }),
+      settingsScreen1: this.state.settingsOpen && !this.state.settingsRoom,
+      settingsScreen2: this.state.settingsOpen && !!this.state.settingsRoom,
+      settingsBack: () => this.setState({ settingsRoom: null }),
+      prefsStorageNote: this.state.prefsStorage === 'local' ? this.strings.settingsSavedLocal : this.strings.settingsSavedHass,
+      settingsRooms, hasSettingsRooms: settingsRooms.length > 0,
+      settingsCameras, hasSettingsCameras: settingsCameras.length > 0,
+      settingsModules,
+      settingsRoomDetail,
+      settingsExportRun: doExport,
+      settingsResetRun: () => this.SETTINGS_RESET(),
+      exportOpen: !!exportSheet, exportText: exportSheet ? exportSheet.text : '',
+      exportCopied: exportSheet ? exportSheet.copied : false, exportNotCopied: exportSheet ? !exportSheet.copied : false,
+      exportClose: () => this.setState({ exportSheet: null }),
+      exportTextChange: () => {}, exportTextClick: (e) => e.target.select(),
+      exportKeepOverrides: () => this.setState({ exportSheet: null }),
+      exportClearOverrides: () => { this.SETTINGS_RESET(); this.setState({ exportSheet: null }); },
+      longMenuOpen: !!longMenuId, longMenuName: longMenuId ? this.fn(longMenuId) : '',
+      longMenuHide: () => { if (longMenuId) this.SETTINGS_LONG_HIDE(longMenuId); },
+      longMenuClose: () => this.setState({ longMenu: null })
     };
   }
 }
