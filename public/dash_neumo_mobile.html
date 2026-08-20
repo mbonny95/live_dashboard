@@ -816,8 +816,20 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </button>
 </div>
 
+<div style="display:flex;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px;overflow:auto;margin:14px 0 18px">
+<sc-for list="{{ settingsTabs }}" as="st" hint-placeholder-count="4">
+<button onClick="{{ st.go }}" data-sel="{{ st.sel }}" style="flex:none;display:flex;align-items:center;gap:6px;border-radius:999px;padding:0 16px;height:44px;background:transparent;color:var(--tx2);font:600 12.5px/1 var(--font-body);white-space:nowrap">
+{{ st.label }}
+<sc-if value="{{ st.hasIssue }}" hint-placeholder-val="{{ false }}">
+<span data-tone="warn" style="width:7px;height:7px;border-radius:999px;background:currentColor;flex:none"></span>
+</sc-if>
+</button>
+</sc-for>
+</div>
+
+<sc-if value="{{ settingsTabStanze }}" hint-placeholder-val="{{ true }}">
 <sc-if value="{{ hasSettingsRooms }}" hint-placeholder-val="{{ true }}">
-<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:14px 2px 9px">{{ S.rooms }}</div>
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.rooms }}</div>
 <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:20px">
 <sc-for list="{{ settingsRooms }}" as="r" hint-placeholder-count="3">
 <div style="display:flex;align-items:center;gap:7px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:7px 9px">
@@ -848,8 +860,22 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsSections }}</div>
+<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px">
+<sc-for list="{{ settingsModules }}" as="m" hint-placeholder-count="5">
+<button onClick="{{ m.toggle }}" data-sel="{{ m.active }}" style="border-radius:999px;padding:0 14px;height:36px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12px/1 var(--font-body)">{{ m.label }}</button>
+</sc-for>
+</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:20px">{{ S.settingsSectionsNote }}</div>
+
+<div style="display:flex;gap:9px;margin-top:6px">
+<button onClick="{{ settingsExportRun }}" style="flex:1;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 12.5px/1 var(--font-body)">{{ S.settingsExport }}</button>
+<button onClick="{{ settingsResetRun }}" style="flex:1;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ S.settingsReset }}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{ settingsTabCamere }}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{ hasSettingsCameras }}" hint-placeholder-val="{{ true }}">
-<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsCameras }}</div>
 <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:20px">
 <sc-for list="{{ settingsCameras }}" as="c" hint-placeholder-count="1">
 <div style="display:flex;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:7px 9px">
@@ -872,37 +898,16 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 </div>
 </sc-if>
+</sc-if>
 
-<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsSections }}</div>
-<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px">
-<sc-for list="{{ settingsModules }}" as="m" hint-placeholder-count="5">
-<button onClick="{{ m.toggle }}" data-sel="{{ m.active }}" style="border-radius:999px;padding:0 14px;height:36px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12px/1 var(--font-body)">{{ m.label }}</button>
+<sc-if value="{{ settingsTabEnergia }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsPowerUnitLabel }}</div>
+<div style="display:flex;gap:7px;margin-bottom:6px">
+<sc-for list="{{ powerUnitOptions }}" as="pu" hint-placeholder-count="3">
+<button onClick="{{ pu.set }}" data-sel="{{ pu.sel }}" style="flex:1;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ pu.label }}</button>
 </sc-for>
 </div>
-<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:20px">{{ S.settingsSectionsNote }}</div>
-
-<div style="display:flex;gap:9px;margin-top:6px">
-<button onClick="{{ settingsExportRun }}" style="flex:1;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 12.5px/1 var(--font-body)">{{ S.settingsExport }}</button>
-<button onClick="{{ settingsResetRun }}" style="flex:1;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ S.settingsReset }}</button>
-</div>
-
-<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:22px 2px 9px">{{ S.diagTitle }}</div>
-
-<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagConfigHeading }}</div>
-<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
-<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;font:500 11.5px/1.4 var(--font-body);color:var(--tx)">{{ diagConfigSummary }}</div>
-<sc-if value="{{ diagConfigOutsideIframe }}" hint-placeholder-val="{{ false }}">
-<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;font:500 10.5px/1.4 var(--font-body)" data-tone="warn">{{ S.diagConfigOutsideIframe }}</div>
-</sc-if>
-<sc-if value="{{ hasDiagConfigAttempts }}" hint-placeholder-val="{{ true }}">
-<sc-for list="{{ diagConfigAttempts }}" as="a" hint-placeholder-count="1">
-<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
-<span style="font:500 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx2);white-space:normal;overflow-wrap:break-word;flex:1;min-width:0">{{ a.path }}</span>
-<span data-tone="{{ a.tone }}" style="font:600 10.5px/1.4 var(--font-body);color:var(--tx2);flex:none">{{ a.verdictLabel }}</span>
-</div>
-</sc-for>
-</sc-if>
-</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:20px">{{ S.settingsPowerUnitDailyNote }}</div>
 
 <div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagEnergyInstantHeading }}</div>
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
@@ -938,6 +943,24 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-for>
 </div>
+</sc-if>
+
+<sc-if value="{{ settingsTabDiagnostica }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagConfigHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;font:500 11.5px/1.4 var(--font-body);color:var(--tx)">{{ diagConfigSummary }}</div>
+<sc-if value="{{ diagConfigOutsideIframe }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;font:500 10.5px/1.4 var(--font-body)" data-tone="warn">{{ S.diagConfigOutsideIframe }}</div>
+</sc-if>
+<sc-if value="{{ hasDiagConfigAttempts }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ diagConfigAttempts }}" as="a" hint-placeholder-count="1">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx2);white-space:normal;overflow-wrap:break-word;flex:1;min-width:0">{{ a.path }}</span>
+<span data-tone="{{ a.tone }}" style="font:600 10.5px/1.4 var(--font-body);color:var(--tx2);flex:none">{{ a.verdictLabel }}</span>
+</div>
+</sc-for>
+</sc-if>
+</div>
 
 <div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.environment }}</div>
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
@@ -951,6 +974,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 
 <button onClick="{{ diagCopyRun }}" style="width:100%;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx);font:600 12.5px/1 var(--font-body)">{{ S.diagCopyButton }}</button>
 <div style="font:500 10px/1.4 var(--font-body);color:var(--tx2);margin:8px 2px 0">{{ S.diagCopyPrivacyNote }}</div>
+</sc-if>
 </div>
 </sc-if>
 
@@ -1131,7 +1155,7 @@ async function loadUserConfig() {
 
 class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
-    settingsOpen: false, settingsRoom: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null };
+    settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null };
   cfg = mergeConfig({});
   registries = { areas: [], devices: [], entities: [] };
   discovery = null;
@@ -1370,6 +1394,25 @@ class Component extends DCLogic {
     if (v === null) return '—';
     return this.dec(v, d === undefined ? 1 : d) + (u === undefined ? (this.unit(id) ? ' ' + this.unit(id) : '') : u);
   }
+  // Instantaneous power (W/kW/MW), normalized to the user's "powerUnit" pref
+  // (auto/W/kW) regardless of which of those three units the sensor itself
+  // reports in — inverters/EMs split roughly evenly between W and kW, and
+  // forcing a literal " kW" at every call site (v1.5.2 and earlier) is wrong
+  // by 1000x for half of them with no error surfaced anywhere. An
+  // unrecognized unit is shown as-is, un-converted — an honest number in a
+  // strange unit beats a wrong one in the expected unit.
+  powerVal(id) {
+    const v = this.n(id);
+    if (v === null) return '—';
+    const rawUnit = this.unit(id);
+    const u = rawUnit.trim().toLowerCase();
+    const scale = u === 'kw' ? 1000 : u === 'mw' ? 1000000 : u === 'w' ? 1 : null;
+    if (scale === null) return this.dec(v, 1) + (rawUnit ? ' ' + rawUnit : '');
+    const watts = v * scale;
+    const pref = this.PREFS().powerUnit || 'auto';
+    const useKw = pref === 'kw' || (pref === 'auto' && Math.abs(watts) >= 1000);
+    return useKw ? this.dec(watts / 1000, 1) + ' kW' : this.dec(watts, 0) + ' W';
+  }
   call(domain, service, data) { if (this.be) this.be.call(domain, service, data); }
   cover(id, service, extra) { this.call('cover', service, Object.assign({ entity_id: id }, extra || {})); }
   runValve(id, minutes) {
@@ -1527,6 +1570,12 @@ class Component extends DCLogic {
     const p = this.PREFS();
     this.SAVE_PREFS(Object.assign({}, p, { modules: Object.assign({}, p.modules, { [key]: val }) }));
   }
+  // 'auto' | 'w' | 'kw' — read by powerVal(). Daily kWh totals are untouched
+  // by this setting; only instantaneous power display honors it.
+  SETTINGS_SET_POWER_UNIT(unit) {
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { powerUnit: unit }));
+  }
   SETTINGS_RESET() { this.SAVE_PREFS({ v: 1 }); }
   SETTINGS_LONG_HIDE(id) {
     this.SETTINGS_SET_ENTITY(id, false);
@@ -1563,7 +1612,8 @@ class Component extends DCLogic {
       if (s === 'unavailable' || s === 'unknown') return { role, id, valueLabel: s, verdict: 'unavailable', unitWarn: false };
       const isPowerRole = role !== 'battery.soc' && role !== 'inverterStatus';
       const unitWarn = isPowerRole && this.at(id, 'device_class') === 'energy';
-      return { role, id, valueLabel: this.unit(id) ? this.val(id, 2) : s, verdict: 'ok', unitWarn };
+      const valueLabel = isPowerRole ? this.powerVal(id) : (this.unit(id) ? this.val(id, 2) : s);
+      return { role, id, valueLabel, verdict: 'ok', unitWarn };
     });
   }
 
@@ -1580,6 +1630,19 @@ class Component extends DCLogic {
       return { role, source: src, ids, value, counterWarn };
     });
     return { prefsFailed: ed.prefsFailed, rows };
+  }
+
+  // See dash_neumo.html's copy of this method for the full explanation of
+  // why this exists and why it can't reuse the *Rows arrays renderVals()
+  // builds later in the same render.
+  _settingsProblemTab() {
+    const instantBad = this.diagEnergyInstant().some((r) => r.verdict === 'missing' || r.verdict === 'unavailable' || r.unitWarn);
+    const daily = this.diagEnergyDaily();
+    const dailyBad = daily.prefsFailed || daily.rows.some((r) => r.counterWarn);
+    if (instantBad || dailyBad) return 'energia';
+    const cd = this.configDiag;
+    if (cd && cd.attempts.some((a) => a.loadScript && a.defined === false)) return 'diagnostica';
+    return null;
   }
 
   diagEnvironment() {
@@ -1668,7 +1731,7 @@ class Component extends DCLogic {
     const switchTuples = (r.switches || []).map((sw) => {
       const on = this.isOn(sw[0]);
       const powerId = sw[3];
-      const watts = powerId ? this.val(powerId, 0, ' W') : null;
+      const watts = powerId ? this.powerVal(powerId) : null;
       return { id: sw[0], name: sw[1], icon: sw[2], iconRef: this._bindAttr('href', sw[2]), on, action: on ? this.t('turnOff') : this.t('turnOn'), stroke: on ? 'var(--acc)' : 'var(--tx2)',
         sub: (on ? this.t('switch.running') : this.t('switch.off')) + (watts && watts !== '—' ? ' · ' + watts : ''),
         toggle: () => this.call('switch', on ? 'turn_off' : 'turn_on', { entity_id: sw[0] }) };
@@ -2033,9 +2096,9 @@ class Component extends DCLogic {
     }
 
     const nowCells = hasEnergy ? [
-      { icon: '#i-solar', iconRef: this._bindAttr('href', '#i-solar'), stroke: 'var(--acc)', label: this.t('production'), val: this.val(en.production, 2, ' kW') },
-      { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.val(en.consumption, 2, ' kW') },
-      { icon: '#i-tower', iconRef: this._bindAttr('href', '#i-tower'), stroke: 'var(--tx2)', label: this.t('fromGrid'), val: this.val(en.gridImport, 2, ' kW') }
+      { icon: '#i-solar', iconRef: this._bindAttr('href', '#i-solar'), stroke: 'var(--acc)', label: this.t('production'), val: this.powerVal(en.production) },
+      { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.powerVal(en.consumption) },
+      { icon: '#i-tower', iconRef: this._bindAttr('href', '#i-tower'), stroke: 'var(--tx2)', label: this.t('fromGrid'), val: this.powerVal(en.gridImport) }
     ] : [];
     // See dash_neumo.html's copy of this block for the full explanation
     // (power sensors only ever come from config.js; zero-config installs
@@ -2234,6 +2297,7 @@ class Component extends DCLogic {
     let diagConfigAttempts = [], diagConfigSummary = '', diagConfigOutsideIframe = false;
     let diagEnergyInstantRows = [], diagEnergyDailyRows = [], diagPrefsFailed = false, diagEnvRows = [];
     let doDiag = () => {};
+    let settingsTabs = [], powerUnitOptions = [];
     if (this.state.settingsOpen) {
       const S = this.strings;
       const roleLabelKeys = { production: 'diagRoleProduction', consumption: 'diagRoleConsumption', gridImport: 'diagRoleGridImport', gridExport: 'diagRoleGridExport',
@@ -2281,6 +2345,21 @@ class Component extends DCLogic {
         { label: S.diagEnvCameras, value: String(env.cameraCount) },
         { label: S.diagEnvPrefsOutcome, value: env.prefsOutcome === 'ok' ? S.diagEnvPrefsOk : env.prefsOutcome === 'failed' ? S.diagEnvPrefsFailed : S.diagEnvPrefsUnknown }
       ];
+
+      // Settings panel navigation + power unit (v1.5.3) — see dash_neumo.html's
+      // copy of this block for the full explanation.
+      const settingsTabDefs = [['stanze', S.rooms, false], ['energia', this.t('tab.energy'),
+        diagEnergyInstantRows.some((r) => r.tone === 'warn' || r.unitWarn) || diagPrefsFailed || diagEnergyDailyRows.some((r) => r.counterWarn)]];
+      if (settingsCameras.length > 0) settingsTabDefs.push(['camere', S.settingsCameras, false]);
+      settingsTabDefs.push(['diagnostica', S.diagTitle, diagConfigAttempts.some((a) => a.tone === 'warn')]);
+      settingsTabs = settingsTabDefs.map(([key, label, hasIssue]) => ({
+        key, label, hasIssue, sel: (this.state.settingsTab || 'stanze') === key,
+        go: () => this.setState({ settingsTab: key })
+      }));
+
+      const curPowerUnit = prefsNow.powerUnit || 'auto';
+      powerUnitOptions = [['auto', S.settingsPowerUnitAuto], ['w', S.settingsPowerUnitW], ['kw', S.settingsPowerUnitKw]]
+        .map(([key, label]) => ({ key, label, sel: curPowerUnit === key, set: () => this.SETTINGS_SET_POWER_UNIT(key) }));
 
       doDiag = async () => {
         const text = window.CasaPrefs.diagText({
@@ -2388,13 +2467,23 @@ class Component extends DCLogic {
       carCells, warnings,
       panelLpDown: (e) => this._panelLpDown(e), panelLpMove: (e) => this._panelLpMove(e), panelLpUp: () => this._panelLpUp(), panelLpMenu: (e) => this._panelLpMenu(e),
 
-      // settings panel (v1.5.0)
-      openSettings: () => this.setState({ settingsOpen: true, settingsRoom: null }),
+      // settings panel (v1.5.0) — see dash_neumo.html's copy for why
+      // openSettings picks a tab and what settingsTab does/doesn't persist.
+      openSettings: () => {
+        const tab = this._settingsProblemTab() || this.state.settingsTab || 'stanze';
+        this.setState({ settingsOpen: true, settingsRoom: null, settingsTab: tab });
+      },
       closeSettings: () => this.setState({ settingsOpen: false, settingsRoom: null }),
       settingsScreen1: this.state.settingsOpen && !this.state.settingsRoom,
       settingsScreen2: this.state.settingsOpen && !!this.state.settingsRoom,
       settingsBack: () => this.setState({ settingsRoom: null }),
       prefsStorageNote: this.state.prefsStorage === 'local' ? this.strings.settingsSavedLocal : this.strings.settingsSavedHass,
+      settingsTabs,
+      settingsTabStanze: (this.state.settingsTab || 'stanze') === 'stanze',
+      settingsTabEnergia: this.state.settingsTab === 'energia',
+      settingsTabCamere: this.state.settingsTab === 'camere',
+      settingsTabDiagnostica: this.state.settingsTab === 'diagnostica',
+      powerUnitOptions,
       settingsRooms, hasSettingsRooms: settingsRooms.length > 0,
       settingsCameras, hasSettingsCameras: settingsCameras.length > 0,
       settingsModules,

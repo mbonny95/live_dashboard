@@ -1,31 +1,28 @@
 # dash_neumo_mobile.html Settings Mutators
 
-> 17 nodes · cohesion 0.13
+> 14 nodes · cohesion 0.14
 
 ## Key Concepts
 
-- **SAVE_PREFS()** (11 connections) — `public/dash_neumo_mobile.html`
-- **window.CasaPrefs (prefs.js)** (4 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_SET_ROOM()** (4 connections) — `public/dash_neumo_mobile.html`
-- **UI: settings panel screen 1 (rooms/cameras/modules)** (4 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_SET_ENTITY()** (3 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_LONG_HIDE()** (2 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_SET_CAMERA()** (2 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_SET_MODULE()** (2 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_CLEAR_CAMERA()** (1 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_CLEAR_ENTITY()** (1 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_CLEAR_ROOM()** (1 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_MOVE_ROOM()** (1 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_RESET()** (1 connections) — `public/dash_neumo_mobile.html`
-- **SETTINGS_TOGGLE_TAPGATE()** (1 connections) — `public/dash_neumo_mobile.html`
-- **UI: settings export sheet** (1 connections) — `public/dash_neumo_mobile.html`
-- **UI: long-press hide menu** (1 connections) — `public/dash_neumo_mobile.html`
-- **UI: settings panel screen 2 (room entity detail)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SAVE_PREFS(prefs)** (13 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_LONG_HIDE(id)** (2 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_RESET()** (2 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_CLEAR_CAMERA(id)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_CLEAR_ENTITY(id)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_CLEAR_ROOM(id)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_MOVE_ROOM(orderIds,id,dir)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_SET_CAMERA(id,val)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_SET_ENTITY(id,val)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_SET_MODULE(key,val)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_SET_ROOM(id,val)** (1 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_TOGGLE_TAPGATE(id,cfgTapGatedList)** (1 connections) — `public/dash_neumo_mobile.html`
+- **Settings export sheet (copy prefs text)** (1 connections) — `public/dash_neumo_mobile.html`
+- **Long-press quick-hide context menu** (1 connections) — `public/dash_neumo_mobile.html`
 
 ## Relationships
 
-- [dash_neumo_mobile.html Component Class](dash_neumo_mobile.html_Component_Class.md) (4 shared connections)
-- [dash_neumo_mobile.html Boot Sequence](dash_neumo_mobile.html_Boot_Sequence.md) (1 shared connections)
+- [dash_neumo_mobile.html Settings Tab Navigation](dash_neumo_mobile.html_Settings_Tab_Navigation.md) (1 shared connections)
+- [dash_neumo_mobile.html Power Unit Setting (v1.5.3)](dash_neumo_mobile.html_Power_Unit_Setting_%28v1.5.3%29.md) (1 shared connections)
 
 ## Source Files
 
@@ -33,8 +30,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 29 (71%)
-- INFERRED: 12 (29%)
+- EXTRACTED: 28 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

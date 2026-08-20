@@ -3,6 +3,61 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.3] - 2026-08-20
+
+### Fixed
+
+- **Instantaneous power sensors reporting in W were silently treated as
+  kW, showing a number 1000x too small.** Every power call site (the NOW
+  tiles, the room-panel smart-plug wattage row, the Diagnostics panel's
+  energy-instant rows, the grid-export note) forced a literal `kW`/`W`
+  suffix instead of reading the sensor's own `unit_of_measurement` — a
+  1.8kW inverter and an 1800W inverter from two different integrations
+  showed the same "1.8" with no way to tell which unit it actually meant,
+  and a W-only sensor rendered as "1.80 kW", wrong by three orders of
+  magnitude with nothing on screen to suggest it. A new shared
+  `powerVal()` helper reads the real unit (`W`/`kW`/`MW`, case-insensitive)
+  and normalizes to watts before formatting; an unrecognized unit is shown
+  as-is with its own label rather than silently converted, since an honest
+  number in a strange unit beats a wrong one in the expected unit. Also
+  fixed, found while touching this code: the grid-export sentence in the
+  Energia tab was appending a literal " kW" after an already-unit-suffixed
+  value, rendering "0.85 kW kW exporting".
+
+### Added
+
+- **Instantaneous power unit setting** (Settings -> Energy): **Auto**
+  (under 1000 W shows as W with no decimals, at or above shows as kW with
+  one decimal — the default and the same threshold the fix above already
+  used), or force **W** or **kW** always. Decimals follow the unit and
+  aren't a separate control — a second setting for a one-glance number
+  would be a question with no real answer. Applies everywhere an
+  instantaneous power value is shown (NOW tiles, Diagnostics panel,
+  smart-plug wattage, both desktop and mobile); daily kWh totals — the
+  ring, the bar chart — are untouched by this setting on purpose, since
+  they're energy, not power, and a label says so under the control.
+- **Settings panel navigation**: the panel had grown to five flat,
+  continuously-scrolling sections (rooms, cameras, instant energy, daily
+  energy, diagnostics) since v1.5.0/v1.5.1. It's now four tabs — **Stanze
+  · Energia · Telecamere · Diagnostica** — in a horizontally-scrollable
+  pill row (never abbreviated labels or icons-only, per the project's
+  density rule), 44px targets throughout. Instant and daily energy diag
+  share the Energia tab since they're the same subject looked at two ways.
+  Rooms/Sections-visibility/Export/Reset live under Stanze, the closest
+  thing this panel has to a general-structure tab. The active tab survives
+  closing the panel for the session (not persisted across reloads or
+  devices — it's navigation state, not a sticky preference). Because the
+  settings panel is where someone goes when something's broken, any
+  grouping that hides the broken field is a regression by definition, so
+  two rules hold regardless: a small dot marks a tab with a real
+  Diagnostics-verified issue (entity missing/unavailable, a kWh sensor in
+  a power role, a lifetime counter mistaken for a daily one, a config load
+  failure — the same verdicts the v1.5.1 Diagnostics panel already
+  computes, reused rather than re-derived), and opening the panel while
+  any tab has one jumps straight there, overriding the remembered tab —
+  chasing a misconfigured sensor shouldn't require renavigating on every
+  open.
+
 ## [1.5.2] - 2026-08-20
 
 ### Fixed

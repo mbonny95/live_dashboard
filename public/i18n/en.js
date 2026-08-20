@@ -29,6 +29,12 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   settingsExportSelect: 'Select and copy the text below', settingsExportOffer: 'Clear the overrides now that they’re in the file?',
   settingsExportKeep: 'Keep', settingsExportClear: 'Clear',
 
+  // settings panel tabs + power unit (v1.5.3), static labels — tab labels
+  // reuse rooms/settingsCameras/diagTitle rather than adding parallel keys
+  settingsPowerUnitLabel: 'Instantaneous power unit', settingsPowerUnitAuto: 'Auto',
+  settingsPowerUnitW: 'W', settingsPowerUnitKw: 'kW',
+  settingsPowerUnitDailyNote: 'Daily totals stay in kWh.',
+
   // diagnostics panel (v1.5.1), static labels
   diagTitle: 'Diagnostics', diagConfigHeading: 'Config',
   diagConfigOutsideIframe: "This page isn't running inside the Home Assistant panel: the /local/ paths aren't even attempted, so your config.js can't be seen from here.",
@@ -79,7 +85,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'energy.producedPeriod': 'Produced this period', 'energy.producedShort': 'produced', 'energy.productionNow': 'Production now',
   'energy.takenFromGrid': 'Taken from grid', 'energy.selfConsumption': '{pct} self-consumption',
   'energy.selfConsumptionShort': 'self-consumption',
-  'energy.gridNote': '{grid} from grid · {exportVal} kW exporting · {status}',
+  'energy.gridNote': '{grid} from grid · {exportVal} exporting · {status}',
   'energy.selfConsumptionLabel': 'Self-consumption', 'energy.feedIn': 'Fed to grid', 'energy.kwhConsumed': 'kWh consumed',
   'energy.selfShort': 'self-cons.', 'energy.gridShort': 'from grid', 'energy.feedShort': 'fed in',
   'energy.compactSummary': 'kWh today · {pct} self-consumed',

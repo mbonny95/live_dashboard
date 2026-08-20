@@ -29,6 +29,12 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   settingsExportSelect: 'Seleziona e copia il testo qui sotto', settingsExportOffer: 'Azzero gli override ora che sono nel file?',
   settingsExportKeep: 'Mantieni', settingsExportClear: 'Azzera',
 
+  // settings panel tabs + power unit (v1.5.3), static labels — tab labels
+  // reuse rooms/settingsCameras/diagTitle rather than adding parallel keys
+  settingsPowerUnitLabel: 'Unità potenza istantanea', settingsPowerUnitAuto: 'Auto',
+  settingsPowerUnitW: 'W', settingsPowerUnitKw: 'kW',
+  settingsPowerUnitDailyNote: 'I totali giornalieri restano in kWh.',
+
   // diagnostics panel (v1.5.1), static labels
   diagTitle: 'Diagnostica', diagConfigHeading: 'Config',
   diagConfigOutsideIframe: 'La pagina non gira dentro il pannello di Home Assistant: i percorsi /local/ non vengono nemmeno tentati, quindi la tua config.js non può essere vista da qui.',
@@ -79,7 +85,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'energy.producedPeriod': 'Prodotti nel periodo', 'energy.producedShort': 'prodotti', 'energy.productionNow': 'Produzione adesso',
   'energy.takenFromGrid': 'Prelevati dalla rete', 'energy.selfConsumption': '{pct} di autoconsumo',
   'energy.selfConsumptionShort': 'autoconsumo',
-  'energy.gridNote': '{grid} dalla rete · {exportVal} kW in immissione · {status}',
+  'energy.gridNote': '{grid} dalla rete · {exportVal} in immissione · {status}',
   'energy.selfConsumptionLabel': 'Autoconsumo', 'energy.feedIn': 'Immissione', 'energy.kwhConsumed': 'kWh consumati',
   'energy.selfShort': 'autocons.', 'energy.gridShort': 'dalla rete', 'energy.feedShort': 'immessi',
   'energy.compactSummary': 'kWh oggi · {pct} di autoconsumo',

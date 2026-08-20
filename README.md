@@ -79,7 +79,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.5.2
+       module_url: /local/community/live_dashboard/panel.js?v=1.5.3
        embed_iframe: true
        trust_external_script: false
    ```
@@ -92,7 +92,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.5.2` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.5.3` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -237,6 +237,18 @@ enough that it's opt-in only, for the odd install that happens to have one
 wired that up separately). Set it if you have it; leave it unset otherwise
 and the ring derives self-consumption from production and grid export
 instead, which is what almost every install ends up doing.
+
+### Instantaneous power unit
+
+Production/consumption/grid-import/grid-export/battery-power tiles read
+whatever `unit_of_measurement` the sensor actually reports (W, kW, or MW —
+case-insensitive) and normalize it, so a W sensor and a kW sensor from two
+different integrations display consistently instead of one being off by
+1000x. Settings -> Energy -> **Instantaneous power unit** picks how the
+normalized number is shown: **Auto** (under 1000 W shows as W, at or above
+shows as kW — the default), or force **W** / **kW** always. This only
+affects instantaneous power; daily totals (the ring, the bar chart) stay in
+kWh regardless.
 
 ### Reading the ring
 

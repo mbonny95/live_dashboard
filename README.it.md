@@ -71,7 +71,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.5.2
+       module_url: /local/community/live_dashboard/panel.js?v=1.5.3
        embed_iframe: true
        trust_external_script: false
    ```
@@ -84,7 +84,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    sia come `console.error` sia come messaggio sulla pagina stessa, con il
    `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.5.2` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.5.3` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -240,6 +240,18 @@ l'installazione occasionale che ne ha uno (es. dal tracciamento "consumo"
 dell'Energy Dashboard di HA, se l'hai collegato a parte). Impostalo se ce
 l'hai; altrimenti lascialo vuoto e l'anello deriva l'autoconsumo da
 produzione ed immissione, che è quello che fa quasi ogni installazione.
+
+### Unità della potenza istantanea
+
+Le tessere di produzione/consumo/prelievo/immissione/potenza batteria
+leggono l'`unit_of_measurement` che il sensore dichiara davvero (W, kW o MW
+— case-insensitive) e la normalizzano, così un sensore in W e uno in kW da
+due integrazioni diverse mostrano numeri coerenti invece che uno sbagliato
+di 1000 volte. Impostazioni -> Energia -> **Unità potenza istantanea**
+sceglie come mostrare il numero normalizzato: **Auto** (sotto 1000 W mostra
+W, da 1000 in su mostra kW — il default), oppure forza sempre **W** o
+**kW**. Riguarda solo la potenza istantanea; i totali giornalieri (l'anello,
+il grafico a barre) restano in kWh in ogni caso.
 
 ### Come si legge l'anello
 
