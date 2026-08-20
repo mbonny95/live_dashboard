@@ -806,7 +806,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 
 <sc-if value="{{ panel }}" hint-placeholder-val="{{ false }}">
 <div onClick="{{ closeRoom }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:40;animation:fade .18s ease"></div>
-<div onPointerDown="{{ panelLpDown }}" onPointerUp="{{ panelLpUp }}" onPointerLeave="{{ panelLpUp }}" onContextMenu="{{ panelLpMenu }}" style="position:fixed;z-index:41;right:0;top:0;bottom:0;width:min(560px,100%);background:var(--page);box-shadow:-18px 0 44px rgba(20,24,30,.24);overflow-y:auto;padding:22px;animation:rise .22s cubic-bezier(.22,1,.36,1)">
+<div onPointerDown="{{ panelLpDown }}" onPointerMove="{{ panelLpMove }}" onPointerUp="{{ panelLpUp }}" onPointerLeave="{{ panelLpUp }}" onPointerCancel="{{ panelLpUp }}" onContextMenu="{{ panelLpMenu }}" style="position:fixed;z-index:41;right:0;top:0;bottom:0;width:min(560px,100%);background:var(--page);box-shadow:-18px 0 44px rgba(20,24,30,.24);overflow-y:auto;padding:22px;animation:rise .22s cubic-bezier(.22,1,.36,1)">
 <div style="display:flex;align-items:center;gap:13px;margin-bottom:20px">
 <div style="width:52px;height:52px;border-radius:20px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
 <svg width="24" height="24" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use ref="{{ panel.iconRef }}"></use></svg>
@@ -847,7 +847,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.covers }}</div>
 <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
 <sc-for list="{{ panel.covers }}" as="c" hint-placeholder-count="1">
-<div data-entity-id="{{ c.id }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:13px">
 <svg width="20" height="20" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-blind"></use></svg>
 <div style="flex:1;min-width:0">
@@ -866,7 +866,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </button>
 </div>
 </div>
-<input type="range" min="0" max="100" value="{{ c.pos }}" onInput="{{ c.drag }}" onPointerUp="{{ c.setPos }}" onTouchEnd="{{ c.setPos }}">
+<sc-if value="{{ c.hasPosition }}" hint-placeholder-val="{{ false }}">
+<input type="range" min="0" max="100" value="{{ c.pos }}" onInput="{{ c.drag }}" onPointerUp="{{ c.setPos }}" onKeyUp="{{ c.setPos }}" style="touch-action:none;user-select:none">
+</sc-if>
 </div>
 </sc-for>
 </div>
@@ -1776,25 +1778,43 @@ class Component extends DCLogic {
   }
 
   // Long-press-to-hide (600ms) / right-click, delegated at the room-panel
-  // drawer level rather than bound per-row: every row (lights/covers/
-  // switches/appliances/sensors/media/extras) carries a `data-entity-id`
-  // attribute instead of its own three event handlers — one set of handlers
-  // here covers all of them, and covers new row kinds for free if any are
-  // ever added. `e.target.closest(...)` finds which row (if any) the
-  // press/click landed on; presses on the drawer's padding/header are
-  // ignored (closest returns null).
+  // drawer level rather than bound per-row: every row (lights/switches/
+  // appliances/sensors/media/extras) carries a `data-entity-id` attribute
+  // instead of its own three event handlers — one set of handlers here
+  // covers all of them, and covers new row kinds for free if any are ever
+  // added. `e.target.closest(...)` finds which row (if any) the press/click
+  // landed on; presses on the drawer's padding/header are ignored (closest
+  // returns null). Covers don't carry `data-entity-id` (v1.5.2): the row
+  // holds the position slider, the dashboard's most frequent continuous
+  // drag, and a stray long-press mid-drag used to fire the hide-entity menu
+  // instead of a position change — removed rather than merely guarded,
+  // since hiding a cover is already one tap away in the settings panel.
   _lpEntityId(e) {
     const el = e.target && e.target.closest && e.target.closest('[data-entity-id]');
     return el ? el.getAttribute('data-entity-id') : null;
   }
+  // A drag is not a long-press: `pointermove` past a 10px threshold from
+  // the `pointerdown` origin cancels the pending timer, same as `pointerup`
+  // or `pointercancel` (Android fires the latter once it takes the gesture
+  // over for scrolling). Once cancelled it stays cancelled for the rest of
+  // this gesture — the timer is only re-armed on the next `pointerdown`.
   _panelLpDown(e) {
     const id = this._lpEntityId(e);
-    if (!id) return;
+    if (!id) { this._lpOrigin = null; return; }
     if (this._lpTimer) clearTimeout(this._lpTimer);
-    this._lpTimer = setTimeout(() => this.setState({ longMenu: id }), 600);
+    this._lpOrigin = { x: e.clientX, y: e.clientY };
+    this._lpTimer = setTimeout(() => { this._lpTimer = null; this.setState({ longMenu: id }); }, 600);
+  }
+  _panelLpMove(e) {
+    if (!this._lpTimer || !this._lpOrigin) return;
+    if (Math.hypot(e.clientX - this._lpOrigin.x, e.clientY - this._lpOrigin.y) > 10) {
+      clearTimeout(this._lpTimer);
+      this._lpTimer = null;
+    }
   }
   _panelLpUp() {
     if (this._lpTimer) { clearTimeout(this._lpTimer); this._lpTimer = null; }
+    this._lpOrigin = null;
   }
   _panelLpMenu(e) {
     const id = this._lpEntityId(e);
@@ -2621,13 +2641,17 @@ class Component extends DCLogic {
             // push (every ~600ms) snaps the thumb back to the stale live value
             // mid-drag. The override self-clears once the shutter catches up.
             const pos = dragVal !== undefined && dragVal !== liveVal ? dragVal : liveVal;
+            // Bit 4 (SET_POSITION) of supported_features — some covers only
+            // know open/close/stop, and set_cover_position legitimately fails
+            // on those. Show the slider only when the device claims it.
+            const hasPosition = ((Number(this.at(id, 'supported_features')) || 0) & 4) === 4;
             const clearDrag = () => {
               if (!this.state.coverDrag || this.state.coverDrag[id] === undefined) return;
               const d = Object.assign({}, this.state.coverDrag);
               delete d[id];
               this.setState({ coverDrag: d });
             };
-            return { id, name: this.fn(id), pos,
+            return { id, name: this.fn(id), pos, hasPosition,
               sub: live === undefined ? this.s(id) : pos === 0 ? this.t('cover.closed') : pos === 100 ? this.t('cover.fullyOpen') : this.t('cover.openAt', { pct: pos }),
               up: () => { clearDrag(); this.cover(id, 'open_cover'); },
               down: () => { clearDrag(); this.cover(id, 'close_cover'); },
@@ -2636,9 +2660,17 @@ class Component extends DCLogic {
               // visual position, no service call — a real cover motor can't
               // keep up with dozens of position commands per second of drag.
               drag: (e) => this.setState({ coverDrag: Object.assign({}, this.state.coverDrag, { [id]: Number(e.target.value) }) }),
-              // Fires once, on release: this is the only point a service call
-              // for this slider goes out.
-              setPos: (e) => this.cover(id, 'set_cover_position', { position: Number(e.target.value) }) };
+              // Fires once, on release (pointer or keyboard): the only point a
+              // service call for this slider goes out. Guards against NaN —
+              // possible if the row unmounts mid-gesture (e.g. hidden while
+              // dragging) so the event lands on a detached node — and against
+              // redundant calls when the released value matches what's
+              // already live.
+              setPos: (e) => {
+                const v = Number(e.target.value);
+                if (!Number.isFinite(v) || v === liveVal) return;
+                this.cover(id, 'set_cover_position', { position: v });
+              } };
           }),
           switches: switchesAll,
           sensors: (r.sensors || []).map((s) => ({ id: s[0], label: s[1], icon: s[2], iconRef: this._bindAttr('href', s[2]), val: this.val(s[0], s[3], s[4]) })),
@@ -2926,7 +2958,7 @@ class Component extends DCLogic {
       carRange: hasVehicle && veh.range ? this.val(veh.range, 0, ' km') : '—',
       carCells, warnings,
       panel, closeRoom: () => this.setState({ room: null }),
-      panelLpDown: (e) => this._panelLpDown(e), panelLpUp: () => this._panelLpUp(), panelLpMenu: (e) => this._panelLpMenu(e),
+      panelLpDown: (e) => this._panelLpDown(e), panelLpMove: (e) => this._panelLpMove(e), panelLpUp: () => this._panelLpUp(), panelLpMenu: (e) => this._panelLpMenu(e),
 
       // settings panel (v1.5.0)
       openSettings: () => this.setState({ settingsOpen: true, settingsRoom: null }),

@@ -3,6 +3,54 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.2] - 2026-08-20
+
+### Fixed
+
+- **Cover position slider on touch: dragging could trigger the long-press
+  "hide entity" menu and, intermittently, `Failed to perform action
+  cover.set_cover_position`.** Two symptoms, one root cause: the long-press
+  timer that opens the hide-entity menu (settings panel, v1.5.0) wasn't
+  cancelled by finger movement, and a slow drag *is* a long-press — finger
+  down, time passing, timer firing — it just doesn't show on desktop, where
+  a mouse drag takes ~300ms. If it fired mid-drag, the entity's row could
+  unmount before `pointerup`, so the event landed on a detached node,
+  `e.target.value` was no longer meaningful, `Number()` produced `NaN`, and
+  the service call went out with `position: NaN`.
+  - The long-press timer now dies on `pointermove` past a 10px threshold
+    from the `pointerdown` origin, and on `pointercancel` (which Android
+    fires once it takes a gesture over for scrolling) — not just on
+    `pointerup` as before.
+  - The cover row no longer participates in long-press-to-hide at all: it's
+    the dashboard's single most frequent continuous-drag control, so rather
+    than merely guard the gesture, the shortcut is removed from it —
+    hiding a cover was already one tap away in the settings panel (v1.5.0).
+    Lights, switches, appliances, sensors, media, and extras keep the
+    shortcut; only the row holding the slider drops it.
+  - The position slider itself now sets `touch-action:none` and
+    `user-select:none`, so a long press over it no longer triggers Android's
+    own text-selection handles/context menu — a third symptom of the same
+    gesture.
+  - `set_cover_position` is now called at most once per drag: `onTouchEnd`
+    was firing alongside `onPointerUp` on touch devices (pointer events
+    already cover touch), sending the same command twice per release.
+    `onKeyUp` was added so the slider stays operable with the arrow keys.
+  - Two guards were added before the service call fires: a non-finite
+    (`NaN`) value is dropped rather than sent, and a released value equal
+    to the entity's already-known position is skipped, cutting spurious
+    calls from tapping the slider without moving it.
+  - The position slider is now shown only when the cover reports the
+    `SET_POSITION` bit (4) in `supported_features`; covers that only
+    support open/close/stop show just those three buttons, since
+    `set_cover_position` legitimately fails on them and the previous
+    behavior offered a control the device never had.
+  - Verified: `set_position` (missing the `cover.` service prefix, and
+    distinct from the correct `cover.set_cover_position`) does not appear
+    anywhere in `public/` — the error in the original report was the
+    long-press/`NaN` bug above, not a wrong service name.
+  - `dash_neumo.html` and `dash_neumo_mobile.html` duplicate this gesture
+    logic; both were fixed identically. No visual or configuration changes.
+
 ## [1.5.1] - 2026-08-16
 
 ### Added

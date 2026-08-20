@@ -32,7 +32,7 @@ function entity(id, area_id, state, attributes) {
 // discovery.js) has something to show even in the demo.
 const SEED = [
   entity('light.soggiorno', 'soggiorno', 'on', { friendly_name: 'Soggiorno', brightness: 210 }),
-  entity('cover.soggiorno_tapparella', 'soggiorno', 'open', { friendly_name: 'Tapparella soggiorno', current_position: 70 }),
+  entity('cover.soggiorno_tapparella', 'soggiorno', 'open', { friendly_name: 'Tapparella soggiorno', current_position: 70, supported_features: 15 }),
   entity('media_player.soggiorno_tv', 'soggiorno', 'playing', { friendly_name: 'TV soggiorno', media_title: 'Demo channel' }),
   entity('sensor.soggiorno_temperatura', 'soggiorno', '21.4', { friendly_name: 'Temperatura soggiorno', device_class: 'temperature', unit_of_measurement: '°C' }),
   entity('sensor.soggiorno_umidita', 'soggiorno', '48', { friendly_name: 'Umidità soggiorno', device_class: 'humidity', unit_of_measurement: '%' }),
@@ -45,11 +45,11 @@ const SEED = [
   entity('sensor.soggiorno_telecomando_batteria', 'soggiorno', '12', { friendly_name: 'Telecomando TV batteria', device_class: 'battery', unit_of_measurement: '%' }),
 
   entity('light.camera', 'camera', 'off', { friendly_name: 'Camera' }),
-  entity('cover.camera_tapparella', 'camera', 'closed', { friendly_name: 'Tapparella camera', current_position: 0 }),
+  entity('cover.camera_tapparella', 'camera', 'closed', { friendly_name: 'Tapparella camera', current_position: 0, supported_features: 15 }),
   entity('climate.camera', 'camera', 'heat', { friendly_name: 'Termostato camera', temperature: 20, current_temperature: 19.5 }),
 
   entity('light.camera_bimbi', 'camera_bimbi', 'off', { friendly_name: 'Camera bimbi' }),
-  entity('cover.camera_bimbi_tapparella', 'camera_bimbi', 'closed', { friendly_name: 'Tapparella camera bimbi', current_position: 10 }),
+  entity('cover.camera_bimbi_tapparella', 'camera_bimbi', 'closed', { friendly_name: 'Tapparella camera bimbi', current_position: 10, supported_features: 15 }),
 
   entity('light.cucina', 'cucina', 'on', { friendly_name: 'Cucina', brightness: 255 }),
   entity('switch.cucina_forno', 'cucina', 'off', { friendly_name: 'Forno' }),
@@ -60,7 +60,7 @@ const SEED = [
   entity('binary_sensor.cucina_movimento', 'cucina', 'on', { friendly_name: 'Movimento cucina', device_class: 'motion' }),
 
   entity('light.bagno', 'bagno', 'off', { friendly_name: 'Bagno' }),
-  entity('cover.bagno_tapparella', 'bagno', 'open', { friendly_name: 'Tapparella bagno', current_position: 100 }),
+  entity('cover.bagno_tapparella', 'bagno', 'open', { friendly_name: 'Tapparella bagno', current_position: 100, supported_features: 15 }),
   entity('humidifier.bagno_deumidificatore', 'bagno', 'off', { friendly_name: 'Deumidificatore bagno' }),
   entity('binary_sensor.bagno_allagamento', 'bagno', 'on', { friendly_name: 'Sensore allagamento bagno', device_class: 'moisture' }),
 
@@ -68,8 +68,8 @@ const SEED = [
   entity('switch.studio_stampante', 'studio', 'off', { friendly_name: 'Stampante' }),
 
   entity('light.ingresso', 'ingresso', 'off', { friendly_name: 'Ingresso' }),
-  entity('cover.ingresso_tapparella_1', 'ingresso', 'open', { friendly_name: 'Tapparella ingresso 1', current_position: 100 }),
-  entity('cover.ingresso_tapparella_2', 'ingresso', 'open', { friendly_name: 'Tapparella ingresso 2', current_position: 100 }),
+  entity('cover.ingresso_tapparella_1', 'ingresso', 'open', { friendly_name: 'Tapparella ingresso 1', current_position: 100, supported_features: 15 }),
+  entity('cover.ingresso_tapparella_2', 'ingresso', 'open', { friendly_name: 'Tapparella ingresso 2', current_position: 100, supported_features: 15 }),
   entity('sensor.ingresso_temperatura', 'ingresso', '19.8', { friendly_name: 'Temperatura ingresso', device_class: 'temperature', unit_of_measurement: '°C' }),
   entity('lock.ingresso_porta', 'ingresso', 'unlocked', { friendly_name: 'Porta ingresso' }),
 
@@ -86,7 +86,11 @@ const SEED = [
   entity('fan.giardino_ventilazione', 'giardino', 'off', { friendly_name: 'Ventilazione veranda' }),
 
   entity('switch.garage_luce', 'garage', 'off', { friendly_name: 'Luce garage' }),
-  entity('cover.garage_portone', 'garage', 'closed', { friendly_name: 'Portone garage', current_position: 0 }),
+  // No SET_POSITION bit on purpose: a real garage-door opener is usually
+  // open/close/stop only, and this is the demo's one example of the guard
+  // in dash_neumo*.html that hides the position slider when the device
+  // doesn't support it (v1.5.2) — buttons only, same as it'd render live.
+  entity('cover.garage_portone', 'garage', 'closed', { friendly_name: 'Portone garage', current_position: 0, supported_features: 11 }),
 
   entity('light.corridoio', 'corridoio', 'off', { friendly_name: 'Corridoio' }),
   entity('sensor.corridoio_co2', 'corridoio', '640', { friendly_name: 'CO₂ corridoio', device_class: 'carbon_dioxide', unit_of_measurement: 'ppm' }),

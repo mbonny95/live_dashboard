@@ -286,7 +286,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-if>
 
 <sc-if value="{{ tabStanze }}" hint-placeholder-val="{{ false }}">
-<div onPointerDown="{{ panelLpDown }}" onPointerUp="{{ panelLpUp }}" onPointerLeave="{{ panelLpUp }}" onContextMenu="{{ panelLpMenu }}" data-m="col" data-screen-label="Stanze" style="gap:10px">
+<div onPointerDown="{{ panelLpDown }}" onPointerMove="{{ panelLpMove }}" onPointerUp="{{ panelLpUp }}" onPointerLeave="{{ panelLpUp }}" onPointerCancel="{{ panelLpUp }}" onContextMenu="{{ panelLpMenu }}" data-m="col" data-screen-label="Stanze" style="gap:10px">
 <sc-for list="{{ rooms }}" as="r" hint-placeholder-count="8">
 <div data-on="{{ r.active }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:11px 12px">
 <div style="display:flex;align-items:center;gap:9px">
@@ -355,7 +355,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 
 <sc-for list="{{ r.covers }}" as="c" hint-placeholder-count="1">
-<div data-entity-id="{{ c.id }}" style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:12px 13px">
 <div style="display:flex;align-items:center;gap:10px">
 <div style="flex:1;min-width:0">
 <div style="font:600 13px/1.2 var(--font-body)">{{ c.name }}</div>
@@ -373,7 +373,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </button>
 </div>
 </div>
-<input type="range" min="0" max="100" value="{{ c.pos }}" onInput="{{ c.drag }}" onPointerUp="{{ c.setPos }}" onTouchEnd="{{ c.setPos }}" style="margin-top:11px">
+<sc-if value="{{ c.hasPosition }}" hint-placeholder-val="{{ false }}">
+<input type="range" min="0" max="100" value="{{ c.pos }}" onInput="{{ c.drag }}" onPointerUp="{{ c.setPos }}" onKeyUp="{{ c.setPos }}" style="touch-action:none;user-select:none;margin-top:11px">
+</sc-if>
 </div>
 </sc-for>
 
@@ -1439,18 +1441,37 @@ class Component extends DCLogic {
       window.CasaPrefs.save(this.be, prefs).then((storage) => this.setState({ prefsStorage: storage }));
     }
   }
+  // Covers don't carry `data-entity-id` (v1.5.2): the row holds the
+  // position slider, the dashboard's most frequent continuous drag, and a
+  // stray long-press mid-drag used to fire the hide-entity menu instead of
+  // a position change — removed rather than merely guarded, since hiding a
+  // cover is already one tap away in the settings panel.
   _lpEntityId(e) {
     const el = e.target && e.target.closest && e.target.closest('[data-entity-id]');
     return el ? el.getAttribute('data-entity-id') : null;
   }
+  // A drag is not a long-press: `pointermove` past a 10px threshold from
+  // the `pointerdown` origin cancels the pending timer, same as `pointerup`
+  // or `pointercancel` (Android fires the latter once it takes the gesture
+  // over for scrolling). Once cancelled it stays cancelled for the rest of
+  // this gesture — the timer is only re-armed on the next `pointerdown`.
   _panelLpDown(e) {
     const id = this._lpEntityId(e);
-    if (!id) return;
+    if (!id) { this._lpOrigin = null; return; }
     if (this._lpTimer) clearTimeout(this._lpTimer);
-    this._lpTimer = setTimeout(() => this.setState({ longMenu: id }), 600);
+    this._lpOrigin = { x: e.clientX, y: e.clientY };
+    this._lpTimer = setTimeout(() => { this._lpTimer = null; this.setState({ longMenu: id }); }, 600);
+  }
+  _panelLpMove(e) {
+    if (!this._lpTimer || !this._lpOrigin) return;
+    if (Math.hypot(e.clientX - this._lpOrigin.x, e.clientY - this._lpOrigin.y) > 10) {
+      clearTimeout(this._lpTimer);
+      this._lpTimer = null;
+    }
   }
   _panelLpUp() {
     if (this._lpTimer) { clearTimeout(this._lpTimer); this._lpTimer = null; }
+    this._lpOrigin = null;
   }
   _panelLpMenu(e) {
     const id = this._lpEntityId(e);
@@ -1695,19 +1716,32 @@ class Component extends DCLogic {
         const liveVal = live === undefined ? 0 : live;
         const dragVal = this.state.coverDrag ? this.state.coverDrag[id] : undefined;
         const pos = dragVal !== undefined && dragVal !== liveVal ? dragVal : liveVal;
+        // Bit 4 (SET_POSITION) of supported_features — some covers only know
+        // open/close/stop, and set_cover_position legitimately fails on
+        // those. Show the slider only when the device claims it.
+        const hasPosition = ((Number(this.at(id, 'supported_features')) || 0) & 4) === 4;
         const clearDrag = () => {
           if (!this.state.coverDrag || this.state.coverDrag[id] === undefined) return;
           const d = Object.assign({}, this.state.coverDrag);
           delete d[id];
           this.setState({ coverDrag: d });
         };
-        return { id, name: this.fn(id), pos,
+        return { id, name: this.fn(id), pos, hasPosition,
           sub: live === undefined ? this.s(id) : pos === 0 ? this.t('cover.closed') : pos === 100 ? this.t('cover.fullyOpen') : this.t('cover.openAt', { pct: pos }),
           up: () => { clearDrag(); this.cover(id, 'open_cover'); },
           down: () => { clearDrag(); this.cover(id, 'close_cover'); },
           stop: () => { clearDrag(); this.cover(id, 'stop_cover'); },
           drag: (e) => this.setState({ coverDrag: Object.assign({}, this.state.coverDrag, { [id]: Number(e.target.value) }) }),
-          setPos: (e) => this.cover(id, 'set_cover_position', { position: Number(e.target.value) }) };
+          // Fires once, on release (pointer or keyboard). Guards against NaN
+          // — possible if the row unmounts mid-gesture (e.g. hidden while
+          // dragging) so the event lands on a detached node — and against
+          // redundant calls when the released value matches what's already
+          // live.
+          setPos: (e) => {
+            const v = Number(e.target.value);
+            if (!Number.isFinite(v) || v === liveVal) return;
+            this.cover(id, 'set_cover_position', { position: v });
+          } };
       }),
       switches: switchesAll,
       media: (r.media || []).map((id) => {
@@ -2352,7 +2386,7 @@ class Component extends DCLogic {
       fuelWidth: (gaugePct === null ? 0 : Math.max(2, Math.min(100, gaugePct))) + '%',
       fuelTone: gaugePct === null ? 'ok' : gaugePct < 20 ? 'alert' : gaugePct < 40 ? 'warn' : 'ok',
       carCells, warnings,
-      panelLpDown: (e) => this._panelLpDown(e), panelLpUp: () => this._panelLpUp(), panelLpMenu: (e) => this._panelLpMenu(e),
+      panelLpDown: (e) => this._panelLpDown(e), panelLpMove: (e) => this._panelLpMove(e), panelLpUp: () => this._panelLpUp(), panelLpMenu: (e) => this._panelLpMenu(e),
 
       // settings panel (v1.5.0)
       openSettings: () => this.setState({ settingsOpen: true, settingsRoom: null }),

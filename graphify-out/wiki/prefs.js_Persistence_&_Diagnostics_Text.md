@@ -18,7 +18,7 @@
 
 ## Relationships
 
-- [DCLogic Component Runtime](DCLogic_Component_Runtime.md) (2 shared connections)
+- [support.js Micro-Framework Runtime](support.js_Micro-Framework_Runtime.md) (2 shared connections)
 
 ## Source Files
 

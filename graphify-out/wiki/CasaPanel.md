@@ -2,7 +2,7 @@
 
 > God node · 19 connections · `public/panel.js`
 
-**Community:** [Home Assistant Panel Bridge](Home_Assistant_Panel_Bridge.md)
+**Community:** [panel.js Custom Panel Bridge](panel.js_Custom_Panel_Bridge.md)
 
 ## Connections by Relation
 
