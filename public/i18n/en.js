@@ -34,6 +34,8 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   settingsPowerUnitLabel: 'Instantaneous power unit', settingsPowerUnitAuto: 'Auto',
   settingsPowerUnitW: 'W', settingsPowerUnitKw: 'kW',
   settingsPowerUnitDailyNote: 'Daily totals stay in kWh.',
+  settingsPlugThresholdLabel: 'Active-plug threshold',
+  settingsPlugThresholdNote: 'Below this power, a switched-on plug reads as standby, not running.',
 
   // diagnostics panel (v1.5.1), static labels
   diagTitle: 'Diagnostics', diagConfigHeading: 'Config',
@@ -60,17 +62,30 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   diagEnvPrefsOk: 'ok', diagEnvPrefsFailed: 'failed', diagEnvPrefsUnknown: 'not attempted',
   diagCopyButton: 'Copy diagnostics', diagCopyPrivacyNote: 'Contains the names of your entities and rooms, no passwords.',
 
+  // v1.5.4 — cameras/ring/alarm, static labels
+  diagCameraHeading: 'Cameras — live', diagCamNotOpened: 'not opened yet',
+  diagCamLayerNative: 'native HLS', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'fast previews',
+  diagCamWsNotAttempted: 'camera/stream unavailable on this backend', diagCamWsOk: 'camera/stream ok', diagCamWsFailed: 'camera/stream failed',
+  diagRingHeading: 'Energy ring', diagRingInUse: 'In use', diagRingNoEnergy: 'no ring (energy not configured)',
+  diagRingDoubleLabel: 'double ring', diagRingSingleGeneric: 'single ring',
+  diagSourceDomain: 'found via the alarm_control_panel domain',
+  diagAlarmHeading: 'Alarm', diagAlarmEntity: 'Entity', diagAlarmFoundVia: 'Found via',
+  diagAlarmCapabilities: 'Declared capabilities', diagAlarmDisarmOnly: 'disarm only',
+  diagAlarmCodeRequired: 'Requires a code', diagVerdictYes: 'yes', diagVerdictNo: 'no',
+
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Armed · away', 'alarm.armedHome': 'Armed · home', 'alarm.armedNight': 'Armed · night',
   'alarm.armedVacation': 'Armed · vacation', 'alarm.arming': 'Arming…',
   'alarm.btnAway': 'Away', 'alarm.btnHome': 'Home', 'alarm.btnNight': 'Night', 'alarm.btnVacation': 'Vacation',
+  'alarm.btnCustom': 'Custom',
   'alarm.disarmed': 'Disarmed', 'alarm.pending': 'Pending…', 'alarm.triggered': 'ALARM TRIGGERED',
+  'alarm.codeRequired': 'This panel requires a code: use the Home Assistant app to arm/disarm.',
 
   'appliance.energyToday': '{val} today',
 
   'cameras.motionDetected': 'Motion detected · {name}', 'cameras.allQuiet': 'All quiet',
   'cameras.tabSub': '{n} cameras · previews refresh every {seconds} seconds',
-  'cameras.moreCount': '+{n} more',
+  'cameras.moreCount': '+{n} more', 'cameras.snapshotBadge': 'Preview refreshing',
 
   'chart.hide': 'Hide trend', 'chart.show': 'Show trend', 'chart.show48h': 'Show 48h trend',
 
@@ -81,11 +96,11 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'energy.avgPerDay': 'Average produced per day', 'energy.consumptionNow': 'House consumption now',
   'energy.days': '{n} days', 'energy.fromGridShort': 'from grid', 'energy.gridCost': 'Cost of grid import',
   'energy.gridImportNow': 'Grid import now', 'energy.inverterProducing': 'inverter producing',
-  'energy.inverterStandby': 'inverter on standby', 'energy.periodNote': 'produced over the last {n} days · {grid} kWh taken from the grid',
+  'energy.inverterStandby': 'inverter on standby', 'energy.periodNote': 'produced over the last {n} days · {grid} taken from the grid',
   'energy.producedPeriod': 'Produced this period', 'energy.producedShort': 'produced', 'energy.productionNow': 'Production now',
   'energy.takenFromGrid': 'Taken from grid', 'energy.selfConsumption': '{pct} self-consumption',
   'energy.selfConsumptionShort': 'self-consumption',
-  'energy.gridNote': '{grid} from grid · {exportVal} exporting · {status}',
+  'energy.gridNote': '{grid} from grid · {exportVal} exported · {status}',
   'energy.selfConsumptionLabel': 'Self-consumption', 'energy.feedIn': 'Fed to grid', 'energy.kwhConsumed': 'kWh consumed',
   'energy.selfShort': 'self-cons.', 'energy.gridShort': 'from grid', 'energy.feedShort': 'fed in',
   'energy.compactSummary': 'kWh today · {pct} self-consumed',
@@ -126,12 +141,13 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'settings.reasonDeviceClass': 'device_class {dc}',
 
   'diag.configResolved': 'Config loaded from {path}.',
+  'diag.ringMissing': 'single ring — missing {field}',
 
   'siren.sounding': 'sounding',
 
   'status.connected': 'Connected', 'status.connecting': 'Connecting…', 'status.error': 'Not connected',
 
-  'switch.off': 'off', 'switch.running': 'running',
+  'switch.off': 'off', 'switch.running': 'running', 'switch.active': 'active',
 
   'valve.open': 'open', 'valve.closed': 'closed',
   'valve.openAction': 'Open', 'valve.closeAction': 'Close',

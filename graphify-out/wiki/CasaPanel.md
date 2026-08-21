@@ -1,8 +1,8 @@
 # CasaPanel
 
-> God node · 19 connections · `public/panel.js`
+> God node · 20 connections · `public/panel.js`
 
-**Community:** [panel.js Custom Panel Bridge](panel.js_Custom_Panel_Bridge.md)
+**Community:** [casa-panel Custom Element](casa-panel_Custom_Element.md)
 
 ## Connections by Relation
 
@@ -16,6 +16,7 @@
 - ._handleEnergyToday() `EXTRACTED`
 - ._handleHistory() `EXTRACTED`
 - ._handleCall() `EXTRACTED`
+- ._handleCameraStream() `EXTRACTED`
 - ._handleEnergyPrefs() `EXTRACTED`
 - ._handleRegistries() `EXTRACTED`
 - ._handleUserDataGet() `EXTRACTED`

@@ -295,6 +295,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <button onClick="{{ b.run }}" data-sel="{{ b.sel }}" style="height:44px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--tx2)">{{ b.label }}</button>
 </sc-for>
 </div>
+<sc-if value="{{ hasAlarmCodeNote }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-top:10px">{{ alarmCodeNote }}</div>
+</sc-if>
 </div>
 </sc-if>
 
@@ -1000,7 +1003,10 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </button>
 </div>
 <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:22px;background:var(--nu-d);box-shadow:var(--nu-ins);overflow:hidden">
-<sc-if value="{{ camHasStream }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ camLayerVideo }}" hint-placeholder-val="{{ false }}">
+<video ref="{{ camVideoRef }}" autoplay playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain"></video>
+</sc-if>
+<sc-if value="{{ camLayerSnapshot }}" hint-placeholder-val="{{ false }}">
 <img ref="{{ camStreamSrcRef }}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain">
 </sc-if>
 <sc-if value="{{ camNoStream }}" hint-placeholder-val="{{ true }}">
@@ -1008,10 +1014,12 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <svg width="46" height="46" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-cam"></use></svg>
 </div>
 </sc-if>
+<sc-if value="{{ camShowBadge }}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute;left:14px;top:14px;display:flex;align-items:center;gap:7px;height:27px;padding:0 11px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm)">
 <span style="width:7px;height:7px;border-radius:999px;background:var(--acc);flex:none"></span>
-<span style="font:600 10.5px/1 var(--font-body);color:var(--accT)">{{ S.live }}</span>
+<span style="font:600 10.5px/1 var(--font-body);color:var(--accT)">{{ camBadgeLabel }}</span>
 </div>
+</sc-if>
 </div>
 <div style="display:flex;align-items:center;gap:8px;margin-top:13px;font:500 11px/1.3 var(--font-body);color:var(--tx2)">
 <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-timer"></use></svg>
@@ -1166,6 +1174,14 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 <div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:20px">{{ S.settingsPowerUnitDailyNote }}</div>
 
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsPlugThresholdLabel }}</div>
+<div style="display:flex;gap:7px;margin-bottom:6px">
+<sc-for list="{{ plugThresholdOptions }}" as="pt" hint-placeholder-count="4">
+<button onClick="{{ pt.set }}" data-sel="{{ pt.sel }}" style="flex:1;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ pt.label }}</button>
+</sc-for>
+</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:20px">{{ S.settingsPlugThresholdNote }}</div>
+
 <div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagEnergyInstantHeading }}</div>
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
 <sc-for list="{{ diagEnergyInstantRows }}" as="row" hint-placeholder-count="3">
@@ -1218,6 +1234,40 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </sc-for>
 </sc-if>
 </div>
+
+<sc-if value="{{ hasDiagCameraRows }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagCameraHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-for list="{{ diagCameraRows }}" as="row" hint-placeholder-count="2">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ row.label }}</span>
+<span style="font:600 11px/1.4 var(--font-body);color:var(--tx);text-align:right">{{ row.value }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasDiagRingRow }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagRingHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ S.diagRingInUse }}</span>
+<span style="font:600 11px/1.4 var(--font-body);color:var(--tx);text-align:right">{{ diagRingValue }}</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasAlarm }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagAlarmHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-for list="{{ diagAlarmRows }}" as="row" hint-placeholder-count="4">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ row.label }}</span>
+<span style="font:600 11px/1.4 var(--font-body);color:var(--tx);text-align:right">{{ row.value }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
 
 <div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.environment }}</div>
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
@@ -1440,8 +1490,11 @@ class Component extends DCLogic {
   componentDidMount() {
     this.timer = setInterval(() => this.setState({ now: Date.now() }), 15000);
     this._onVisibility = () => {
-      if (document.visibilityState === 'hidden') this._stopSnapTimer();
-      else this._startSnapTimer();
+      if (document.visibilityState === 'hidden') { this._stopSnapTimer(); this._camStopFastPoll(); }
+      else {
+        this._startSnapTimer();
+        if (this.state.cam && this.state.camStreamLayer === 'snapshot') this._camStartFastPoll(this.state.cam);
+      }
     };
     document.addEventListener('visibilitychange', this._onVisibility);
     this._boot().catch((e) => { console.error('[casa] backend load failed', e); this.setState({ status: 'error' }); });
@@ -1476,15 +1529,126 @@ class Component extends DCLogic {
       if (Date.now() >= this.camCloseAt) this._closeCam();
       else this.setState({});
     }, 1000);
-    this.setState({ cam: id });
+    this.setState({ cam: id, camStreamLayer: null, camStreamUrl: null, camFastTick: null });
+    this._camStartStream(id);
   }
   _closeCam() {
     if (this.camTimer) { clearInterval(this.camTimer); this.camTimer = null; }
-    this.setState({ cam: null });
+    this._camStopFastPoll();
+    if (this._hlsInstance) { try { this._hlsInstance.destroy(); } catch (e) { /* already torn down */ } this._hlsInstance = null; }
+    // Invalidates any in-flight camera/stream request from _camStartStream
+    // so a slow response for a camera the user already closed (or switched
+    // away from) can't land afterwards and flip the now-wrong stream on.
+    this.camStreamReqId = (this.camStreamReqId || 0) + 1;
+    this.setState({ cam: null, camStreamLayer: null, camStreamUrl: null });
   }
   _revealCam(id) {
     this.setState({ camRevealed: Object.assign({}, this.state.camRevealed, { [id]: true }) });
   }
+
+  // --- camera live view (v1.5.4) --------------------------------------------
+  // See CLAUDE.md's v1.5.4 spec, point 1, for the full "why": camera/proxy_
+  // stream (the old approach, string-substituted from the preview URL) only
+  // ever serves MJPEG, which RTSP/ONVIF/generic cameras — most of the
+  // installed base — never expose, so their detail view was a black
+  // rectangle. Three layers, first one that works wins, no error ever shown
+  // for a layer that doesn't — a rectangle isn't a bug report, it's a dead
+  // end, so this always degrades to *something moving* instead:
+  //   1. camera/stream in HLS format, played natively (<video src>) —
+  //      Safari/iOS/many iOS webviews only; the only layer that is a real
+  //      live stream.
+  //   2. same URL, played via a vendored hls.js — written, but the vendor
+  //      file ships in no release yet (open question, see CLAUDE.md); inert
+  //      until someone drops public/vendor/hls.light.min.js in place.
+  //   3. camera_proxy stills (the same endpoint the previews already use
+  //      successfully), cache-busted at a fast interval, only while the
+  //      detail view is open — see _camStartFastPoll.
+  async _camStartStream(id) {
+    this.camStreamReqId = (this.camStreamReqId || 0) + 1;
+    const reqId = this.camStreamReqId;
+    const diag = { wsAttempted: false, wsOk: null, wsError: null, layer: null };
+    if (this.be && this.be.cameraStream) {
+      diag.wsAttempted = true;
+      try {
+        const result = await this.be.cameraStream(id);
+        const url = result && result.url;
+        diag.wsOk = !!url;
+        if (reqId === this.camStreamReqId && url) {
+          const canNative = !!document.createElement('video').canPlayType('application/vnd.apple.mpegurl');
+          if (canNative) {
+            diag.layer = 'hls-native';
+            this._setCamDiag(id, diag);
+            this.setState({ camStreamLayer: 'hls-native', camStreamUrl: url });
+            return;
+          }
+          const hlsReady = await this._ensureHlsJs();
+          if (reqId !== this.camStreamReqId) return;
+          if (hlsReady) {
+            diag.layer = 'hls.js';
+            this._setCamDiag(id, diag);
+            this.setState({ camStreamLayer: 'hlsjs', camStreamUrl: url });
+            return;
+          }
+        }
+      } catch (e) {
+        diag.wsOk = false;
+        diag.wsError = (e && e.message) || String(e);
+      }
+    }
+    if (reqId !== this.camStreamReqId) return;
+    diag.layer = 'snapshot';
+    this._setCamDiag(id, diag);
+    this.setState({ camStreamLayer: 'snapshot', camStreamUrl: null });
+    this._camStartFastPoll(id);
+  }
+
+  _setCamDiag(id, diag) {
+    this.camDiag = Object.assign({}, this.camDiag, { [id]: diag });
+  }
+
+  // Lazily probes for a vendored hls.js exactly once per session: no vendor
+  // file shipped in this release (open question — see CLAUDE.md), so on
+  // every install today this resolves false after one harmless 404 the
+  // first time a non-Safari browser opens a camera detail — never paid by
+  // installs that never open one, and never repeated after the first try.
+  _ensureHlsJs() {
+    if (window.Hls) return Promise.resolve(true);
+    if (!this._hlsJsLoadPromise) {
+      this._hlsJsLoadPromise = loadScript(bust('./vendor/hls.light.min.js')).then((ok) => ok && !!window.Hls);
+    }
+    return this._hlsJsLoadPromise;
+  }
+
+  // Ref callback for the <video> element in the 'hlsjs' layer — MSE playback
+  // needs a live HTMLVideoElement to attach to, unlike the native-HLS layer
+  // where `src` alone (via _bindAttr) is enough.
+  _attachHlsJs(video, url) {
+    if (this._hlsInstance) { try { this._hlsInstance.destroy(); } catch (e) { /* already torn down */ } this._hlsInstance = null; }
+    if (!video || !url || !window.Hls) return;
+    const hls = new window.Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    this._hlsInstance = hls;
+  }
+
+  // Tier 3 fallback: the same camera_proxy stills the previews already use
+  // (never camera_proxy_stream — that's the endpoint that only works for
+  // MJPEG cameras and was the root cause here), re-fetched fast enough to
+  // read as "something is moving" without pretending to be a real live feed
+  // — see the "anteprima aggiornata" badge in render(). Only ever runs while
+  // the detail view is open on this exact camera (checked on every tick, not
+  // just at start, since _openCam can move to a different camera while this
+  // timer is still alive) and suspended in the background the same way the
+  // slower preview timer already is.
+  _camStartFastPoll(id) {
+    this._camStopFastPoll();
+    if (document.visibilityState === 'hidden') return;
+    this.camFastTimer = setInterval(() => {
+      if (this.state.cam !== id) { this._camStopFastPoll(); return; }
+      this.setState({ camFastTick: Date.now() });
+    }, 400);
+  }
+  _camStopFastPoll() { if (this.camFastTimer) { clearInterval(this.camFastTimer); this.camFastTimer = null; } }
 
   async _boot() {
     await Promise.all([
@@ -1729,6 +1893,28 @@ class Component extends DCLogic {
     const useKw = pref === 'kw' || (pref === 'auto' && Math.abs(watts) >= 1000);
     return useKw ? this.dec(watts / 1000, 1) + ' kW' : this.dec(watts, 0) + ' W';
   }
+  // Settings -> Energia (v1.5.4). Default 3W matches the "a plug measuring
+  // 0.4W with the relay closed is standby, not a running appliance" reading
+  // in CLAUDE.md's v1.5.4 spec, point 2.
+  plugThresholdW() {
+    const v = this.PREFS().plugThreshold;
+    return (typeof v === 'number' && v > 0) ? v : 3;
+  }
+  // Three-tier plug state (off/active-standby/running-with-load), shared by
+  // the room panel's switch rows and the "on now" list so they never
+  // disagree — see discovery.js's classifySwitchPower for the level rules.
+  // `level: null` (no usable power sensor on this switch's device) falls
+  // back to the plain binary reading unchanged from v1.5.3 — a switch with
+  // no way to know more isn't a problem to flag.
+  plugStatus(switchId, powerId) {
+    if (!this.discovery) return { level: null, watts: null, on: this.isOn(switchId), sub: this.isOn(switchId) ? this.t('switch.running') : this.t('switch.off') };
+    const c = this.discovery.classifySwitchPower(this.state.st, switchId, powerId, this.plugThresholdW());
+    let sub;
+    if (c.level === 'running') sub = this.t('switch.running') + ' · ' + this.powerVal(powerId);
+    else if (c.level === 'active') sub = this.t('switch.active');
+    else sub = c.relayOn ? this.t('switch.running') : this.t('switch.off');
+    return { level: c.level, watts: c.watts, on: c.relayOn, sub };
+  }
   call(domain, service, data) { if (this.be) this.be.call(domain, service, data); }
   cover(id, service, extra) { this.call('cover', service, Object.assign({ entity_id: id }, extra || {})); }
   // Generic "run this valve for N minutes" for irrigation zones: just two
@@ -1928,6 +2114,11 @@ class Component extends DCLogic {
     const p = this.PREFS();
     this.SAVE_PREFS(Object.assign({}, p, { powerUnit: unit }));
   }
+  // Watts — read by plugStatus() (see discovery.js's classifySwitchPower).
+  SETTINGS_SET_PLUG_THRESHOLD(watts) {
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { plugThreshold: watts }));
+  }
   SETTINGS_RESET() { this.SAVE_PREFS({ v: 1 }); }
   SETTINGS_LONG_HIDE(id) {
     this.SETTINGS_SET_ENTITY(id, false);
@@ -2083,7 +2274,15 @@ class Component extends DCLogic {
       const open = cs.filter((p) => p > 0).length;
       bits.push(open ? this.t('room.coversOpenCount', { open, total: cs.length }) : this.t('room.coversClosed'));
     }
-    (r.switches || []).forEach((sw) => { if (this.isOn(sw[0])) bits.push(this.t('room.switchRunning', { name: sw[1] })); });
+    // Room summary says "X in corso", so it must mean the same thing the
+    // room panel's "in funzione" does (v1.5.4): a plug merely energized at
+    // standby isn't "in corso" any more than an appliance that's plugged in
+    // but off is. No power sensor at all -> level stays null -> falls back
+    // to the old plain-relay reading, unchanged from v1.5.3.
+    (r.switches || []).forEach((sw) => {
+      const plug = this.plugStatus(sw[0], sw[3]);
+      if (plug.level === 'running' || (plug.level === null && plug.on)) bits.push(this.t('room.switchRunning', { name: sw[1] }));
+    });
     if ((r.media || []).some((id) => this.s(id) === 'playing')) bits.push(this.t('room.tvOn'));
     if ((r.vacuum || []).some((v) => this.s(v[0]) === 'cleaning')) bits.push(this.t('room.vacuumRunning'));
     (this.MODULE_VISIBLE('appliances') ? (this.cfg.appliances || []) : []).forEach((a) => {
@@ -2094,7 +2293,7 @@ class Component extends DCLogic {
     return bits.slice(0, 2).join(' · ') || this.t('room.nothingActive');
   }
 
-  ALARM_ID() { return this.discovery ? this.discovery.discoverAlarm(this.state.st, this.cfg) : null; }
+  ALARM_ID() { return this.discovery ? this.discovery.discoverAlarm(this.state.st, this.cfg, this.registries) : null; }
 
   ALARM(id) {
     const s = this.s(id);
@@ -2251,7 +2450,25 @@ class Component extends DCLogic {
     camHomeTiles = camHomeTiles.map((c) => Object.assign({}, c, { outline: c.motion ? '2px solid var(--acc)' : 'none' }));
     const camCur = camList.find((c) => c.id === this.state.cam) || null;
     const camOpen = !!camCur;
-    const camStreamSrc = camCur && camCur.picture ? camCur.picture.replace('/api/camera_proxy/', '/api/camera_proxy_stream/') : '';
+    // v1.5.4: layered live view — see _camStartStream for the full strategy.
+    // camStreamSrc (tier 3 only) re-reads camCur.picture on every fast tick
+    // rather than caching the URL once, same as the preview tiles above: the
+    // token inside entity_picture expires, and re-reading it from the live
+    // states object (refreshed on every hass push) is what keeps this alive
+    // past the first few minutes instead of quietly dying.
+    const camStreamLayer = camOpen ? this.state.camStreamLayer : null;
+    const camStreamUrl = camOpen ? this.state.camStreamUrl : null;
+    const camLayerVideo = camStreamLayer === 'hls-native' || camStreamLayer === 'hlsjs';
+    const camLayerSnapshot = camStreamLayer === 'snapshot' && camCur && !!camCur.picture;
+    const camStreamSrc = camLayerSnapshot
+      ? camCur.picture + (camCur.picture.indexOf('?') === -1 ? '?' : '&') + '_cb=' + (this.state.camFastTick || this.state.snapTick)
+      : '';
+    const camNoStream = camOpen && !camLayerVideo && !camLayerSnapshot;
+    const camVideoRef = camStreamLayer === 'hlsjs'
+      ? (el) => this._attachHlsJs(el, camStreamUrl)
+      : this._bindAttr('src', camStreamUrl);
+    const camShowBadge = camLayerVideo || camLayerSnapshot;
+    const camBadgeLabel = camStreamLayer === 'snapshot' ? this.t('cameras.snapshotBadge') : this.strings.live;
     const camRemainingS = camOpen ? Math.max(0, Math.ceil((this.camCloseAt - Date.now()) / 1000)) : 0;
     const camCountdown = Math.floor(camRemainingS / 60) + ':' + String(camRemainingS % 60).padStart(2, '0');
 
@@ -2265,6 +2482,11 @@ class Component extends DCLogic {
     const activeItems = [];
     const applianceSwitches = new Set((this.cfg.appliances || []).map((a) => a.powerSwitch).filter(Boolean));
     const entityHiddenForActive = this.ENTITY_HIDDEN_SET();
+    // "On now" walks raw states directly, outside discoverRooms's registry
+    // walk, so it needs its own switch->power-sensor lookup to apply the
+    // same three-tier reading the room panel uses (v1.5.4) — see
+    // discovery.js's powerSensorForSwitch.
+    const activeSwitchPowerMap = this.discovery ? this.discovery.powerSensorForSwitch(this.state.st, this.registries) : new Map();
     Object.keys(this.state.st).forEach((id) => {
       if (entityHiddenForActive.has(id)) return;
       const dom = id.split('.')[0];
@@ -2273,7 +2495,8 @@ class Component extends DCLogic {
         const b = this.at(id, 'brightness');
         activeItems.push({ id, icon: '#i-bulb', iconRef: this._bindAttr('href', '#i-bulb'), name: this.fn(id), sub: b ? Math.round((b / 255) * 100) + '% ' + this.t('light.brightnessSuffix') : this.t('common.on'), off: () => this.call('light', 'turn_off', { entity_id: id }) });
       } else if (dom === 'switch' && s === 'on' && !applianceSwitches.has(id)) {
-        activeItems.push({ id, icon: '#i-plug', iconRef: this._bindAttr('href', '#i-plug'), name: this.fn(id), sub: this.t('switch.running'), off: () => this.call('switch', 'turn_off', { entity_id: id }) });
+        const plug = this.plugStatus(id, activeSwitchPowerMap.get(id) || null);
+        activeItems.push({ id, icon: '#i-plug', iconRef: this._bindAttr('href', '#i-plug'), name: this.fn(id), sub: plug.sub, off: () => this.call('switch', 'turn_off', { entity_id: id }) });
       } else if (dom === 'media_player' && s === 'playing') {
         activeItems.push({ id, icon: '#i-tv', iconRef: this._bindAttr('href', '#i-tv'), name: this.fn(id), sub: this.at(id, 'media_title') || this.t('media.playing'), off: () => this.call('media_player', 'turn_off', { entity_id: id }) });
       } else if (dom === 'vacuum' && (s === 'cleaning' || s === 'returning')) {
@@ -2376,13 +2599,28 @@ class Component extends DCLogic {
     // different subsets (see discovery.js comments / README/TROUBLESHOOTING).
     const feat = hasAlarm ? Number(this.at(alarmId, 'supported_features')) : NaN;
     const supp = isNaN(feat) ? 0 : feat;
-    const alarmBtns = hasAlarm ? [{ label: this.t('alarm.disarmed'), sel: alarmSt === 'disarmed', run: () => this.call('alarm_control_panel', 'alarm_disarm', { entity_id: alarmId }) }] : [];
+    // A code_format-declaring entity fails `failed to perform action` if we
+    // call arm/disarm without `code` — same profile as the cover
+    // SET_POSITION guard elsewhere in this file. No PIN pad in this release
+    // (CLAUDE.md's v1.5.4 spec, point 3 — deliberately deferred), so a
+    // gated action stays a no-op with an explicit note instead of a
+    // service call that goes out and silently fails. code_arm_required
+    // only ever softens *arming* — HA's alarm_control_panel model has no
+    // equivalent bypass for disarm, so disarm is gated on code_format alone.
+    const alarmCodeFormat = hasAlarm ? this.at(alarmId, 'code_format') : null;
+    const alarmCodeArmRequired = hasAlarm ? this.at(alarmId, 'code_arm_required') : undefined;
+    const alarmNeedsCodeArm = !!alarmCodeFormat && alarmCodeArmRequired !== false;
+    const alarmNeedsCodeDisarm = !!alarmCodeFormat;
+    const alarmGuardedCall = (service, needsCode) => needsCode ? () => {} : () => this.call('alarm_control_panel', service, { entity_id: alarmId });
+    const alarmBtns = hasAlarm ? [{ label: this.t('alarm.disarmed'), sel: alarmSt === 'disarmed', run: alarmGuardedCall('alarm_disarm', alarmNeedsCodeDisarm) }] : [];
     if (hasAlarm) [[1, 'armed_home', 'alarm_arm_home', this.t('alarm.btnHome')],
      [2, 'armed_away', 'alarm_arm_away', this.t('alarm.btnAway')],
      [4, 'armed_night', 'alarm_arm_night', this.t('alarm.btnNight')],
+     [16, 'armed_custom_bypass', 'alarm_arm_custom_bypass', this.t('alarm.btnCustom')],
      [32, 'armed_vacation', 'alarm_arm_vacation', this.t('alarm.btnVacation')]].forEach((b) => {
-      if (supp & b[0]) alarmBtns.push({ label: b[3], sel: alarmSt === b[1], run: () => this.call('alarm_control_panel', b[2], { entity_id: alarmId }) });
+      if (supp & b[0]) alarmBtns.push({ label: b[3], sel: alarmSt === b[1], run: alarmGuardedCall(b[2], alarmNeedsCodeArm) });
     });
+    const alarmCodeNote = hasAlarm && (alarmNeedsCodeArm || alarmNeedsCodeDisarm) ? this.t('alarm.codeRequired') : '';
 
     // energy (Fase 3 — generic sensor-role mapping, see live_dashboard_config.example.js).
     // The bars below still compare "produced today" against "taken from the
@@ -2656,9 +2894,9 @@ class Component extends DCLogic {
         const switchTuples = (r.switches || []).map((sw) => {
           const on = this.isOn(sw[0]);
           const powerId = sw[3];
-          const watts = powerId ? this.powerVal(powerId) : null;
+          const plug = this.plugStatus(sw[0], powerId);
           return { id: sw[0], name: sw[1], icon: sw[2], iconRef: this._bindAttr('href', sw[2]), on, stroke: on ? 'var(--acc)' : 'var(--tx2)',
-            sub: (on ? this.t('switch.running') : this.t('switch.off')) + (watts && watts !== '—' ? ' · ' + watts : ''),
+            sub: plug.sub,
             toggle: () => this.call('switch', on ? 'turn_off' : 'turn_on', { entity_id: sw[0] }) };
         });
         const humidifierTuples = (r.humidifier || []).map((h) => {
@@ -2870,8 +3108,9 @@ class Component extends DCLogic {
     // clock tick" reasoning as the block above.
     let diagConfigAttempts = [], diagConfigSummary = '', diagConfigOutsideIframe = false;
     let diagEnergyInstantRows = [], diagEnergyDailyRows = [], diagPrefsFailed = false, diagEnvRows = [];
+    let diagCameraRows = [], diagRingValue = '', diagAlarmRows = [];
     let doDiag = () => {};
-    let settingsTabs = [], powerUnitOptions = [];
+    let settingsTabs = [], powerUnitOptions = [], plugThresholdOptions = [];
     if (this.state.settingsOpen) {
       const S = this.strings;
       const roleLabelKeys = { production: 'diagRoleProduction', consumption: 'diagRoleConsumption', gridImport: 'diagRoleGridImport', gridExport: 'diagRoleGridExport',
@@ -2920,6 +3159,44 @@ class Component extends DCLogic {
         { label: S.diagEnvPrefsOutcome, value: env.prefsOutcome === 'ok' ? S.diagEnvPrefsOk : env.prefsOutcome === 'failed' ? S.diagEnvPrefsFailed : S.diagEnvPrefsUnknown }
       ];
 
+      // v1.5.4, point 5 — three diagnostics rows that answer exactly the
+      // questions that cost real debugging time this release: which camera
+      // layer actually activated (and whether camera/stream itself even
+      // answered), which energy ring is live and why the fallback one might
+      // be showing instead, and what the alarm entity/capabilities/code
+      // situation is. camDiag is populated by _camStartStream as each
+      // camera detail is opened — a camera never opened this session has no
+      // entry yet, shown as "not opened" rather than a false failure.
+      const camLayerLabelKeys = { 'hls-native': 'diagCamLayerNative', 'hlsjs': 'diagCamLayerHlsjs', 'snapshot': 'diagCamLayerSnapshot' };
+      diagCameraRows = camList.map((c) => {
+        const d = (this.camDiag || {})[c.id];
+        if (!d) return { label: c.name, value: S.diagCamNotOpened };
+        const layerLabel = S[camLayerLabelKeys[d.layer]] || d.layer || '—';
+        const wsLabel = !d.wsAttempted ? S.diagCamWsNotAttempted : d.wsOk ? S.diagCamWsOk : S.diagCamWsFailed;
+        return { label: c.name, value: layerLabel + ' · ' + wsLabel };
+      });
+
+      diagRingValue = !hasEnergy ? S.diagRingNoEnergy
+        : hasNewRing ? S.diagRingDoubleLabel
+        : prodT == null ? this.t('diag.ringMissing', { field: S.diagRoleProduction })
+        : gridT == null ? this.t('diag.ringMissing', { field: S.diagRoleGridImport })
+        : S.diagRingSingleGeneric;
+
+      if (hasAlarm) {
+        const capLabels = [];
+        if (supp & 1) capLabels.push(this.t('alarm.btnHome'));
+        if (supp & 2) capLabels.push(this.t('alarm.btnAway'));
+        if (supp & 4) capLabels.push(this.t('alarm.btnNight'));
+        if (supp & 16) capLabels.push(this.t('alarm.btnCustom'));
+        if (supp & 32) capLabels.push(this.t('alarm.btnVacation'));
+        diagAlarmRows = [
+          { label: S.diagAlarmEntity, value: alarmId },
+          { label: S.diagAlarmFoundVia, value: (this.cfg && this.cfg.alarm) ? S.diagSourceConfig : S.diagSourceDomain },
+          { label: S.diagAlarmCapabilities, value: capLabels.length ? capLabels.join(', ') : S.diagAlarmDisarmOnly },
+          { label: S.diagAlarmCodeRequired, value: (alarmNeedsCodeArm || alarmNeedsCodeDisarm) ? S.diagVerdictYes : S.diagVerdictNo }
+        ];
+      }
+
       // Settings panel navigation (v1.5.3): four flat tabs instead of one
       // long scroll. "hasIssue" reuses the same *Rows this block already
       // computed (see the diagnostics comment above) rather than
@@ -2939,6 +3216,9 @@ class Component extends DCLogic {
       const curPowerUnit = prefsNow.powerUnit || 'auto';
       powerUnitOptions = [['auto', S.settingsPowerUnitAuto], ['w', S.settingsPowerUnitW], ['kw', S.settingsPowerUnitKw]]
         .map(([key, label]) => ({ key, label, sel: curPowerUnit === key, set: () => this.SETTINGS_SET_POWER_UNIT(key) }));
+      const curPlugThreshold = this.plugThresholdW();
+      plugThresholdOptions = [1, 3, 5, 10]
+        .map((w) => ({ key: String(w), label: w + ' W', sel: curPlugThreshold === w, set: () => this.SETTINGS_SET_PLUG_THRESHOLD(w) }));
 
       doDiag = async () => {
         const text = window.CasaPrefs.diagText({
@@ -2989,11 +3269,12 @@ class Component extends DCLogic {
       openAllRooms: () => this.setState({ allRooms: true }),
       closeAllRooms: () => this.setState({ allRooms: false }),
       hasAlarm, alarmLabel: al[0], alarmTone: al[1], alarmStroke: alarmSt === 'disarmed' ? 'var(--tx2)' : 'var(--acc)', alarmBtns,
+      hasAlarmCodeNote: !!alarmCodeNote, alarmCodeNote,
       hasCameras, hasCamTab, camList, camMain, camMulti, camCols: String(camCols),
       camHomeSingle, camHomeMulti, camHomeTiles,
       camHeadline, camSub, goCams,
       camOpen, camName: camCur ? camCur.name : '', camArea: camCur ? camCur.area : '',
-      camStreamSrc, camStreamSrcRef: this._bindAttr('src', camStreamSrc), camHasStream: !!camStreamSrc, camNoStream: !camStreamSrc,
+      camLayerVideo, camVideoRef, camLayerSnapshot, camStreamSrcRef: this._bindAttr('src', camStreamSrc), camNoStream, camShowBadge, camBadgeLabel,
       camCountdown, closeCam: () => this._closeCam(),
       hasEnergy, energyCompact, energyNormal,
       hasNewRing, hasInnerRing, hasOldRing: !hasNewRing,
@@ -3012,9 +3293,15 @@ class Component extends DCLogic {
       loadTodayFull: gridT === null ? '—' : this.dec(gridT, 2) + ' kWh',
       selfRatioLine: this.t('energy.selfConsumption', { pct: selfPct }),
       selfRatio: selfPct,
+      // Both halves of this note are *daily* totals (gridT/exportT), same as
+      // the ring above it — v1.5.4 fix: this used to read exportVal from
+      // powerVal(en.gridExport), the *instantaneous* feed-in power, mixed
+      // into a sentence about the day's totals (see CLAUDE.md's v1.5.4 spec,
+      // point 4). Only reachable via hasOldRing (single-ring fallback for
+      // installs with partial energy data), which is why it went unnoticed.
       gridNote: this.t('energy.gridNote', {
-        grid: hasEnergy ? this.val(en.gridToday, 2, ' kWh') : '—',
-        exportVal: hasEnergy && en.gridExport ? this.powerVal(en.gridExport) : '—',
+        grid: gridT != null ? this.dec(gridT, 2) + ' kWh' : '—',
+        exportVal: exportT != null ? this.dec(exportT, 2) + ' kWh' : '—',
         status: invStatus
       }),
       invStatus,
@@ -3025,7 +3312,7 @@ class Component extends DCLogic {
       hasHistory, noHistory, noHistoryLabel: this.t('energy.noHistory'),
       feedInLabel: this.t('energy.feedIn'),
       prodPeriod: this.dec(totP, 1) + ' kWh',
-      periodNote: this.t('energy.periodNote', { n: R, grid: this.dec(totG, 1) }),
+      periodNote: this.t('energy.periodNote', { n: R, grid: this.dec(totG, 1) + ' kWh' }),
       hasIrrigation, irrSummary: hasIrrigation ? (this.cfg.irrigation.summary ? this.s(this.cfg.irrigation.summary) : this.t('irrigation.defaultSummary', { n: zones.length })) : '',
       irrSub: hasIrrigation
         ? [
@@ -3071,7 +3358,7 @@ class Component extends DCLogic {
       settingsTabEnergia: this.state.settingsTab === 'energia',
       settingsTabCamere: this.state.settingsTab === 'camere',
       settingsTabDiagnostica: this.state.settingsTab === 'diagnostica',
-      powerUnitOptions,
+      powerUnitOptions, plugThresholdOptions,
       settingsRooms, hasSettingsRooms: settingsRooms.length > 0,
       settingsCameras, hasSettingsCameras: settingsCameras.length > 0,
       settingsModules,
@@ -3093,6 +3380,9 @@ class Component extends DCLogic {
       diagConfigSummary, diagConfigOutsideIframe,
       diagEnergyInstantRows, diagEnergyDailyRows, diagPrefsFailed,
       diagEnvRows,
+      diagCameraRows, hasDiagCameraRows: diagCameraRows.length > 0,
+      diagRingValue, hasDiagRingRow: !!diagRingValue,
+      diagAlarmRows,
       diagCopyRun: doDiag,
       diagOpen: !!diagSheet, diagText: diagSheet ? diagSheet.text : '',
       diagCopied: diagSheet ? diagSheet.copied : false, diagNotCopied: diagSheet ? !diagSheet.copied : false,

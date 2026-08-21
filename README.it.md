@@ -71,7 +71,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.5.3
+       module_url: /local/community/live_dashboard/panel.js?v=1.5.4
        embed_iframe: true
        trust_external_script: false
    ```
@@ -84,7 +84,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    sia come `console.error` sia come messaggio sulla pagina stessa, con il
    `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.5.3` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.5.4` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -148,12 +148,17 @@ pannello si registra davvero — vedi la nota sotto "Via HACS" più sopra per
 come si presenta quando va storto.
 
 Fatto — senza nessun file di config, la dashboard scopre da sola le tue aree
-e ne mostra fino a 12 come tessere stanza, più le eventuali entità `person.*`
-e la prima `weather.*` che trova. Allarme, selettore di modalità casa,
-Energia, Irrigazione e Auto restano nascosti finché non li attivi (vedi
-sotto) — non c'è modo di indovinare l'accoppiata giusta per uno script
-"modalità casa", né quale, tra più pannelli allarme, sia "quello giusto":
-per questo restano spenti di default invece di tentare a caso.
+e ne mostra fino a 12 come tessere stanza, più le eventuali entità
+`person.*`, la prima `weather.*` che trova, e (v1.5.4) la prima entità
+`alarm_control_panel.*`, di qualunque marca — i suoi pulsanti inserisci/
+disinserisci seguono il suo `supported_features`, così una centrale che non
+sa fare per esempio Notte non mostra mai un pulsante destinato a fallire.
+Con più di una centrale, `config.alarm` continua a scegliere quale; le
+altre semplicemente non vengono ancora mostrate. Selettore di modalità
+casa, Energia, Irrigazione e Auto restano nascosti finché non li attivi
+(vedi sotto) — non c'è modo di indovinare l'accoppiata giusta per uno
+script "modalità casa": per questo resta spento di default invece di
+tentare a caso.
 
 ### Configurare il resto
 
@@ -363,6 +368,17 @@ resto — nessun campo stanza separato da compilare).
 Gli elettrodomestici in funzione compaiono anche in "cose accese adesso" in
 Casa e nel riepilogo della stanza, come una luce o un robot in pulizia.
 
+### Prese smart senza una voce in `config.appliances`
+
+Anche una `switch.*` generica nel pannello di una stanza fa la stessa
+distinzione "sta davvero assorbendo corrente" (v1.5.4), a costo zero: se il
+suo device espone anche un `sensor.*` con `device_class: power` (vero per la
+maggior parte delle prese smart), lo stato `on` del relè viene letto su tre
+livelli invece di due — **spenta**, **attiva** (relè chiuso, sotto soglia —
+alimentata ma ferma), o **in funzione** (sopra soglia, con i watt in tempo
+reale). La soglia di default è 3 W ed è regolabile da Impostazioni →
+Energia. Una presa senza sensore di potenza sul device non cambia — resta
+acceso/spento come prima.
 ## Telecamere (opzionale)
 
 Auto-discovery completo da ogni entità `camera.*` che Home Assistant
@@ -375,10 +391,25 @@ telecamere da mantenere a mano.
   `entity_picture` (l'URL che Home Assistant firma già da solo), ricaricato
   ogni `snapshotInterval` secondi (10 di default). Il refresh si sospende
   quando la scheda/pagina non è visibile.
-- **Live al tap.** Toccare un'anteprima apre uno stream MJPEG a schermo
-  intero (lo stesso URL firmato, con `/api/camera_proxy/` sostituito da
-  `/api/camera_proxy_stream/`) — niente `hls.js`, niente WebRTC, niente
-  build step. Si chiude da sola dopo 2 minuti, o al tap.
+- **Live al tap, a strati, secondo ciò che la telecamera e il browser sanno
+  davvero fare** (v1.5.4). Toccare un'anteprima prova, in ordine, il primo
+  strato che funziona:
+  1. Uno stream HLS reale via il componente `stream` di Home Assistant,
+     suonato nativamente — solo Safari, iOS, e molte webview iOS.
+  2. Lo stesso stream tramite un `hls.js` vendorizzato, se qualcuno lo ha
+     copiato in `public/vendor/` — nessuna release lo include oggi, quindi
+     questo strato è sempre inattivo per ora; il pannello Diagnostica mostra
+     quale strato è realmente in uso.
+  3. Fermi immagine rapidi (2–3 al secondo) dallo stesso endpoint
+     `entity_picture` già usato dalle anteprime, con l'etichetta "anteprima
+     aggiornata" invece di "live" — è quello che oggi ottengono la maggior
+     parte degli utenti Android/companion app e la maggior parte delle
+     telecamere RTSP/ONVIF/generic, che non espongono uno stream MJPEG (il
+     vecchio approccio `/api/camera_proxy_stream/`) e su Android non esiste
+     HLS nativo. Non è una live fluida, ma si muove, su qualunque
+     telecamera, su qualunque piattaforma, senza dipendenze. Gira solo col
+     dettaglio aperto, e si sospende con la scheda/pagina.
+  Il dettaglio si chiude da solo dopo 2 minuti, o al tap.
 - **Privacy per le telecamere interne**: elenca un entity_id in
   `hideUntilTap` e la sua tessera mostra solo un'icona — nessuna anteprima
   caricata — finché qualcuno non la tocca una volta per vedere lo snapshot,

@@ -109,6 +109,57 @@ function collectConfiguredEntities(config) {
   return ids;
 }
 
+// --- smart plugs (v1.5.4) ---------------------------------------------------
+// A switch's relay state answers "is it energized" (`switch.x` = on), not
+// "is the appliance plugged into it actually running" — see CLAUDE.md's
+// v1.5.4 spec, point 2. Same device relation discoverCameras already uses
+// for camera->motion (no state/attribute link exists, only "same device"),
+// applied to switch->power sensor instead, and exposed standalone (not just
+// inline inside discoverRooms) so the "on now" list — which walks
+// `states` directly, outside discoverRooms's registry walk — can classify a
+// bare switch id too without re-deriving the device->sensor map itself.
+function powerSensorForSwitch(states, registries) {
+  const entities = (registries && registries.entities) || [];
+  const byDevice = new Map();
+  for (const e of entities) {
+    if (isExcluded(e) || domainOf(e.entity_id) !== 'sensor' || !e.device_id) continue;
+    const st = states[e.entity_id];
+    if (!st || (st.attributes && st.attributes.device_class) !== 'power') continue;
+    if (!byDevice.has(e.device_id)) byDevice.set(e.device_id, e.entity_id);
+  }
+  const map = new Map();
+  for (const e of entities) {
+    if (isExcluded(e) || domainOf(e.entity_id) !== 'switch' || !e.device_id) continue;
+    const powerId = byDevice.get(e.device_id);
+    if (powerId) map.set(e.entity_id, powerId);
+  }
+  return map;
+}
+
+// Three levels, one for each row of the B2 table in CLAUDE.md's v1.5.4 spec:
+//   relay off              -> 'off'      (never ambiguous, no sensor needed)
+//   relay on, under thresholdW  -> 'active'   (energized, standby — not a problem)
+//   relay on, at/over thresholdW -> 'running'  (actually drawing load)
+// No power sensor on this switch's device, or its state isn't a plain
+// number, or its unit isn't one `powerVal()` elsewhere already knows how to
+// normalize to watts (W/kW/MW) -> level: null. Callers treat that exactly
+// like "no power sensor" (v1.5.3 behavior: plain on/off, not a problem to
+// flag) rather than guess-scaling a value they can't actually interpret —
+// same "an honest unknown beats a wrong number" reasoning as powerVal().
+function classifySwitchPower(states, switchId, powerId, thresholdW) {
+  const relayOn = !!states[switchId] && states[switchId].state === 'on';
+  if (!relayOn) return { relayOn: false, level: 'off', watts: null };
+  const st = powerId && states[powerId];
+  const raw = st ? parseFloat(st.state) : NaN;
+  if (!st || isNaN(raw)) return { relayOn: true, level: null, watts: null };
+  const unit = ((st.attributes && st.attributes.unit_of_measurement) || '').trim().toLowerCase();
+  const scale = unit === 'kw' ? 1000 : unit === 'mw' ? 1000000 : unit === 'w' ? 1 : null;
+  if (scale === null) return { relayOn: true, level: null, watts: null };
+  const watts = raw * scale;
+  const threshold = thresholdW == null ? 3 : thresholdW;
+  return { relayOn: true, level: watts >= threshold ? 'running' : 'active', watts };
+}
+
 // --- rooms -------------------------------------------------------------
 
 // `opts` (all optional) lets a caller layer runtime overrides on top of
@@ -161,19 +212,14 @@ function discoverRooms(states, registries, config, opts) {
     catalog: []
   }]));
 
-  // Device -> its own `device_class: power` sensor, for switches only (see
-  // B4 in the fix ticket): a plug's instantaneous wattage is worth showing
-  // next to the switch itself, but the sensor never becomes a pill or a row
-  // of its own — same "same physical thing, don't show it twice" reasoning
-  // as claimedEntities above, just keyed by device instead of by config.
-  const powerSensorByDevice = new Map();
-  for (const e of entities) {
-    if (isExcluded(e) || domainOf(e.entity_id) !== 'sensor' || !e.device_id) continue;
-    const st = states[e.entity_id];
-    if (!st || !(e.entity_id in states)) continue;
-    if ((st.attributes && st.attributes.device_class) !== 'power') continue;
-    if (!powerSensorByDevice.has(e.device_id)) powerSensorByDevice.set(e.device_id, e.entity_id);
-  }
+  // switch entity_id -> its device's `device_class: power` sensor (see
+  // powerSensorForSwitch below) — a plug's instantaneous wattage is worth
+  // showing next to the switch itself, and (v1.5.4) worth telling "energized
+  // but idle" from "actually drawing load", but the sensor never becomes a
+  // pill or a row of its own — same "same physical thing, don't show it
+  // twice" reasoning as claimedEntities above, just keyed by device instead
+  // of by config.
+  const switchPowerMap = powerSensorForSwitch(states, registries);
 
   for (const ent of entities) {
     if (isExcluded(ent)) continue;
@@ -193,8 +239,8 @@ function discoverRooms(states, registries, config, opts) {
 
     if (dom === 'light') { room.lights.push(ent.entity_id); catalogEntry('domain', 'light'); }
     else if (dom === 'switch') {
-      const powerId = ent.device_id ? powerSensorByDevice.get(ent.device_id) : null;
-      room.switches.push([ent.entity_id, name, '#i-plug', powerId || null]);
+      const powerId = switchPowerMap.get(ent.entity_id) || null;
+      room.switches.push([ent.entity_id, name, '#i-plug', powerId]);
       catalogEntry('domain', 'switch');
     }
     else if (dom === 'cover') { room.covers.push(ent.entity_id); catalogEntry('domain', 'cover'); }
@@ -479,11 +525,23 @@ function discoverEnergyEntities(states, registries) {
 }
 
 // --- alarm ------------------------------------------------------------------
-
-function discoverAlarm(states, config) {
+// v1.5.4: was config-only (no id in config.alarm -> no alarm card, ever,
+// regardless of brand) — the one module left with no auto-discovery. The
+// domain alone identifies it (unlike rooms/energy, there's no ambiguity to
+// resolve by name-guessing): any entity under alarm_control_panel is one,
+// whichever integration exposes it. config.alarm still always wins when
+// set — this only fills in when it's absent.
+function discoverAlarm(states, config, registries) {
   const id = config && config.alarm;
-  if (!id) return null;
-  return id in states ? id : null;
+  if (id) return id in states ? id : null;
+  const entities = (registries && registries.entities) || [];
+  const ids = entities.length
+    ? entities.filter((e) => !isExcluded(e) && domainOf(e.entity_id) === 'alarm_control_panel' && e.entity_id in states).map((e) => e.entity_id)
+    : Object.keys(states).filter((eid) => domainOf(eid) === 'alarm_control_panel');
+  if (!ids.length) return null;
+  // More than one: first alphabetically wins, deterministically — no
+  // per-user picker yet (the others aren't hidden, just not surfaced here).
+  return ids.slice().sort()[0];
 }
 
 // --- modes ------------------------------------------------------------------
@@ -591,7 +649,8 @@ window.CasaDiscovery = {
   discoverRooms, discoverAllOfDomain, discoverPeople, discoverWeather, discoverAlarm, discoverModes, discoverCameras,
   resolveEntityArea, mapEnergyPrefs, discoverEnergyEntities,
   resolveVisible, applyEntityVisibility, buildExportedConfig, MODULE_KEYS,
-  CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName
+  CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName,
+  powerSensorForSwitch, classifySwitchPower
 };
 
 })();

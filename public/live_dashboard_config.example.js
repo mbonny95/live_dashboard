@@ -38,9 +38,13 @@ window.CASA_CONFIG = {
     icons: {}    // area ID -> icon id, to override the guessed icon — e.g. { cucina: '#i-house' }
   },
 
-  // Alarm panel: the dashboard never guesses which alarm_control_panel is
-  // "the" one (there could be several, or none). Set the entity_id to show
-  // the alarm card; leave null to hide it.
+  // Alarm panel: auto-discovered since v1.5.4 — the first alarm_control_panel
+  // entity Home Assistant reports (any brand; its arm/disarm buttons follow
+  // its own supported_features) shows up with no config needed. Set the
+  // entity_id here only if you have more than one and auto-discovery picked
+  // the wrong one (it takes the first alphabetically) — this always wins
+  // over discovery. Leaving it null does NOT hide the card if you have an
+  // alarm_control_panel entity; there's no config knob for that yet.
   alarm: null,   // 'alarm_control_panel.home'
 
   // "Modalità casa" style scene switcher: an input_select whose options

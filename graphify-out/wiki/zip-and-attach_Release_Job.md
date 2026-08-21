@@ -1,4 +1,4 @@
-# zip-and-attach Release Job
+# Zip-and-Attach Release Job
 
 > 1 nodes · cohesion 1.00
 

@@ -3,6 +3,88 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.5.4] - 2026-08-21
+
+### Fixed
+
+- **Live camera view was a black rectangle on RTSP/ONVIF/generic cameras —
+  most of the installed base.** The live overlay built its stream URL by
+  string-substituting the preview URL (`camera_proxy` -> `camera_proxy_stream`),
+  which only ever serves MJPEG; cameras Home Assistant repackages through its
+  `stream` component (RTSP, ONVIF, generic, the majority of real installs)
+  don't expose that endpoint at all, so the preview worked (a different,
+  universal endpoint) while the live tap didn't. Also fixed in the same
+  pass: the old MJPEG stream's signed token expired after a few minutes with
+  nothing on screen to explain the resulting black frame. Replaced with a
+  three-layer strategy, first one that works wins, always silent on
+  failure: (1) `camera/stream` in HLS format, played natively where the
+  browser supports it (Safari/iOS); (2) the same stream via a vendored
+  `hls.js` — the code path exists but no vendor file ships in this release
+  (open question, see below); (3) fast `camera_proxy` still-image polling
+  (2-3 fps, re-reading the signed token every cycle so it can't expire),
+  labeled "anteprima aggiornata"/"preview refreshing" instead of "live" so
+  it never pretends to be more than it is. The fast poll only runs while
+  the camera detail is open and pauses with the tab, same as the existing
+  preview timer.
+- **Smart plugs read "accesa" as "in use" even when the appliance behind
+  them was idle.** A `switch.*`'s relay state answers "is it energized",
+  not "is the washer actually washing" — the appliances module already knew
+  this distinction, but a plug that ended up in the generic room list
+  (the common case for anyone without a `config.appliances` entry) never
+  got it. Switches whose device also exposes a `device_class: power` sensor
+  (true for most smart plugs) now read as three levels — off / active
+  (relay closed, under a 3 W default threshold — energized but idle) /
+  running (at or above threshold, shown with live wattage) — everywhere a
+  switch state is shown: the room panel, the room summary line, and the
+  "on now" list. The threshold is adjustable from Settings -> Energia. A
+  switch with no power sensor on its device is unaffected, exactly the
+  v1.5.3 behavior.
+- **`energy.gridNote` (the note under the single-ring energy card) mixed an
+  instantaneous grid-export reading into a sentence about the day's
+  totals**, sitting right below a ring that's entirely daily — e.g. "1,4 kWh
+  dalla rete · 0,85 kW in immissione". Now both halves are the same day's
+  totals as the ring above them. Only reachable via the single-ring
+  fallback (installs with partial daily energy data), which is why it went
+  unnoticed for months.
+- **Units baked into a translated template string instead of the
+  formatted value** (`energy.periodNote`, which hardcoded " kWh" after an
+  unlabeled number) — moved into the value the same way every other power/
+  energy string in this codebase already does it, so a translator editing
+  the sentence can never accidentally duplicate or drop a unit.
+
+### Added
+
+- **Alarm panel auto-discovery.** Previously the only module in this
+  project with no auto-discovery at all — no `config.alarm`, no card,
+  regardless of brand. Now the first `alarm_control_panel.*` entity Home
+  Assistant reports shows up with zero configuration, the same way rooms/
+  weather/people do; `config.alarm` still always wins when more than one
+  panel exists and discovery's alphabetical pick isn't the right one.
+- **Alarm PIN awareness.** An entity declaring `code_format` fails `failed
+  to perform action` when armed/disarmed without a `code` — this dashboard
+  has no PIN pad yet, so instead of calling the service blindly (and
+  failing silently on screen) a gated action is now a no-op with an
+  explicit note explaining a code is needed. `code_arm_required: false`
+  installs are unaffected — arming still works with no code, as before.
+  A full PIN keypad is follow-up work.
+- **`ARM_CUSTOM_BYPASS` ("Personalizzato"/"Custom") alarm button**, the one
+  `supported_features` bit the existing dynamic button logic didn't cover
+  yet.
+- **Three new Diagnostica rows**: per camera, which live-view layer
+  actually activated and whether `camera/stream` itself succeeded; which
+  energy ring is in use and, for the single-ring fallback, which daily
+  value is missing; and the alarm entity, how it was found, its declared
+  capabilities, and whether it requires a code.
+
+### Open question
+
+Whether to vendor `hls.js` (~180 KB) for the second live-view layer. The
+code path is written and ready; the file itself isn't included in this
+release — it would be the project's first third-party runtime dependency,
+worth deciding with real data on how many installs stay on the fast-preview
+fallback rather than up front. The new camera Diagnostica row is what lets
+that be answered from real installs instead of guessed.
+
 ## [1.5.3] - 2026-08-20
 
 ### Fixed

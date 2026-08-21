@@ -23,6 +23,7 @@
 //    energyToday()  posts 'casa:energy-today'   -> parent runs hass.callWS('recorder/statistics_during_period')
 //    userDataGet()  posts 'casa:user-data-get'  -> parent runs hass.callWS('frontend/get_user_data')
 //    userDataSet()  posts 'casa:user-data-set'  -> parent runs hass.callWS('frontend/set_user_data')
+//    cameraStream() posts 'casa:camera-stream'  -> parent runs hass.callWS('camera/stream')
 //  panel.js answers with the matching '*-result' message, matched back up by
 //  a request id.
 //
@@ -68,7 +69,8 @@ async function connect(handlers, readyTimeoutMs) {
     }
     if (d.type === 'casa:call-result' || d.type === 'casa:history-result' || d.type === 'casa:registries-result'
       || d.type === 'casa:energy-prefs-result' || d.type === 'casa:energy-today-result'
-      || d.type === 'casa:user-data-get-result' || d.type === 'casa:user-data-set-result') {
+      || d.type === 'casa:user-data-get-result' || d.type === 'casa:user-data-set-result'
+      || d.type === 'casa:camera-stream-result') {
       const p = pending.get(d.id);
       if (!p) return;
       pending.delete(d.id);
@@ -147,6 +149,15 @@ async function connect(handlers, readyTimeoutMs) {
 
     userDataSet: function (value) {
       return send('casa:user-data-set', { value });
+    },
+
+    // Resolves { url } (an HA-relative /api/hls/<token>/master_m3u8 path,
+    // same origin as this page since it's served by HA itself) or rejects —
+    // never returns a fabricated URL. Rejection is a normal outcome (no
+    // `stream` integration loaded, entity doesn't support it) that callers
+    // fall back from silently — see dash_neumo*.html's _camStartStream.
+    cameraStream: function (entity_id) {
+      return send('casa:camera-stream', { entity_id });
     },
 
     close: function () {

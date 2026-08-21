@@ -134,11 +134,17 @@ That's the sensor's data, not a bug in the chart.
 
 ### The live camera overlay is a black/broken image
 
-`camera_proxy_stream` (the MJPEG endpoint this dashboard uses for the live
-view) isn't implemented by every camera integration — some only support the
-still-image proxy or a WebRTC/HLS stream instead. If the still preview works
-but tapping into live doesn't, that's the integration, not a config mistake;
-there's no per-camera setting here to change it.
+Fixed in v1.5.4 — before that release, the live view always tried
+`camera_proxy_stream` (MJPEG), which RTSP/ONVIF/generic cameras (most of
+the installed base) never implement, producing exactly this black
+rectangle even though the still preview worked fine (previews use a
+different, universal endpoint). If you're still seeing this on v1.5.4 or
+later: open Settings → Diagnostica and check the camera's row — it names
+which of the three layers (native HLS / hls.js / fast previews) is active
+and whether `camera/stream` itself succeeded or failed, which narrows down
+whether the problem is the `stream` integration, the browser, or something
+else. On a current version, the worst case should be "anteprima
+aggiornata"/"preview refreshing" stills, never a black rectangle.
 
 ### The "Sorveglianza"/"Surveillance" tab doesn't appear even though I have cameras
 
@@ -153,13 +159,28 @@ this dashboard discovers.
 Buttons are generated from the alarm entity's `supported_features` bitmask,
 not guessed. If your alarm integration doesn't declare `arm_home` (bit 1),
 the "Home" button won't appear — that's the integration's own declaration,
-this dashboard doesn't second-guess it. If the whole card is missing, check
-that `config.alarm` is set to a real `alarm_control_panel.*` entity ID.
+this dashboard doesn't second-guess it. `supported_features` absent or `0`
+means only status and Disarm show, on purpose. If the whole card is
+missing, check whether you actually have an `alarm_control_panel.*`
+entity in this Home Assistant instance at all — since v1.5.4 the alarm
+card is auto-discovered the same way rooms/weather/people are, no
+`config.alarm` required; it only needs setting explicitly if you have more
+than one alarm panel and discovery (first alphabetically) picked the wrong
+one.
 
-### A whole section (Energy / Irrigation / Vehicle / Cameras / Alarm / Modes / People) is missing
+### Alarm buttons tap but nothing happens
 
-That's by design when it isn't configured: `alarm`/`modes`/`energy`/
-`irrigation`/`vehicle` are all opt-in in `config.js` (`null` hides them);
-`people`/`weather`/`cameras` auto-discover but hide themselves if nothing is
+If the entity declares a `code_format` (a PIN/code the integration
+requires), this dashboard deliberately does **not** call the service
+without one — there's no PIN pad yet, so arm/disarm on that entity is a
+no-op with a note under the buttons explaining why, rather than a silent
+`failed to perform action`. Use the Home Assistant app for that panel until
+a code entry lands here.
+
+### A whole section (Energy / Irrigation / Vehicle / Cameras / Modes / People) is missing
+
+That's by design when it isn't configured: `modes`/`energy`/`irrigation`/
+`vehicle` are all opt-in in `config.js` (`null` hides them); `people`/
+`weather`/`cameras`/`alarm` auto-discover but hide themselves if nothing is
 found. Nothing here indicates an error — see `live_dashboard_config.example.js` for what
 each section needs.

@@ -79,7 +79,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.5.3
+       module_url: /local/community/live_dashboard/panel.js?v=1.5.4
        embed_iframe: true
        trust_external_script: false
    ```
@@ -92,7 +92,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.5.3` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.5.4` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -152,12 +152,15 @@ the folder the panel actually registers itself from — see the note under
 "Via HACS" above for what that looks like when it goes wrong.
 
 That's it — with no config file at all, the dashboard auto-discovers your
-areas and shows up to 12 of them as room tiles, plus any `person.*` entities
-and the first `weather.*` entity it finds. Alarm, house-mode scene switcher,
-Energy, Irrigation and Vehicle stay hidden until you opt into them (see
-below) — there's no way to guess a "house mode" script pairing or which of
-several alarm panels is "the" one, so those stay off by default rather than
-guessing wrong.
+areas and shows up to 12 of them as room tiles, plus any `person.*` entities,
+the first `weather.*` entity it finds, and (v1.5.4) the first
+`alarm_control_panel.*` entity, whichever brand — its arm/disarm buttons
+follow its own `supported_features`, so a panel that can't do e.g. Night
+never shows a button that would just fail. With more than one alarm panel,
+config.alarm still lets you pick which; the rest is simply not surfaced yet.
+House-mode scene switcher, Energy, Irrigation and Vehicle stay hidden until
+you opt into them (see below) — there's no way to guess a "house mode"
+script pairing, so those stay off by default rather than guessing wrong.
 
 ### Configuring the rest
 
@@ -355,6 +358,17 @@ fill in).
 Appliances that are running also appear in the Casa "on right now" list and
 in the room summary, the same as lights or a vacuum in progress.
 
+### Smart plugs without a `config.appliances` entry
+
+A generic `switch.*` entity in a room panel makes the same "is it actually
+drawing load" distinction (v1.5.4), with zero configuration: if its device
+also exposes a `sensor.*` with `device_class: power` (true for most smart
+plugs), the relay's `on` state is read as three levels instead of two —
+**off**, **active** (relay closed, under the threshold — plugged in but
+idle), or **running** (at/above the threshold, shown with the live wattage).
+The threshold defaults to 3 W and is adjustable from Settings → Energia. A
+switch with no power sensor on its device is unaffected — plain on/off,
+exactly as before.
 ## Cameras (optional)
 
 Fully auto-discovered from every `camera.*` entity Home Assistant reports —
@@ -367,10 +381,23 @@ maintain.
   `entity_picture` (the URL Home Assistant already signs for you), reloaded
   every `snapshotInterval` seconds (10 by default). The refresh pauses while
   the browser tab/page isn't visible.
-- **Live on tap.** Tapping a preview opens a fullscreen MJPEG stream (the
-  same signed URL, `/api/camera_proxy/` swapped for
-  `/api/camera_proxy_stream/`) — no `hls.js`, no WebRTC, no build step. It
-  closes automatically after 2 minutes, or on tap.
+- **Live on tap, layered by what the camera and browser can actually do**
+  (v1.5.4). Tapping a preview tries, in order, the first one that works:
+  1. A real HLS stream via Home Assistant's `stream` integration, played
+     natively — Safari, iOS, and many iOS webviews only.
+  2. The same stream through a vendored `hls.js`, if one has been dropped
+     into `public/vendor/` — none ships with this project today, so this
+     layer is currently always inactive; the Diagnostics panel shows which
+     layer is actually in use.
+  3. Fast still-image polling (2–3 frames/second) from the same
+     `entity_picture` endpoint the tiles already use, labeled "preview
+     refreshing" instead of "live" — this is what most Android/companion-app
+     users and most RTSP/ONVIF/generic cameras get today, since they don't
+     expose an MJPEG stream (the old `/api/camera_proxy_stream/` approach)
+     and Android has no native HLS. It's not a smooth live feed, but it
+     moves, on any camera, on any platform, with no dependencies. Only runs
+     while the detail view is open, and pauses with the tab/page.
+  The detail view closes automatically after 2 minutes, or on tap.
 - **Privacy for indoor cameras**: list an entity_id in `hideUntilTap` and its
   tile shows only an icon — no preview loads — until someone taps it once to
   reveal the still, and taps again to go live. Meant for a camera pointed at

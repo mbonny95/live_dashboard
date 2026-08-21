@@ -34,6 +34,8 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   settingsPowerUnitLabel: 'Unità potenza istantanea', settingsPowerUnitAuto: 'Auto',
   settingsPowerUnitW: 'W', settingsPowerUnitKw: 'kW',
   settingsPowerUnitDailyNote: 'I totali giornalieri restano in kWh.',
+  settingsPlugThresholdLabel: 'Soglia presa attiva',
+  settingsPlugThresholdNote: 'Sotto questa potenza una presa accesa è considerata in standby, non in funzione.',
 
   // diagnostics panel (v1.5.1), static labels
   diagTitle: 'Diagnostica', diagConfigHeading: 'Config',
@@ -60,17 +62,30 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   diagEnvPrefsOk: 'ok', diagEnvPrefsFailed: 'fallito', diagEnvPrefsUnknown: 'non tentato',
   diagCopyButton: 'Copia diagnostica', diagCopyPrivacyNote: 'Contiene i nomi delle tue entità e stanze, nessuna password.',
 
+  // v1.5.4 — camere/anello/allarme, static labels
+  diagCameraHeading: 'Telecamere — live', diagCamNotOpened: 'non ancora aperta',
+  diagCamLayerNative: 'HLS nativo', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'anteprime rapide',
+  diagCamWsNotAttempted: 'camera/stream non disponibile su questo backend', diagCamWsOk: 'camera/stream ok', diagCamWsFailed: 'camera/stream fallito',
+  diagRingHeading: 'Anello energia', diagRingInUse: 'In uso', diagRingNoEnergy: 'nessun anello (energia non configurata)',
+  diagRingDoubleLabel: 'anello doppio', diagRingSingleGeneric: 'anello singolo',
+  diagSourceDomain: 'trovata per dominio alarm_control_panel',
+  diagAlarmHeading: 'Allarme', diagAlarmEntity: 'Entità', diagAlarmFoundVia: 'Trovata tramite',
+  diagAlarmCapabilities: 'Capacità dichiarate', diagAlarmDisarmOnly: 'solo disinserimento',
+  diagAlarmCodeRequired: 'Richiede un codice', diagVerdictYes: 'sì', diagVerdictNo: 'no',
+
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Inserito · fuori', 'alarm.armedHome': 'Inserito · in casa', 'alarm.armedNight': 'Inserito · notte',
   'alarm.armedVacation': 'Inserito · vacanza', 'alarm.arming': 'In inserimento…',
   'alarm.btnAway': 'Fuori', 'alarm.btnHome': 'In casa', 'alarm.btnNight': 'Notte', 'alarm.btnVacation': 'Vacanza',
+  'alarm.btnCustom': 'Personalizzato',
   'alarm.disarmed': 'Disinserito', 'alarm.pending': 'In attesa…', 'alarm.triggered': 'ALLARME IN CORSO',
+  'alarm.codeRequired': 'Questa centrale richiede un codice: usa l’app Home Assistant per inserire/disinserire.',
 
   'appliance.energyToday': '{val} oggi',
 
   'cameras.motionDetected': 'Movimento rilevato · {name}', 'cameras.allQuiet': 'Tutto tranquillo',
   'cameras.tabSub': '{n} telecamere · anteprime aggiornate ogni {seconds} secondi',
-  'cameras.moreCount': '+{n} altre',
+  'cameras.moreCount': '+{n} altre', 'cameras.snapshotBadge': 'Anteprima aggiornata',
 
   'chart.hide': 'Nascondi andamento', 'chart.show': 'Vedi andamento', 'chart.show48h': 'Vedi andamento 48h',
 
@@ -81,11 +96,11 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'energy.avgPerDay': 'Media prodotta al giorno', 'energy.consumptionNow': 'Consumo casa adesso',
   'energy.days': '{n} giorni', 'energy.fromGridShort': 'dalla rete', 'energy.gridCost': 'Costo del prelievo',
   'energy.gridImportNow': 'Prelievo dalla rete', 'energy.inverterProducing': 'inverter in produzione',
-  'energy.inverterStandby': 'inverter in standby', 'energy.periodNote': 'prodotti negli ultimi {n} giorni · {grid} kWh presi dalla rete',
+  'energy.inverterStandby': 'inverter in standby', 'energy.periodNote': 'prodotti negli ultimi {n} giorni · {grid} presi dalla rete',
   'energy.producedPeriod': 'Prodotti nel periodo', 'energy.producedShort': 'prodotti', 'energy.productionNow': 'Produzione adesso',
   'energy.takenFromGrid': 'Prelevati dalla rete', 'energy.selfConsumption': '{pct} di autoconsumo',
   'energy.selfConsumptionShort': 'autoconsumo',
-  'energy.gridNote': '{grid} dalla rete · {exportVal} in immissione · {status}',
+  'energy.gridNote': '{grid} dalla rete · {exportVal} immessi · {status}',
   'energy.selfConsumptionLabel': 'Autoconsumo', 'energy.feedIn': 'Immissione', 'energy.kwhConsumed': 'kWh consumati',
   'energy.selfShort': 'autocons.', 'energy.gridShort': 'dalla rete', 'energy.feedShort': 'immessi',
   'energy.compactSummary': 'kWh oggi · {pct} di autoconsumo',
@@ -126,12 +141,13 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'settings.reasonDeviceClass': 'device_class {dc}',
 
   'diag.configResolved': 'Config caricata da {path}.',
+  'diag.ringMissing': 'anello singolo — manca {field}',
 
   'siren.sounding': 'in suono',
 
   'status.connected': 'Collegato', 'status.connecting': 'Connessione…', 'status.error': 'Non collegato',
 
-  'switch.off': 'spenta', 'switch.running': 'in funzione',
+  'switch.off': 'spenta', 'switch.running': 'in funzione', 'switch.active': 'attiva',
 
   'valve.open': 'aperta', 'valve.closed': 'chiusa',
   'valve.openAction': 'Apri', 'valve.closeAction': 'Chiudi',

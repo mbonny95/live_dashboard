@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '1.5.3';
+const VERSION = '1.5.4';
 console.info(`[live_dashboard] v${VERSION}`);
 
 const FLUSH_MS = 600;
@@ -447,6 +447,27 @@ class CasaPanel extends HTMLElement {
     }
   }
 
+  // v1.5.4: the live-camera fix. camera/stream is the only websocket command
+  // that knows how to turn ANY camera integration (RTSP/ONVIF/generic — the
+  // majority of the installed base, none of which serve MJPEG) into a
+  // playable URL, by asking HA's own `stream` component to repackage it as
+  // HLS. Callers (dash_neumo*.html) treat a rejection here as a normal,
+  // silent "fall back to snapshot polling" signal, not an error to surface —
+  // see this file's fetchDailyCounterHistory for the same "no Energy
+  // dashboard configured" reasoning applied to a different optional feature.
+  async _handleCameraStream(msg) {
+    if (!this._hass) {
+      this._reply(msg.id, 'casa:camera-stream-result', { ok: false, error: 'hass not ready' });
+      return;
+    }
+    try {
+      const result = await this._hass.callWS({ type: 'camera/stream', entity_id: msg.entity_id, format: 'hls' });
+      this._reply(msg.id, 'casa:camera-stream-result', { ok: true, result });
+    } catch (e) {
+      this._reply(msg.id, 'casa:camera-stream-result', { ok: false, error: (e && e.message) || String(e) });
+    }
+  }
+
   _onMessage(e) {
     if (!this._iframe || e.source !== this._iframe.contentWindow) return;
     const d = e.data;
@@ -468,6 +489,8 @@ class CasaPanel extends HTMLElement {
       this._handleUserDataGet(d);
     } else if (d.type === 'casa:user-data-set') {
       this._handleUserDataSet(d);
+    } else if (d.type === 'casa:camera-stream') {
+      this._handleCameraStream(d);
     }
   }
 }
