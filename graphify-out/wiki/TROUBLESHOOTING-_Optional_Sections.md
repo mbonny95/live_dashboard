@@ -1,10 +1,10 @@
-# Irrigation Chart Mismatch
+# TROUBLESHOOTING: Optional Sections
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Irrigation zone chart reflects raw noisy sensor history** (0 connections) — `TROUBLESHOOTING.md`
+- **Optional sections (Energy/Irrigation/Vehicle/Cameras/Modes/People)** (0 connections) — `TROUBLESHOOTING.md`
 
 ## Relationships
 

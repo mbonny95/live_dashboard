@@ -1,11 +1,11 @@
-# Density Constraint Retired (v1.4.9)
+# Changelog: Camera Grid Adapts to Count
 
 > 2 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Vincolo 1280x800 senza scroll ritirato (v1.4.9)** (1 connections) — `CLAUDE.md`
-- **Minimi non negoziabili: 44px bersagli, 10px testo, mai comprimere per far entrare più roba** (1 connections) — `CLAUDE.md`
+- **Casa Sorveglianza card adapts to camera count** (1 connections) — `CHANGELOG.md`
+- **Sorveglianza tab requires 2+ cameras** (1 connections) — `TROUBLESHOOTING.md`
 
 ## Relationships
 
@@ -13,7 +13,8 @@
 
 ## Source Files
 
-- `CLAUDE.md`
+- `CHANGELOG.md`
+- `TROUBLESHOOTING.md`
 
 ## Audit Trail
 

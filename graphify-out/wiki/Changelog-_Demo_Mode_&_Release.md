@@ -1,4 +1,4 @@
-# Demo Mode Fallback
+# Changelog: Demo Mode & Release
 
 > 5 nodes · cohesion 0.40
 

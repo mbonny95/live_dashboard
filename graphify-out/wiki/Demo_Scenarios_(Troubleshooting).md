@@ -1,0 +1,47 @@
+# Demo Scenarios (Troubleshooting)
+
+> 20 nodes · cohesion 0.12
+
+## Key Concepts
+
+- **?demo&scenario= troubleshooting table** (9 connections) — `TROUBLESHOOTING.md`
+- **Seven forceable demo scenarios** (6 connections) — `CHANGELOG.md`
+- **Demo scenario bar (desktop)** (5 connections) — `public/dash_neumo.html`
+- **scenario=partial** (3 connections) — `CHANGELOG.md`
+- **Demo scenario bar (mobile)** (3 connections) — `public/dash_neumo_mobile.html`
+- **switchScenario(id)** (3 connections) — `public/dash_neumo.html`
+- **scenario=missing** (2 connections) — `CHANGELOG.md`
+- **switchScenario(id) [mobile]** (2 connections) — `public/dash_neumo_mobile.html`
+- **scenario=missing (troubleshooting table)** (2 connections) — `TROUBLESHOOTING.md`
+- **scenario=partial (troubleshooting table)** (2 connections) — `TROUBLESHOOTING.md`
+- **Unreleased (CHANGELOG)** (1 connections) — `CHANGELOG.md`
+- **&bare URL flag** (1 connections) — `public/dash_neumo.html`
+- **window.CasaBackendDemo (ha-backend-demo.js global)** (1 connections) — `public/dash_neumo.html`
+- **&bare URL flag [mobile]** (1 connections) — `public/dash_neumo_mobile.html`
+- **Stuck on "Connessione…" / demo-mode fallback** (1 connections) — `TROUBLESHOOTING.md`
+- **scenario=default** (1 connections) — `TROUBLESHOOTING.md`
+- **scenario=export** (1 connections) — `TROUBLESHOOTING.md`
+- **scenario=import** (1 connections) — `TROUBLESHOOTING.md`
+- **scenario=night** (1 connections) — `TROUBLESHOOTING.md`
+- **scenario=odd-units** (1 connections) — `TROUBLESHOOTING.md`
+
+## Relationships
+
+- [Changelog: Alarm & Camera Fixes](Changelog-_Alarm_%26_Camera_Fixes.md) (1 shared connections)
+
+## Source Files
+
+- `CHANGELOG.md`
+- `TROUBLESHOOTING.md`
+- `public/dash_neumo.html`
+- `public/dash_neumo_mobile.html`
+
+## Audit Trail
+
+- EXTRACTED: 41 (87%)
+- INFERRED: 6 (13%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

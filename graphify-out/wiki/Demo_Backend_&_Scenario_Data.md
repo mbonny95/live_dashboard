@@ -1,15 +1,19 @@
-# Demo Backend Data
+# Demo Backend & Scenario Data
 
-> 6 nodes · cohesion 0.53
+> 10 nodes · cohesion 0.29
 
 ## Key Concepts
 
-- **ha-backend-demo.js** (5 connections) — `public/ha-backend-demo.js`
+- **ha-backend-demo.js** (9 connections) — `public/ha-backend-demo.js`
 - **connect()** (4 connections) — `public/ha-backend-demo.js`
 - **buildRegistries()** (2 connections) — `public/ha-backend-demo.js`
 - **cloneStates()** (2 connections) — `public/ha-backend-demo.js`
+- **patchConfig()** (2 connections) — `public/ha-backend-demo.js`
 - **rand()** (2 connections) — `public/ha-backend-demo.js`
+- **scenarioConfig()** (2 connections) — `public/ha-backend-demo.js`
+- **currentScenarioId()** (1 connections) — `public/ha-backend-demo.js`
 - **entity()** (1 connections) — `public/ha-backend-demo.js`
+- **scenarioSeed()** (1 connections) — `public/ha-backend-demo.js`
 
 ## Relationships
 
@@ -21,7 +25,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 16 (100%)
+- EXTRACTED: 26 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

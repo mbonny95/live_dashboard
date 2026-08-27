@@ -10,9 +10,9 @@
     "semantic_hash": "d7b4128962bfa753aec0bce201789898"
   },
   "public/ha-backend-demo.js": {
-    "mtime": 1787227480.1592004,
-    "ast_hash": "6ece1c37cb234ac1b19afc859610ce6f",
-    "semantic_hash": "6ece1c37cb234ac1b19afc859610ce6f"
+    "mtime": 1787818700.2530246,
+    "ast_hash": "6562fbbc870edbb5f1bfd0ecda2c3f77",
+    "semantic_hash": "6562fbbc870edbb5f1bfd0ecda2c3f77"
   },
   "public/ha-backend-panel.js": {
     "mtime": 1787319784.82722,
@@ -65,9 +65,9 @@
     "semantic_hash": "6719db3df8abacac7cc567ed9e6fe6e8"
   },
   "CHANGELOG.md": {
-    "mtime": 1787321007.0779657,
-    "ast_hash": "2539ab69f468b3ea283b702fa1a755e0",
-    "semantic_hash": "2539ab69f468b3ea283b702fa1a755e0"
+    "mtime": 1787820067.5902038,
+    "ast_hash": "fafc87e94da34c5e80f53c2dfe462bb4",
+    "semantic_hash": "fafc87e94da34c5e80f53c2dfe462bb4"
   },
   "README.it.md": {
     "mtime": 1787320923.6330037,
@@ -80,19 +80,19 @@
     "semantic_hash": "b5b9178071cd9214e61a2a52ee8e1c91"
   },
   "TROUBLESHOOTING.md": {
-    "mtime": 1787320975.7914772,
-    "ast_hash": "f535adb359f5b18df82379406afad681",
-    "semantic_hash": "f535adb359f5b18df82379406afad681"
+    "mtime": 1787820049.9082637,
+    "ast_hash": "ce938c421ac1e3ba75997b047d70309b",
+    "semantic_hash": "ce938c421ac1e3ba75997b047d70309b"
   },
   "public/dash_neumo.html": {
-    "mtime": 1787320698.4737952,
-    "ast_hash": "9fcf932aa48817eca14a9110d15de362",
-    "semantic_hash": "9fcf932aa48817eca14a9110d15de362"
+    "mtime": 1787819673.659529,
+    "ast_hash": "59c6dca2a8c39bd5aa780b35b082949b",
+    "semantic_hash": "59c6dca2a8c39bd5aa780b35b082949b"
   },
   "public/dash_neumo_mobile.html": {
-    "mtime": 1787320765.097673,
-    "ast_hash": "5586844c5d404b521d85d2bcb532268e",
-    "semantic_hash": "5586844c5d404b521d85d2bcb532268e"
+    "mtime": 1787819703.6576986,
+    "ast_hash": "d557c898d7a8550d0d5fcc85d37adfc2",
+    "semantic_hash": "d557c898d7a8550d0d5fcc85d37adfc2"
   },
   "assets/icon-256.png": {
     "mtime": 1786733001.0,
@@ -143,5 +143,10 @@
     "mtime": 1786913008.643485,
     "ast_hash": "8be6b08f1af1dfa29a14bc378bcabb42",
     "semantic_hash": "8be6b08f1af1dfa29a14bc378bcabb42"
+  },
+  ".claude/settings.local.json": {
+    "mtime": 1787819323.7601056,
+    "ast_hash": "5bfc81bad564fd45418c33fbe3c5c198",
+    "semantic_hash": "5bfc81bad564fd45418c33fbe3c5c198"
   }
 }

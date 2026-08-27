@@ -1,11 +1,11 @@
-# Camera Grid Adapts to Count
+# Changelog: Cover Slider Fix (v1.5.2)
 
 > 2 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Casa Sorveglianza card adapts to camera count** (1 connections) — `CHANGELOG.md`
-- **Sorveglianza tab requires 2+ cameras** (1 connections) — `TROUBLESHOOTING.md`
+- **Cover position slider touch/long-press fix** (1 connections) — `CHANGELOG.md`
+- **v1.5.2 release** (1 connections) — `CHANGELOG.md`
 
 ## Relationships
 
@@ -14,7 +14,6 @@
 ## Source Files
 
 - `CHANGELOG.md`
-- `TROUBLESHOOTING.md`
 
 ## Audit Trail
 

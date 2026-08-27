@@ -94,7 +94,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 </defs></svg>
 
-<div data-nu="1" data-theme="{{ theme }}" style="min-height:100dvh;background:var(--page);color:var(--tx);max-width:560px;margin:0 auto;padding:14px 14px calc(134px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px">
+<div data-nu="1" data-theme="{{ theme }}" style="min-height:100dvh;background:var(--page);color:var(--tx);max-width:560px;margin:0 auto;padding:14px 14px calc(134px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;padding-bottom:{{ scenarioBarPad }}">
 
 <div style="display:flex;align-items:center;gap:11px;flex:none">
 <div style="flex:1;min-width:0">
@@ -1121,6 +1121,16 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </div>
 
+<!-- Demo scenario bar — see dash_neumo.html's copy for the "why". Stacked
+     above the bottom tab bar (fixed, ~80px + safe area), never over it. -->
+<sc-if value="{{ scenarioBarVisible }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:0;right:0;bottom:calc(84px + env(safe-area-inset-bottom));background:#14171c;display:flex;gap:6px;padding:6px 8px;overflow-x:auto;box-shadow:0 -1px 0 rgba(0,0,0,.4);z-index:6">
+<sc-for list="{{ scenarioItems }}" as="sc" hint-placeholder-count="7">
+<button onClick="{{ sc.go }}" style="flex:none;min-height:44px;min-width:44px;padding:0 14px;border-radius:8px;background:{{ sc.bg }};color:{{ sc.fg }};font:600 11.5px/1 var(--font-body);letter-spacing:.02em;white-space:nowrap">{{ sc.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:900},&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;casa&quot;,&quot;stanze&quot;,&quot;irrigazione&quot;,&quot;energia&quot;,&quot;auto&quot;,&quot;meteo&quot;],&quot;default&quot;:&quot;casa&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;themePref&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;day&quot;,&quot;night&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;showModes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamento&quot;}}">
@@ -1165,6 +1175,14 @@ function loadScript(src) {
     s.onerror = () => resolve(false); // config.js is optional — a 404 is not an error
     document.head.appendChild(s);
   });
+}
+
+// See dash_neumo.html's copy of this function for why: `scenario` in the
+// URL, then a full reload — the demo has no state worth preserving.
+function switchScenario(id) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('scenario', id);
+  window.location.replace(url.toString());
 }
 
 // Tried in order, first hit wins. HACS overwrites the plugin's own folder
@@ -1215,6 +1233,9 @@ class Component extends DCLogic {
   t = (key) => key;
   // See dash_neumo.html's copy of this field for why it's a Proxy, not {}.
   strings = new Proxy({}, { get: () => '' });
+  // See dash_neumo.html's copy of this field for why — `&bare` hides the
+  // scenario bar.
+  bare = new URLSearchParams(location.search).has('bare');
 
   componentDidMount() {
     this.timer = setInterval(() => this.setState({ now: Date.now() }), 15000);
@@ -2595,8 +2616,23 @@ class Component extends DCLogic {
     const exportSheet = this.state.exportSheet;
     const longMenuId = this.state.longMenu;
 
+    // See dash_neumo.html's copy of this block for why. Stacked above the
+    // bottom tab bar (fixed, ~80px + safe area) rather than covering it.
+    const scenarioBarVisible = this.kind === 'demo' && !this.bare;
+    const scenarioBackend = scenarioBarVisible ? window.CasaBackendDemo : null;
+    const scenarioItems = scenarioBackend ? scenarioBackend.SCENARIOS.map((sc) => {
+      const sel = sc.id === scenarioBackend.activeScenario;
+      return {
+        id: sc.id, label: sc.name, sel,
+        bg: sel ? '#454d59' : 'transparent', fg: sel ? '#f4f6fa' : '#9aa3b2',
+        go: () => switchScenario(sc.id)
+      };
+    }) : [];
+    const scenarioBarPad = scenarioBarVisible ? 'calc(190px + env(safe-area-inset-bottom))' : 'calc(134px + env(safe-area-inset-bottom))';
+
     return {
       S: this.strings, isDemo: this.kind === 'demo',
+      scenarioBarVisible, scenarioItems, scenarioBarPad,
       theme, tabs,
       toggleTheme: () => this.setState({ theme: theme === 'night' ? 'day' : 'night' }),
       themeIcon: theme === 'night' ? '#i-moon' : '#i-sun',
@@ -2644,17 +2680,15 @@ class Component extends DCLogic {
       prodToday: prodT === null ? '—' : this.dec(prodT, 1),
       prodTodayFull: prodT === null ? '—' : this.dec(prodT, 2) + ' kWh',
       gridToday: gridT === null ? '—' : this.dec(gridT, 2) + ' kWh',
-      selfRatio: hasEnergy && en.production && en.consumption ? (() => {
-        const p = this.n(en.production), c = this.n(en.consumption);
-        return p === null || c === null || c === 0 ? '—' : this.dec(Math.min(100, (p / c) * 100), 0) + '%';
-      })() : '—',
-      energySummaryLine: this.t('energy.summaryLine', {
-        status: invStatus,
-        pct: hasEnergy && en.production && en.consumption ? (() => {
-          const p = this.n(en.production), c = this.n(en.consumption);
-          return p === null || c === null || c === 0 ? '—' : this.dec(Math.min(100, (p / c) * 100), 0) + '%';
-        })() : '—'
-      }),
+      // pct is dailySelfPct, not a live production/consumption ratio — this
+      // line sits right above gridToday (a daily total) in the hasOldRing
+      // fallback, so mixing in an instantaneous ratio here made the two
+      // adjacent numbers describe different time windows without saying so.
+      // See dash_neumo.html's copy of this fix for the full "why" (found via
+      // the `partial` demo scenario). dailySelfPct is '—' in exactly the
+      // case that reaches hasOldRing — an honest dash beats a
+      // contradiction-inducing wrong percentage.
+      energySummaryLine: this.t('energy.summaryLine', { status: invStatus, pct: dailySelfPct }),
       showEnergyChart: energyChart,
       energyChartLabel: energyChart ? this.t('chart.hide') : this.t('chart.show'),
       toggleEnergyChart: () => this.toggleChart('energia'),

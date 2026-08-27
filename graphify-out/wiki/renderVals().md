@@ -1,8 +1,8 @@
 # renderVals()
 
-> God node · 54 connections · `public/dash_neumo.html`
+> God node · 55 connections · `public/dash_neumo.html`
 
-**Community:** [Alarm, Rooms & Appliances Data](Alarm%2C_Rooms_%26_Appliances_Data.md)
+**Community:** [Alarm Guard & Appliance Helpers](Alarm_Guard_%26_Appliance_Helpers.md)
 
 ## Connections by Relation
 
@@ -28,11 +28,14 @@
 - isOn() `EXTRACTED`
 - dec() `EXTRACTED`
 
+### conceptually_related_to
+- energy.gridNote daily/instantaneous mixing fix `INFERRED`
+
 ### rationale_for
 - PIN-Gated Alarm Guard `INFERRED`
 
 ### semantically_similar_to
-- Component.renderVals() `INFERRED`
+- renderVals() \[mobile\] `INFERRED`
 
 ---
 

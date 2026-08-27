@@ -3,6 +3,43 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- **Seven forceable data scenarios in demo mode**
+  (`?demo&scenario=export|import|night|partial|missing|odd-units`, plus
+  `default`), each a pure data patch to `SEED`/`DEMO_CONFIG` in
+  `ha-backend-demo.js` applied before the backend connects — no branching
+  added anywhere else, so what runs under a scenario is exactly the code a
+  real installation runs. A thin, deliberately non-neumorphic dark bar at
+  the bottom of the demo (desktop and mobile) switches between them and
+  writes the choice into the URL; `&bare` hides it for screenshots. `partial`
+  and `missing` are the two that matter most: `partial` removes the export
+  and battery entities from `SEED` itself (not just the config) so
+  Diagnostica correctly reports them as "not configured" rather than
+  "missing", and exercises the single-ring energy fallback that several past
+  bugs (double unit suffixes, the `gridNote` mixing bug) lived in unseen;
+  `missing` instead points `DEMO_CONFIG.energy` at entity IDs absent from
+  `SEED`, producing the empty energy state and lighting up the Settings →
+  Energia diagnostics indicators added in v1.5.3. See CLAUDE.md and
+  `TROUBLESHOOTING.md` for the full scenario table.
+
+### Fixed
+
+- **The single-ring energy fallback's headline self-consumption line
+  mixed an instantaneous production/consumption ratio into a card that's
+  otherwise entirely about the day's totals** — sitting directly above a
+  daily grid-import figure, so a demo with no configured export sensor
+  could show "100% self-consumption" right next to "1.4 kWh from grid" (both
+  true, about different things, presented as one statement). Same class of
+  bug as the `energy.gridNote` fix in v1.5.4, just in the line above it,
+  which is why it survived that pass. Now reads the same daily
+  self-consumption percentage used everywhere else this label appears, and
+  honestly shows "—" when the day's total isn't derivable — found by
+  building the `partial` demo scenario above, which is the only path that
+  reaches this fallback with live sensors still present.
+
 ## [1.5.4] - 2026-08-21
 
 ### Fixed

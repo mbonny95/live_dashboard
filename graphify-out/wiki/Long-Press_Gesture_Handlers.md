@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [Alarm, Rooms & Appliances Data](Alarm%2C_Rooms_%26_Appliances_Data.md) (3 shared connections)
+- [Alarm Guard & Appliance Helpers](Alarm_Guard_%26_Appliance_Helpers.md) (3 shared connections)
 
 ## Source Files
 

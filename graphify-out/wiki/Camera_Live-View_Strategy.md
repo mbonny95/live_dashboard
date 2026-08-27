@@ -1,6 +1,6 @@
 # Camera Live-View Strategy
 
-> 51 nodes · cohesion 0.07
+> 48 nodes · cohesion 0.07
 
 ## Key Concepts
 
@@ -13,44 +13,44 @@
 - **componentDidMount()** (6 connections) — `public/dash_neumo.html`
 - **Component.componentDidMount()** (6 connections) — `public/dash_neumo_mobile.html`
 - **Three-Layer Camera Live View** (5 connections) — `public/dash_neumo.html`
+- **loadUserConfig()** (5 connections) — `public/dash_neumo.html`
 - **loadScript()** (5 connections) — `public/dash_neumo.html`
 - **Component._camStartStream()** (5 connections) — `public/dash_neumo_mobile.html`
-- **loadScript() cache-bust propagation fix** (4 connections) — `CHANGELOG.md`
 - **bust()** (4 connections) — `public/dash_neumo.html`
 - **_camStopFastPoll()** (4 connections) — `public/dash_neumo.html`
 - **_closeCam()** (4 connections) — `public/dash_neumo.html`
-- **loadUserConfig()** (4 connections) — `public/dash_neumo.html`
 - **Component._ensureHlsJs()** (4 connections) — `public/dash_neumo_mobile.html`
 - **_openCam()** (4 connections) — `public/dash_neumo.html`
 - **_startSnapTimer()** (4 connections) — `public/dash_neumo.html`
 - **_stopSnapTimer()** (4 connections) — `public/dash_neumo.html`
-- **README: live-on-tap layered strategy documentation** (4 connections) — `README.md`
 - **hls.js vendoring open question** (3 connections) — `CHANGELOG.md`
 - **_attachHlsJs()** (3 connections) — `public/dash_neumo.html`
 - **bust()** (3 connections) — `public/dash_neumo_mobile.html`
 - **Component._camStartFastPoll()** (3 connections) — `public/dash_neumo_mobile.html`
-- *... and 26 more nodes in this community*
+- **Component._camStopFastPoll()** (3 connections) — `public/dash_neumo_mobile.html`
+- **Component._closeCam()** (3 connections) — `public/dash_neumo_mobile.html`
+- *... and 23 more nodes in this community*
 
 ## Relationships
 
-- [Changelog: Diagnostics & Config](Changelog-_Diagnostics_%26_Config.md) (5 shared connections)
-- [Alarm, Rooms & Appliances Data](Alarm%2C_Rooms_%26_Appliances_Data.md) (3 shared connections)
-- [Changelog: Power & Units Fixes](Changelog-_Power_%26_Units_Fixes.md) (1 shared connections)
+- [Alarm Guard & Appliance Helpers](Alarm_Guard_%26_Appliance_Helpers.md) (3 shared connections)
+- [Changelog: Alarm & Camera Fixes](Changelog-_Alarm_%26_Camera_Fixes.md) (2 shared connections)
+- [Changelog: Diagnostics Panel](Changelog-_Diagnostics_Panel.md) (1 shared connections)
 - [Casa Panel Render Sections](Casa_Panel_Render_Sections.md) (1 shared connections)
+- [README Installation Instructions](README_Installation_Instructions.md) (1 shared connections)
+- [Changelog: Energy Diagnostics](Changelog-_Energy_Diagnostics.md) (1 shared connections)
 
 ## Source Files
 
 - `CHANGELOG.md`
-- `README.it.md`
-- `README.md`
 - `TROUBLESHOOTING.md`
 - `public/dash_neumo.html`
 - `public/dash_neumo_mobile.html`
 
 ## Audit Trail
 
-- EXTRACTED: 122 (67%)
-- INFERRED: 60 (33%)
+- EXTRACTED: 121 (70%)
+- INFERRED: 52 (30%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -2,7 +2,7 @@
 
 > God node · 13 connections · `public/dash_neumo_mobile.html`
 
-**Community:** [Alarm, Rooms & Appliances Data](Alarm%2C_Rooms_%26_Appliances_Data.md)
+**Community:** [Config/Entity Visibility Helpers](Config-Entity_Visibility_Helpers.md)
 
 ## Connections by Relation
 

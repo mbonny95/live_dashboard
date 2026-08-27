@@ -1,4 +1,4 @@
-# Unavailable Entity Display
+# TROUBLESHOOTING: Unavailable Entity Display (dup)
 
 > 1 nodes · cohesion 1.00
 

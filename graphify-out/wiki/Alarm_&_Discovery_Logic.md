@@ -7,9 +7,9 @@
 - **discovery.js** (21 connections) — `public/discovery.js`
 - **discoverRooms()** (9 connections) — `public/discovery.js`
 - **domainOf()** (9 connections) — `public/discovery.js`
+- **Alarm panel auto-discovery** (7 connections) — `CHANGELOG.md`
 - **isExcluded()** (7 connections) — `public/discovery.js`
 - **discoverAlarm()** (6 connections) — `public/discovery.js`
-- **Alarm panel auto-discovery** (5 connections) — `CHANGELOG.md`
 - **discoverCameras()** (4 connections) — `public/discovery.js`
 - **discoverEnergyEntities()** (4 connections) — `public/discovery.js`
 - **friendlyName()** (4 connections) — `public/discovery.js`
@@ -33,9 +33,11 @@
 
 ## Relationships
 
-- [Changelog: Power & Units Fixes](Changelog-_Power_%26_Units_Fixes.md) (2 shared connections)
-- [Changelog: Diagnostics & Config](Changelog-_Diagnostics_%26_Config.md) (1 shared connections)
+- [Changelog: Alarm & Camera Fixes](Changelog-_Alarm_%26_Camera_Fixes.md) (2 shared connections)
+- [Changelog: Diagnostics Panel](Changelog-_Diagnostics_Panel.md) (1 shared connections)
+- [Changelog: Power & Units Fixes](Changelog-_Power_%26_Units_Fixes.md) (1 shared connections)
 - [Support Micro-Framework Runtime](Support_Micro-Framework_Runtime.md) (1 shared connections)
+- [Changelog: Appliances & Irrigation](Changelog-_Appliances_%26_Irrigation.md) (1 shared connections)
 
 ## Source Files
 
@@ -45,8 +47,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 95 (91%)
-- INFERRED: 9 (9%)
+- EXTRACTED: 97 (92%)
+- INFERRED: 9 (8%)
 - AMBIGUOUS: 0 (0%)
 
 ---

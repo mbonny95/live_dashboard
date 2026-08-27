@@ -1,10 +1,10 @@
-# Mobile Chart Toggle Handler
+# TROUBLESHOOTING: Irrigation Chart Noise (dup)
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Component.toggleChart()** (0 connections) — `public/dash_neumo_mobile.html`
+- **Irrigation zone chart reflects raw noisy sensor history** (0 connections) — `TROUBLESHOOTING.md`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `public/dash_neumo_mobile.html`
+- `TROUBLESHOOTING.md`
 
 ## Audit Trail
 

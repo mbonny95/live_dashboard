@@ -1,10 +1,10 @@
-# Vehicle Config (README)
+# Mobile Energy Chart Toggle
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **README: vehicle optional config** (0 connections) — `README.md`
+- **Component.chartOn()** (0 connections) — `public/dash_neumo_mobile.html`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `README.md`
+- `public/dash_neumo_mobile.html`
 
 ## Audit Trail
 

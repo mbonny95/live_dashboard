@@ -11,6 +11,33 @@ puts all of it on the clipboard as plain text, so a bug report can be a
 paste instead of a back-and-forth. It only helps once something has
 rendered, though — for a genuinely blank/black panel, see the next section.
 
+### Before you open an issue: try it in `?demo&scenario=…`
+
+The demo backend (`ha-backend-demo.js`) can be forced into seven fixed data
+states, each reachable as a URL — open `dash_neumo.html?demo&scenario=<id>`
+(or `dash_neumo_mobile.html` on a narrow screen) straight from `file://`, no
+Home Assistant needed. A thin dark bar at the bottom of the demo lets you
+switch between them without typing the URL by hand; `&bare` hides that bar
+for screenshots.
+
+| `scenario=` | what it forces |
+| --- | --- |
+| `default` | today's demo, unchanged |
+| `export` | strong sun, house exporting to the grid |
+| `import` | overcast, house pulling from the grid, battery discharging |
+| `night` | zero production, sun below the horizon, night theme |
+| `partial` | only production + grid-import configured — no export sensor, no battery: exercises the single-ring energy fallback |
+| `missing` | config points at entity IDs that don't exist — exercises the empty-state / Diagnostica indicators |
+| `odd-units` | power sensors declaring `Kw`, `w`, `MW`, and one unrecognized unit |
+
+If a bug reproduces in one of these, paste the exact `?demo&scenario=…` link
+into the issue — it's a fixed, shareable data state, so whoever picks up the
+issue sees precisely what you saw without needing your Home Assistant
+instance. If it *doesn't* reproduce in the closest matching scenario, that's
+useful too: it means the bug depends on something these seven states don't
+cover (a specific sensor value, a device quirk), which is worth saying in the
+issue.
+
 ### White / blank panel
 
 - **Check `panel_custom.name` first, especially with a second/parallel

@@ -242,9 +242,129 @@ const DEMO_CONFIG = {
   ]
 };
 
+// ===========================================================================
+//  SCENARI FORZABILI (?demo&scenario=<id>) — vedi CLAUDE.md.
+//
+//  Un solo vincolo, che decide tutto il resto: uno scenario è un insieme di
+//  dati applicato a SEED/DEMO_CONFIG qui sotto, mai un `if (scenario === …)`
+//  altrove nel codice. dash_neumo.html, discovery.js e la formattazione non
+//  sanno che gli scenari esistono — vedono solo entità diverse.
+// ===========================================================================
+const SCENARIOS = [
+  { id: 'default', name: 'Giornata normale' },
+  { id: 'export', name: 'Sole forte, immissione',
+    states: {
+      'sensor.solar_power': { state: '4.6' },
+      'sensor.house_power': { state: '0.7' },
+      'sensor.grid_import_power': { state: '0.0' },
+      'sensor.grid_export_power': { state: '3.7' },
+      'sensor.battery_soc': { state: '95' },
+      'sensor.battery_power': { state: '-0.4' },
+      'sensor.solar_energy_today': { state: '15.4' },
+      'sensor.grid_import_today': { state: '0.1' },
+      'sensor.grid_export_today': { state: '8.9' }
+    } },
+  { id: 'import', name: 'Nuvolo, prelievo',
+    states: {
+      'sensor.solar_power': { state: '0.05' },
+      'sensor.house_power': { state: '1.6' },
+      'sensor.grid_import_power': { state: '1.55' },
+      'sensor.grid_export_power': { state: '0.0' },
+      'sensor.battery_soc': { state: '28' },
+      'sensor.battery_power': { state: '0.6' },
+      'sensor.solar_energy_today': { state: '0.6' },
+      'sensor.grid_import_today': { state: '5.9' },
+      'sensor.grid_export_today': { state: '0.0' }
+    } },
+  { id: 'night', name: 'Notte',
+    states: {
+      'sun.sun': { state: 'below_horizon' },
+      'sensor.solar_power': { state: '0.0' },
+      'sensor.grid_export_power': { state: '0.0' },
+      'sensor.house_power': { state: '0.9' },
+      'sensor.grid_import_power': { state: '0.85' },
+      'sensor.battery_soc': { state: '41' },
+      'sensor.battery_power': { state: '0.45' }
+    } },
+  // The most important scenario — see CLAUDE.md. Entities removed from SEED
+  // (not just left out of the config), so the diagnostics tell "unconfigured"
+  // apart from "missing" (that's the `missing` scenario, below).
+  { id: 'partial', name: 'Dati parziali',
+    removeIds: ['sensor.grid_export_power', 'sensor.grid_export_today', 'sensor.battery_soc', 'sensor.battery_power'],
+    patchConfig(cfg) {
+      cfg.energy.gridExport = null;
+      cfg.energy.gridExportToday = null;
+      cfg.energy.battery = null;
+      return cfg;
+    } },
+  // Config promises entities that were never renamed here — SEED is
+  // untouched, only DEMO_CONFIG.energy points at ids that don't exist.
+  { id: 'missing', name: 'Entità inesistenti',
+    patchConfig(cfg) {
+      const en = cfg.energy;
+      en.production = 'sensor.solar_power_missing';
+      en.consumption = 'sensor.house_power_missing';
+      en.gridImport = 'sensor.grid_import_power_missing';
+      en.gridExport = 'sensor.grid_export_power_missing';
+      en.battery = { soc: 'sensor.battery_soc_missing', power: 'sensor.battery_power_missing' };
+      en.inverterStatus = 'sensor.inverter_status_missing';
+      en.productionToday = 'sensor.solar_energy_today_missing';
+      en.gridToday = 'sensor.grid_import_today_missing';
+      en.gridExportToday = 'sensor.grid_export_today_missing';
+      en.price = 'sensor.electricity_price_missing';
+      return cfg;
+    } },
+  { id: 'odd-units', name: 'Unità anomale',
+    states: {
+      'sensor.solar_power': { state: '2.6', attributes: { unit_of_measurement: 'Kw' } },
+      'sensor.house_power': { state: '850', attributes: { unit_of_measurement: 'w' } },
+      'sensor.grid_import_power': { state: '0.0012', attributes: { unit_of_measurement: 'MW' } },
+      'sensor.grid_export_power': { state: '4100', attributes: { unit_of_measurement: 'BTU/h' } }
+    } }
+];
+const SCENARIO_MAP = {};
+SCENARIOS.forEach((s) => { SCENARIO_MAP[s.id] = s; });
+
+function currentScenarioId() {
+  try {
+    const id = new URLSearchParams(window.location.search).get('scenario');
+    return (id && SCENARIO_MAP[id]) ? id : 'default';
+  } catch (e) {
+    return 'default';
+  }
+}
+
+function scenarioSeed(scenario) {
+  let seed = SEED.map((e) => Object.assign({}, e, { attributes: Object.assign({}, e.attributes) }));
+  if (scenario.removeIds) {
+    const drop = new Set(scenario.removeIds);
+    seed = seed.filter((e) => !drop.has(e.entity_id));
+  }
+  if (scenario.states) {
+    seed = seed.map((e) => {
+      const patch = scenario.states[e.entity_id];
+      if (!patch) return e;
+      return Object.assign({}, e, {
+        state: patch.state !== undefined ? patch.state : e.state,
+        attributes: Object.assign({}, e.attributes, patch.attributes || {})
+      });
+    });
+  }
+  return seed;
+}
+
+function scenarioConfig(scenario) {
+  const cfg = JSON.parse(JSON.stringify(DEMO_CONFIG));
+  return scenario.patchConfig ? scenario.patchConfig(cfg) : cfg;
+}
+
+const ACTIVE_SCENARIO_ID = currentScenarioId();
+const ACTIVE_SEED = scenarioSeed(SCENARIO_MAP[ACTIVE_SCENARIO_ID]);
+const ACTIVE_CONFIG = scenarioConfig(SCENARIO_MAP[ACTIVE_SCENARIO_ID]);
+
 function buildRegistries() {
   const areas = Object.keys(AREA_NAMES).map((id) => ({ area_id: id, name: AREA_NAMES[id], icon: null }));
-  const entities = SEED.map((e) => ({
+  const entities = ACTIVE_SEED.map((e) => ({
     entity_id: e.entity_id, area_id: e.area_id, device_id: DEVICE_LINKS[e.entity_id] || null,
     disabled_by: null, hidden_by: null,
     entity_category: e.entity_id === 'sensor.router_wifi_rssi' ? 'diagnostic' : null
@@ -254,7 +374,7 @@ function buildRegistries() {
 
 function cloneStates() {
   const out = {};
-  for (const e of SEED) out[e.entity_id] = { state: e.state, attributes: Object.assign({}, e.attributes) };
+  for (const e of ACTIVE_SEED) out[e.entity_id] = { state: e.state, attributes: Object.assign({}, e.attributes) };
   return out;
 }
 
@@ -394,6 +514,6 @@ async function connect(handlers) {
   return demoBackend();
 }
 
-window.CasaBackendDemo = { BACKEND_KIND, connect, DEMO_CONFIG };
+window.CasaBackendDemo = { BACKEND_KIND, connect, DEMO_CONFIG: ACTIVE_CONFIG, SCENARIOS, activeScenario: ACTIVE_SCENARIO_ID };
 
 })();

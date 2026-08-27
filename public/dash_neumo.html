@@ -109,7 +109,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 </defs></svg>
 
-<div data-nu="1" data-theme="{{ theme }}" style="height:100vh;background:var(--page);color:var(--tx);padding:22px 24px;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+<div data-nu="1" data-theme="{{ theme }}" style="height:100vh;background:var(--page);color:var(--tx);padding:22px 24px;display:flex;flex-direction:column;gap:12px;overflow:hidden;padding-bottom:{{ scenarioBarPad }}">
 
 <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;flex:none">
 <div style="flex:none">
@@ -986,6 +986,17 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 
+<!-- Demo scenario bar (see CLAUDE.md) — internal tool, deliberately not
+     neumorphic: solid dark, full width, no soft shadows, so a screenshot
+     reads unmistakably as "not a control for the end user". -->
+<sc-if value="{{ scenarioBarVisible }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:0;right:0;bottom:0;z-index:60;background:#14171c;display:flex;gap:6px;padding:6px 8px;overflow-x:auto;box-shadow:0 -1px 0 rgba(0,0,0,.4)">
+<sc-for list="{{ scenarioItems }}" as="sc" hint-placeholder-count="7">
+<button onClick="{{ sc.go }}" style="flex:none;min-height:44px;min-width:44px;padding:0 14px;border-radius:8px;background:{{ sc.bg }};color:{{ sc.fg }};font:600 11.5px/1 var(--font-body);letter-spacing:.02em;white-space:nowrap">{{ sc.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+
 <sc-if value="{{ camOpen }}" hint-placeholder-val="{{ false }}">
 <div onClick="{{ closeCam }}" style="position:fixed;inset:0;background:rgba(20,24,30,.52);backdrop-filter:blur(3px);z-index:44;animation:fade .18s ease"></div>
 <div data-nu="1" data-theme="{{ theme }}" style="position:fixed;z-index:45;inset:0;display:grid;place-items:center;padding:40px;pointer-events:none;color:var(--tx)">
@@ -1416,6 +1427,16 @@ function loadScript(src) {
   });
 }
 
+// Demo scenario bar (see CLAUDE.md) — switching writes `scenario` into the
+// URL and reloads. The demo backend has no state worth preserving across a
+// reload (see ha-backend-demo.js), so a full reload is the clean path rather
+// than something to work around.
+function switchScenario(id) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('scenario', id);
+  window.location.replace(url.toString());
+}
+
 // Tried in order, first hit wins. HACS overwrites the plugin's own folder
 // on every update, so a config.js living next to panel.js would be wiped
 // out by the next update — `/local/live_dashboard_config.js` (config/www/
@@ -1486,6 +1507,9 @@ class Component extends DCLogic {
   // instead of undefined is what `t()` two lines below already does for
   // the exact same reason; this makes S.* consistent with it.
   strings = new Proxy({}, { get: () => '' });
+  // `&bare` (see CLAUDE.md) hides the scenario bar for README screenshots —
+  // read once at construction, same lifetime as ASSET_V above.
+  bare = new URLSearchParams(location.search).has('bare');
 
   componentDidMount() {
     this.timer = setInterval(() => this.setState({ now: Date.now() }), 15000);
@@ -2636,10 +2660,6 @@ class Component extends DCLogic {
     const arc = (v, c) => (c * Math.max(0, Math.min(1, (v || 0) / ringMax))).toFixed(1) + ' ' + c;
     const invRaw = hasEnergy && en.inverterStatus ? this.s(en.inverterStatus) : null;
     const invStatus = invRaw == null ? '—' : /standby/i.test(invRaw) ? this.t('energy.inverterStandby') : /normal|grid|on.?grid/i.test(invRaw) ? this.t('energy.inverterProducing') : invRaw;
-    const selfPct = hasEnergy && en.production && en.consumption ? (() => {
-      const p = this.n(en.production), c = this.n(en.consumption);
-      return p === null || c === null || c === 0 ? '—' : this.dec(Math.min(100, (p / c) * 100), 0) + '%';
-    })() : '—';
 
     // --- Fotovoltaico ring: two concentric rings, each summing to its own
     // total (see README's Energy section for the two identities this
@@ -3241,6 +3261,22 @@ class Component extends DCLogic {
     const exportSheet = this.state.exportSheet;
     const longMenuId = this.state.longMenu;
 
+    // Demo scenario bar (see CLAUDE.md) — reads window.CasaBackendDemo
+    // directly rather than caching it on the instance, since it's only ever
+    // consulted here and the demo backend script is guaranteed loaded by the
+    // time this.kind is 'demo'.
+    const scenarioBarVisible = this.kind === 'demo' && !this.bare;
+    const scenarioBackend = scenarioBarVisible ? window.CasaBackendDemo : null;
+    const scenarioItems = scenarioBackend ? scenarioBackend.SCENARIOS.map((sc) => {
+      const sel = sc.id === scenarioBackend.activeScenario;
+      return {
+        id: sc.id, label: sc.name, sel,
+        bg: sel ? '#454d59' : 'transparent', fg: sel ? '#f4f6fa' : '#9aa3b2',
+        go: () => switchScenario(sc.id)
+      };
+    }) : [];
+    const scenarioBarPad = scenarioBarVisible ? '58px' : '22px';
+
     return {
       S: this.strings,
       theme,
@@ -3256,6 +3292,7 @@ class Component extends DCLogic {
       wxDetailLine: this.t('wx.detailLine', { label: wxi[1], temp: outT === null ? '—' : this.dec(outT, 0) + '°' }),
       hasPeople, people,
       isDemo: this.kind === 'demo',
+      scenarioBarVisible, scenarioItems, scenarioBarPad,
       connLabel: stt[0], connTone: stt[1], connTitle: 'Backend: ' + (this.kind || '…') + ' · ' + stt[0],
       tabCasa: this.state.tab === 'casa', tabIrr: this.state.tab === 'irrigazione',
       tabEnergia: this.state.tab === 'energia', tabAuto: this.state.tab === 'auto',
@@ -3291,14 +3328,18 @@ class Component extends DCLogic {
       prodToday: prodT === null ? '—' : this.dec(prodT, 1),
       prodTodayFull: prodT === null ? '—' : this.dec(prodT, 2) + ' kWh',
       loadTodayFull: gridT === null ? '—' : this.dec(gridT, 2) + ' kWh',
-      selfRatioLine: this.t('energy.selfConsumption', { pct: selfPct }),
-      selfRatio: selfPct,
-      // Both halves of this note are *daily* totals (gridT/exportT), same as
-      // the ring above it — v1.5.4 fix: this used to read exportVal from
-      // powerVal(en.gridExport), the *instantaneous* feed-in power, mixed
-      // into a sentence about the day's totals (see CLAUDE.md's v1.5.4 spec,
-      // point 4). Only reachable via hasOldRing (single-ring fallback for
-      // installs with partial energy data), which is why it went unnoticed.
+      // Both this line and gridNote below it are *daily* totals (dailySelfPct/
+      // gridT/exportT), same as the ring above them and the "kWh oggi" label
+      // on it — this used to read an instantaneous production/consumption
+      // ratio here (`selfPct`, computed live) right next to gridNote's daily
+      // kWh, the same "instant number in a daily card" bug the v1.5.4 gridNote
+      // fix addressed for the line below, just not yet here. dailySelfPct is
+      // '—' in exactly the case that reaches hasOldRing (no export-today
+      // sensor to derive autoconsumo from) — an honest dash beats a
+      // contradiction-inducing wrong percentage. Found via the `partial` demo
+      // scenario, which is the only path that reaches this fallback.
+      selfRatioLine: this.t('energy.selfConsumption', { pct: dailySelfPct }),
+      selfRatio: dailySelfPct,
       gridNote: this.t('energy.gridNote', {
         grid: gridT != null ? this.dec(gridT, 2) + ' kWh' : '—',
         exportVal: exportT != null ? this.dec(exportT, 2) + ' kWh' : '—',
