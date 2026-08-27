@@ -1,6 +1,6 @@
-# Zip-and-Attach Release Job
+# zip-and-attach Release Job
 
-> 1 nodes · cohesion 1.00
+> 1 nodes
 
 ## Key Concepts
 

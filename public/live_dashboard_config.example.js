@@ -204,5 +204,15 @@ window.CASA_CONFIG = {
   // entities/cameras: a per-user choice from the panel wins over this list.
   modules: {
     hide: []   // ['vehicle', 'appliances']
+  },
+
+  // Home section order (v1.7.0): the order the Alarm/Energy/Surveillance
+  // cards appear in on the Casa home screen (desktop column 3, mobile's
+  // Casa tab) — not visibility, just order. Any subset works; a section
+  // left out keeps its position relative to the other two. Each user's own
+  // choice from the settings panel overrides this, same hierarchy as
+  // rooms.order above.
+  sections: {
+    order: []   // ['energy', 'cameras', 'alarm']
   }
 };

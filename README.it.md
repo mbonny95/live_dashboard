@@ -202,6 +202,19 @@ attuali in un blocco pronto da incollare in quel file, per chi preferisce
 versionare il layout o applicarlo a tutti gli utenti di casa invece che al
 solo proprio account.
 
+**Da v1.7.0 si può riordinare anche le card Allarme/Energia/Sorveglianza
+della schermata Casa** — chi ha il fotovoltaico può mettere Energia in
+cima, chi ha quattro telecamere può mettere Sorveglianza in cima. È un
+ordine solo, condiviso fra desktop (quale card riempie per prima la terza
+colonna) e mobile (l'ordine della pila nella tab Casa), non due impostazioni
+indipendenti — il tablet a muro e il telefono non possono mai essere in
+disaccordo su qual è "l'ordine attuale". Impostazioni → Stanze ha una lista
+"Ordine sezioni Casa", con frecce su/giù per riga e un ripristino con
+conferma. `config.js` può fissare un ordine predefinito con
+`sections.order`, stessa gerarchia di override di `rooms.order`. Riordina
+solo queste tre card — le stanze, le card "accesi ora"/azioni rapide e le
+colonne stesse del desktop non ne fanno parte.
+
 ## Attivare l'Energia
 
 **Può darsi che tu non debba configurare nulla qui.** Se hai già impostato

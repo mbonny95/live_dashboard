@@ -23,3 +23,7 @@ graphify-out/cache/
 # della macchina, non portabile tra installazioni
 graphify-out/.graphify_python
 graphify-out/.graphify_root
+
+# Analisi derivata (comunità/coesione/hub/domande) — rigenerabile da graph.json,
+# stesso trattamento di cost.json/cache/ qui sopra
+graphify-out/.graphify_analysis.json

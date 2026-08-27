@@ -611,6 +611,39 @@ function applyEntityVisibility(room, hiddenIds) {
 // config.js top-level module keys 1:1 (see live_dashboard_config.example.js).
 const MODULE_KEYS = ['energy', 'irrigation', 'cameras', 'appliances', 'vehicle'];
 
+// --- Casa home section order (v1.7.0) --------------------------------------
+// Only the three cards that already appear together as a linear stack on
+// both desktop (column 3) and mobile (the Casa tab) qualify for a shared
+// order — rooms and the onNow/quick-actions cards live in fixed positions
+// on both formats and are out of scope (see the v1.7.0 spec).
+const SECTION_ORDER_DEFAULT = ['alarm', 'energy', 'cameras'];
+
+// Fuses a saved order (from prefs, or from config.js's own default) with a
+// default order, so a section unknown to `saved` — either never chosen by
+// this user, or a section that didn't exist yet when they last reordered —
+// lands where the default puts it *relative to its neighbours*, not tacked
+// onto the end. An id in `saved` that isn't in `defaultOrder` any more is
+// silently dropped rather than erroring.
+function mergeSectionOrder(saved, defaultOrder) {
+  const result = (saved || []).filter((id) => defaultOrder.includes(id));
+  // De-dupe defensively — a corrupted/hand-edited saved list shouldn't
+  // duplicate a section.
+  const seen = new Set();
+  for (let i = result.length - 1; i >= 0; i--) {
+    if (seen.has(result[i])) result.splice(i, 1); else seen.add(result[i]);
+  }
+  for (const id of defaultOrder) {
+    if (result.includes(id)) continue;
+    let insertAt = 0;
+    for (let i = defaultOrder.indexOf(id) - 1; i >= 0; i--) {
+      const idx = result.indexOf(defaultOrder[i]);
+      if (idx !== -1) { insertAt = idx + 1; break; }
+    }
+    result.splice(insertAt, 0, id);
+  }
+  return result;
+}
+
 // Builds the plain-object config that reflects *resolved* state (config.js
 // merged with the panel's current overrides) rather than either alone —
 // this is what "Esporta come config.js" serializes. `known` supplies every
@@ -629,13 +662,17 @@ function buildExportedConfig(cfg, prefs, known) {
   const camerasHide = (k.cameraIds || []).filter((id) => !resolveVisible(id, p.cameras, configCameraHidden));
   const modulesHide = MODULE_KEYS.filter((key) => !resolveVisible(key, p.modules, configModuleHidden));
   const roomsOrder = (p.order && p.order.rooms && p.order.rooms.length) ? p.order.rooms : ((cfg.rooms && cfg.rooms.order) || []);
+  const cfgSectionsOrder = (cfg.sections && cfg.sections.order) || SECTION_ORDER_DEFAULT;
+  const sectionsOrder = (p.order && p.order.sections && p.order.sections.length)
+    ? mergeSectionOrder(p.order.sections, cfgSectionsOrder) : cfgSectionsOrder;
   const hideUntilTap = p.hideUntilTap !== undefined ? p.hideUntilTap : ((cfg.cameras && cfg.cameras.hideUntilTap) || []);
 
   return Object.assign({}, cfg, {
     rooms: Object.assign({}, cfg.rooms, { hide: roomsHide, order: roomsOrder }),
     entities: Object.assign({}, cfg.entities, { hide: entitiesHide }),
     cameras: Object.assign({}, cfg.cameras, { hide: camerasHide, hideUntilTap }),
-    modules: Object.assign({}, cfg.modules, { hide: modulesHide })
+    modules: Object.assign({}, cfg.modules, { hide: modulesHide }),
+    sections: Object.assign({}, cfg.sections, { order: sectionsOrder })
   });
 }
 
@@ -649,6 +686,7 @@ window.CasaDiscovery = {
   discoverRooms, discoverAllOfDomain, discoverPeople, discoverWeather, discoverAlarm, discoverModes, discoverCameras,
   resolveEntityArea, mapEnergyPrefs, discoverEnergyEntities,
   resolveVisible, applyEntityVisibility, buildExportedConfig, MODULE_KEYS,
+  SECTION_ORDER_DEFAULT, mergeSectionOrder,
   CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName,
   powerSensorForSwitch, classifySwitchPower
 };

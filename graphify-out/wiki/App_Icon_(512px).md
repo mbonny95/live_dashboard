@@ -1,6 +1,6 @@
 # App Icon (512px)
 
-> 1 nodes · cohesion 1.00
+> 1 nodes
 
 ## Key Concepts
 

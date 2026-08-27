@@ -199,6 +199,18 @@ turns your current picks into a paste-ready block for that file, for
 anyone who'd rather version their layout or apply it to every user in the
 house instead of just their own account.
 
+**Since v1.7.0, the Casa home screen's Alarm/Energy/Surveillance cards can
+be reordered too** — a solar-heavy install can put Energy first, a
+camera-heavy one can put Surveillance first. It's one order shared by
+desktop (which card fills column 3 first) and mobile (the Casa tab's
+stack), not two independent settings, so the wall tablet and your phone
+never disagree about what "the current order" is. Settings → Rooms has a
+"Home section order" list, with up/down arrows per row and a confirm-gated
+reset. `config.js`'s `sections.order` can set an installation default, same
+override hierarchy as `rooms.order`. This only reorders those three cards
+— rooms, the "on now"/quick-actions cards, and desktop's column layout
+itself aren't part of it.
+
 ## Enabling Energy
 
 **You may not need to configure anything here at all.** If you've already

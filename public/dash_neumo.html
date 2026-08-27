@@ -281,6 +281,8 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 
 <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+<sc-for list="{{ casaSections }}" as="sec" hint-placeholder-count="3">
+<sc-if value="{{ sec.isAlarm }}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{ hasAlarm }}" hint-placeholder-val="{{ true }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:none">
 <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
@@ -300,7 +302,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </sc-if>
 </div>
 </sc-if>
+</sc-if>
 
+<sc-if value="{{ sec.isEnergy }}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{ hasEnergy }}" hint-placeholder-val="{{ true }}">
 <sc-if value="{{ energyNormal }}" hint-placeholder-val="{{ true }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:1;min-height:0;display:flex;flex-direction:column">
@@ -450,7 +454,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 </sc-if>
+</sc-if>
 
+<sc-if value="{{ sec.isCameras }}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{ hasCameras }}" hint-placeholder-val="{{ false }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:1;min-height:0;display:flex;flex-direction:column">
 <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex:none">
@@ -515,6 +521,8 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </sc-if>
 </div>
 </sc-if>
+</sc-if>
+</sc-for>
 </div>
 
 </div>
@@ -1160,6 +1168,23 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsSectionOrder }}</div>
+<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:8px">
+<sc-for list="{{ settingsSectionOrder }}" as="sec" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:7px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:7px 9px;opacity:{{ sec.dimOpacity }}">
+<svg width="18" height="18" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ sec.iconRef }}"></use></svg>
+<div style="flex:1;min-width:0;font:600 13px/1.2 var(--font-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sec.label }}</div>
+<button onClick="{{ sec.up }}" title="{{ S.up }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none;opacity:{{ sec.upOpacity }}">
+<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-up"></use></svg>
+</button>
+<button onClick="{{ sec.down }}" title="{{ S.down }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none;opacity:{{ sec.downOpacity }}">
+<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"></use></svg>
+</button>
+</div>
+</sc-for>
+</div>
+<button onClick="{{ sectionResetOpen }}" style="display:inline-flex;align-items:center;min-height:44px;padding:0;background:transparent;font:600 11px/1.3 var(--font-body);color:var(--accT);margin-bottom:20px">{{ S.settingsSectionOrderReset }}</button>
+
 <div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsSections }}</div>
 <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px">
 <sc-for list="{{ settingsModules }}" as="m" hint-placeholder-count="5">
@@ -1392,6 +1417,18 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ sectionResetConfirmOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ sectionResetCancel }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:50;animation:fade .18s ease"></div>
+<div style="position:fixed;z-index:51;left:50%;bottom:32px;transform:translateX(-50%);width:min(320px,calc(100vw - 32px));background:var(--page);border-radius:22px;box-shadow:0 18px 44px rgba(20,24,30,.3);padding:16px">
+<div style="font:600 13px/1.4 var(--font-body);color:var(--tx);margin-bottom:4px;text-align:center">{{ S.settingsSectionOrderResetTitle }}</div>
+<div style="font:500 11.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:12px;text-align:center">{{ S.settingsSectionOrderResetBody }}</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{ sectionResetCancel }}" style="flex:1;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ S.settingsBack }}</button>
+<button onClick="{{ sectionResetConfirmRun }}" style="flex:1;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 12.5px/1 var(--font-body)">{{ S.settingsReset }}</button>
+</div>
+</div>
+</sc-if>
+
 <sc-if value="{{ longMenuOpen }}" hint-placeholder-val="{{ false }}">
 <div onClick="{{ longMenuClose }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:50;animation:fade .18s ease"></div>
 <div style="position:fixed;z-index:51;left:50%;bottom:32px;transform:translateX(-50%);width:min(320px,calc(100vw - 32px));background:var(--page);border-radius:22px;box-shadow:0 18px 44px rgba(20,24,30,.3);padding:16px">
@@ -1523,7 +1560,7 @@ async function loadUserConfig() {
 
 class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: 'casa', room: null, allRooms: false, theme: null, hist: null, range: 7, weather: false, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
-    settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null };
+    settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false };
   // Safe synchronous defaults: the first render happens before
   // componentDidMount's dynamic imports resolve, so these must already be
   // usable — _boot() below replaces them and forces a re-render via setState.
@@ -2217,6 +2254,41 @@ class Component extends DCLogic {
     const p = this.PREFS();
     this.SAVE_PREFS(Object.assign({}, p, { order: Object.assign({}, p.order, { rooms: next }) }));
   }
+  // Casa home section order (v1.7.0) — alarm/energy/cameras, the three cards
+  // that already appear as a linear stack on both desktop and mobile. Rooms
+  // and onNow/quick-actions stay fixed on both formats and aren't part of
+  // this. `config.js`'s cfg.sections.order proposes an installation default;
+  // the panel's prefs.order.sections overrides it per user (same hierarchy
+  // as visibility) and is fused with the default via mergeSectionOrder so a
+  // section missing from a saved list lands next to its default neighbours,
+  // not at the end.
+  SECTION_ORDER_DEFAULT_RESOLVED() {
+    if (!this.discovery) return ['alarm', 'energy', 'cameras'];
+    const cfgOrder = ((this.cfg.sections && this.cfg.sections.order) || [])
+      .filter((id) => this.discovery.SECTION_ORDER_DEFAULT.includes(id));
+    return cfgOrder.length ? this.discovery.mergeSectionOrder(cfgOrder, this.discovery.SECTION_ORDER_DEFAULT) : this.discovery.SECTION_ORDER_DEFAULT;
+  }
+  SECTION_ORDER() {
+    if (!this.discovery) return ['alarm', 'energy', 'cameras'];
+    const base = this.SECTION_ORDER_DEFAULT_RESOLVED();
+    const saved = (this.PREFS().order && this.PREFS().order.sections) || [];
+    return saved.length ? this.discovery.mergeSectionOrder(saved, base) : base;
+  }
+  SETTINGS_MOVE_SECTION(orderIds, id, dir) {
+    const idx = orderIds.indexOf(id);
+    const j = idx + dir;
+    if (idx < 0 || j < 0 || j >= orderIds.length) return;
+    const next = orderIds.slice();
+    const tmp = next[idx]; next[idx] = next[j]; next[j] = tmp;
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { order: Object.assign({}, p.order, { sections: next }) }));
+  }
+  SETTINGS_RESET_SECTIONS() {
+    const p = this.PREFS();
+    const order = Object.assign({}, p.order); delete order.sections;
+    this.SAVE_PREFS(Object.assign({}, p, { order }));
+    this.setState({ sectionResetConfirm: false });
+  }
   SETTINGS_SET_ENTITY(id, val) {
     const p = this.PREFS();
     this.SAVE_PREFS(Object.assign({}, p, { entities: Object.assign({}, p.entities, { [id]: val }) }));
@@ -2578,6 +2650,13 @@ class Component extends DCLogic {
     })() : [];
     const hasCameras = camsRaw.length > 0;
     const hasCamTab = camsRaw.length >= 2;
+    // Casa home column 3 order (v1.7.0) — alarm/energy/cameras render in
+    // whatever order the user (or config.js) picked; each still gates on
+    // its own hasX flag, so a hidden section just renders nothing at its
+    // position rather than leaving a gap.
+    const casaSections = this.SECTION_ORDER().map((id) => ({
+      id, isAlarm: id === 'alarm', isEnergy: id === 'energy', isCameras: id === 'cameras'
+    }));
     // The Fotovoltaico card only shrinks when a Sorveglianza card needs the
     // room below it — untouched otherwise (third column is 627px of 642
     // available at 1200x800 with both cards present, no margin to spare).
@@ -3214,7 +3293,7 @@ class Component extends DCLogic {
     // insurance against doing this work on every 15s clock tick otherwise.
     const prefsNow = this.PREFS();
     const chNow = this.CONFIG_HIDDEN();
-    let settingsRooms = [], settingsCameras = [], settingsModules = [], settingsRoomDetail = null;
+    let settingsRooms = [], settingsCameras = [], settingsModules = [], settingsSectionOrder = [], settingsRoomDetail = null;
     let doExport = () => {};
     if (this.state.settingsOpen && this.discovery) {
       const d = this.discovery;
@@ -3271,6 +3350,28 @@ class Component extends DCLogic {
       settingsModules = window.CasaDiscovery.MODULE_KEYS.map((key) => {
         const active = d.resolveVisible(key, prefsNow.modules, chNow.modules);
         return { key, label: moduleLabels[key], active, toggle: () => this.SETTINGS_SET_MODULE(key, !active) };
+      });
+
+      // Casa home section order (v1.7.0) — same row pattern as settingsRooms
+      // above, without the visibility toggle: alarm has none at all (it only
+      // ever shows when an alarm entity exists), and energy/cameras already
+      // have theirs in the "Sezioni" pill list right below. `dim` here is
+      // read-only feedback, not a control.
+      const sectionMeta = {
+        alarm: { label: this.strings.alarm, icon: '#i-shield', dim: !hasAlarm },
+        energy: { label: this.strings.solar, icon: '#i-solar', dim: !d.resolveVisible('energy', prefsNow.modules, chNow.modules) },
+        cameras: { label: this.strings.surveillance, icon: '#i-cam', dim: !d.resolveVisible('cameras', prefsNow.modules, chNow.modules) }
+      };
+      const sectionOrderIds = this.SECTION_ORDER();
+      settingsSectionOrder = sectionOrderIds.map((id, idx) => {
+        const m = sectionMeta[id];
+        const canUp = idx > 0, canDown = idx < sectionOrderIds.length - 1;
+        return {
+          id, label: m.label, iconRef: this._bindAttr('href', m.icon), dimOpacity: m.dim ? '.45' : '1',
+          upOpacity: canUp ? '1' : '.35', downOpacity: canDown ? '1' : '.35',
+          up: () => this.SETTINGS_MOVE_SECTION(sectionOrderIds, id, -1),
+          down: () => this.SETTINGS_MOVE_SECTION(sectionOrderIds, id, 1)
+        };
       });
 
       if (this.state.settingsRoom) {
@@ -3511,6 +3612,7 @@ class Component extends DCLogic {
       allRoomsOpen: this.state.allRooms,
       openAllRooms: () => this.setState({ allRooms: true }),
       closeAllRooms: () => this.setState({ allRooms: false }),
+      casaSections,
       hasAlarm, alarmLabel: al[0], alarmTone: al[1], alarmStroke: alarmSt === 'disarmed' ? 'var(--tx2)' : 'var(--acc)', alarmBtns,
       hasAlarmCodeNote: !!alarmCodeNote, alarmCodeNote,
       hasCameras, hasCamTab, camList, camMain, camMulti, camCols: String(camCols),
@@ -3614,6 +3716,11 @@ class Component extends DCLogic {
       settingsRooms, hasSettingsRooms: settingsRooms.length > 0,
       settingsCameras, hasSettingsCameras: settingsCameras.length > 0,
       settingsModules,
+      settingsSectionOrder,
+      sectionResetConfirmOpen: this.state.sectionResetConfirm,
+      sectionResetOpen: () => this.setState({ sectionResetConfirm: true }),
+      sectionResetCancel: () => this.setState({ sectionResetConfirm: false }),
+      sectionResetConfirmRun: () => this.SETTINGS_RESET_SECTIONS(),
       settingsRoomDetail,
       settingsExportRun: doExport,
       settingsResetRun: () => this.SETTINGS_RESET(),

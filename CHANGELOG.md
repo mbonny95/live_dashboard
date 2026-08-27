@@ -3,6 +3,33 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.7.0] - 2026-08-27
+
+### Added
+
+- **Home section order.** The Casa home screen's Alarm/Energy/Surveillance
+  cards can now be reordered — one linear order shared by desktop (which
+  card fills column 3 first) and mobile (the Casa tab's stack), so a
+  solar-heavy install can put Energy first and a camera-heavy one can put
+  Surveillance first, without the two formats ever disagreeing about which
+  order is "current". Settings → Rooms gained a "Home section order" list
+  right below the room list, with 44px up/down arrows per row (no
+  drag-and-drop — this panel already scrolls, and a long-press-to-drag
+  gesture would collide with the long-press-to-hide gesture fixed in
+  v1.5.2) and a confirm-gated "Reset to default order". A hidden section
+  (Energy/Surveillance can be hidden from the existing "Sections" toggles;
+  Alarm shows only when an alarm entity exists) stays in the order list,
+  greyed, still movable — hiding and later re-showing a section returns it
+  to wherever it was left, not to the end. `config.js`'s new
+  `sections.order` sets an installation default; each user's own choice
+  from the panel overrides it, same hierarchy as `rooms.order`. A section
+  a saved order doesn't mention — the common case once a future release
+  adds a fourth one — is fused in next to its default neighbours rather
+  than appended at the end, so reordering today doesn't strand that section
+  out of sight later; an id a saved order mentions that no longer exists is
+  dropped silently. Rooms, onNow/quick actions, and desktop's column
+  layout itself are unchanged and out of scope for this release.
+
 ## [1.6.0] - 2026-08-27
 
 ### Added

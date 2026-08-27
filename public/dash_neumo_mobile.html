@@ -191,6 +191,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<sc-for list="{{ casaSections }}" as="sec" hint-placeholder-count="3">
+<sc-if value="{{ sec.isEnergy }}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{ hasEnergy }}" hint-placeholder-val="{{ true }}">
 <button onClick="{{ goEnergia }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:16px;text-align:left;width:100%;display:block">
 <span style="display:flex;align-items:center;gap:8px">
@@ -208,7 +210,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </span>
 </button>
 </sc-if>
+</sc-if>
 
+<sc-if value="{{ sec.isCameras }}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{ hasCameras }}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{ camHomeSingle }}" hint-placeholder-val="{{ true }}">
 <button onClick="{{ camMain.open }}" style="position:relative;display:block;width:100%;aspect-ratio:16/8;border-radius:22px;background:var(--nu-d);box-shadow:var(--nu-ins);overflow:hidden;padding:0">
@@ -264,7 +268,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 </sc-if>
+</sc-if>
 
+<sc-if value="{{ sec.isAlarm }}" hint-placeholder-val="{{ false }}">
 <sc-if value="{{ hasAlarm }}" hint-placeholder-val="{{ true }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
 <div style="display:flex;align-items:center;gap:12px">
@@ -284,6 +290,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-if>
 </div>
 </sc-if>
+</sc-if>
+</sc-for>
 
 </div>
 </sc-if>
@@ -877,6 +885,23 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsSectionOrder }}</div>
+<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:8px">
+<sc-for list="{{ settingsSectionOrder }}" as="sec" hint-placeholder-count="3">
+<div style="display:flex;align-items:center;gap:7px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:7px 9px;opacity:{{ sec.dimOpacity }}">
+<svg width="18" height="18" fill="none" stroke="var(--tx2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ sec.iconRef }}"></use></svg>
+<div style="flex:1;min-width:0;font:600 13px/1.2 var(--font-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sec.label }}</div>
+<button onClick="{{ sec.up }}" title="{{ S.up }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none;opacity:{{ sec.upOpacity }}">
+<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-up"></use></svg>
+</button>
+<button onClick="{{ sec.down }}" title="{{ S.down }}" style="width:44px;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;color:var(--tx2);flex:none;opacity:{{ sec.downOpacity }}">
+<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"></use></svg>
+</button>
+</div>
+</sc-for>
+</div>
+<button onClick="{{ sectionResetOpen }}" style="display:inline-flex;align-items:center;min-height:44px;padding:0;background:transparent;font:600 11px/1.3 var(--font-body);color:var(--accT);margin-bottom:20px">{{ S.settingsSectionOrderReset }}</button>
+
 <div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsSections }}</div>
 <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:8px">
 <sc-for list="{{ settingsModules }}" as="m" hint-placeholder-count="5">
@@ -1108,6 +1133,18 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ sectionResetConfirmOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ sectionResetCancel }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:50;animation:fade .18s ease"></div>
+<div style="position:fixed;z-index:51;left:50%;bottom:32px;transform:translateX(-50%);width:min(320px,calc(100vw - 32px));background:var(--page);border-radius:22px;box-shadow:0 18px 44px rgba(20,24,30,.3);padding:16px">
+<div style="font:600 13px/1.4 var(--font-body);color:var(--tx);margin-bottom:4px;text-align:center">{{ S.settingsSectionOrderResetTitle }}</div>
+<div style="font:500 11.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:12px;text-align:center">{{ S.settingsSectionOrderResetBody }}</div>
+<div style="display:flex;gap:8px">
+<button onClick="{{ sectionResetCancel }}" style="flex:1;height:48px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ S.settingsBack }}</button>
+<button onClick="{{ sectionResetConfirmRun }}" style="flex:1;height:48px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 12.5px/1 var(--font-body)">{{ S.settingsReset }}</button>
+</div>
+</div>
+</sc-if>
+
 <sc-if value="{{ longMenuOpen }}" hint-placeholder-val="{{ false }}">
 <div onClick="{{ longMenuClose }}" style="position:fixed;inset:0;background:rgba(20,24,30,.42);backdrop-filter:blur(3px);z-index:50;animation:fade .18s ease"></div>
 <div style="position:fixed;z-index:51;left:50%;bottom:32px;transform:translateX(-50%);width:min(320px,calc(100vw - 32px));background:var(--page);border-radius:22px;box-shadow:0 18px 44px rgba(20,24,30,.3);padding:16px">
@@ -1250,7 +1287,7 @@ async function loadUserConfig() {
 
 class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
-    settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null };
+    settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false };
   cfg = mergeConfig({});
   registries = { areas: [], devices: [], entities: [] };
   discovery = null;
@@ -1793,6 +1830,36 @@ class Component extends DCLogic {
     const p = this.PREFS();
     this.SAVE_PREFS(Object.assign({}, p, { order: Object.assign({}, p.order, { rooms: next }) }));
   }
+  // Casa home section order (v1.7.0) — see the desktop file's copy of this
+  // comment for the full rationale; the mechanics here are identical, only
+  // the markup consuming them differs (mobile's Casa tab is a single stack).
+  SECTION_ORDER_DEFAULT_RESOLVED() {
+    if (!this.discovery) return ['alarm', 'energy', 'cameras'];
+    const cfgOrder = ((this.cfg.sections && this.cfg.sections.order) || [])
+      .filter((id) => this.discovery.SECTION_ORDER_DEFAULT.includes(id));
+    return cfgOrder.length ? this.discovery.mergeSectionOrder(cfgOrder, this.discovery.SECTION_ORDER_DEFAULT) : this.discovery.SECTION_ORDER_DEFAULT;
+  }
+  SECTION_ORDER() {
+    if (!this.discovery) return ['alarm', 'energy', 'cameras'];
+    const base = this.SECTION_ORDER_DEFAULT_RESOLVED();
+    const saved = (this.PREFS().order && this.PREFS().order.sections) || [];
+    return saved.length ? this.discovery.mergeSectionOrder(saved, base) : base;
+  }
+  SETTINGS_MOVE_SECTION(orderIds, id, dir) {
+    const idx = orderIds.indexOf(id);
+    const j = idx + dir;
+    if (idx < 0 || j < 0 || j >= orderIds.length) return;
+    const next = orderIds.slice();
+    const tmp = next[idx]; next[idx] = next[j]; next[j] = tmp;
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { order: Object.assign({}, p.order, { sections: next }) }));
+  }
+  SETTINGS_RESET_SECTIONS() {
+    const p = this.PREFS();
+    const order = Object.assign({}, p.order); delete order.sections;
+    this.SAVE_PREFS(Object.assign({}, p, { order }));
+    this.setState({ sectionResetConfirm: false });
+  }
   SETTINGS_SET_ENTITY(id, val) {
     const p = this.PREFS();
     this.SAVE_PREFS(Object.assign({}, p, { entities: Object.assign({}, p.entities, { [id]: val }) }));
@@ -2190,6 +2257,11 @@ class Component extends DCLogic {
     })() : [];
     const hasCameras = camsRaw.length > 0;
     const hasCamTab = camsRaw.length >= 2;
+    // Casa home section order (v1.7.0) — same computation as desktop; see
+    // that file's comment for the rationale.
+    const casaSections = this.SECTION_ORDER().map((id) => ({
+      id, isAlarm: id === 'alarm', isEnergy: id === 'energy', isCameras: id === 'cameras'
+    }));
     const snapTick = this.state.snapTick;
     const camList = camsRaw.map((c) => {
       const revealed = !!this.state.camRevealed[c.id];
@@ -2530,7 +2602,7 @@ class Component extends DCLogic {
     // discovery.js/prefs.js calls) so the two layouts never disagree.
     const prefsNow = this.PREFS();
     const chNow = this.CONFIG_HIDDEN();
-    let settingsRooms = [], settingsCameras = [], settingsModules = [], settingsRoomDetail = null;
+    let settingsRooms = [], settingsCameras = [], settingsModules = [], settingsSectionOrder = [], settingsRoomDetail = null;
     let doExport = () => {};
     if (this.state.settingsOpen && this.discovery) {
       const d = this.discovery;
@@ -2581,6 +2653,26 @@ class Component extends DCLogic {
       settingsModules = window.CasaDiscovery.MODULE_KEYS.map((key) => {
         const active = d.resolveVisible(key, prefsNow.modules, chNow.modules);
         return { key, label: moduleLabels[key], active, toggle: () => this.SETTINGS_SET_MODULE(key, !active) };
+      });
+
+      // Casa home section order (v1.7.0) — see the desktop file for the
+      // reasoning; identical here, only the label source (`this.strings`)
+      // differs in indentation, not content.
+      const sectionMeta = {
+        alarm: { label: this.strings.alarm, icon: '#i-shield', dim: !hasAlarm },
+        energy: { label: this.strings.solar, icon: '#i-solar', dim: !d.resolveVisible('energy', prefsNow.modules, chNow.modules) },
+        cameras: { label: this.strings.surveillance, icon: '#i-cam', dim: !d.resolveVisible('cameras', prefsNow.modules, chNow.modules) }
+      };
+      const sectionOrderIds = this.SECTION_ORDER();
+      settingsSectionOrder = sectionOrderIds.map((id, idx) => {
+        const m = sectionMeta[id];
+        const canUp = idx > 0, canDown = idx < sectionOrderIds.length - 1;
+        return {
+          id, label: m.label, iconRef: this._bindAttr('href', m.icon), dimOpacity: m.dim ? '.45' : '1',
+          upOpacity: canUp ? '1' : '.35', downOpacity: canDown ? '1' : '.35',
+          up: () => this.SETTINGS_MOVE_SECTION(sectionOrderIds, id, -1),
+          down: () => this.SETTINGS_MOVE_SECTION(sectionOrderIds, id, 1)
+        };
       });
 
       if (this.state.settingsRoom) {
@@ -2779,6 +2871,7 @@ class Component extends DCLogic {
       connTone: stt[1], connLabel: stt[0],
       tabCasa: tab === 'casa', tabStanze: tab === 'stanze', tabIrr: tab === 'irrigazione',
       tabEnergia: tab === 'energia', tabAuto: tab === 'auto', tabMeteo: tab === 'meteo', tabCam: tab === 'camere',
+      casaSections,
       hasEnergy, hasIrrigation, hasVehicle, hasWeather: hasWeather || hasStation, hasAlarm, hasModes, hasPeople,
       hasNoAreas, goToAreas,
       hasCameras, hasCamTab, camList, camMain, camHeadline, camSub,
@@ -2873,6 +2966,11 @@ class Component extends DCLogic {
       settingsRooms, hasSettingsRooms: settingsRooms.length > 0,
       settingsCameras, hasSettingsCameras: settingsCameras.length > 0,
       settingsModules,
+      settingsSectionOrder,
+      sectionResetConfirmOpen: this.state.sectionResetConfirm,
+      sectionResetOpen: () => this.setState({ sectionResetConfirm: true }),
+      sectionResetCancel: () => this.setState({ sectionResetConfirm: false }),
+      sectionResetConfirmRun: () => this.SETTINGS_RESET_SECTIONS(),
       settingsRoomDetail,
       settingsExportRun: doExport,
       settingsResetRun: () => this.SETTINGS_RESET(),
