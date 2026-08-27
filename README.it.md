@@ -71,7 +71,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.5.4
+       module_url: /local/community/live_dashboard/panel.js?v=1.6.0
        embed_iframe: true
        trust_external_script: false
    ```
@@ -84,7 +84,7 @@ i file del plugin, cosa che conta se mai passi dall'uno all'altro.
    sia come `console.error` sia come messaggio sulla pagina stessa, con il
    `name:` atteso e la cartella effettivamente rilevata.
 
-   Quel `?v=1.5.4` su `module_url` conta più di quanto sembri: `/local/`
+   Quel `?v=1.6.0` su `module_url` conta più di quanto sembri: `/local/`
    viene servito con cache lunga, e i browser cachano i moduli ES in modo
    particolarmente aggressivo, quindi un hard refresh da solo non forza
    sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
@@ -224,7 +224,7 @@ sbagliati.
 | Ruolo | Huawei FusionSolar | SolarEdge | Fronius | Shelly EM | Energy Dashboard di HA |
 | --- | --- | --- | --- | --- | --- |
 | `production` | `sensor.*_panel_production_power` | `sensor.solaredge_current_power` | `sensor.inverter_power` | `sensor.shellyem_channel_a_power` | `sensor.solar_power` (tuo) |
-| `consumption` | `sensor.*_house_load_power` | — (serve un utility meter) | — | `sensor.shellyem_channel_b_power` | `sensor.house_power` |
+| `consumption` | `sensor.*_house_load_power` | *(opzionale — vedi sotto)* | *(opzionale — vedi sotto)* | `sensor.shellyem_channel_b_power` | `sensor.house_power` |
 | `gridImport` | `sensor.*_grid_consumption_power` | `sensor.solaredge_m1_ac_power` (lato prelievo) | `sensor.meter_power` | `sensor.shellyem_channel_b_power` | il tuo sensore di prelievo |
 | `gridExport` | `sensor.*_grid_injection_power` | stesso contatore, lato immissione | `sensor.meter_power` (negativo) | lo stesso, invertito | il tuo sensore di immissione |
 | `productionToday` | `sensor.*_panel_production_today` | `sensor.solaredge_lifetime_energy` (diff) | `sensor.energy_day` | Shelly EM non ha un contatore giornaliero — aggiungi un helper `utility_meter` | `sensor.solar_energy_today` |
@@ -245,6 +245,52 @@ l'installazione occasionale che ne ha uno (es. dal tracciamento "consumo"
 dell'Energy Dashboard di HA, se l'hai collegato a parte). Impostalo se ce
 l'hai; altrimenti lascialo vuoto e l'anello deriva l'autoconsumo da
 produzione ed immissione, che è quello che fa quasi ogni installazione.
+
+### Consumo casa (istantaneo), derivato in automatico
+
+La maggior parte delle integrazioni inverter/contatore espone produzione,
+prelievo e immissione come sensori di potenza live, ma non il consumo di
+tutta la casa — era l'unico ruolo che richiedeva scrivere a mano un
+`template sensor` in `configuration.yaml` solo per sommare gli altri tre.
+**Non serve più.** Lascia `consumption` non impostato e, ogni volta che
+`production`, `gridImport` e `gridExport` risolvono tutti e tre, questa
+dashboard lo calcola da sola:
+
+```
+consumo casa = produzione + prelievo − immissione + scaricaBatteria − caricaBatteria
+```
+
+Un sensore `consumption` esplicito, se lo imposti, vince sempre — questo è
+solo un fallback per quando non ce n'è uno. Se manca anche solo uno tra
+produzione/prelievo/immissione, la derivazione non parte affatto: ottieni un
+onesto "—" invece di un numero calcolato da una formula incompleta. Il
+valore derivato si dichiara ovunque compare — "Consumo casa adesso ·
+calcolato" nella tessera istantanea, "kWh calcolati" al posto di "kWh
+consumati" al centro dell'anello — così non viene mai scambiato per un
+sensore misurato.
+
+**Se hai una batteria:** la formula deve sapere che segno usa il tuo sensore
+di potenza batteria per la carica, perché non esiste una convenzione
+universale tra le integrazioni.
+
+- **Due sensori separati** (`config.energy.battery.chargePower` /
+  `dischargePower`, entrambi sempre positivi): nessuna ambiguità, niente da
+  configurare.
+- **Un sensore firmato** (`config.energy.battery.power`, il caso comune):
+  il default è **positivo = in carica**. Se per la tua integrazione è al
+  contrario, Impostazioni -> Energia ha un controllo esplicito **Potenza
+  batteria** — "Positivo = in carica" / "Positivo = in scarica" — con il
+  valore derivato dal vivo mostrato subito sotto, così lo vedi cambiare
+  mentre giri l'interruttore. Sbagliarlo fa uscire il consumo derivato
+  implausibile (negativo) più spesso che no; quando succede in modo
+  persistente, Impostazioni -> Energia accende un avviso che nomina la causa
+  probabile con una correzione a un tocco, e nel frattempo la dashboard
+  mostra "—" invece di un "consumo casa" negativo — vedi TROUBLESHOOTING.md.
+
+Il valore giornaliero in kWh (l'anello, "kWh consumati") aveva già una sua
+derivazione più vecchia (autoconsumo ricavato da produzione e immissione) —
+non toccata da nulla di quanto sopra, solo etichettata allo stesso modo
+quando è lei a fare il lavoro al posto di un sensore `consumptionToday`.
 
 ### Unità della potenza istantanea
 

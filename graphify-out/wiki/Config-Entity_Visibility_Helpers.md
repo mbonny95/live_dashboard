@@ -1,6 +1,6 @@
 # Config/Entity Visibility Helpers
 
-> 32 nodes · cohesion 0.13
+> 36 nodes · cohesion 0.12
 
 ## Key Concepts
 
@@ -8,8 +8,10 @@
 - **Component.PREFS()** (16 connections) — `public/dash_neumo_mobile.html`
 - **Component.SAVE_PREFS()** (13 connections) — `public/dash_neumo_mobile.html`
 - **SAVE_PREFS()** (13 connections) — `public/dash_neumo.html`
+- **SETTINGS_SET_ENTITY()** (5 connections) — `public/dash_neumo.html`
 - **CONFIG_HIDDEN()** (4 connections) — `public/dash_neumo.html`
 - **ENTITY_HIDDEN_SET()** (4 connections) — `public/dash_neumo.html`
+- **Component.SETTINGS_SET_ENTITY()** (4 connections) — `public/dash_neumo_mobile.html`
 - **ROOMS_RESULT()** (4 connections) — `public/dash_neumo.html`
 - **SETTINGS_CLEAR_CAMERA()** (4 connections) — `public/dash_neumo.html`
 - **SETTINGS_CLEAR_ENTITY()** (4 connections) — `public/dash_neumo.html`
@@ -27,16 +29,12 @@
 - **Component.SETTINGS_CLEAR_CAMERA()** (3 connections) — `public/dash_neumo_mobile.html`
 - **Component.SETTINGS_CLEAR_ENTITY()** (3 connections) — `public/dash_neumo_mobile.html`
 - **Component.SETTINGS_CLEAR_ROOM()** (3 connections) — `public/dash_neumo_mobile.html`
-- **Component.SETTINGS_MOVE_ROOM()** (3 connections) — `public/dash_neumo_mobile.html`
-- **Component.SETTINGS_SET_CAMERA()** (3 connections) — `public/dash_neumo_mobile.html`
-- *... and 7 more nodes in this community*
+- *... and 11 more nodes in this community*
 
 ## Relationships
 
-- [Alarm Guard & Appliance Helpers](Alarm_Guard_%26_Appliance_Helpers.md) (16 shared connections)
-- [Mobile Settings Long-Press Actions](Mobile_Settings_Long-Press_Actions.md) (4 shared connections)
-- [Mobile Diagnostics Helpers](Mobile_Diagnostics_Helpers.md) (2 shared connections)
-- [Room/Camera Aggregate Results](Room-Camera_Aggregate_Results.md) (2 shared connections)
+- [Casa Panel Render Sections](Casa_Panel_Render_Sections.md) (20 shared connections)
+- [v1.6.0 Release Notes](v1.6.0_Release_Notes.md) (2 shared connections)
 
 ## Source Files
 
@@ -45,8 +43,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 124 (79%)
-- INFERRED: 32 (21%)
+- EXTRACTED: 134 (79%)
+- INFERRED: 36 (21%)
 - AMBIGUOUS: 0 (0%)
 
 ---

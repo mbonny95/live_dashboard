@@ -1,11 +1,11 @@
-# Changelog: Cover Slider Fix (v1.5.2)
+# Changelog: Areas Empty State (v1.4.x)
 
 > 2 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Cover position slider touch/long-press fix** (1 connections) — `CHANGELOG.md`
-- **v1.5.2 release** (1 connections) — `CHANGELOG.md`
+- **Empty-state guidance for zero HA areas** (1 connections) — `CHANGELOG.md`
+- **Fotovoltaico grid-figure inline tooltip** (1 connections) — `CHANGELOG.md`
 
 ## Relationships
 

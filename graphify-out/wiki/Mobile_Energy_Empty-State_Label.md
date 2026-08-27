@@ -1,10 +1,10 @@
-# Mobile Energy Chart Toggle
+# Mobile Energy Empty-State Label
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Component.toggleChart()** (0 connections) — `public/dash_neumo_mobile.html`
+- **energyMissingLabel computed var (mobile)** (0 connections) — `public/dash_neumo_mobile.html`
 
 ## Relationships
 

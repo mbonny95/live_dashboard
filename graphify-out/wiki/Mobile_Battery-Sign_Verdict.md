@@ -1,10 +1,10 @@
-# Mobile Energy Chart Toggle Handler
+# Mobile Battery-Sign Verdict
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Component.toggleChart()** (0 connections) — `public/dash_neumo_mobile.html`
+- **batterySignVerdict() (mobile)** (0 connections) — `public/dash_neumo_mobile.html`
 
 ## Relationships
 

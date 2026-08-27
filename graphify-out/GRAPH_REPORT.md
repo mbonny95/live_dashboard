@@ -1,43 +1,35 @@
 # Graph Report - .  (2026-08-27)
 
 ## Corpus Check
-- 30 files · ~107,111 words
+- 30 files · ~111,360 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 566 nodes · 894 edges · 64 communities (38 shown, 26 thin omitted)
-- Extraction: 82% EXTRACTED · 17% INFERRED · 0% AMBIGUOUS · INFERRED: 156 edges (avg confidence: 0.89)
-- Token cost: 63,593 input · 0 output
+- 616 nodes · 960 edges · 61 communities (30 shown, 31 thin omitted)
+- Extraction: 82% EXTRACTED · 18% INFERRED · 0% AMBIGUOUS · INFERRED: 171 edges (avg confidence: 0.88)
+- Token cost: 79,791 input · 0 output
 
 ## Community Hubs (Navigation)
 - Support Micro-Framework Runtime
-- Camera Live-View Strategy
 - Casa Panel Render Sections
+- Camera Live-View Strategy
+- Alarm & Discovery Logic
+- Casa Card Widgets
+- Changelog: Power & Cover Fixes
+- Changelog: Diagnostics & Config
 - Config/Entity Visibility Helpers
 - casa-panel Custom Element
 - Project Instructions (CLAUDE.md)
-- Alarm & Discovery Logic
-- Alarm Guard & Appliance Helpers
-- Demo Scenarios (Troubleshooting)
+- v1.6.0 Release Notes
 - Changelog: Alarm & Camera Fixes
-- Mobile Diagnostics Helpers
-- Changelog: Power & Units Fixes
-- Mobile Formatting Helpers
-- Changelog: Energy Diagnostics
+- TROUBLESHOOTING: Demo Scenarios
 - Casa Screenshot Annotations
 - Prefs Persistence & Diagnostics Text
-- README Cross-References
-- README Installation Instructions
 - Demo Backend & Scenario Data
-- Changelog: Appliances & Irrigation
-- Changelog: Settings Panel & Config
-- Changelog: Diagnostics Panel
 - Long-Press Gesture Handlers
 - Mobile Screenshot Annotations
-- Room/Camera Aggregate Results
 - mapEnergyPrefs Test Suite
 - Changelog: Demo Mode & Release
-- Mobile Settings Long-Press Actions
 - Release Workflow (GitHub Actions)
 - README Header Banner
 - Energia Screenshot Annotations
@@ -46,8 +38,7 @@
 - HA Backend Panel Bridge
 - App Icon (256px)
 - Changelog: Energy Ring Legend
-- Changelog: Cover Slider Fix (v1.5.2)
-- Changelog: Grid Tooltip/Empty State
+- Changelog: Areas Empty State (v1.4.x)
 - Changelog: Camera Grid Adapts to Count
 - CLAUDE.md: Density Constraint Retired
 - Icon Sprite & Theme Tokens
@@ -62,12 +53,18 @@
 - Changelog: Remaining-Time Removal
 - Changelog: Ring Stroke Linecap Fix
 - Changelog: Template Placeholder Fix
+- Mobile Battery-Sign Sampling
+- Mobile Battery-Sign Verdict
+- Mobile Energy Empty-State Label
+- Mobile Power Formatting
+- Mobile Energy Settings Shortcut
+- Mobile Battery-Sign Setting
 - README: Vehicle Config
 - TROUBLESHOOTING: Irrigation Chart Noise
 - TROUBLESHOOTING: Irrigation Chart Noise (dup)
 - TROUBLESHOOTING: Optional Sections
 - TROUBLESHOOTING: Unavailable Entity Display
-- TROUBLESHOOTING: Unavailable Entity Display (dup)
+- TROUBLESHOOTING: Unreachable Entity Design Note
 
 ## God Nodes (most connected - your core abstractions)
 1. `renderVals()` - 55 edges
@@ -76,21 +73,21 @@
 4. `Component.PREFS()` - 16 edges
 5. `SAVE_PREFS()` - 13 edges
 6. `Component.SAVE_PREFS()` - 13 edges
-7. `walk()` - 10 edges
-8. `powerVal()` - 10 edges
-9. `domainOf()` - 9 edges
-10. `discoverRooms()` - 9 edges
+7. `v1.5.4 changelog entry` - 12 edges
+8. `walk()` - 10 edges
+9. `powerVal()` - 10 edges
+10. `domainOf()` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Start here: Settings → Diagnostica` --semantically_similar_to--> `Diagnostics panel (settings gear → Diagnostica)`  [INFERRED] [semantically similar]
-  TROUBLESHOOTING.md → CHANGELOG.md
 - `ARM_CUSTOM_BYPASS ("Personalizzato") alarm button` --references--> `discoverAlarm()`  [INFERRED]
   CHANGELOG.md → public/discovery.js
 - `Three-layer camera live-view strategy` --semantically_similar_to--> `Live camera overlay black/broken image (fixed v1.5.4)`  [INFERRED] [semantically similar]
   CHANGELOG.md → TROUBLESHOOTING.md
 - `energy.gridNote daily-vs-instantaneous mixing fix` --semantically_similar_to--> `Energy charts empty/wrong: daily-counter vs power-role mistakes`  [INFERRED] [semantically similar]
   CHANGELOG.md → TROUBLESHOOTING.md
-- `Diagnostics: Energy instantaneous values block` --semantically_similar_to--> `Energy charts empty/wrong: daily-counter vs power-role mistakes`  [INFERRED] [semantically similar]
+- `Start here: Settings → Diagnostica` --semantically_similar_to--> `Diagnostics panel (settings gear → Diagnostica)`  [INFERRED] [semantically similar]
+  TROUBLESHOOTING.md → CHANGELOG.md
+- `loadScript() cache-bust propagation fix` --semantically_similar_to--> `Missing/stale ?v= on module_url causes stale panel.js`  [INFERRED] [semantically similar]
   CHANGELOG.md → TROUBLESHOOTING.md
 
 ## Import Cycles
@@ -116,134 +113,105 @@
 - **Demo scenario switching flow (bar UI, URL state, backend SEED patch, docs)** — changelog_demo_scenarios_feature, public_dash_neumo_scenario_bar, public_dash_neumo_switchscenario, public_dash_neumo_mobile_scenario_bar, public_dash_neumo_mobile_switchscenario, troubleshooting_demo_scenario_table, public_dash_neumo_casabackenddemo [INFERRED 0.85]
 - **Recurring bug class: mixing instantaneous power/ratio values into daily-total energy displays** — changelog_gridnote_fix, changelog_single_ring_selfconsumption_fix, changelog_powerval_helper, changelog_instant_power_unit_setting, troubleshooting_energy_charts_empty [INFERRED 0.85]
 - **v1.5.4 auto-discovery/diagnostic feature set (alarm + cameras)** — changelog_alarm_autodiscovery, changelog_alarm_pin_awareness, changelog_arm_custom_bypass, changelog_diagnostica_rows_v154, changelog_black_camera_fix [EXTRACTED 1.00]
+- **Derived house-consumption feature (v1.6.0)** — derived_house_consumption_formula_concept, public_dash_neumo_deriveconsumption, public_dash_neumo_battery_sign_convention_concept, readme_house_consumption_section, changelog_v1_6_0_house_consumption, troubleshooting_derived_consumption_section [EXTRACTED 0.95]
+- **Battery sign self-diagnosis and one-tap invert flow** — public_dash_neumo__samplebatterysign, public_dash_neumo_batterysignverdict, public_dash_neumo_settings_set_battery_sign, public_dash_neumo_batterypowersign [EXTRACTED 0.90]
+- **Self-explanatory empty states, three cases** — empty_state_case_a_no_areas_concept, empty_state_case_b_missing_entity_concept, changelog_v1_6_0_empty_states, public_dash_neumo_hasnoareas, public_dash_neumo_energyemptystate [EXTRACTED 0.90]
 
-## Communities (64 total, 26 thin omitted)
+## Communities (61 total, 31 thin omitted)
 
 ### Community 0 - "Support Micro-Framework Runtime"
 Cohesion: 0.07
 Nodes (51): boot(), cdnScriptFor(), collectProps(), compileAttr(), compileTemplate(), contentKey(), createComponentFactory(), createHelmetManager() (+43 more)
 
-### Community 1 - "Camera Live-View Strategy"
-Cohesion: 0.07
-Nodes (47): camera/stream HLS websocket call, Fast camera_proxy still-image polling fallback, hls.js vendoring open question, Three-layer camera live-view strategy, _attachHlsJs(), _boot(), bust(), Three-Layer Camera Live View (+39 more)
+### Community 1 - "Casa Panel Render Sections"
+Cohesion: 0.08
+Nodes (53): ALARM(), ALARM_ID(), PIN-Gated Alarm Guard, applianceItems(), applianceState(), at(), _bindAttr(), call() (+45 more)
 
-### Community 2 - "Casa Panel Render Sections"
+### Community 2 - "Camera Live-View Strategy"
+Cohesion: 0.07
+Nodes (46): loadScript() cache-bust propagation fix, camera/stream HLS websocket call, Fast camera_proxy still-image polling fallback, hls.js vendoring open question, Three-layer camera live-view strategy, _attachHlsJs(), _boot(), bust() (+38 more)
+
+### Community 3 - "Alarm & Discovery Logic"
+Cohesion: 0.07
+Nodes (39): Alarm panel auto-discovery, Alarm PIN/code_format gating (no-op with note), Appliances module (config.appliances), ARM_CUSTOM_BYPASS ("Personalizzato") alarm button, discoverRooms() excludes entities referenced elsewhere in config.js, Irrigation buttons field (input_button alternative to valve), Room tiles size to min-content instead of stretching, Seven new discovered domains + status/sensor pills (+31 more)
+
+### Community 4 - "Casa Card Widgets"
 Cohesion: 0.06
 Nodes (43): Active Items List (On Now), Alarm Panel, All Rooms Overflow Panel, Camera Home Multi Grid, Camera Home Single Tile, Camera Home Widget, Camera Detail Modal, Casa View (+35 more)
 
-### Community 3 - "Config/Entity Visibility Helpers"
-Cohesion: 0.13
-Nodes (32): CONFIG_HIDDEN(), ENTITY_HIDDEN_SET(), Component.CONFIG_HIDDEN(), Component.ENTITY_HIDDEN_SET(), Component.PREFS(), Component.ROOMS_RESULT(), Component.SAVE_PREFS(), Component.SETTINGS_CLEAR_CAMERA() (+24 more)
+### Community 5 - "Changelog: Power & Cover Fixes"
+Cohesion: 0.06
+Nodes (35): Cover position slider touch/long-press fix, energy.periodNote hardcoded-unit-in-template fix, Instantaneous power unit setting (Auto/W/kW), powerVal() shared unit-normalization helper, powerVal() instantaneous power unit normalization, Settings panel tabbed navigation (Stanze/Energia/Telecamere/Diagnostica), v1.5.2 changelog entry, v1.5.3 changelog entry (+27 more)
 
-### Community 4 - "casa-panel Custom Element"
+### Community 6 - "Changelog: Diagnostics & Config"
+Cohesion: 0.06
+Nodes (39): config/www/live_dashboard_config.js update-safe config location, Copy diagnostics clipboard button, Cover position slider long-press/drag/NaN fix, Diagnostics: Config block (config.js path resolution), Diagnostics: Energy daily totals block, Diagnostics: Energy instantaneous values block, Diagnostics: Environment block, Diagnostics panel (settings gear → Diagnostica) (+31 more)
+
+### Community 7 - "Config/Entity Visibility Helpers"
+Cohesion: 0.12
+Nodes (36): CONFIG_HIDDEN(), ENTITY_HIDDEN_SET(), Component.CONFIG_HIDDEN(), Component.ENTITY_HIDDEN_SET(), Component.PREFS(), Component.ROOMS_RESULT(), Component.SAVE_PREFS(), Component.SETTINGS_CLEAR_CAMERA() (+28 more)
+
+### Community 8 - "casa-panel Custom Element"
 Cohesion: 0.13
 Nodes (9): CasaPanel, fetchDailyCounterHistory(), fetchDailyLastSample(), fetchHistory(), fetchRawHistory(), fetchTodayStatsDelta(), FOLDER_NAME, isoDay() (+1 more)
 
-### Community 5 - "Project Instructions (CLAUDE.md)"
+### Community 9 - "Project Instructions (CLAUDE.md)"
 Cohesion: 0.08
 Nodes (27): --acc: prelievo (famiglia terracotta = rete), window.CASA_CONFIG come global (import() bloccato su file://), CHANGELOG.md (voce più recente), console.log non esiste per utenti su companion app/tablet: serve diagnostica visibile in dashboard, src/href/points dinamici via ref callback dopo il mount, Grammatica colori energia non negoziabile (anello e barre coerenti), --feed: immissione (salvia schiarita), graphify-out/GRAPH_REPORT.md (+19 more)
 
-### Community 6 - "Alarm & Discovery Logic"
-Cohesion: 0.15
-Nodes (21): Alarm panel auto-discovery, Alarm PIN/code_format gating (no-op with note), ARM_CUSTOM_BYPASS ("Personalizzato") alarm button, buildExportedConfig(), collectConfiguredEntities(), discoverAlarm(), discoverAllOfDomain(), discoverCameras() (+13 more)
+### Community 10 - "v1.6.0 Release Notes"
+Cohesion: 0.11
+Nodes (24): energy.gridNote daily/instantaneous mixing fix, v1.6.0 changelog entry, Seven forceable demo scenarios (changelog entry), Self-explanatory empty states, three cases (changelog entry), Single-ring self-consumption mixing fix (changelog entry), Empty state case (a): no rooms discovered at all, Empty state case (b): configured energy entity doesn't exist, ha-backend-demo.js (+16 more)
 
-### Community 7 - "Alarm Guard & Appliance Helpers"
-Cohesion: 0.13
-Nodes (20): ALARM(), ALARM_ID(), PIN-Gated Alarm Guard, applianceItems(), applianceState(), _bindAttr(), call(), isOn() (+12 more)
+### Community 11 - "Changelog: Alarm & Camera Fixes"
+Cohesion: 0.11
+Nodes (21): Alarm PIN awareness (code_format gating), ARM_CUSTOM_BYPASS alarm button, Live camera black-screen fix (three-layer strategy), Cameras module initial release (auto-discovered), Three new Diagnostica rows (camera/energy/alarm), Open question: vendor hls.js, Smart plug three-level state (off/active/running), v1.5.4 changelog entry (+13 more)
 
-### Community 8 - "Demo Scenarios (Troubleshooting)"
-Cohesion: 0.12
-Nodes (20): Seven forceable demo scenarios, scenario=missing, scenario=partial, Unreleased (CHANGELOG), &bare URL flag, window.CasaBackendDemo (ha-backend-demo.js global), &bare URL flag [mobile], Demo scenario bar (mobile) (+12 more)
+### Community 12 - "TROUBLESHOOTING: Demo Scenarios"
+Cohesion: 0.11
+Nodes (21): Seven forceable demo scenarios, scenario=missing, scenario=partial, Single-ring self-consumption line mixing fix, Unreleased (CHANGELOG), &bare URL flag, window.CasaBackendDemo (ha-backend-demo.js global), &bare URL flag [mobile] (+13 more)
 
-### Community 9 - "Changelog: Alarm & Camera Fixes"
-Cohesion: 0.12
-Nodes (19): Alarm PIN awareness (code_format gating), ARM_CUSTOM_BYPASS alarm button, Live camera black-screen fix (three-layer strategy), Cameras module initial release (auto-discovered), Three new Diagnostica rows (camera/energy/alarm), energy.gridNote daily/instantaneous mixing fix, Open question: vendor hls.js, Single-ring self-consumption line mixing fix (+11 more)
-
-### Community 10 - "Mobile Diagnostics Helpers"
-Cohesion: 0.20
-Nodes (19): at(), dec(), diagEnergyDaily(), diagEnergyInstant(), Component.at(), Component.dec(), Component.diagEnergyDaily(), Component.diagEnergyInstant() (+11 more)
-
-### Community 11 - "Changelog: Power & Units Fixes"
-Cohesion: 0.14
-Nodes (16): energy.periodNote hardcoded-unit-in-template fix, Instantaneous power unit setting (Auto/W/kW), powerVal() shared unit-normalization helper, powerVal() instantaneous power unit normalization, Room tiles size to min-content instead of stretching, Settings panel tabbed navigation (Stanze/Energia/Telecamere/Diagnostica), Seven new discovered domains + status/sensor pills, Configurable smart-plug active/running power threshold (+8 more)
-
-### Community 12 - "Mobile Formatting Helpers"
-Cohesion: 0.23
-Nodes (14): cover(), fn(), Component.applianceItems(), Component.applianceState(), Component._bindAttr(), Component.call(), Component.cover(), Component.fn() (+6 more)
-
-### Community 13 - "Changelog: Energy Diagnostics"
-Cohesion: 0.22
-Nodes (11): Diagnostics: Energy daily totals block, Double-ring energy model (consumption/production identities), Energy auto-discovery via HA Energy dashboard get_prefs, energy/get_prefs multi-entry summation fix, energy.gridNote daily-vs-instantaneous mixing fix, panel_custom name: mismatch install-time self-check, README: energy sensor role mapping table, README.it: tabella mappatura ruoli energia (+3 more)
-
-### Community 14 - "Casa Screenshot Annotations"
+### Community 13 - "Casa Screenshot Annotations"
 Cohesion: 0.25
 Nodes (11): Casa Dashboard Screenshot, Allarme (Alarm) Card, Double-Ring Energy Gauge (7,6 kWh), Autoconsumo Tile (6,2 kWh), Dalla Rete Tile (1,4 kWh), Immessi in Rete Tile (3,6 kWh), Three-Tile Compact Energy Legend, Fotovoltaico Compact Card Layout (+3 more)
 
-### Community 15 - "Prefs Persistence & Diagnostics Text"
+### Community 14 - "Prefs Persistence & Diagnostics Text"
 Cohesion: 0.27
 Nodes (8): diagRowLine(), diagText(), load(), padCol(), readLocal(), save(), writeLocal(), createExternalModules()
 
-### Community 16 - "README Cross-References"
-Cohesion: 0.24
-Nodes (6): README.it: limiti noti, README: kiosk mode for wall tablet, README: known limits, Empty rooms: areas never assigned in HA, Entity not showing anywhere: discovery checklist, Missing section (Energy/Irrigation/Vehicle/...) is opt-in by design
-
-### Community 17 - "README Installation Instructions"
-Cohesion: 0.24
-Nodes (10): loadScript() cache-bust propagation fix, panel_custom tag derived from deploy folder fix, README: HACS installation instructions, README.it: installazione HACS, README.it: installazione manuale, README: Manual installation instructions, White/blank panel: panel_custom.name mismatch, Start here: Settings → Diagnostica (+2 more)
-
-### Community 18 - "Demo Backend & Scenario Data"
+### Community 15 - "Demo Backend & Scenario Data"
 Cohesion: 0.29
 Nodes (6): buildRegistries(), cloneStates(), connect(), patchConfig(), rand(), scenarioConfig()
 
-### Community 19 - "Changelog: Appliances & Irrigation"
-Cohesion: 0.22
-Nodes (9): Appliances module (config.appliances), discoverRooms() excludes entities referenced elsewhere in config.js, Irrigation buttons field (input_button alternative to valve), Optional weather station config module, README: appliances optional config, README: enabling irrigation (valve/buttons), README.it: prese smart senza voce in config.appliances, README: smart plugs without config.appliances entry (+1 more)
-
-### Community 20 - "Changelog: Settings Panel & Config"
-Cohesion: 0.22
-Nodes (9): config/www/live_dashboard_config.js update-safe config location, Example config renamed to .example.js, Export as config.js button, HACS custom-repository support, Settings panel (rooms/entities/cameras/sections visibility), Settings panel: cameras privacy gate + section toggles, Settings panel: rooms/entities show-hide-reorder, README: config.js path resolution order (+1 more)
-
-### Community 21 - "Changelog: Diagnostics Panel"
-Cohesion: 0.29
-Nodes (8): Copy diagnostics clipboard button, Cover position slider long-press/drag/NaN fix, Diagnostics: Config block (config.js path resolution), Diagnostics: Energy instantaneous values block, Diagnostics: Environment block, Diagnostics panel (settings gear → Diagnostica), Four-tab settings panel (Stanze/Energia/Telecamere/Diagnostica), Three new Diagnostica rows (camera/energy-ring/alarm)
-
-### Community 22 - "Long-Press Gesture Handlers"
+### Community 16 - "Long-Press Gesture Handlers"
 Cohesion: 0.36
 Nodes (8): _lpEntityId(), Component._lpEntityId(), Component._panelLpDown(), Component._panelLpMenu(), Component._panelLpUp(), _panelLpDown(), _panelLpMenu(), _panelLpUp()
 
-### Community 23 - "Mobile Screenshot Annotations"
+### Community 17 - "Mobile Screenshot Annotations"
 Cohesion: 0.40
 Nodes (6): Cose Accese Adesso (Active Devices List), Bottom Navigation Bar (Casa/Stanze/Irrigazione/Energia/Auto/Meteo), Modalità Casa (Home Mode Selector), Mobile Dashboard View (Screenshot), Chi è in Casa (Presence Tracker), Weather Widget (19°, Sunny)
 
-### Community 24 - "Room/Camera Aggregate Results"
-Cohesion: 0.47
-Nodes (6): ALL_CAMERAS_RESULT(), ALL_ROOMS_RESULT(), diagEnvironment(), Component.ALL_CAMERAS_RESULT(), Component.ALL_ROOMS_RESULT(), Component.diagEnvironment()
-
-### Community 25 - "mapEnergyPrefs Test Suite"
+### Community 18 - "mapEnergyPrefs Test Suite"
 Cohesion: 0.33
 Nodes (3): __dirname, sandbox, src
 
-### Community 26 - "Changelog: Demo Mode & Release"
+### Community 19 - "Changelog: Demo Mode & Release"
 Cohesion: 0.40
 Nodes (5): Demo mode with invented dataset, First public release (0.1.0), Selected-state !important inline-style override fix, README: demo mode documentation, Stuck on "Connecting…" and demo-mode fallback
 
-### Community 27 - "Mobile Settings Long-Press Actions"
-Cohesion: 0.67
-Nodes (4): Component.SETTINGS_LONG_HIDE(), Component.SETTINGS_SET_ENTITY(), SETTINGS_LONG_HIDE(), SETTINGS_SET_ENTITY()
-
-### Community 29 - "Release Workflow (GitHub Actions)"
+### Community 21 - "Release Workflow (GitHub Actions)"
 Cohesion: 0.67
 Nodes (3): Attach to Release Step, Build live_dashboard.zip Step, HACS zip_release content_in_root Convention
 
-### Community 30 - "README Header Banner"
+### Community 22 - "README Header Banner"
 Cohesion: 1.00
 Nodes (3): Live Dashboard README Header Banner, Home Assistant, Live Dashboard
 
-### Community 31 - "Energia Screenshot Annotations"
+### Community 23 - "Energia Screenshot Annotations"
 Cohesion: 1.00
 Nodes (3): Energia Dashboard View, Live Power KPI Cards (Produzione/Consumo/Prelievo), Produzione e Prelievo Bar Chart
 
-### Community 32 - "Irrigazione Screenshot Annotations"
+### Community 24 - "Irrigazione Screenshot Annotations"
 Cohesion: 1.00
 Nodes (3): Irrigazione (Irrigation) Dashboard View, Zona 1 Irrigation Card, Zona 2 Irrigation Card
 
@@ -256,9 +224,9 @@ Nodes (3): Irrigazione (Irrigation) Dashboard View, Zona 1 Irrigation Card, Zona
   TROUBLESHOOTING.md · relation: conceptually_related_to
 
 ## Knowledge Gaps
-- **95 isolated node(s):** `FOLDER_NAME`, `__dirname`, `src`, `sandbox`, `zip-and-attach Release Job` (+90 more)
+- **111 isolated node(s):** `FOLDER_NAME`, `__dirname`, `src`, `sandbox`, `zip-and-attach Release Job` (+106 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **26 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **31 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -269,11 +237,11 @@ _Questions this graph is uniquely positioned to answer:_
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
 - **What is the exact relationship between `Camera tile shows only icon, never preview` and `Sorveglianza/Surveillance tab requires 2+ cameras`?**
   _Edge tagged AMBIGUOUS (relation: conceptually_related_to) - confidence is low._
-- **Why does `renderVals()` connect `Alarm Guard & Appliance Helpers` to `Camera Live-View Strategy`, `Config/Entity Visibility Helpers`, `Changelog: Alarm & Camera Fixes`, `Mobile Diagnostics Helpers`, `Mobile Formatting Helpers`, `Long-Press Gesture Handlers`, `Room/Camera Aggregate Results`, `Mobile Settings Long-Press Actions`?**
-  _High betweenness centrality (0.238) - this node is a cross-community bridge._
+- **Why does `renderVals()` connect `Casa Panel Render Sections` to `Long-Press Gesture Handlers`, `v1.6.0 Release Notes`, `Camera Live-View Strategy`, `Config/Entity Visibility Helpers`?**
+  _High betweenness centrality (0.237) - this node is a cross-community bridge._
 - **Why does `collectConfiguredEntities()` connect `Alarm & Discovery Logic` to `Support Micro-Framework Runtime`?**
-  _High betweenness centrality (0.159) - this node is a cross-community bridge._
+  _High betweenness centrality (0.152) - this node is a cross-community bridge._
 - **Why does `walk()` connect `Support Micro-Framework Runtime` to `Alarm & Discovery Logic`?**
-  _High betweenness centrality (0.157) - this node is a cross-community bridge._
+  _High betweenness centrality (0.151) - this node is a cross-community bridge._
 - **Are the 3 inferred relationships involving `renderVals()` (e.g. with `PIN-Gated Alarm Guard` and `renderVals() [mobile]`) actually correct?**
   _`renderVals()` has 3 INFERRED edges - model-reasoned connections that need verification._

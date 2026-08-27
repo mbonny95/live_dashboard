@@ -7,7 +7,7 @@
 ## Connections by Relation
 
 ### calls
-- [discoverRooms()](discoverRooms%28%29.md) `EXTRACTED`
+- discoverRooms() `EXTRACTED`
 - discoverAlarm() `EXTRACTED`
 - discoverCameras() `EXTRACTED`
 - discoverEnergyEntities() `EXTRACTED`

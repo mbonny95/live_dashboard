@@ -1,10 +1,10 @@
-# Mobile Energy Chart Toggle
+# TROUBLESHOOTING: Unreachable Entity Design Note
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Component.toggleChart()** (0 connections) — `public/dash_neumo_mobile.html`
+- **Entities show "unreachable"/grey by design** (0 connections) — `TROUBLESHOOTING.md`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `public/dash_neumo_mobile.html`
+- `TROUBLESHOOTING.md`
 
 ## Audit Trail
 

@@ -309,6 +309,13 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <span style="flex:1;font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)">{{ S.solar }}</span>
 <button onClick="{{ goEnergia }}" style="background:transparent;font:600 11px/1 var(--font-body);color:var(--accT);padding:6px 2px">{{ S.details }}</button>
 </div>
+<sc-if value="{{ energyEmptyState }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:8px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:18px;padding:16px">
+<div style="font:600 12.5px/1.4 var(--font-body);word-break:break-all">{{ energyMissingLabel }}</div>
+<div style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ S.energyEmptyBody }}</div>
+<button onClick="{{ openEnergySettings }}" style="align-self:flex-start;margin-top:2px;height:40px;padding:0 14px;border-radius:13px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--accT)">{{ S.energyEmptyCta }}</button>
+</div>
+</sc-if>
 <sc-if value="{{ hasNewRing }}" hint-placeholder-val="{{ false }}">
 <div style="position:relative;width:178px;height:178px;margin:0 auto 14px;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center;flex:none">
 <svg viewBox="0 0 200 200" style="position:absolute;inset:8px;width:162px;height:162px">
@@ -375,6 +382,13 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <span style="flex:1;font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--tx2)">{{ S.solar }}</span>
 <button onClick="{{ goEnergia }}" style="background:transparent;font:600 11px/1 var(--font-body);color:var(--accT);padding:6px 2px">{{ S.details }}</button>
 </div>
+<sc-if value="{{ energyEmptyState }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:7px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:13px">
+<div style="font:600 12px/1.4 var(--font-body);word-break:break-all">{{ energyMissingLabel }}</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2)">{{ S.energyEmptyBody }}</div>
+<button onClick="{{ openEnergySettings }}" style="align-self:flex-start;margin-top:2px;height:40px;padding:0 12px;border-radius:12px;background:var(--gr);box-shadow:var(--nu-sm);font:600 11.5px/1 var(--font-body);color:var(--accT)">{{ S.energyEmptyCta }}</button>
+</div>
+</sc-if>
 <sc-if value="{{ hasNewRing }}" hint-placeholder-val="{{ false }}">
 <div style="position:relative;width:124px;height:124px;margin:0 auto 11px;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center;flex:none">
 <svg viewBox="0 0 200 200" style="position:absolute;inset:6px;width:112px;height:112px">
@@ -646,6 +660,14 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ energyEmptyState }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:26px;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:10px">
+<div style="font:600 15px/1.4 var(--font-body);word-break:break-all">{{ energyMissingLabel }}</div>
+<div style="font:500 12px/1.5 var(--font-body);color:var(--tx2)">{{ S.energyEmptyBody }}</div>
+<button onClick="{{ openEnergySettings }}" style="align-self:flex-start;margin-top:4px;height:44px;padding:0 18px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);font:600 13px/1 var(--font-body);color:var(--accT)">{{ S.energyEmptyCta }}</button>
+</div>
+</sc-if>
+
 <sc-if value="{{ energyTabFallback }}" hint-placeholder-val="{{ false }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:22px 24px;flex:none;display:flex;flex-direction:column;gap:16px">
 <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
@@ -684,6 +706,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ energyTabChart }}" hint-placeholder-val="{{ true }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:20px 22px;flex:1;min-height:0;display:flex;flex-direction:column">
 <div style="display:flex;align-items:flex-end;gap:20px;flex-wrap:wrap;flex:none">
 <div style="min-width:0">
@@ -756,6 +779,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </sc-for>
 </div>
 </div>
+</sc-if>
 </div>
 </sc-if>
 
@@ -1192,6 +1216,24 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </sc-for>
 </div>
 <div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:20px">{{ S.settingsPlugThresholdNote }}</div>
+
+<sc-if value="{{ showBatterySignControl }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsBatterySignHeading }}</div>
+<div style="display:flex;gap:7px;margin-bottom:6px">
+<sc-for list="{{ batterySignOptions }}" as="bs" hint-placeholder-count="2">
+<button onClick="{{ bs.set }}" data-sel="{{ bs.sel }}" style="flex:1;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ bs.label }}</button>
+</sc-for>
+</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:8px">{{ batterySignLiveLabel }}</div>
+<sc-if value="{{ batterySignSuspect }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:11px 13px;margin-bottom:8px" data-tone="warn">
+<div style="font:600 11.5px/1.3 var(--font-body)">{{ S.settingsBatterySignSuspectTitle }}</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2)">{{ S.settingsBatterySignSuspectBody }}</div>
+<button onClick="{{ batterySignInvert }}" style="align-self:flex-start;height:38px;padding:0 14px;border-radius:12px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--accT)">{{ S.settingsBatterySignInvert }}</button>
+</div>
+</sc-if>
+<div style="margin-bottom:20px"></div>
+</sc-if>
 
 <div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagEnergyInstantHeading }}</div>
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
@@ -1908,14 +1950,89 @@ class Component extends DCLogic {
   powerVal(id) {
     const v = this.n(id);
     if (v === null) return '—';
-    const rawUnit = this.unit(id);
-    const u = rawUnit.trim().toLowerCase();
+    const watts = this.toWatts(id);
+    if (watts === null) return this.dec(v, 1) + (this.unit(id) ? ' ' + this.unit(id) : '');
+    return this.formatWatts(watts);
+  }
+  // Split out of powerVal() (v1.6.0) so the house-consumption derivation
+  // below can combine several sensors in a common unit before formatting —
+  // powerVal() itself is unchanged in behavior, just reassembled from these
+  // two halves. null means the sensor's unit isn't W/kW/MW (unrecognized —
+  // see powerVal()'s own comment on why that's shown raw, never converted).
+  toWatts(id) {
+    const v = this.n(id);
+    if (v === null) return null;
+    const u = this.unit(id).trim().toLowerCase();
     const scale = u === 'kw' ? 1000 : u === 'mw' ? 1000000 : u === 'w' ? 1 : null;
-    if (scale === null) return this.dec(v, 1) + (rawUnit ? ' ' + rawUnit : '');
-    const watts = v * scale;
+    return scale === null ? null : v * scale;
+  }
+  formatWatts(watts) {
+    if (watts === null || watts === undefined) return '—';
     const pref = this.PREFS().powerUnit || 'auto';
     const useKw = pref === 'kw' || (pref === 'auto' && Math.abs(watts) >= 1000);
     return useKw ? this.dec(watts / 1000, 1) + ' kW' : this.dec(watts, 0) + ' W';
+  }
+  // --- house consumption, derived (v1.6.0) ------------------------------
+  // consumo casa = produzione + prelievo - immissione + scaricaBatteria -
+  // caricaBatteria. Only ever runs when config.energy.consumption is unset
+  // — an explicit sensor always wins, even if it disagrees with this (it's
+  // the user's install, not ours). Needs production, gridImport *and*
+  // gridExport all resolved; with any of the three missing this returns
+  // `derived: false` rather than a partial sum — see CLAUDE.md v1.6.0,
+  // "Quando derivare". Battery terms are additive extras: no battery
+  // config at all just drops them (batteryTermUsed stays false), which is
+  // the normal case for an install with no battery.
+  deriveConsumption() {
+    const en = (this.cfg && this.cfg.energy) || {};
+    if (en.consumption) return { watts: null, derived: false, batteryTermUsed: false };
+    const prod = this.toWatts(en.production);
+    const imp = this.toWatts(en.gridImport);
+    const exp = this.toWatts(en.gridExport);
+    if (prod === null || imp === null || exp === null) return { watts: null, derived: false, batteryTermUsed: false };
+    let battTerm = 0, batteryTermUsed = false;
+    const bat = en.battery || {};
+    if (bat.chargePower && bat.dischargePower) {
+      // Two separate always-positive sensors (v1.6.0, point 1) — no sign
+      // ambiguity, so no convention pref and no plausibility check apply.
+      const c = this.toWatts(bat.chargePower), d = this.toWatts(bat.dischargePower);
+      if (c !== null || d !== null) { battTerm = (d || 0) - (c || 0); batteryTermUsed = true; }
+    } else if (bat.power) {
+      const bp = this.toWatts(bat.power);
+      if (bp !== null) {
+        const sign = this.batteryPowerSign();
+        const chargeW = sign === 'charge' ? Math.max(0, bp) : Math.max(0, -bp);
+        const dischargeW = sign === 'charge' ? Math.max(0, -bp) : Math.max(0, bp);
+        battTerm = dischargeW - chargeW;
+        batteryTermUsed = true;
+      }
+    }
+    const watts = prod + imp - exp + battTerm;
+    return { watts, derived: true, batteryTermUsed };
+  }
+  // A derived consumption that comes out negative is never shown as a
+  // number — see CLAUDE.md v1.6.0: "preferiamo un numero assente a un
+  // numero verosimile e sbagliato". Sampled here (not on every render —
+  // renderVals() runs on any UI interaction, not just new sensor data;
+  // this instance-field buffer is throttled to one sample per ~10s) so
+  // batterySignSuspect below can tell a single noisy blip apart from a
+  // sustained wrong-sign convention. Only sampled when a battery term
+  // actually participated — a plain production+import-export derivation
+  // going negative would mean broken sensors, not an inverted convention,
+  // and isn't this checkpoint's job to diagnose.
+  _sampleBatterySign(negative) {
+    if (!this._batterySignBuffer) this._batterySignBuffer = [];
+    const now = Date.now();
+    const last = this._batterySignBuffer[this._batterySignBuffer.length - 1];
+    if (last && now - last.t < 10000) return;
+    this._batterySignBuffer.push({ t: now, negative });
+    const cutoff = now - 180000;
+    this._batterySignBuffer = this._batterySignBuffer.filter((s) => s.t >= cutoff);
+  }
+  batterySignVerdict() {
+    const buf = this._batterySignBuffer || [];
+    const n = buf.length;
+    const negShare = n ? buf.filter((s) => s.negative).length / n : 0;
+    return { samples: n, suspect: n >= 5 && negShare > 0.5 };
   }
   // Settings -> Energia (v1.5.4). Default 3W matches the "a plug measuring
   // 0.4W with the relay closed is standby, not a running appliance" reading
@@ -2143,6 +2260,18 @@ class Component extends DCLogic {
     const p = this.PREFS();
     this.SAVE_PREFS(Object.assign({}, p, { plugThreshold: watts }));
   }
+  // 'charge' | 'discharge' — which sign a single signed battery-power sensor
+  // uses for charging. Only meaningful when config.energy.battery.power is
+  // set and chargePower/dischargePower aren't (see deriveConsumption()) —
+  // two separate always-positive sensors need no convention at all.
+  batteryPowerSign() {
+    const v = this.PREFS().batteryPowerSign;
+    return v === 'discharge' ? 'discharge' : 'charge';
+  }
+  SETTINGS_SET_BATTERY_SIGN(sign) {
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { batteryPowerSign: sign === 'discharge' ? 'discharge' : 'charge' }));
+  }
   SETTINGS_RESET() { this.SAVE_PREFS({ v: 1 }); }
   SETTINGS_LONG_HIDE(id) {
     this.SETTINGS_SET_ENTITY(id, false);
@@ -2235,7 +2364,7 @@ class Component extends DCLogic {
     const instantBad = this.diagEnergyInstant().some((r) => r.verdict === 'missing' || r.verdict === 'unavailable' || r.unitWarn);
     const daily = this.diagEnergyDaily();
     const dailyBad = daily.prefsFailed || daily.rows.some((r) => r.counterWarn);
-    if (instantBad || dailyBad) return 'energia';
+    if (instantBad || dailyBad || this.batterySignVerdict().suspect) return 'energia';
     const cd = this.configDiag;
     if (cd && cd.attempts.some((a) => a.loadScript && a.defined === false)) return 'diagnostica';
     return null;
@@ -2389,6 +2518,38 @@ class Component extends DCLogic {
     // from any source, so the module also appears with zero config.js when
     // HA's own Energy dashboard (or auto-discovery) found something.
     const hasEnergy = (!!en.production || prodT != null || gridT != null) && this.MODULE_VISIBLE('energy');
+    // --- empty state, case (b): configured but the entity doesn't exist
+    // (CLAUDE.md v1.6.0) --------------------------------------------------
+    // hasEnergy above is a truthiness check on the *string* id, not on
+    // whether that id resolves — a renamed/removed sensor still makes
+    // hasEnergy true, so the card would otherwise render with every value
+    // silently "—" and no explanation. energyEmptyState only fires when
+    // there's truly nothing live to show (energyHasLiveData false): a role
+    // renamed while the rest of the install still works is left alone, same
+    // as before — this is specifically the "whole module points at ghosts"
+    // case the `missing` demo scenario exercises.
+    const energyMissingIds = [];
+    if (hasEnergy) {
+      ['production', 'consumption', 'gridImport', 'gridExport'].forEach((role) => {
+        const id = en[role];
+        if (id && !(id in this.state.st)) energyMissingIds.push(id);
+      });
+      if (en.battery) {
+        ['soc', 'power', 'chargePower', 'dischargePower'].forEach((k) => {
+          const id = en.battery[k];
+          if (id && !(id in this.state.st)) energyMissingIds.push(id);
+        });
+      }
+    }
+    const energyHasLiveData = (en.production && this.n(en.production) !== null) ||
+      (en.consumption && this.n(en.consumption) !== null) ||
+      (en.gridImport && this.n(en.gridImport) !== null) ||
+      prodT !== null || gridT !== null;
+    const energyEmptyState = hasEnergy && energyMissingIds.length > 0 && !energyHasLiveData;
+    const ENERGY_MISSING_SHOWN = 3;
+    const energyMissingLabel = energyMissingIds.slice(0, ENERGY_MISSING_SHOWN).join(' · ') +
+      (energyMissingIds.length > ENERGY_MISSING_SHOWN ? ' ' + this.t('energyEmpty.more', { n: energyMissingIds.length - ENERGY_MISSING_SHOWN }) : '');
+    const openEnergySettings = () => this.setState({ settingsOpen: true, settingsRoom: null, settingsTab: 'energia' });
     const hasIrrigation = !!(this.cfg.irrigation && this.cfg.irrigation.zones && this.cfg.irrigation.zones.length) && this.MODULE_VISIBLE('irrigation');
     const hasVehicle = !!(this.cfg.vehicle) && this.MODULE_VISIBLE('vehicle');
     const alarmId = this.ALARM_ID();
@@ -2609,11 +2770,15 @@ class Component extends DCLogic {
     };
     const rooms = roomsResult.rooms.map(buildRoom);
     const overflowRooms = roomsResult.overflow.map(buildRoom);
-    // Literally zero areas in the registry — not "areas exist but nothing
-    // controllable in them", which is a different, rarer case that doesn't
-    // need this message. This is the single most likely reason a fresh
-    // install looks empty, so it gets a direct link instead of a blank grid.
-    const hasNoAreas = !this.registries.areas || this.registries.areas.length === 0;
+    // Empty state, case (a): discovery found nothing at all (CLAUDE.md
+    // v1.6.0) — widened from the original "zero areas exist in the
+    // registry" check, which missed the actually-common cause: areas exist
+    // in HA, entities just were never assigned to one. ALL_ROOMS_RESULT()
+    // ignores the panel's own hide prefs (same reasoning as its own doc
+    // comment), so hiding every room by hand doesn't trigger this — only a
+    // genuinely empty discovery result does.
+    const allRoomsRes = this.ALL_ROOMS_RESULT();
+    const hasNoAreas = allRoomsRes.rooms.length === 0 && allRoomsRes.overflow.length === 0;
     const goToAreas = () => { try { window.top.location.href = '/config/areas/dashboard'; } catch (e) {} };
 
     const al = hasAlarm ? this.ALARM(alarmId) : ['', 'ok'];
@@ -2675,6 +2840,10 @@ class Component extends DCLogic {
     if (consT != null && gridT != null) autoconsumo = Math.max(0, consT - gridT);
     else if (prodT != null && exportT != null) autoconsumo = Math.max(0, prodT - exportT);
     const consumoCasa = consT != null ? consT : (autoconsumo != null && gridT != null ? autoconsumo + gridT : null);
+    // Declares itself (v1.6.0) rather than silently mixing a derived number
+    // in with measured ones — see kwhConsumedLabel below, and deriveConsumption()
+    // above for the same principle applied to the instantaneous tile.
+    const dailyConsumptionDerived = consT == null && consumoCasa != null;
 
     // Outer ring needs production too (not just autoconsumo + prelievo) —
     // deliberately stricter than the math alone requires, so "no production
@@ -2685,7 +2854,10 @@ class Component extends DCLogic {
     // empty ring) when the install has no export sensor, per the spec this
     // was built against: an empty ring reads as broken, not as "zero".
     const hasInnerRing = hasOuterRing && exportT != null && prodT > 0;
-    const hasNewRing = hasOuterRing;
+    // energyEmptyState (case b, above) wins over either ring — showing a
+    // ring built from whatever partial data resolved would contradict the
+    // "entity doesn't exist" explanation sitting right next to it.
+    const hasNewRing = hasOuterRing && !energyEmptyState;
 
     const RING_GAP = 5, ORC = 540.4, IRC = 389.6; // circumferences for r=86 / r=62
     // A segment whose share is small enough that the gap eats the whole
@@ -2723,9 +2895,24 @@ class Component extends DCLogic {
     // sensor, per the "single ring fallback" degradation).
     const ringLegendCols = 'repeat(' + ringLegend.length + ', 1fr)';
 
+    // House consumption, derived when config.energy.consumption isn't set
+    // (v1.6.0) — see deriveConsumption() above for the formula and why an
+    // explicit sensor always wins. Sampled into the battery-sign buffer
+    // here rather than inside deriveConsumption() itself, since this is the
+    // one call site that actually feeds the live "consumo ora" tile — the
+    // buffer should track what the user is looking at, not every place the
+    // formula could theoretically run.
+    const consumeResult = hasEnergy ? this.deriveConsumption() : { watts: null, derived: false, batteryTermUsed: false };
+    if (consumeResult.batteryTermUsed) this._sampleBatterySign(consumeResult.watts !== null && consumeResult.watts < 0);
+    const consumptionDisplayWatts = (consumeResult.watts !== null && consumeResult.watts >= 0) ? consumeResult.watts : null;
+    const consumptionIsDerived = consumeResult.derived;
+    const consumptionVal = en.consumption ? this.powerVal(en.consumption) : this.formatWatts(consumptionDisplayWatts);
+    const consumptionLabel = consumptionIsDerived ? this.t('energy.consumptionNowDerived') : this.t('energy.consumptionNow');
+    const batterySign = this.batterySignVerdict();
+
     const nowCells = hasEnergy ? [
       { icon: '#i-solar', iconRef: this._bindAttr('href', '#i-solar'), stroke: 'var(--acc)', label: this.t('energy.productionNow'), val: this.powerVal(en.production) },
-      { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.powerVal(en.consumption) },
+      { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: consumptionLabel, val: consumptionVal },
       { icon: '#i-tower', iconRef: this._bindAttr('href', '#i-tower'), stroke: 'var(--tx2)', label: this.t('energy.gridImportNow'), val: this.powerVal(en.gridImport) }
     ] : [];
     // Power sensors only ever come from config.js — energy/get_prefs
@@ -2737,8 +2924,12 @@ class Component extends DCLogic {
     // (HA Energy dashboard auto-discovered, no config.energy at all) fall
     // through to the daily-totals view the ring already built, instead of
     // opening on four empty cells.
-    const hasPowerCells = !!(en.production || en.consumption || en.gridImport);
+    const hasPowerCells = !!(en.production || en.consumption || en.gridImport) && !energyEmptyState;
     const energyTabFallback = !hasPowerCells && hasNewRing;
+    // Tab-level chart card (Produzione e prelievo bar chart) — the one
+    // Energia-tab element energyEmptyState doesn't already suppress via
+    // hasPowerCells/hasNewRing above, since it renders unconditionally.
+    const energyTabChart = !energyEmptyState;
     const dailySelfPct = hasOuterRing && consumoCasa ? this.dec(Math.min(100, (autoconsumo / consumoCasa) * 100), 0) + '%' : '—';
 
     const price = hasEnergy && en.price ? this.n(en.price) : null;
@@ -3131,6 +3322,7 @@ class Component extends DCLogic {
     let diagCameraRows = [], diagRingValue = '', diagAlarmRows = [];
     let doDiag = () => {};
     let settingsTabs = [], powerUnitOptions = [], plugThresholdOptions = [];
+    let showBatterySignControl = false, batterySignOptions = [], batterySignLiveLabel = '', batterySignSuspect = false, batterySignInvert = () => {};
     if (this.state.settingsOpen) {
       const S = this.strings;
       const roleLabelKeys = { production: 'diagRoleProduction', consumption: 'diagRoleConsumption', gridImport: 'diagRoleGridImport', gridExport: 'diagRoleGridExport',
@@ -3225,7 +3417,7 @@ class Component extends DCLogic {
       // config-load warn), which decides the tab on open, before these
       // rows exist yet. Rooms/cameras have no diagnosed failure mode.
       const settingsTabDefs = [['stanze', S.rooms, false], ['energia', this.t('tab.energy'),
-        diagEnergyInstantRows.some((r) => r.tone === 'warn' || r.unitWarn) || diagPrefsFailed || diagEnergyDailyRows.some((r) => r.counterWarn)]];
+        diagEnergyInstantRows.some((r) => r.tone === 'warn' || r.unitWarn) || diagPrefsFailed || diagEnergyDailyRows.some((r) => r.counterWarn) || batterySign.suspect]];
       if (settingsCameras.length > 0) settingsTabDefs.push(['camere', S.settingsCameras, false]);
       settingsTabDefs.push(['diagnostica', S.diagTitle, diagConfigAttempts.some((a) => a.tone === 'warn')]);
       settingsTabs = settingsTabDefs.map(([key, label, hasIssue]) => ({
@@ -3239,6 +3431,20 @@ class Component extends DCLogic {
       const curPlugThreshold = this.plugThresholdW();
       plugThresholdOptions = [1, 3, 5, 10]
         .map((w) => ({ key: String(w), label: w + ' W', sel: curPlugThreshold === w, set: () => this.SETTINGS_SET_PLUG_THRESHOLD(w) }));
+
+      // Battery power sign convention (v1.6.0) — only meaningful when a
+      // single signed sensor is driving the consumption derivation above
+      // (deriveConsumption()): two separate always-positive sensors need no
+      // convention, and if config.energy.consumption is set directly the
+      // derivation never runs at all, so there's nothing here to tune.
+      const bat = en.battery || {};
+      showBatterySignControl = !!(bat.power && !(bat.chargePower && bat.dischargePower) && !en.consumption);
+      const curBatterySign = this.batteryPowerSign();
+      batterySignOptions = [['charge', S.settingsBatterySignCharge], ['discharge', S.settingsBatterySignDischarge]]
+        .map(([key, label]) => ({ key, label, sel: curBatterySign === key, set: () => this.SETTINGS_SET_BATTERY_SIGN(key) }));
+      batterySignLiveLabel = this.t('settingsBatterySignLive', { val: this.formatWatts(consumptionDisplayWatts) });
+      batterySignSuspect = batterySign.suspect;
+      batterySignInvert = () => this.SETTINGS_SET_BATTERY_SIGN(curBatterySign === 'charge' ? 'discharge' : 'charge');
 
       doDiag = async () => {
         const text = window.CasaPrefs.diagText({
@@ -3314,13 +3520,17 @@ class Component extends DCLogic {
       camLayerVideo, camVideoRef, camLayerSnapshot, camStreamSrcRef: this._bindAttr('src', camStreamSrc), camNoStream, camShowBadge, camBadgeLabel,
       camCountdown, closeCam: () => this._closeCam(),
       hasEnergy, energyCompact, energyNormal,
-      hasNewRing, hasInnerRing, hasOldRing: !hasNewRing,
+      energyEmptyState, energyMissingLabel, openEnergySettings, energyTabChart,
+      hasNewRing, hasInnerRing, hasOldRing: !hasNewRing && !energyEmptyState,
       outerSelfArc: hasOuterRing ? outerSelf.dasharray : '', outerSelfOffset: hasOuterRing ? outerSelf.dashoffset : '0', outerSelfCap: hasOuterRing ? outerSelf.cap : 'butt',
       outerGridArc: hasOuterRing ? outerGrid.dasharray : '', outerGridOffset: hasOuterRing ? outerGrid.dashoffset : '0', outerGridCap: hasOuterRing ? outerGrid.cap : 'butt',
       innerSelfArc: hasInnerRing ? innerSelf.dasharray : '', innerSelfOffset: hasInnerRing ? innerSelf.dashoffset : '0', innerSelfCap: hasInnerRing ? innerSelf.cap : 'butt',
       innerFeedArc: hasInnerRing ? innerFeed.dasharray : '', innerFeedOffset: hasInnerRing ? innerFeed.dashoffset : '0', innerFeedCap: hasInnerRing ? innerFeed.cap : 'butt',
       consumoCasaBig: consumoCasa === null ? '—' : this.dec(consumoCasa, 1),
-      kwhConsumedLabel: this.t('energy.kwhConsumed'),
+      // Declares itself when derived (v1.6.0) — see dailyConsumptionDerived
+      // above. Same "sottotitolo visibile senza interazione" treatment as
+      // consumptionLabel on the instantaneous tile below.
+      kwhConsumedLabel: this.t(dailyConsumptionDerived ? 'energy.kwhConsumedDerived' : 'energy.kwhConsumed'),
       ringLegend, ringLegendCols,
       ringCompactSummary: hasOuterRing ? this.t('energy.compactSummary', { pct: dailySelfPct }) : '',
       selfConsumptionShort: this.t('energy.selfConsumptionShort'), fromGridShort: this.t('energy.fromGridShort'),
@@ -3400,6 +3610,7 @@ class Component extends DCLogic {
       settingsTabCamere: this.state.settingsTab === 'camere',
       settingsTabDiagnostica: this.state.settingsTab === 'diagnostica',
       powerUnitOptions, plugThresholdOptions,
+      showBatterySignControl, batterySignOptions, batterySignLiveLabel, batterySignSuspect, batterySignInvert,
       settingsRooms, hasSettingsRooms: settingsRooms.length > 0,
       settingsCameras, hasSettingsCameras: settingsCameras.length > 0,
       settingsModules,

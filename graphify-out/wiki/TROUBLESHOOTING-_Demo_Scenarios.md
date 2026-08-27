@@ -1,6 +1,6 @@
-# Demo Scenarios (Troubleshooting)
+# TROUBLESHOOTING: Demo Scenarios
 
-> 20 nodes · cohesion 0.12
+> 21 nodes · cohesion 0.11
 
 ## Key Concepts
 
@@ -11,6 +11,7 @@
 - **Demo scenario bar (mobile)** (3 connections) — `public/dash_neumo_mobile.html`
 - **switchScenario(id)** (3 connections) — `public/dash_neumo.html`
 - **scenario=missing** (2 connections) — `CHANGELOG.md`
+- **Single-ring self-consumption line mixing fix** (2 connections) — `CHANGELOG.md`
 - **switchScenario(id) [mobile]** (2 connections) — `public/dash_neumo_mobile.html`
 - **scenario=missing (troubleshooting table)** (2 connections) — `TROUBLESHOOTING.md`
 - **scenario=partial (troubleshooting table)** (2 connections) — `TROUBLESHOOTING.md`
@@ -27,7 +28,7 @@
 
 ## Relationships
 
-- [Changelog: Alarm & Camera Fixes](Changelog-_Alarm_%26_Camera_Fixes.md) (1 shared connections)
+- [v1.6.0 Release Notes](v1.6.0_Release_Notes.md) (1 shared connections)
 
 ## Source Files
 
@@ -38,8 +39,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 41 (87%)
-- INFERRED: 6 (13%)
+- EXTRACTED: 43 (88%)
+- INFERRED: 6 (12%)
 - AMBIGUOUS: 0 (0%)
 
 ---

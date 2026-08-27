@@ -1,6 +1,6 @@
 # Camera Live-View Strategy
 
-> 48 nodes · cohesion 0.07
+> 47 nodes · cohesion 0.07
 
 ## Key Concepts
 
@@ -16,6 +16,7 @@
 - **loadUserConfig()** (5 connections) — `public/dash_neumo.html`
 - **loadScript()** (5 connections) — `public/dash_neumo.html`
 - **Component._camStartStream()** (5 connections) — `public/dash_neumo_mobile.html`
+- **loadScript() cache-bust propagation fix** (4 connections) — `CHANGELOG.md`
 - **bust()** (4 connections) — `public/dash_neumo.html`
 - **_camStopFastPoll()** (4 connections) — `public/dash_neumo.html`
 - **_closeCam()** (4 connections) — `public/dash_neumo.html`
@@ -28,17 +29,15 @@
 - **bust()** (3 connections) — `public/dash_neumo_mobile.html`
 - **Component._camStartFastPoll()** (3 connections) — `public/dash_neumo_mobile.html`
 - **Component._camStopFastPoll()** (3 connections) — `public/dash_neumo_mobile.html`
-- **Component._closeCam()** (3 connections) — `public/dash_neumo_mobile.html`
-- *... and 23 more nodes in this community*
+- *... and 22 more nodes in this community*
 
 ## Relationships
 
-- [Alarm Guard & Appliance Helpers](Alarm_Guard_%26_Appliance_Helpers.md) (3 shared connections)
+- [Changelog: Diagnostics & Config](Changelog-_Diagnostics_%26_Config.md) (5 shared connections)
+- [Casa Panel Render Sections](Casa_Panel_Render_Sections.md) (3 shared connections)
 - [Changelog: Alarm & Camera Fixes](Changelog-_Alarm_%26_Camera_Fixes.md) (2 shared connections)
-- [Changelog: Diagnostics Panel](Changelog-_Diagnostics_Panel.md) (1 shared connections)
-- [Casa Panel Render Sections](Casa_Panel_Render_Sections.md) (1 shared connections)
-- [README Installation Instructions](README_Installation_Instructions.md) (1 shared connections)
-- [Changelog: Energy Diagnostics](Changelog-_Energy_Diagnostics.md) (1 shared connections)
+- [Alarm & Discovery Logic](Alarm_%26_Discovery_Logic.md) (1 shared connections)
+- [Casa Card Widgets](Casa_Card_Widgets.md) (1 shared connections)
 
 ## Source Files
 
@@ -49,7 +48,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 121 (70%)
+- EXTRACTED: 120 (70%)
 - INFERRED: 52 (30%)
 - AMBIGUOUS: 0 (0%)
 

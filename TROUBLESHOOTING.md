@@ -81,6 +81,11 @@ issue.
 
 ### Rooms are empty, or show far fewer entities than expected
 
+- **If Rooms is showing an empty-state card with a "Go to Areas" button,
+  that's the dashboard already telling you the cause** (v1.6.0) — no
+  entities resolved to a room at all, almost always because areas were
+  never assigned in this installation. The card is there specifically so
+  this isn't a silent blank grid; follow its button rather than guessing.
 - The most common cause by far: **areas were never assigned** in this
   installation. This dashboard has no naming or grouping fallback beyond
   Home Assistant's own area/device/entity registries — it can't guess a
@@ -120,6 +125,45 @@ into rooms at all — it can still be wired into Energy/Irrigation/Vehicle via
 This is intentional, not a bug — the dashboard shows "unreachable" instead of
 printing the raw `unavailable` state, and dims the row. It means Home
 Assistant itself has lost contact with that entity.
+
+### The Energy card shows an entity ID and "Open settings" instead of the ring
+
+That's the empty-state the dashboard shows (v1.6.0) when `config.energy`
+points at an entity ID that no longer exists in Home Assistant — usually a
+sensor an integration update renamed or removed, with the rest of the
+install otherwise fine. The listed ID is exactly what to search for in
+**Developer Tools → States**; the button jumps straight to Settings →
+Energy, which lists the same verdict per role. Reproduce it on demand with
+`?demo&scenario=missing`. This is a different case from "Energy charts are
+empty or look wrong" below, which is about *daily totals* pointed at the
+wrong kind of sensor, not a missing one — and different again from having no
+`config.energy` at all, which just hides the whole card (see "A whole
+section... is missing" further down).
+
+### "Derived house consumption" shows "—", or the settings toggle says it's probably inverted
+
+- **"—" instead of a number**: the instantaneous consumption derivation
+  (v1.6.0 — see README's "House consumption, derived" section) needs
+  `production`, `gridImport` *and* `gridExport` all resolved; missing any
+  one of the three, it shows "—" rather than a number computed from an
+  incomplete formula. Check Settings → Energy's "Energy — instantaneous
+  values" list for which of the three is the gap.
+- **The derived value is negative, or Settings → Energy shows "The battery
+  convention is probably inverted"**: your battery power sensor's sign
+  doesn't match what's selected under **Battery power** in Settings →
+  Energy. There's no universal convention across integrations for whether
+  positive means charging or discharging — flip the toggle (or tap
+  **Invert** on the warning itself) and watch the live value shown right
+  below it become plausible again. The warning only fires after several
+  samples come out negative in a row (a single noisy blip doesn't trigger
+  it), and the dashboard never shows a negative "house consumption" number
+  either way — an honest "—" during the bad window beats a wrong-looking
+  number.
+- This entire control only appears when a single signed
+  `config.energy.battery.power` sensor is configured (and `consumption`
+  isn't set directly, since then there's nothing to derive). Two separate
+  `chargePower`/`dischargePower` sensors, both always positive, need no
+  convention and show no toggle at all.
 
 ### Energy charts are empty or look wrong
 

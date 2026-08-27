@@ -3,10 +3,49 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [1.6.0] - 2026-08-27
 
 ### Added
 
+- **House consumption, derived automatically.** The one remaining manual
+  step in the whole setup — hand-writing a `template sensor` in
+  `configuration.yaml` just to add production + grid-import − grid-export
+  together — is gone. Leave `config.energy.consumption` unset and, whenever
+  production/gridImport/gridExport all resolve, the instantaneous "house
+  consumption" tile computes itself from them (plus battery charge/discharge
+  power, when configured); an explicit sensor still always wins. Any of the
+  three missing and it shows an honest "—" rather than a number from an
+  incomplete sum — never a partial derivation quietly passed off as the real
+  thing. The derived value declares itself everywhere it appears
+  ("House consumption now · calculated", "kWh calculated" at the ring's
+  center) rather than being indistinguishable from a measured sensor.
+  Battery sign handling: two separate always-positive charge/discharge
+  sensors need no configuration at all; a single signed sensor defaults to
+  positive-means-charging, with an explicit toggle in Settings → Energy
+  (live-updating derived value shown right below it) for installs where
+  that's backwards. Getting the sign wrong is self-diagnosing rather than
+  silently wrong: a rolling few-minutes window watches for the derived value
+  coming out negative more often than not, and when it does, Settings →
+  Energy raises a named verdict with a one-tap invert — never a bare
+  negative "consumption" number on screen in the meantime. See README's
+  "House consumption, derived automatically" section and
+  `TROUBLESHOOTING.md`.
+- **Self-explanatory empty states, three cases instead of one silent
+  blank.** (a) Rooms discovery finding nothing at all now shows a
+  "Go to Areas" card regardless of *why* it's empty — widened from the old
+  check (literally zero areas in the registry) to the actually-common cause
+  (areas exist, entities were just never assigned to one). (b) A configured
+  energy role pointing at an entity ID that no longer exists (the `missing`
+  demo scenario's exact case — a sensor renamed by an integration update,
+  the rest of the install still fine) now names the missing ID directly and
+  links to the exact Settings → Energy row, instead of quietly rendering an
+  unexplained ring full of dashes. (c) A module the user hid on purpose from
+  the Settings visibility panel (v1.5.0) stays hidden with nothing shown at
+  all — confirmed as already-correct behavior, not something this pass
+  needed to add. Reproduce case (b) on demand with `?demo&scenario=missing`;
+  case (a) has no demo scenario of its own — the demo backend's entities are
+  all pre-assigned to areas, so there's no data patch that reproduces it
+  there.
 - **Seven forceable data scenarios in demo mode**
   (`?demo&scenario=export|import|night|partial|missing|odd-units`, plus
   `default`), each a pure data patch to `SEED`/`DEMO_CONFIG` in

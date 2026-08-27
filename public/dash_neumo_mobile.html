@@ -564,6 +564,13 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 <div data-m="col" data-screen-label="Energia">
 
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<sc-if value="{{ energyEmptyState }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font:600 13px/1.4 var(--font-body);word-break:break-all">{{ energyMissingLabel }}</div>
+<div style="font:500 11.5px/1.4 var(--font-body);color:var(--tx2)">{{ S.energyEmptyBody }}</div>
+<button onClick="{{ openEnergySettings }}" style="align-self:flex-start;margin-top:2px;height:44px;padding:0 16px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1 var(--font-body);color:var(--accT)">{{ S.energyEmptyCta }}</button>
+</div>
+</sc-if>
 <sc-if value="{{ hasNewRing }}" hint-placeholder-val="{{ false }}">
 <div style="font:600 10.5px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2)">{{ S.solar }}</div>
 <div style="position:relative;width:150px;height:150px;margin:14px auto;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center">
@@ -639,10 +646,12 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ energyTabChart }}" hint-placeholder-val="{{ true }}">
 <button onClick="{{ toggleEnergyChart }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--tx2)">
 <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"></use></svg>
 {{ energyChartLabel }}
 </button>
+</sc-if>
 
 <sc-if value="{{ showEnergyChart }}" hint-placeholder-val="{{ false }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:16px">
@@ -924,6 +933,24 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 </div>
 <div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:20px">{{ S.settingsPlugThresholdNote }}</div>
+
+<sc-if value="{{ showBatterySignControl }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 9px">{{ S.settingsBatterySignHeading }}</div>
+<div style="display:flex;gap:7px;margin-bottom:6px">
+<sc-for list="{{ batterySignOptions }}" as="bs" hint-placeholder-count="2">
+<button onClick="{{ bs.set }}" data-sel="{{ bs.sel }}" style="flex:1;height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ bs.label }}</button>
+</sc-for>
+</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:8px">{{ batterySignLiveLabel }}</div>
+<sc-if value="{{ batterySignSuspect }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:11px 13px;margin-bottom:8px" data-tone="warn">
+<div style="font:600 11.5px/1.3 var(--font-body)">{{ S.settingsBatterySignSuspectTitle }}</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2)">{{ S.settingsBatterySignSuspectBody }}</div>
+<button onClick="{{ batterySignInvert }}" style="align-self:flex-start;height:40px;padding:0 14px;border-radius:12px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--accT)">{{ S.settingsBatterySignInvert }}</button>
+</div>
+</sc-if>
+<div style="margin-bottom:20px"></div>
+</sc-if>
 
 <div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagEnergyInstantHeading }}</div>
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
@@ -1557,16 +1584,74 @@ class Component extends DCLogic {
   powerVal(id) {
     const v = this.n(id);
     if (v === null) return '—';
-    const rawUnit = this.unit(id);
-    const u = rawUnit.trim().toLowerCase();
+    const watts = this.toWatts(id);
+    if (watts === null) return this.dec(v, 1) + (this.unit(id) ? ' ' + this.unit(id) : '');
+    return this.formatWatts(watts);
+  }
+  // See dash_neumo.html's copy of these for the full "why" (v1.6.0).
+  toWatts(id) {
+    const v = this.n(id);
+    if (v === null) return null;
+    const u = this.unit(id).trim().toLowerCase();
     const scale = u === 'kw' ? 1000 : u === 'mw' ? 1000000 : u === 'w' ? 1 : null;
-    if (scale === null) return this.dec(v, 1) + (rawUnit ? ' ' + rawUnit : '');
-    const watts = v * scale;
+    return scale === null ? null : v * scale;
+  }
+  formatWatts(watts) {
+    if (watts === null || watts === undefined) return '—';
     const pref = this.PREFS().powerUnit || 'auto';
     const useKw = pref === 'kw' || (pref === 'auto' && Math.abs(watts) >= 1000);
     return useKw ? this.dec(watts / 1000, 1) + ' kW' : this.dec(watts, 0) + ' W';
   }
-  // See dash_neumo.html's copy of these two for the full "why" (v1.5.4).
+  // --- house consumption, derived (v1.6.0) — see dash_neumo.html's copy of
+  // this method for the full "why" and the formula.
+  deriveConsumption() {
+    const en = (this.cfg && this.cfg.energy) || {};
+    if (en.consumption) return { watts: null, derived: false, batteryTermUsed: false };
+    const prod = this.toWatts(en.production);
+    const imp = this.toWatts(en.gridImport);
+    const exp = this.toWatts(en.gridExport);
+    if (prod === null || imp === null || exp === null) return { watts: null, derived: false, batteryTermUsed: false };
+    let battTerm = 0, batteryTermUsed = false;
+    const bat = en.battery || {};
+    if (bat.chargePower && bat.dischargePower) {
+      const c = this.toWatts(bat.chargePower), d = this.toWatts(bat.dischargePower);
+      if (c !== null || d !== null) { battTerm = (d || 0) - (c || 0); batteryTermUsed = true; }
+    } else if (bat.power) {
+      const bp = this.toWatts(bat.power);
+      if (bp !== null) {
+        const sign = this.batteryPowerSign();
+        const chargeW = sign === 'charge' ? Math.max(0, bp) : Math.max(0, -bp);
+        const dischargeW = sign === 'charge' ? Math.max(0, -bp) : Math.max(0, bp);
+        battTerm = dischargeW - chargeW;
+        batteryTermUsed = true;
+      }
+    }
+    const watts = prod + imp - exp + battTerm;
+    return { watts, derived: true, batteryTermUsed };
+  }
+  _sampleBatterySign(negative) {
+    if (!this._batterySignBuffer) this._batterySignBuffer = [];
+    const now = Date.now();
+    const last = this._batterySignBuffer[this._batterySignBuffer.length - 1];
+    if (last && now - last.t < 10000) return;
+    this._batterySignBuffer.push({ t: now, negative });
+    const cutoff = now - 180000;
+    this._batterySignBuffer = this._batterySignBuffer.filter((s) => s.t >= cutoff);
+  }
+  batterySignVerdict() {
+    const buf = this._batterySignBuffer || [];
+    const n = buf.length;
+    const negShare = n ? buf.filter((s) => s.negative).length / n : 0;
+    return { samples: n, suspect: n >= 5 && negShare > 0.5 };
+  }
+  batteryPowerSign() {
+    const v = this.PREFS().batteryPowerSign;
+    return v === 'discharge' ? 'discharge' : 'charge';
+  }
+  SETTINGS_SET_BATTERY_SIGN(sign) {
+    const p = this.PREFS();
+    this.SAVE_PREFS(Object.assign({}, p, { batteryPowerSign: sign === 'discharge' ? 'discharge' : 'charge' }));
+  }
   plugThresholdW() {
     const v = this.PREFS().plugThreshold;
     return (typeof v === 'number' && v > 0) ? v : 3;
@@ -1810,7 +1895,7 @@ class Component extends DCLogic {
     const instantBad = this.diagEnergyInstant().some((r) => r.verdict === 'missing' || r.verdict === 'unavailable' || r.unitWarn);
     const daily = this.diagEnergyDaily();
     const dailyBad = daily.prefsFailed || daily.rows.some((r) => r.counterWarn);
-    if (instantBad || dailyBad) return 'energia';
+    if (instantBad || dailyBad || this.batterySignVerdict().suspect) return 'energia';
     const cd = this.configDiag;
     if (cd && cd.attempts.some((a) => a.loadScript && a.defined === false)) return 'diagnostica';
     return null;
@@ -2047,6 +2132,30 @@ class Component extends DCLogic {
     const exportT = en.gridExportToday ? this.n(en.gridExportToday) : (edDaily.gridExportToday != null ? edDaily.gridExportToday : null);
     const consT = en.consumptionToday ? this.n(en.consumptionToday) : null;
     const hasEnergy = (!!en.production || prodT != null || gridT != null) && this.MODULE_VISIBLE('energy');
+    // Empty state, case (b) — see dash_neumo.html's copy of this block for
+    // the full "why" (v1.6.0).
+    const energyMissingIds = [];
+    if (hasEnergy) {
+      ['production', 'consumption', 'gridImport', 'gridExport'].forEach((role) => {
+        const id = en[role];
+        if (id && !(id in this.state.st)) energyMissingIds.push(id);
+      });
+      if (en.battery) {
+        ['soc', 'power', 'chargePower', 'dischargePower'].forEach((k) => {
+          const id = en.battery[k];
+          if (id && !(id in this.state.st)) energyMissingIds.push(id);
+        });
+      }
+    }
+    const energyHasLiveData = (en.production && this.n(en.production) !== null) ||
+      (en.consumption && this.n(en.consumption) !== null) ||
+      (en.gridImport && this.n(en.gridImport) !== null) ||
+      prodT !== null || gridT !== null;
+    const energyEmptyState = hasEnergy && energyMissingIds.length > 0 && !energyHasLiveData;
+    const ENERGY_MISSING_SHOWN = 3;
+    const energyMissingLabel = energyMissingIds.slice(0, ENERGY_MISSING_SHOWN).join(' · ') +
+      (energyMissingIds.length > ENERGY_MISSING_SHOWN ? ' ' + this.t('energyEmpty.more', { n: energyMissingIds.length - ENERGY_MISSING_SHOWN }) : '');
+    const openEnergySettings = () => this.setState({ settingsOpen: true, settingsRoom: null, settingsTab: 'energia' });
     const hasIrrigation = !!(this.cfg.irrigation && this.cfg.irrigation.zones && this.cfg.irrigation.zones.length) && this.MODULE_VISIBLE('irrigation');
     const hasVehicle = !!(this.cfg.vehicle) && this.MODULE_VISIBLE('vehicle');
 
@@ -2191,7 +2300,10 @@ class Component extends DCLogic {
       const entityHidden = this.ENTITY_HIDDEN_SET();
       allRoomsFlat.forEach((r) => this.discovery.applyEntityVisibility(r, entityHidden));
     }
-    const hasNoAreas = !this.registries.areas || this.registries.areas.length === 0;
+    // Empty state, case (a) — see dash_neumo.html's copy of this block for
+    // the full "why" (v1.6.0).
+    const allRoomsResCaseA = this.ALL_ROOMS_RESULT();
+    const hasNoAreas = allRoomsResCaseA.rooms.length === 0 && allRoomsResCaseA.overflow.length === 0;
     const goToAreas = () => { try { window.top.location.href = '/config/areas/dashboard'; } catch (e) {} };
     // See dash_neumo.html for the pill priority order (allarmi, aperture,
     // presenza, temperatura, umidità, il resto) and per-domain busy rules.
@@ -2265,9 +2377,10 @@ class Component extends DCLogic {
     if (consT != null && gridT != null) autoconsumo = Math.max(0, consT - gridT);
     else if (prodT != null && exportT != null) autoconsumo = Math.max(0, prodT - exportT);
     const consumoCasa = consT != null ? consT : (autoconsumo != null && gridT != null ? autoconsumo + gridT : null);
+    const dailyConsumptionDerived = consT == null && consumoCasa != null;
     const hasOuterRing = prodT != null && gridT != null && autoconsumo != null && consumoCasa != null && consumoCasa > 0;
     const hasInnerRing = hasOuterRing && exportT != null && prodT > 0;
-    const hasNewRing = hasOuterRing;
+    const hasNewRing = hasOuterRing && !energyEmptyState;
     const RING_GAP = 5, ORC = 540.4, IRC = 389.6;
     // See dash_neumo.html's copy of this block for why cap is conditional.
     const ringSeg = (value, shareTotal, C, offsetAcc) => {
@@ -2293,17 +2406,28 @@ class Component extends DCLogic {
       ringLegend.push({ color: 'var(--feed)', label: this.t('energy.feedIn'), val: this.dec(exportT, 1) + ' kWh', num: this.dec(exportT, 1), short: this.t('energy.feedShort') });
     }
 
+    // House consumption, derived (v1.6.0) — see dash_neumo.html's copy of
+    // this block for the full explanation.
+    const consumeResult = hasEnergy ? this.deriveConsumption() : { watts: null, derived: false, batteryTermUsed: false };
+    if (consumeResult.batteryTermUsed) this._sampleBatterySign(consumeResult.watts !== null && consumeResult.watts < 0);
+    const consumptionDisplayWatts = (consumeResult.watts !== null && consumeResult.watts >= 0) ? consumeResult.watts : null;
+    const consumptionIsDerived = consumeResult.derived;
+    const consumptionVal = en.consumption ? this.powerVal(en.consumption) : this.formatWatts(consumptionDisplayWatts);
+    const consumptionLabel = consumptionIsDerived ? this.t('energy.consumptionNowDerived') : this.t('energy.consumptionNow');
+    const batterySign = this.batterySignVerdict();
+
     const nowCells = hasEnergy ? [
       { icon: '#i-solar', iconRef: this._bindAttr('href', '#i-solar'), stroke: 'var(--acc)', label: this.t('production'), val: this.powerVal(en.production) },
-      { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: this.t('energy.consumptionNow'), val: this.powerVal(en.consumption) },
+      { icon: '#i-house', iconRef: this._bindAttr('href', '#i-house'), stroke: 'var(--sage)', label: consumptionLabel, val: consumptionVal },
       { icon: '#i-tower', iconRef: this._bindAttr('href', '#i-tower'), stroke: 'var(--tx2)', label: this.t('fromGrid'), val: this.powerVal(en.gridImport) }
     ] : [];
     // See dash_neumo.html's copy of this block for the full explanation
     // (power sensors only ever come from config.js; zero-config installs
     // relying on HA's own Energy dashboard never get them).
-    const hasPowerCells = !!(en.production || en.consumption || en.gridImport);
+    const hasPowerCells = !!(en.production || en.consumption || en.gridImport) && !energyEmptyState;
     const energyTabFallback = !hasPowerCells && hasNewRing;
     const dailySelfPct = hasOuterRing && consumoCasa ? this.dec(Math.min(100, (autoconsumo / consumoCasa) * 100), 0) + '%' : '—';
+    const energyTabChart = !energyEmptyState;
 
     const price = hasEnergy && en.price ? this.n(en.price) : null;
     const R = this.state.range;
@@ -2497,6 +2621,7 @@ class Component extends DCLogic {
     let diagCameraRows = [], diagRingValue = '', diagAlarmRows = [];
     let doDiag = () => {};
     let settingsTabs = [], powerUnitOptions = [], plugThresholdOptions = [];
+    let showBatterySignControl = false, batterySignOptions = [], batterySignLiveLabel = '', batterySignSuspect = false, batterySignInvert = () => {};
     if (this.state.settingsOpen) {
       const S = this.strings;
       const roleLabelKeys = { production: 'diagRoleProduction', consumption: 'diagRoleConsumption', gridImport: 'diagRoleGridImport', gridExport: 'diagRoleGridExport',
@@ -2580,7 +2705,7 @@ class Component extends DCLogic {
       // Settings panel navigation + power unit (v1.5.3) — see dash_neumo.html's
       // copy of this block for the full explanation.
       const settingsTabDefs = [['stanze', S.rooms, false], ['energia', this.t('tab.energy'),
-        diagEnergyInstantRows.some((r) => r.tone === 'warn' || r.unitWarn) || diagPrefsFailed || diagEnergyDailyRows.some((r) => r.counterWarn)]];
+        diagEnergyInstantRows.some((r) => r.tone === 'warn' || r.unitWarn) || diagPrefsFailed || diagEnergyDailyRows.some((r) => r.counterWarn) || batterySign.suspect]];
       if (settingsCameras.length > 0) settingsTabDefs.push(['camere', S.settingsCameras, false]);
       settingsTabDefs.push(['diagnostica', S.diagTitle, diagConfigAttempts.some((a) => a.tone === 'warn')]);
       settingsTabs = settingsTabDefs.map(([key, label, hasIssue]) => ({
@@ -2594,6 +2719,17 @@ class Component extends DCLogic {
       const curPlugThreshold = this.plugThresholdW();
       plugThresholdOptions = [1, 3, 5, 10]
         .map((w) => ({ key: String(w), label: w + ' W', sel: curPlugThreshold === w, set: () => this.SETTINGS_SET_PLUG_THRESHOLD(w) }));
+
+      // Battery power sign convention (v1.6.0) — see dash_neumo.html's copy
+      // of this block for the full explanation.
+      const bat = en.battery || {};
+      showBatterySignControl = !!(bat.power && !(bat.chargePower && bat.dischargePower) && !en.consumption);
+      const curBatterySign = this.batteryPowerSign();
+      batterySignOptions = [['charge', S.settingsBatterySignCharge], ['discharge', S.settingsBatterySignDischarge]]
+        .map(([key, label]) => ({ key, label, sel: curBatterySign === key, set: () => this.SETTINGS_SET_BATTERY_SIGN(key) }));
+      batterySignLiveLabel = this.t('settingsBatterySignLive', { val: this.formatWatts(consumptionDisplayWatts) });
+      batterySignSuspect = batterySign.suspect;
+      batterySignInvert = () => this.SETTINGS_SET_BATTERY_SIGN(curBatterySign === 'charge' ? 'discharge' : 'charge');
 
       doDiag = async () => {
         const text = window.CasaPrefs.diagText({
@@ -2668,14 +2804,15 @@ class Component extends DCLogic {
       wxHumidity: outH === null ? '—' : this.dec(outH, 0) + '%',
       wxDetailLine: this.t('wx.humidityDetailLine', { label: wxi[1], humidity: outH === null ? '—' : this.dec(outH, 0) + '%' }),
       nowCells, invStatus, hasPowerCells, energyTabFallback,
+      energyEmptyState, energyMissingLabel, openEnergySettings,
       energyTabSelfPctLine: this.t('energy.selfConsumption', { pct: dailySelfPct }),
-      hasNewRing, hasInnerRing, hasOldRing: !hasNewRing,
+      hasNewRing, hasInnerRing, hasOldRing: !hasNewRing && !energyEmptyState,
       outerSelfArc: hasOuterRing ? outerSelf.dasharray : '', outerSelfOffset: hasOuterRing ? outerSelf.dashoffset : '0', outerSelfCap: hasOuterRing ? outerSelf.cap : 'butt',
       outerGridArc: hasOuterRing ? outerGrid.dasharray : '', outerGridOffset: hasOuterRing ? outerGrid.dashoffset : '0', outerGridCap: hasOuterRing ? outerGrid.cap : 'butt',
       innerSelfArc: hasInnerRing ? innerSelf.dasharray : '', innerSelfOffset: hasInnerRing ? innerSelf.dashoffset : '0', innerSelfCap: hasInnerRing ? innerSelf.cap : 'butt',
       innerFeedArc: hasInnerRing ? innerFeed.dasharray : '', innerFeedOffset: hasInnerRing ? innerFeed.dashoffset : '0', innerFeedCap: hasInnerRing ? innerFeed.cap : 'butt',
       consumoCasaBig: consumoCasa === null ? '—' : this.dec(consumoCasa, 1),
-      kwhConsumedLabel: this.t('energy.kwhConsumed'),
+      kwhConsumedLabel: this.t(dailyConsumptionDerived ? 'energy.kwhConsumedDerived' : 'energy.kwhConsumed'),
       ringLegend,
       prodToday: prodT === null ? '—' : this.dec(prodT, 1),
       prodTodayFull: prodT === null ? '—' : this.dec(prodT, 2) + ' kWh',
@@ -2689,7 +2826,7 @@ class Component extends DCLogic {
       // case that reaches hasOldRing — an honest dash beats a
       // contradiction-inducing wrong percentage.
       energySummaryLine: this.t('energy.summaryLine', { status: invStatus, pct: dailySelfPct }),
-      showEnergyChart: energyChart,
+      showEnergyChart: energyChart && !energyEmptyState, energyTabChart,
       energyChartLabel: energyChart ? this.t('chart.hide') : this.t('chart.show'),
       toggleEnergyChart: () => this.toggleChart('energia'),
       ranges, bars, periodCells, hasExportBars,
@@ -2732,6 +2869,7 @@ class Component extends DCLogic {
       settingsTabCamere: this.state.settingsTab === 'camere',
       settingsTabDiagnostica: this.state.settingsTab === 'diagnostica',
       powerUnitOptions, plugThresholdOptions,
+      showBatterySignControl, batterySignOptions, batterySignLiveLabel, batterySignSuspect, batterySignInvert,
       settingsRooms, hasSettingsRooms: settingsRooms.length > 0,
       settingsCameras, hasSettingsCameras: settingsCameras.length > 0,
       settingsModules,

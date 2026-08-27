@@ -2,7 +2,7 @@
 
 > God node · 55 connections · `public/dash_neumo.html`
 
-**Community:** [Alarm Guard & Appliance Helpers](Alarm_Guard_%26_Appliance_Helpers.md)
+**Community:** [Casa Panel Render Sections](Casa_Panel_Render_Sections.md)
 
 ## Connections by Relation
 
@@ -20,13 +20,13 @@
 - plugThresholdW() `EXTRACTED`
 - call() `EXTRACTED`
 - SETTINGS_SET_ENTITY() `EXTRACTED`
+- ALL_ROOMS_RESULT() `EXTRACTED`
 - diagEnergyDaily() `EXTRACTED`
 - applianceState() `EXTRACTED`
 - _openCam() `EXTRACTED`
 - _closeCam() `EXTRACTED`
 - unit() `EXTRACTED`
 - isOn() `EXTRACTED`
-- dec() `EXTRACTED`
 
 ### conceptually_related_to
 - energy.gridNote daily/instantaneous mixing fix `INFERRED`

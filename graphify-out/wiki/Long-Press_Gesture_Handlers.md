@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [Alarm Guard & Appliance Helpers](Alarm_Guard_%26_Appliance_Helpers.md) (3 shared connections)
+- [Casa Panel Render Sections](Casa_Panel_Render_Sections.md) (3 shared connections)
 
 ## Source Files
 

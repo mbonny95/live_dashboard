@@ -1,6 +1,6 @@
 # Alarm & Discovery Logic
 
-> 26 nodes · cohesion 0.15
+> 44 nodes · cohesion 0.07
 
 ## Key Concepts
 
@@ -10,45 +10,47 @@
 - **Alarm panel auto-discovery** (7 connections) — `CHANGELOG.md`
 - **isExcluded()** (7 connections) — `public/discovery.js`
 - **discoverAlarm()** (6 connections) — `public/discovery.js`
+- **Three-tier smart-plug state (off/active/running)** (4 connections) — `CHANGELOG.md`
 - **discoverCameras()** (4 connections) — `public/discovery.js`
 - **discoverEnergyEntities()** (4 connections) — `public/discovery.js`
 - **friendlyName()** (4 connections) — `public/discovery.js`
 - **powerSensorForSwitch()** (4 connections) — `public/discovery.js`
 - **Alarm PIN/code_format gating (no-op with note)** (3 connections) — `CHANGELOG.md`
+- **Appliances module (config.appliances)** (3 connections) — `CHANGELOG.md`
+- **discoverRooms() excludes entities referenced elsewhere in config.js** (3 connections) — `CHANGELOG.md`
+- **Configurable smart-plug active/running power threshold** (3 connections) — `CHANGELOG.md`
+- **classifySwitchPower()** (3 connections) — `public/discovery.js`
 - **collectConfiguredEntities()** (3 connections) — `public/discovery.js`
 - **discoverAllOfDomain()** (3 connections) — `public/discovery.js`
+- **README: smart plugs without config.appliances entry** (3 connections) — `README.md`
 - **ARM_CUSTOM_BYPASS ("Personalizzato") alarm button** (2 connections) — `CHANGELOG.md`
+- **Room tiles size to min-content instead of stretching** (2 connections) — `CHANGELOG.md`
+- **Seven new discovered domains + status/sensor pills** (2 connections) — `CHANGELOG.md`
+- **Switch inline wattage from co-device power sensor** (2 connections) — `CHANGELOG.md`
+- **Optional weather station config module** (2 connections) — `CHANGELOG.md`
 - **buildExportedConfig()** (2 connections) — `public/discovery.js`
-- **discoverPeople()** (2 connections) — `public/discovery.js`
-- **discoverWeather()** (2 connections) — `public/discovery.js`
-- **guessAreaIcon()** (2 connections) — `public/discovery.js`
-- **mapMdiIcon()** (2 connections) — `public/discovery.js`
-- **resolveVisible()** (2 connections) — `public/discovery.js`
-- **Alarm buttons tap but nothing happens: code_format no-op** (2 connections) — `TROUBLESHOOTING.md`
-- **Alarm card missing/fewer buttons: supported_features driven** (2 connections) — `TROUBLESHOOTING.md`
-- **applyEntityVisibility()** (1 connections) — `public/discovery.js`
-- **discoverModes()** (1 connections) — `public/discovery.js`
-- **mapEnergyPrefs()** (1 connections) — `public/discovery.js`
-- *... and 1 more nodes in this community*
+- *... and 19 more nodes in this community*
 
 ## Relationships
 
 - [Changelog: Alarm & Camera Fixes](Changelog-_Alarm_%26_Camera_Fixes.md) (2 shared connections)
-- [Changelog: Diagnostics Panel](Changelog-_Diagnostics_Panel.md) (1 shared connections)
-- [Changelog: Power & Units Fixes](Changelog-_Power_%26_Units_Fixes.md) (1 shared connections)
+- [Changelog: Diagnostics & Config](Changelog-_Diagnostics_%26_Config.md) (1 shared connections)
+- [Camera Live-View Strategy](Camera_Live-View_Strategy.md) (1 shared connections)
+- [Changelog: Power & Cover Fixes](Changelog-_Power_%26_Cover_Fixes.md) (1 shared connections)
 - [Support Micro-Framework Runtime](Support_Micro-Framework_Runtime.md) (1 shared connections)
-- [Changelog: Appliances & Irrigation](Changelog-_Appliances_%26_Irrigation.md) (1 shared connections)
 
 ## Source Files
 
 - `CHANGELOG.md`
+- `README.it.md`
+- `README.md`
 - `TROUBLESHOOTING.md`
 - `public/discovery.js`
 
 ## Audit Trail
 
-- EXTRACTED: 97 (92%)
-- INFERRED: 9 (8%)
+- EXTRACTED: 117 (80%)
+- INFERRED: 29 (20%)
 - AMBIGUOUS: 0 (0%)
 
 ---

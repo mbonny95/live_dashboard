@@ -1,10 +1,10 @@
-# TROUBLESHOOTING: Unavailable Entity Display (dup)
+# Mobile Energy Chart-On Helper
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Entities show "unreachable"/grey by design** (0 connections) — `TROUBLESHOOTING.md`
+- **Component.chartOn()** (0 connections) — `public/dash_neumo_mobile.html`
 
 ## Relationships
 
@@ -12,7 +12,7 @@
 
 ## Source Files
 
-- `TROUBLESHOOTING.md`
+- `public/dash_neumo_mobile.html`
 
 ## Audit Trail
 

@@ -105,6 +105,24 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'energy.selfShort': 'autocons.', 'energy.gridShort': 'dalla rete', 'energy.feedShort': 'immessi',
   'energy.compactSummary': 'kWh oggi · {pct} di autoconsumo',
   'energy.noHistory': 'Nessun dato storico per questo periodo',
+  // v1.6.0 — consumo casa derivato (vedi CLAUDE.md). kwhConsumedDerived
+  // sostituisce la parola invece di aggiungere testo: siede dentro l'anello,
+  // uno spazio circolare fisso dove "kWh consumati · calcolato" (provato per
+  // primo) usciva dal cerchio — vedi screenshot mobile che l'ha scoperto.
+  'energy.consumptionNowDerived': 'Consumo casa adesso · calcolato',
+  'energy.kwhConsumedDerived': 'kWh calcolati',
+
+  // v1.6.0 — stato vuoto energia (caso b) e derivazione consumo/batteria
+  'energyEmpty.more': '+{n} altri',
+  energyEmptyBody: 'Non esistono più in Home Assistant — probabilmente rinominati o rimossi in un aggiornamento dell\'integrazione.',
+  energyEmptyCta: 'Apri impostazioni',
+  settingsBatterySignHeading: 'Potenza batteria',
+  settingsBatterySignCharge: 'Positivo = in carica', settingsBatterySignDischarge: 'Positivo = in scarica',
+  settingsBatterySignLive: 'Consumo casa derivato ora: {val}',
+  settingsBatterySignSuspectTitle: 'La convenzione della batteria è probabilmente invertita',
+  settingsBatterySignSuspectBody: 'Il consumo casa derivato è risultato negativo nella maggior parte degli ultimi campioni — quasi sempre significa che il segno scelto sopra è quello sbagliato.',
+  settingsBatterySignInvert: 'Inverti',
+  diagRoleBatteryChargePower: 'batteria (carica)', diagRoleBatteryDischargePower: 'batteria (scarica)',
 
   'greeting.afternoon': 'Buon pomeriggio', 'greeting.evening': 'Buonasera', 'greeting.morning': 'Buongiorno', 'greeting.night': 'Notte',
 

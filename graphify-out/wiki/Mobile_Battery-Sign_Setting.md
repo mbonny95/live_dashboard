@@ -1,10 +1,10 @@
-# Mobile Energy Chart Toggle
+# Mobile Battery-Sign Setting
 
 > 1 nodes · cohesion 1.00
 
 ## Key Concepts
 
-- **Component.toggleChart()** (0 connections) — `public/dash_neumo_mobile.html`
+- **SETTINGS_SET_BATTERY_SIGN() (mobile)** (0 connections) — `public/dash_neumo_mobile.html`
 
 ## Relationships
 

@@ -105,6 +105,24 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'energy.selfShort': 'self-cons.', 'energy.gridShort': 'from grid', 'energy.feedShort': 'fed in',
   'energy.compactSummary': 'kWh today · {pct} self-consumed',
   'energy.noHistory': 'No history for this period',
+  // v1.6.0 — derived house consumption (see CLAUDE.md). kwhConsumedDerived
+  // replaces the word instead of appending text: it sits inside the ring, a
+  // fixed circular space where "kWh consumed · calculated" (tried first)
+  // ran outside the circle — found via the mobile screenshot.
+  'energy.consumptionNowDerived': 'House consumption now · calculated',
+  'energy.kwhConsumedDerived': 'kWh calculated',
+
+  // v1.6.0 — energy empty state (case b) and consumption/battery derivation
+  'energyEmpty.more': '+{n} more',
+  energyEmptyBody: "No longer exist in Home Assistant — probably renamed or removed by an integration update.",
+  energyEmptyCta: 'Open settings',
+  settingsBatterySignHeading: 'Battery power',
+  settingsBatterySignCharge: 'Positive = charging', settingsBatterySignDischarge: 'Positive = discharging',
+  settingsBatterySignLive: 'Derived house consumption now: {val}',
+  settingsBatterySignSuspectTitle: 'The battery convention is probably inverted',
+  settingsBatterySignSuspectBody: 'The derived house consumption has come out negative for most of the last few samples — that almost always means the sign chosen above is the wrong one.',
+  settingsBatterySignInvert: 'Invert',
+  diagRoleBatteryChargePower: 'battery (charge)', diagRoleBatteryDischargePower: 'battery (discharge)',
 
   'greeting.afternoon': 'Good afternoon', 'greeting.evening': 'Good evening', 'greeting.morning': 'Good morning', 'greeting.night': 'Night',
 

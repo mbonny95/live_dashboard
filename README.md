@@ -79,7 +79,7 @@ files live, which matters if you ever migrate from one to the other.
        url_path: casa
        sidebar_title: Casa
        sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.5.4
+       module_url: /local/community/live_dashboard/panel.js?v=1.6.0
        embed_iframe: true
        trust_external_script: false
    ```
@@ -92,7 +92,7 @@ files live, which matters if you ever migrate from one to the other.
    `console.error` and as a message on the page itself, naming the `name:`
    it expected and the folder it actually found itself running from.
 
-   The `?v=1.5.4` on `module_url` matters more than it looks: `/local/` is
+   The `?v=1.6.0` on `module_url` matters more than it looks: `/local/` is
    served with long cache headers, and browsers cache ES modules
    particularly aggressively, so a plain hard refresh doesn't reliably force
    a re-fetch of `panel.js` after an update. Match it to the version you
@@ -220,7 +220,7 @@ TROUBLESHOOTING.md if the numbers look wrong.
 | Role | Huawei FusionSolar | SolarEdge | Fronius | Shelly EM | HA Energy Dashboard |
 | --- | --- | --- | --- | --- | --- |
 | `production` | `sensor.*_panel_production_power` | `sensor.solaredge_current_power` | `sensor.inverter_power` | `sensor.shellyem_channel_a_power` | `sensor.solar_power` (your own) |
-| `consumption` | `sensor.*_house_load_power` | — (add a utility meter) | — | `sensor.shellyem_channel_b_power` | `sensor.house_power` |
+| `consumption` | `sensor.*_house_load_power` | *(optional — see below)* | *(optional — see below)* | `sensor.shellyem_channel_b_power` | `sensor.house_power` |
 | `gridImport` | `sensor.*_grid_consumption_power` | `sensor.solaredge_m1_ac_power` (import side) | `sensor.meter_power` | `sensor.shellyem_channel_b_power` | your grid import sensor |
 | `gridExport` | `sensor.*_grid_injection_power` | same meter, export side | `sensor.meter_power` (negative) | same, inverted | your grid export sensor |
 | `productionToday` | `sensor.*_panel_production_today` | `sensor.solaredge_lifetime_energy` (diffed) | `sensor.energy_day` | Shelly EM has no daily counter — add a `utility_meter` helper | `sensor.solar_energy_today` |
@@ -240,6 +240,51 @@ enough that it's opt-in only, for the odd install that happens to have one
 wired that up separately). Set it if you have it; leave it unset otherwise
 and the ring derives self-consumption from production and grid export
 instead, which is what almost every install ends up doing.
+
+### House consumption (instantaneous), derived automatically
+
+Most inverter/meter integrations expose production, grid import and grid
+export as live power sensors, but not whole-house consumption — that's the
+one role that used to require writing your own `template sensor` in
+`configuration.yaml` just to add the other three together. **You no longer
+need to.** Leave `consumption` unset and, whenever `production`, `gridImport`
+and `gridExport` are all resolved, this dashboard computes it itself:
+
+```
+house consumption = production + gridImport − gridExport + batteryDischarge − batteryCharge
+```
+
+An explicit `consumption` sensor, if you set one, always wins — this is only
+a fallback for when there isn't one. If any of production/gridImport/
+gridExport is missing, the derivation doesn't run at all: you get an honest
+"—" rather than a number computed from an incomplete formula. The derived
+value declares itself everywhere it appears — "House consumption now ·
+calculated" on the instantaneous tile, "kWh calculated" instead of "kWh
+consumed" at the center of the ring — so it's never mistaken for a measured
+sensor.
+
+**If you have a battery:** the formula needs to know which sign your battery
+power sensor uses for charging, since there's no universal convention across
+integrations.
+
+- **Two separate sensors** (`config.energy.battery.chargePower` /
+  `dischargePower`, both always positive): no ambiguity, nothing to
+  configure.
+- **One signed sensor** (`config.energy.battery.power`, the common case):
+  defaults to **positive = charging**. If that's backwards for your
+  integration, Settings -> Energy has an explicit **Battery power**
+  toggle — "Positive = charging" / "Positive = discharging" — with the
+  live derived value shown right below it, so you can watch it change as
+  you flip the switch. Get it wrong and the derived consumption comes out
+  implausible (negative) more often than not; when that happens
+  persistently, Settings -> Energy surfaces a warning naming the likely
+  cause with a one-tap fix, and the dashboard shows "—" rather than a
+  negative "house consumption" in the meantime — see TROUBLESHOOTING.md.
+
+The daily kWh figure (the ring, "kWh consumati") had its own, older
+derivation already (self-consumption backed out of production and grid
+export) — unaffected by any of the above, just now labeled the same way when
+it's the one doing the work instead of a `consumptionToday` sensor.
 
 ### Instantaneous power unit
 

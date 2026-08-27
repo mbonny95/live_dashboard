@@ -2,7 +2,7 @@
 
 > God node · 10 connections · `public/dash_neumo.html`
 
-**Community:** [Mobile Diagnostics Helpers](Mobile_Diagnostics_Helpers.md)
+**Community:** [Casa Panel Render Sections](Casa_Panel_Render_Sections.md)
 
 ## Connections by Relation
 
