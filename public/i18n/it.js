@@ -76,6 +76,24 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   diagAlarmCapabilities: 'Capacità dichiarate', diagAlarmDisarmOnly: 'solo disinserimento',
   diagAlarmCodeRequired: 'Richiede un codice', diagVerdictYes: 'sì', diagVerdictNo: 'no',
 
+  // Diagnostica — entità non mostrate (v1.7.1)
+  diagReasonsHeading: 'Diagnostica',
+  diagReasonNoArea: 'Nessuna area assegnata',
+  diagReasonNoAreaBody: "Queste entità funzionano, ma non appartengono a nessuna stanza. Assegna un'area al dispositivo in Impostazioni → Dispositivi.",
+  diagReasonUnknownArea: 'Area non riconosciuta',
+  diagReasonUnknownAreaBody: "L'area assegnata a queste entità non è (più) nel registro di Home Assistant.",
+  diagReasonNoRegistryEntry: "Definita in YAML — non eliminabile dall'interfaccia",
+  diagReasonNoRegistryEntryBody: 'Si rimuove dal file di configurazione, poi Strumenti per sviluppatori → YAML → Ricarica.',
+  diagReasonNoState: 'Nessuno stato disponibile',
+  diagReasonClaimedByModule: 'Già usata da un altro modulo',
+  diagReasonEmptyRoom: 'Stanza senza controlli',
+  diagReasonHiddenBy: 'Nascosta in Home Assistant',
+  diagReasonDisabledBy: 'Disabilitata in Home Assistant',
+  diagReasonDiagnosticCategory: 'Entità di diagnostica',
+  diagReasonConfigCategory: 'Entità di configurazione',
+  diagDuplicateDevicesBody: 'Dopo un aggiornamento di Home Assistant, Matter può registrare di nuovo lo stesso dispositivo. La copia con i comandi non ha area e resta invisibile.',
+  diagModuleWeatherStation: 'Stazione meteo', diagModuleWeather: 'Meteo', diagModulePeople: 'Persone',
+
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Inserito · fuori', 'alarm.armedHome': 'Inserito · in casa', 'alarm.armedNight': 'Inserito · notte',
   'alarm.armedVacation': 'Inserito · vacanza', 'alarm.arming': 'In inserimento…',
@@ -163,6 +181,10 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   'diag.configResolved': 'Config caricata da {path}.',
   'diag.ringMissing': 'anello singolo — manca {field}',
+  'diag.reasonsTotal': '{n} entità non mostrate',
+  'diag.reasonClaimedByModule': 'già usata da {module}',
+  'diag.duplicateDevicesTitle': '{n} dispositivi registrati due volte.',
+  'diag.duplicateDeviceLine': "{from} → assegna l'area di {to}",
 
   'siren.sounding': 'in suono',
 

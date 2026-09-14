@@ -1074,6 +1074,55 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 </div>
 
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;overflow:hidden;margin-bottom:16px">
+<button onClick="{{ diagReasonsToggle }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:10px 11px;background:transparent;text-align:left">
+<span style="font:600 12.5px/1.3 var(--font-body);color:var(--tx)">{{ S.diagReasonsHeading }} <span style="color:var(--tx2);font-weight:500">· {{ diagReasonTotalLabel }}</span></span>
+<svg width="14" height="14" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:{{ diagReasonsChevRotate }}"><use href="#i-down"></use></svg>
+</button>
+<sc-if value="{{ diagReasonsOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:8px;padding:0 11px 12px">
+
+<sc-if value="{{ hasDiagDuplicateDevices }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:6px;background:var(--nu-d);border-radius:14px;padding:11px 12px" data-tone="warn">
+<div style="font:600 11.5px/1.3 var(--font-body)">{{ diagDuplicateDevicesTitle }}</div>
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2)">{{ S.diagDuplicateDevicesBody }}</div>
+<sc-for list="{{ diagDuplicateDevices }}" as="pair" hint-placeholder-count="1">
+<div style="font:500 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx2);white-space:normal;overflow-wrap:break-word">{{ pair.line }}</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasDiagReasonGroups }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ diagReasonGroups }}" as="grp" hint-placeholder-count="3">
+<div style="background:var(--nu-d);border-radius:14px;overflow:hidden">
+<button onClick="{{ grp.toggle }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:9px 11px;background:transparent;text-align:left">
+<span style="font:600 11.5px/1.3 var(--font-body);color:var(--tx)">{{ grp.label }} <span style="color:var(--tx2);font-weight:500">({{ grp.count }})</span></span>
+<svg width="12" height="12" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none;transform:{{ grp.chevRotate }}"><use href="#i-down"></use></svg>
+</button>
+<sc-if value="{{ grp.open }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:6px;padding:0 11px 11px">
+<sc-if value="{{ grp.hasExplain }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-bottom:2px">{{ grp.explain }}</div>
+</sc-if>
+<sc-for list="{{ grp.rows }}" as="row" hint-placeholder-count="2">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:12px;padding:8px 10px">
+<div style="font:600 12px/1.3 var(--font-body);color:var(--tx)">{{ row.name }}</div>
+<div style="font:500 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--tx2);margin-top:2px;white-space:normal;overflow-wrap:break-word">{{ row.entityIdLabel }}</div>
+<sc-if value="{{ row.hasReasonExtra }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-top:2px">{{ row.reasonExtra }}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</sc-if>
+
+</div>
+</sc-if>
+</div>
+
 <button onClick="{{ diagCopyRun }}" style="width:100%;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx);font:600 12.5px/1 var(--font-body)">{{ S.diagCopyButton }}</button>
 <div style="font:500 10px/1.4 var(--font-body);color:var(--tx2);margin:8px 2px 0">{{ S.diagCopyPrivacyNote }}</div>
 </sc-if>
@@ -1287,7 +1336,8 @@ async function loadUserConfig() {
 
 class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
-    settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false };
+    settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false,
+    diagReasonsOpen: false, diagReasonGroupsOpen: {} };
   cfg = mergeConfig({});
   registries = { areas: [], devices: [], entities: [] };
   discovery = null;
@@ -2711,6 +2761,8 @@ class Component extends DCLogic {
     let diagConfigAttempts = [], diagConfigSummary = '', diagConfigOutsideIframe = false;
     let diagEnergyInstantRows = [], diagEnergyDailyRows = [], diagPrefsFailed = false, diagEnvRows = [];
     let diagCameraRows = [], diagRingValue = '', diagAlarmRows = [];
+    let diagReasonGroups = [], diagReasonTotalLabel = '', hasDiagReasonGroups = false, diagHasHighSeverityReason = false;
+    let hasDiagDuplicateDevices = false, diagDuplicateDevices = [], diagDuplicateDevicesTitle = '';
     let doDiag = () => {};
     let settingsTabs = [], powerUnitOptions = [], plugThresholdOptions = [];
     let showBatterySignControl = false, batterySignOptions = [], batterySignLiveLabel = '', batterySignSuspect = false, batterySignInvert = () => {};
@@ -2794,12 +2846,74 @@ class Component extends DCLogic {
         ];
       }
 
+      // Diagnostica — why an entity doesn't show up (v1.7.1) — see
+      // dash_neumo.html's copy of this block for the full explanation.
+      if (this.discovery) {
+        const REASON_ORDER = ['no_area', 'unknown_area', 'no_registry_entry', 'no_state',
+          'claimed_by_module', 'empty_room', 'hidden_by', 'disabled_by', 'diagnostic_category', 'config_category'];
+        const REASON_LABEL_KEYS = {
+          no_area: 'diagReasonNoArea', unknown_area: 'diagReasonUnknownArea', no_registry_entry: 'diagReasonNoRegistryEntry',
+          no_state: 'diagReasonNoState', claimed_by_module: 'diagReasonClaimedByModule', empty_room: 'diagReasonEmptyRoom',
+          hidden_by: 'diagReasonHiddenBy', disabled_by: 'diagReasonDisabledBy',
+          diagnostic_category: 'diagReasonDiagnosticCategory', config_category: 'diagReasonConfigCategory'
+        };
+        const REASON_EXPLAIN_KEYS = { no_area: 'diagReasonNoAreaBody', unknown_area: 'diagReasonUnknownAreaBody', no_registry_entry: 'diagReasonNoRegistryEntryBody' };
+        const HIGH_SEVERITY_REASONS = ['no_area', 'unknown_area', 'no_registry_entry'];
+        const claimModuleLabels = {
+          energy: this.t('tab.energy'), irrigation: this.t('tab.irrigation'), weatherStation: S.diagModuleWeatherStation,
+          vehicle: this.t('tab.vehicle'), appliances: S.appliances, cameras: this.t('tab.cameras'),
+          alarm: S.alarm, weather: S.diagModuleWeather, modes: S.houseMode, people: S.diagModulePeople, quickActions: S.quickActions
+        };
+
+        const discardLog = this.ALL_ROOMS_RESULT().discardLog || [];
+        const byReason = {};
+        discardLog.forEach((d) => { (byReason[d.reason] = byReason[d.reason] || []).push(d); });
+
+        diagReasonTotalLabel = this.t('diag.reasonsTotal', { n: discardLog.length });
+        diagHasHighSeverityReason = HIGH_SEVERITY_REASONS.some((r) => byReason[r] && byReason[r].length);
+        const groupsOpen = this.state.diagReasonGroupsOpen || {};
+        diagReasonGroups = REASON_ORDER.filter((r) => byReason[r] && byReason[r].length).map((reasonCode) => {
+          const entries = byReason[reasonCode];
+          const open = groupsOpen[reasonCode] !== false;
+          return {
+            reason: reasonCode,
+            label: S[REASON_LABEL_KEYS[reasonCode]],
+            count: entries.length,
+            hasExplain: !!REASON_EXPLAIN_KEYS[reasonCode],
+            explain: REASON_EXPLAIN_KEYS[reasonCode] ? S[REASON_EXPLAIN_KEYS[reasonCode]] : '',
+            open, chevRotate: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            toggle: () => this.setState({ diagReasonGroupsOpen: Object.assign({}, groupsOpen, { [reasonCode]: !open }) }),
+            rows: entries.map((d) => ({
+              name: d.name,
+              entityIdLabel: d.entity_id || '—',
+              hasReasonExtra: reasonCode === 'claimed_by_module',
+              reasonExtra: reasonCode === 'claimed_by_module'
+                ? this.t('diag.reasonClaimedByModule', { module: claimModuleLabels[d.module] || d.module || '—' })
+                : ''
+            }))
+          };
+        });
+        hasDiagReasonGroups = diagReasonGroups.length > 0;
+
+        const dupPairs = this.discovery.findDuplicateDevices(this.registries) || [];
+        hasDiagDuplicateDevices = dupPairs.length > 0;
+        if (hasDiagDuplicateDevices) {
+          diagDuplicateDevicesTitle = this.t('diag.duplicateDevicesTitle', { n: dupPairs.length });
+          diagDuplicateDevices = dupPairs.map((p) => ({
+            line: this.t('diag.duplicateDeviceLine', {
+              from: p.withoutArea.name_by_user || p.withoutArea.name || p.withoutArea.model || p.withoutArea.id,
+              to: p.withArea.name_by_user || p.withArea.name || p.withArea.model || p.withArea.id
+            })
+          }));
+        }
+      }
+
       // Settings panel navigation + power unit (v1.5.3) — see dash_neumo.html's
       // copy of this block for the full explanation.
       const settingsTabDefs = [['stanze', S.rooms, false], ['energia', this.t('tab.energy'),
         diagEnergyInstantRows.some((r) => r.tone === 'warn' || r.unitWarn) || diagPrefsFailed || diagEnergyDailyRows.some((r) => r.counterWarn) || batterySign.suspect]];
       if (settingsCameras.length > 0) settingsTabDefs.push(['camere', S.settingsCameras, false]);
-      settingsTabDefs.push(['diagnostica', S.diagTitle, diagConfigAttempts.some((a) => a.tone === 'warn')]);
+      settingsTabDefs.push(['diagnostica', S.diagTitle, diagConfigAttempts.some((a) => a.tone === 'warn') || diagHasHighSeverityReason]);
       settingsTabs = settingsTabDefs.map(([key, label, hasIssue]) => ({
         key, label, hasIssue, sel: (this.state.settingsTab || 'stanze') === key,
         go: () => this.setState({ settingsTab: key })
@@ -2834,7 +2948,14 @@ class Component extends DCLogic {
           dailyPrefsFailedNote: diagPrefsFailed ? S.diagPrefsFailedMsg : null,
           dailyRows: diagEnergyDailyRows.map((r) => ({ roleLabel: r.roleLabel, sourceLabel: r.sourceLabel, idsLabel: r.idsLabel, valueLabel: r.valueLabel, counterWarnLabel: r.counterWarn ? S.diagCounterWarn : null })),
           envHeading: S.environment,
-          envRows: diagEnvRows
+          envRows: diagEnvRows,
+          reasonsHeading: S.diagReasonsHeading, reasonsTotalLabel: diagReasonTotalLabel,
+          reasonGroups: diagReasonGroups.map((g) => ({
+            label: g.label, count: g.count,
+            rows: g.rows.map((r) => ({ name: r.name, entityIdLabel: r.entityIdLabel, reasonExtra: r.reasonExtra }))
+          })),
+          duplicateDevicesTitle: hasDiagDuplicateDevices ? diagDuplicateDevicesTitle : null,
+          duplicateDeviceLines: diagDuplicateDevices.map((p) => p.line)
         });
         const copied = await window.CasaPrefs.copyToClipboard(text);
         this.setState({ diagSheet: { text, copied } });
@@ -2992,6 +3113,10 @@ class Component extends DCLogic {
       diagCameraRows, hasDiagCameraRows: diagCameraRows.length > 0,
       diagRingValue, hasDiagRingRow: !!diagRingValue,
       diagAlarmRows,
+      diagReasonsOpen: this.state.diagReasonsOpen, diagReasonsToggle: () => this.setState({ diagReasonsOpen: !this.state.diagReasonsOpen }),
+      diagReasonsChevRotate: this.state.diagReasonsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      diagReasonTotalLabel, diagReasonGroups, hasDiagReasonGroups,
+      hasDiagDuplicateDevices, diagDuplicateDevices, diagDuplicateDevicesTitle,
       diagCopyRun: doDiag,
       diagOpen: !!diagSheet, diagText: diagSheet ? diagSheet.text : '',
       diagCopied: diagSheet ? diagSheet.copied : false, diagNotCopied: diagSheet ? !diagSheet.copied : false,

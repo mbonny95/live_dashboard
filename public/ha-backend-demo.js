@@ -101,6 +101,16 @@ const SEED = [
   // demo too, not just in discovery.js's unit-level logic.
   entity('sensor.router_wifi_rssi', 'corridoio', '-52', { friendly_name: 'RSSI router', unit_of_measurement: 'dBm' }),
 
+  // The v1.7.1 bug, modeled directly (see CLAUDE.md): Matter re-registers a
+  // device after a core update, the old device keeps the user's area/name,
+  // the entities that actually work migrate to a new device with no area —
+  // area_id: null here on purpose, resolved only through DEVICE_LINKS below
+  // (to 'device_relay_new', itself arealess in DEVICES), so this cover hits
+  // discoverRooms's `no_area` discard exactly like the real one did. Always
+  // present in plain `?demo` — no special scenario needed to prove either
+  // this or the paired "device sdoppiati" warning (see DEVICES).
+  entity('cover.relay_2pm_shade', null, 'closed', { friendly_name: 'Relay Switch 2PM Shade', current_position: 0, supported_features: 15 }),
+
   // people
   entity('person.alex', null, 'home', { friendly_name: 'Alex' }),
   entity('person.sam', null, 'not_home', { friendly_name: 'Sam' }),
@@ -178,8 +188,24 @@ const DEVICE_LINKS = {
   'camera.cancello': 'device_cancello',
   'binary_sensor.cancello_motion': 'device_cancello',
   'switch.cucina_forno': 'device_forno',
-  'sensor.cucina_forno_potenza': 'device_forno'
+  'sensor.cucina_forno_potenza': 'device_forno',
+  'cover.relay_2pm_shade': 'device_relay_new'
 };
+
+// Device-registry rows (v1.7.1) — empty until now, since nothing before
+// needed one: every other demo device relation only mattered at the entity
+// level (DEVICE_LINKS above). findDuplicateDevices (discovery.js) pairs
+// devices by serial_number, so the two rows below share one — same
+// physical relay, "re-registered" by Matter after an update, exactly the
+// CLAUDE.md v1.7.1 bug. Deliberately just these two: every other demo
+// entity keeps working through DEVICE_LINKS or no device at all, so this
+// pair doesn't change anything else about the demo.
+const DEVICES = [
+  { id: 'device_relay_old', area_id: 'soggiorno', name: 'Tapparella 1', name_by_user: null,
+    model: 'Relay Switch 2PM', serial_number: 'SN-RELAY2PM-014', hw_version: 'v2', via_device_id: 'device_matter_bridge' },
+  { id: 'device_relay_new', area_id: null, name: 'Relay Switch 2PM Shade', name_by_user: null,
+    model: 'Relay Switch 2PM', serial_number: 'SN-RELAY2PM-014', hw_version: 'v2', via_device_id: 'device_matter_bridge' }
+];
 
 const AREA_NAMES = {
   soggiorno: 'Soggiorno', camera: 'Camera', camera_bimbi: 'Camera Bimbi', cucina: 'Cucina',
@@ -369,7 +395,7 @@ function buildRegistries() {
     disabled_by: null, hidden_by: null,
     entity_category: e.entity_id === 'sensor.router_wifi_rssi' ? 'diagnostic' : null
   }));
-  return { areas, devices: [], entities };
+  return { areas, devices: DEVICES, entities };
 }
 
 function cloneStates() {

@@ -16,10 +16,10 @@
 
 ## Relationships
 
-- [powerVal](powerVal.md) (2 shared connections)
+- [renderVals](renderVals.md) (2 shared connections)
 - [CHANGELOG.md](CHANGELOG.md.md) (1 shared connections)
 - [powerVal() unit normalization fix (v1.5.3)](powerVal%28%29_unit_normalization_fix_%28v1.5.3%29.md) (1 shared connections)
-- [discovery.js](discovery.js.md) (1 shared connections)
+- [Three-tier smart-plug state (off/active/running)](Three-tier_smart-plug_state_%28off-active-running%29.md) (1 shared connections)
 - [House consumption, derived automatically (README section)](House_consumption%2C_derived_automatically_%28README_section%29.md) (1 shared connections)
 
 ## Source Files

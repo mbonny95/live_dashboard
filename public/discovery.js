@@ -73,17 +73,41 @@ const AREA_ICON_RULES = [
 
 function domainOf(entityId) { return entityId.split('.')[0]; }
 
+// Diagnostica (v1.7.1) — would this entity ever have become room content if
+// it *had* an area? Most of the registry doesn't: person/weather/alarm/
+// energy/irrigation/vehicle entities are area-less by design, discovered by
+// their own dedicated functions, never by discoverRooms's per-area loop —
+// flagging every one of them as "no area assigned" would bury the one
+// entity that's actually a problem (the CLAUDE.md v1.7.1 bug) under dozens
+// that are working exactly as intended. Scoped to `no_area`/`unknown_area`
+// only (see discoverRooms) — every other discard reason keeps reporting
+// every entity, unfiltered, since those are cheap to skim and never this
+// noisy in practice.
+function isRoomRelevant(dom, st) {
+  if (CONTROLLABLE_DOMAINS.indexOf(dom) !== -1) return true;
+  const dc = st && st.attributes && st.attributes.device_class;
+  if (dom === 'binary_sensor') return !!BINARY_PILL_CLASS[dc];
+  if (dom === 'sensor') return dc === 'battery' || !!NUMERIC_SENSOR_CLASS[dc];
+  return false;
+}
+
 function guessAreaIcon(name) {
   for (const [re, icon] of AREA_ICON_RULES) if (re.test(name)) return icon;
   return '#i-door';
 }
 
+// Returns a reason code (truthy string) or `null` — never a bare boolean.
+// Every existing call site only ever tests truthiness (`isExcluded(e)` /
+// `!isExcluded(e)`), so a non-empty string behaves exactly like `true` did;
+// this is what lets discoverRooms's main loop (v1.7.1) turn the reason into
+// a Diagnostica entry without duplicating these conditions itself.
 function isExcluded(entity) {
-  if (!entity) return true;
-  if (entity.disabled_by) return true;
-  if (entity.hidden_by) return true;
-  if (entity.entity_category === 'diagnostic' || entity.entity_category === 'config') return true;
-  return false;
+  if (!entity) return 'invalid';
+  if (entity.disabled_by) return 'disabled_by';
+  if (entity.hidden_by) return 'hidden_by';
+  if (entity.entity_category === 'diagnostic') return 'diagnostic_category';
+  if (entity.entity_category === 'config') return 'config_category';
+  return null;
 }
 
 function friendlyName(states, entityId, fallback) {
@@ -107,6 +131,31 @@ function collectConfiguredEntities(config) {
     if (node && typeof node === 'object') { Object.values(node).forEach(walk); }
   })(config);
   return ids;
+}
+
+// Diagnostica (v1.7.1) — which top-level config.js block claimed a given
+// entity, so a "già usata da <modulo>" row can name the module instead of
+// just saying "elsewhere". Deliberately narrower than collectConfiguredEntities
+// above: `rooms`/`entities`/`modules`/`sections` are visibility/order/meta
+// blocks, not specialized modules, so walking them here would mislabel a
+// config-hidden entity as "claimed by a module" — this map is diagnostic
+// display only, never used to decide filtering (collectConfiguredEntities
+// keeps deciding that, unchanged).
+const MODULE_CONFIG_KEYS = ['energy', 'irrigation', 'weatherStation', 'vehicle', 'appliances',
+  'cameras', 'alarm', 'weather', 'modes', 'people', 'quickActions'];
+
+function collectConfiguredEntityModules(config) {
+  const byId = new Map();
+  for (const key of MODULE_CONFIG_KEYS) {
+    const node = config && config[key];
+    if (node === undefined || node === null) continue;
+    (function walk(n) {
+      if (typeof n === 'string') { if (ENTITY_ID_RE.test(n) && !byId.has(n)) byId.set(n, key); return; }
+      if (Array.isArray(n)) { n.forEach(walk); return; }
+      if (n && typeof n === 'object') { Object.values(n).forEach(walk); }
+    })(node);
+  }
+  return byId;
 }
 
 // --- smart plugs (v1.5.4) ---------------------------------------------------
@@ -179,7 +228,25 @@ function discoverRooms(states, registries, config, opts) {
   const areas = (registries && registries.areas) || [];
   const devices = (registries && registries.devices) || [];
   const entities = (registries && registries.entities) || [];
-  if (!areas.length) return { rooms: [], overflow: [] };
+  if (!areas.length) return { rooms: [], overflow: [], discardLog: [] };
+
+  // Diagnostica (v1.7.1) — every entity this function looks at but doesn't
+  // show gets one row here, with *why*. Rebuilt from scratch on every call
+  // (never accumulates across refreshes — see CLAUDE.md's "costo" note) and
+  // handed back alongside rooms/overflow rather than stashed as a global, so
+  // a caller that doesn't want it can just ignore the field.
+  const discardLog = [];
+  const pushDiscard = (ent, reason, extra) => {
+    const areaId = ent.area_id || null;
+    discardLog.push(Object.assign({
+      entity_id: ent.entity_id,
+      name: friendlyName(states, ent.entity_id, ent.name || ent.original_name || ent.entity_id),
+      domain: domainOf(ent.entity_id),
+      reason,
+      areaId,
+      deviceId: ent.device_id || null
+    }, extra));
+  };
 
   const deviceById = new Map(devices.map((d) => [d.id, d]));
   const areaById = new Map(areas.map((a) => [a.area_id, a]));
@@ -192,6 +259,7 @@ function discoverRooms(states, registries, config, opts) {
   // irrigation math, was also cluttering its area's room card as a generic
   // sensor pill.
   const claimedEntities = collectConfiguredEntities(config);
+  const claimedModules = collectConfiguredEntityModules(config);
 
   const byArea = new Map(areas.map((a) => [a.area_id, {
     id: a.area_id, name: a.name,
@@ -222,17 +290,36 @@ function discoverRooms(states, registries, config, opts) {
   const switchPowerMap = powerSensorForSwitch(states, registries);
 
   for (const ent of entities) {
-    if (isExcluded(ent)) continue;
-    if (!(ent.entity_id in states)) continue;
+    const exReason = isExcluded(ent);
+    if (exReason) { pushDiscard(ent, exReason); continue; }
+    if (!(ent.entity_id in states)) { pushDiscard(ent, 'no_state'); continue; }
+    // Checked before the area checks below (the opposite of this file's
+    // original order, which didn't matter before there was anything to log
+    // from it): an irrigation valve or energy sensor is area-less by
+    // design, claimed by its module regardless of area, so attributing its
+    // exclusion to "no area assigned" would be true but misleading — telling
+    // the user to fix something that was never broken. Reordering these two
+    // guards is filtering-neutral (both just `continue`, same net result)
+    // and only changes which reason gets logged.
+    if (claimedEntities.has(ent.entity_id)) {
+      pushDiscard(ent, 'claimed_by_module', { module: claimedModules.get(ent.entity_id) || null });
+      continue;
+    }
     const device = ent.device_id ? deviceById.get(ent.device_id) : null;
+    // Split on purpose, not merged into one condition: "no area at all" and
+    // "area assigned but the registry doesn't know it" are different repairs
+    // for the user, and the first is the high-value case this release exists
+    // for (see CLAUDE.md's v1.7.1 spec — the Matter double-device bug).
+    // Logged only for entities isRoomRelevant() would actually have shown —
+    // an un-areaed person/weather/energy/... entity is normal, not a bug,
+    // and logging every one of them would swamp the one that matters.
     const areaId = ent.area_id || (device && device.area_id) || null;
-    if (!areaId || !byArea.has(areaId)) continue;
+    if (!areaId) { if (isRoomRelevant(domainOf(ent.entity_id), states[ent.entity_id])) pushDiscard(ent, 'no_area'); continue; }
+    if (!byArea.has(areaId)) { if (isRoomRelevant(domainOf(ent.entity_id), states[ent.entity_id])) pushDiscard(ent, 'unknown_area', { areaId }); continue; }
     const room = byArea.get(areaId);
     const dom = domainOf(ent.entity_id);
     const name = friendlyName(states, ent.entity_id);
     const st = states[ent.entity_id];
-
-    if (claimedEntities.has(ent.entity_id)) continue;
 
     const catalogEntry = (reasonKind, reasonValue) =>
       room.catalog.push({ id: ent.entity_id, name, reasonKind, reasonValue });
@@ -295,10 +382,15 @@ function discoverRooms(states, registries, config, opts) {
   const richness = (r) => r.lights.length + r.switches.length + r.covers.length + r.media.length
     + r.climate.length + r.fan.length + r.vacuum.length
     + r.humidifier.length + r.lock.length + r.waterHeater.length + r.valve.length + r.lawnMower.length + r.siren.length;
+  const isEmptyRoom = (r) => !(richness(r) > 0 || r.sensors.length > 0 || r.status.length > 0);
   // Drop areas with nothing controllable and no room-worthy sensors/status —
   // an area that only holds a diagnostic device would otherwise show as an
-  // empty tile.
-  list = list.filter((r) => richness(r) > 0 || r.sensors.length > 0 || r.status.length > 0);
+  // empty tile. Registered once per dropped room (not per entity — nothing
+  // entity-shaped is being discarded here, the area itself is).
+  for (const r of list) {
+    if (isEmptyRoom(r)) discardLog.push({ entity_id: null, name: r.name, domain: 'area', reason: 'empty_room', areaId: r.id, deviceId: null });
+  }
+  list = list.filter((r) => !isEmptyRoom(r));
 
   const order = ((opts && opts.order) || cfg.order || []).map(String);
   const pinned = [];
@@ -315,7 +407,59 @@ function discoverRooms(states, registries, config, opts) {
   // looking sparse — the column just scrolls once it's full. An explicit
   // cfg.max always wins.
   const max = cfg.max || 12;
-  return { rooms: ranked.slice(0, max), overflow: ranked.slice(max) };
+
+  // Diagnostica (v1.7.1) — entities HA's state machine reports that have no
+  // entity-registry row at all. The loop above never sees these (it walks
+  // `entities`, the registry list, not `states`), so they'd otherwise vanish
+  // without ever passing through a discard check. Found on a real install as
+  // YAML-defined template covers HA refuses to delete from the UI ("does not
+  // have a unique ID") — scoped to CONTROLLABLE_DOMAINS, the same "high
+  // value" domains the no_area case targets, so this doesn't flag every
+  // internal helper entity HA creates without a registry row.
+  const registeredIds = new Set(entities.map((e) => e.entity_id));
+  for (const entityId of Object.keys(states)) {
+    if (registeredIds.has(entityId)) continue;
+    if (claimedEntities.has(entityId)) continue;
+    if (CONTROLLABLE_DOMAINS.indexOf(domainOf(entityId)) === -1) continue;
+    discardLog.push({
+      entity_id: entityId, name: friendlyName(states, entityId), domain: domainOf(entityId),
+      reason: 'no_registry_entry', areaId: null, deviceId: null
+    });
+  }
+
+  return { rooms: ranked.slice(0, max), overflow: ranked.slice(max), discardLog };
+}
+
+// Diagnostica (v1.7.1) — Matter (and similar integrations) can re-register
+// a device after an HA core update, leaving two device-registry rows for
+// the same physical thing: an old one with the user's area/name, and a new
+// one — factory name, no area — holding the entities that actually work now
+// (see CLAUDE.md's v1.7.1 spec for the exact bug this is modeled on).
+// Paired by `serial_number` first, since that's the one field that doesn't
+// drift when a name does; hw_version+model+via_device_id is a fallback for
+// integrations that don't expose a serial, and only fires when all three
+// agree — a partial match is worse than no warning at all (false positive
+// on a wall of identical lightbulbs), so an unmatched device stays silent.
+function findDuplicateDevices(registries) {
+  const devices = (registries && registries.devices) || [];
+  const withArea = devices.filter((d) => d.area_id);
+  const withoutArea = devices.filter((d) => !d.area_id);
+  const pairs = [];
+  for (const orphan of withoutArea) {
+    let match = null;
+    let matchedBy = null;
+    if (orphan.serial_number) {
+      match = withArea.find((d) => d.serial_number && d.serial_number === orphan.serial_number) || null;
+      if (match) matchedBy = 'serial_number';
+    }
+    if (!match && orphan.hw_version && orphan.model && orphan.via_device_id) {
+      match = withArea.find((d) => d.hw_version === orphan.hw_version && d.model === orphan.model
+        && d.via_device_id === orphan.via_device_id) || null;
+      if (match) matchedBy = 'hw_model';
+    }
+    if (match) pairs.push({ withoutArea: orphan, withArea: match, matchedBy });
+  }
+  return pairs;
 }
 
 // Best-effort mdi:* -> our SVG sprite icon set. Only maps the common cases;
@@ -688,7 +832,8 @@ window.CasaDiscovery = {
   resolveVisible, applyEntityVisibility, buildExportedConfig, MODULE_KEYS,
   SECTION_ORDER_DEFAULT, mergeSectionOrder,
   CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName,
-  powerSensorForSwitch, classifySwitchPower
+  powerSensorForSwitch, classifySwitchPower,
+  collectConfiguredEntityModules, findDuplicateDevices
 };
 
 })();

@@ -18,10 +18,9 @@
 
 ## Relationships
 
-- [renderVals](renderVals.md) (3 shared connections)
+- [renderVals](renderVals.md) (4 shared connections)
 - [PREFS](PREFS.md) (2 shared connections)
 - [Empty state case (b): configured energy entity doesn't exist](Empty_state_case_%28b%29-_configured_energy_entity_doesn%27t_exist.md) (2 shared connections)
-- [Component.diagEnergyInstant](Component.diagEnergyInstant.md) (1 shared connections)
 
 ## Source Files
 

@@ -126,6 +126,22 @@ function diagText(d) {
   lines.push(d.envHeading);
   d.envRows.forEach((r) => lines.push('  ' + padCol(r.label, 28) + r.value));
 
+  // v1.7.1 — entities not shown, and duplicate-device pairs, both optional
+  // (only present once discovery.js has run) so this stays a no-op for a
+  // call site that hasn't been updated to pass them.
+  if (d.reasonsHeading && d.reasonGroups) {
+    lines.push('');
+    lines.push(d.reasonsHeading + ' — ' + d.reasonsTotalLabel);
+    if (d.duplicateDevicesTitle) {
+      lines.push('  ' + d.duplicateDevicesTitle);
+      (d.duplicateDeviceLines || []).forEach((l) => lines.push('    ' + l));
+    }
+    d.reasonGroups.forEach((g) => {
+      lines.push('  ' + g.label + ' (' + g.count + ')');
+      g.rows.forEach((r) => lines.push(diagRowLine(['    ' + r.name, r.entityIdLabel, r.reasonExtra || ''], [30, 34])));
+    });
+  }
+
   return lines.join('\n') + '\n';
 }
 

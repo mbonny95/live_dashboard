@@ -76,6 +76,24 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   diagAlarmCapabilities: 'Declared capabilities', diagAlarmDisarmOnly: 'disarm only',
   diagAlarmCodeRequired: 'Requires a code', diagVerdictYes: 'yes', diagVerdictNo: 'no',
 
+  // Diagnostics — entities not shown (v1.7.1)
+  diagReasonsHeading: 'Diagnostics',
+  diagReasonNoArea: 'No area assigned',
+  diagReasonNoAreaBody: "These entities work, but don't belong to any room. Assign an area to the device in Settings → Devices.",
+  diagReasonUnknownArea: 'Unrecognized area',
+  diagReasonUnknownAreaBody: "The area assigned to these entities is no longer in Home Assistant's registry.",
+  diagReasonNoRegistryEntry: "Defined in YAML — can't be removed from the UI",
+  diagReasonNoRegistryEntryBody: 'Remove it from the configuration file, then Developer Tools → YAML → Reload.',
+  diagReasonNoState: 'No state available',
+  diagReasonClaimedByModule: 'Already used by another module',
+  diagReasonEmptyRoom: 'Room with no controls',
+  diagReasonHiddenBy: 'Hidden in Home Assistant',
+  diagReasonDisabledBy: 'Disabled in Home Assistant',
+  diagReasonDiagnosticCategory: 'Diagnostic entity',
+  diagReasonConfigCategory: 'Configuration entity',
+  diagDuplicateDevicesBody: 'After a Home Assistant update, Matter can re-register the same device. The copy with the working commands has no area and stays invisible.',
+  diagModuleWeatherStation: 'Weather station', diagModuleWeather: 'Weather', diagModulePeople: 'People',
+
   // dynamic strings, referenced via this.t('key', vars)
   'alarm.armedAway': 'Armed · away', 'alarm.armedHome': 'Armed · home', 'alarm.armedNight': 'Armed · night',
   'alarm.armedVacation': 'Armed · vacation', 'alarm.arming': 'Arming…',
@@ -163,6 +181,10 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
 
   'diag.configResolved': 'Config loaded from {path}.',
   'diag.ringMissing': 'single ring — missing {field}',
+  'diag.reasonsTotal': '{n} entities not shown',
+  'diag.reasonClaimedByModule': 'already used by {module}',
+  'diag.duplicateDevicesTitle': '{n} devices registered twice.',
+  'diag.duplicateDeviceLine': '{from} → assign the area of {to}',
 
   'siren.sounding': 'sounding',
 

@@ -3,6 +3,37 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.7.1] - 2026-09-14
+
+### Added
+
+- **Diagnostica now says why an entity doesn't show up.** Found on a real
+  install after updating Home Assistant core to **2026.9.0**: 12 SwitchBot
+  Relay Switch 2PM covers, connected via Matter, vanished from the
+  dashboard with no message anywhere. The cause — Matter had re-registered
+  every relay as a second device with the same serial number, a factory
+  name, and no area; the working `cover` entities migrated to that new,
+  area-less device, while the old device (with the user's area and name)
+  kept only its diagnostic entities. `discoverRooms` already discarded the
+  now-invisible covers correctly — for someone on a wall tablet or the
+  companion app, with no console, that discard was invisible too. This
+  release doesn't change what discovery keeps or drops (v1.7.1 is
+  observability, not a new filter): every discard point now logs *why* —
+  no area assigned, an unrecognized area, no live state, already claimed by
+  another module (energy/irrigation/cameras/...), disabled or hidden in HA,
+  a diagnostic/config entity, an empty room, or a YAML-defined entity HA
+  refuses to delete ("does not have a unique ID"). Settings → Diagnostica
+  gained a closed-by-default "Diagnostica · N entità non mostrate" section,
+  grouped by reason and sorted by how actionable the reason is — "nessuna
+  area assegnata" first, not whichever group happens to be biggest (that's
+  almost always "entità di diagnostica", the least interesting one). Two
+  devices sharing a serial number where only one has an area — the exact
+  2026.9.0/Matter case above — get their own warning at the top, naming
+  both devices and which area to reassign. The demo (`?demo`, from
+  `file://`) reproduces the bug directly, no real installation required:
+  one cover with no area behind a duplicated device, alongside the
+  existing `sensor.router_wifi_rssi` diagnostic-category entity.
+
 ## [1.7.0] - 2026-08-27
 
 ### Added
