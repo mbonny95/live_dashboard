@@ -1,6 +1,6 @@
 # Diagnostics panel (settings gear → Diagnostica)
 
-> 36 nodes
+> 37 nodes
 
 ## Key Concepts
 
@@ -11,6 +11,7 @@
 - **Energy charts empty/wrong: daily-counter vs power-role mistakes** (5 connections) — `TROUBLESHOOTING.md`
 - **Four-tab settings panel (Stanze/Energia/Telecamere/Diagnostica)** (4 connections) — `CHANGELOG.md`
 - **Double-ring energy model (consumption/production identities)** (4 connections) — `CHANGELOG.md`
+- **loadScript() cache-bust propagation fix** (4 connections) — `CHANGELOG.md`
 - **White/blank panel: panel_custom.name mismatch** (4 connections) — `TROUBLESHOOTING.md`
 - **Three new Diagnostica rows (camera/energy-ring/alarm)** (3 connections) — `CHANGELOG.md`
 - **Diagnostics: Energy instantaneous values block** (3 connections) — `CHANGELOG.md`
@@ -28,14 +29,14 @@
 - **README.it: come si legge l'anello** (2 connections) — `README.it.md`
 - **README: settings panel vs config.js precedence** (2 connections) — `README.md`
 - **Start here: Settings → Diagnostica** (2 connections) — `TROUBLESHOOTING.md`
-- **Missing/stale ?v= on module_url causes stale panel.js** (2 connections) — `TROUBLESHOOTING.md`
-- *... and 11 more nodes in this community*
+- *... and 12 more nodes in this community*
 
 ## Relationships
 
-- [_boot](_boot.md) (5 shared connections)
+- [_boot](_boot.md) (4 shared connections)
 - [CHANGELOG.md](CHANGELOG.md.md) (2 shared connections)
 - [discovery.js](discovery.js.md) (1 shared connections)
+- [Three-tier smart-plug state (off/active/running)](Three-tier_smart-plug_state_%28off-active-running%29.md) (1 shared connections)
 
 ## Source Files
 
@@ -46,8 +47,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 68 (72%)
-- INFERRED: 24 (26%)
+- EXTRACTED: 70 (71%)
+- INFERRED: 26 (27%)
 - AMBIGUOUS: 2 (2%)
 
 ---

@@ -34,7 +34,7 @@
 ## Relationships
 
 - [renderVals](renderVals.md) (20 shared connections)
-- [Empty state case (a): no rooms discovered at all](Empty_state_case_%28a%29-_no_rooms_discovered_at_all.md) (2 shared connections)
+- [Empty state case (b): configured energy entity doesn't exist](Empty_state_case_%28b%29-_configured_energy_entity_doesn%27t_exist.md) (2 shared connections)
 
 ## Source Files
 

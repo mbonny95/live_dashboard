@@ -1787,9 +1787,9 @@
       "source_file": "public/support.js",
       "source_location": "L1171",
       "_origin": "ast",
-      "community": 0,
+      "community": 14,
       "norm_label": "createexternalmodules()",
-      "community_name": "support.js",
+      "community_name": "prefs.js",
       "id": "public_support_createexternalmodules"
     },
     {
@@ -2067,7 +2067,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "changelog.md",
       "_origin": "ast",
       "community_name": "CHANGELOG.md",
@@ -2222,8 +2222,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community": 85,
+      "community_name": "CHANGELOG.md",
       "norm_label": "energy.periodnote hardcoded-unit-in-template fix",
       "id": "changelog_energy_periodnote_unit_in_string_fix"
     },
@@ -2236,8 +2236,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community": 85,
+      "community_name": "CHANGELOG.md",
       "norm_label": "powerval() instantaneous power unit normalization",
       "id": "changelog_powerval_unit_normalization"
     },
@@ -2726,8 +2726,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 2,
-      "community_name": "_boot",
+      "community": 6,
+      "community_name": "Diagnostics panel (settings gear \u2192 Diagnostica)",
       "norm_label": "loadscript() cache-bust propagation fix",
       "id": "changelog_cache_bust_chain_fix"
     },
@@ -3272,7 +3272,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "readme.it.md",
       "community_name": "CHANGELOG.md",
       "id": "readme_it"
@@ -3370,9 +3370,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 92,
+      "community": 85,
       "norm_label": "readme.it: limiti noti",
-      "community_name": "README: known limits",
+      "community_name": "CHANGELOG.md",
       "id": "readme_it_known_limits"
     },
     {
@@ -3384,7 +3384,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "readme.md",
       "community_name": "CHANGELOG.md",
       "id": "readme"
@@ -3468,9 +3468,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
+      "community": 85,
       "norm_label": "readme: instantaneous power unit normalization",
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community_name": "CHANGELOG.md",
       "id": "readme_instantaneous_power_unit"
     },
     {
@@ -3594,7 +3594,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "readme: kiosk mode for wall tablet",
       "community_name": "CHANGELOG.md",
       "id": "readme_kiosk_mode"
@@ -3622,9 +3622,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 92,
+      "community": 85,
       "norm_label": "readme: known limits",
-      "community_name": "README: known limits",
+      "community_name": "CHANGELOG.md",
       "id": "readme_known_limits"
     },
     {
@@ -3636,7 +3636,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "troubleshooting.md",
       "community_name": "CHANGELOG.md",
       "id": "troubleshooting"
@@ -3720,8 +3720,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 92,
-      "community_name": "README: known limits",
+      "community": 85,
+      "community_name": "CHANGELOG.md",
       "norm_label": "empty rooms: areas never assigned in ha",
       "id": "troubleshooting_empty_rooms_no_area_assigned"
     },
@@ -3748,8 +3748,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 92,
-      "community_name": "README: known limits",
+      "community": 85,
+      "community_name": "CHANGELOG.md",
       "norm_label": "entity not showing anywhere: discovery checklist",
       "id": "troubleshooting_entity_not_showing_checklist"
     },
@@ -3860,8 +3860,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 92,
-      "community_name": "README: known limits",
+      "community": 85,
+      "community_name": "CHANGELOG.md",
       "norm_label": "missing section (energy/irrigation/vehicle/...) is opt-in by design",
       "id": "troubleshooting_missing_section_by_design"
     },
@@ -5344,9 +5344,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
+      "community": 5,
       "norm_label": "all_rooms_result()",
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "id": "public_dash_neumo_all_rooms_result"
     },
     {
@@ -5358,8 +5358,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community": 5,
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "norm_label": "all_cameras_result()",
       "id": "public_dash_neumo_all_cameras_result"
     },
@@ -5414,8 +5414,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community": 5,
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "norm_label": "diagenvironment()",
       "id": "public_dash_neumo_diagenvironment"
     },
@@ -6422,9 +6422,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
+      "community": 5,
       "norm_label": "all_rooms_result() (mobile)",
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "id": "public_dash_neumo_mobile_all_rooms_result"
     },
     {
@@ -6436,8 +6436,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community": 5,
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "norm_label": "component.all_cameras_result()",
       "id": "public_dash_neumo_mobile_all_cameras_result"
     },
@@ -6492,8 +6492,8 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community": 5,
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "norm_label": "component.diagenvironment()",
       "id": "public_dash_neumo_mobile_diagenvironment"
     },
@@ -7264,9 +7264,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
+      "community": 85,
       "norm_label": "v1.5.3 changelog entry",
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community_name": "CHANGELOG.md",
       "id": "changelog_v1_5_3"
     },
     {
@@ -7278,9 +7278,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
+      "community": 85,
       "norm_label": "powerval() shared unit-normalization helper",
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community_name": "CHANGELOG.md",
       "id": "changelog_powerval_helper"
     },
     {
@@ -7292,9 +7292,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
+      "community": 85,
       "norm_label": "instantaneous power unit setting (auto/w/kw)",
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community_name": "CHANGELOG.md",
       "id": "changelog_instant_power_unit_setting"
     },
     {
@@ -7306,9 +7306,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
+      "community": 85,
       "norm_label": "settings panel tabbed navigation (stanze/energia/telecamere/diagnostica)",
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community_name": "CHANGELOG.md",
       "id": "changelog_settings_panel_tabs_v153"
     },
     {
@@ -7320,7 +7320,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "v1.5.2 changelog entry",
       "community_name": "CHANGELOG.md",
       "id": "changelog_v1_5_2"
@@ -7334,7 +7334,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "cover position slider touch/long-press fix",
       "community_name": "CHANGELOG.md",
       "id": "changelog_cover_slider_touch_fix"
@@ -7348,9 +7348,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
+      "community": 85,
       "norm_label": "start here: settings -> diagnostica (troubleshooting section)",
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community_name": "CHANGELOG.md",
       "id": "troubleshooting_diagnostica_section"
     },
     {
@@ -7572,9 +7572,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 88,
+      "community": 85,
       "norm_label": "energy charts empty or wrong troubleshooting",
-      "community_name": "Instantaneous power unit setting (Auto/W/kW)",
+      "community_name": "CHANGELOG.md",
       "id": "troubleshooting_energy_charts_empty"
     },
     {
@@ -7826,7 +7826,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "house consumption, derived automatically (changelog entry)",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "changelog_v1_6_0_house_consumption"
     },
     {
@@ -7922,9 +7922,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 93,
+      "community": 85,
       "norm_label": "powerval() unit normalization fix (v1.5.3)",
-      "community_name": "powerVal() unit normalization fix (v1.5.3)",
+      "community_name": "CHANGELOG.md",
       "id": "changelog_v1_5_3_powerval_fix"
     },
     {
@@ -7938,7 +7938,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "house consumption, derived automatically (readme section)",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "readme_house_consumption_section"
     },
     {
@@ -7952,7 +7952,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "reading the ring (readme section)",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "readme_reading_the_ring_section"
     },
     {
@@ -7964,9 +7964,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 93,
+      "community": 85,
       "norm_label": "instantaneous power unit (readme section)",
-      "community_name": "powerVal() unit normalization fix (v1.5.3)",
+      "community_name": "CHANGELOG.md",
       "id": "readme_instantaneous_power_unit_section"
     },
     {
@@ -7978,7 +7978,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "enabling energy (readme section)",
       "community_name": "CHANGELOG.md",
       "id": "readme_enabling_energy_section"
@@ -8020,9 +8020,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
+      "community": 5,
       "norm_label": "known limits (readme section)",
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "id": "readme_known_limits_section"
     },
     {
@@ -8034,7 +8034,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "consumo casa (istantaneo), derivato in automatico (readme.it section)",
       "community_name": "CHANGELOG.md",
       "id": "readme_it_consumo_casa_section"
@@ -8050,7 +8050,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "derived house consumption shows -- or inverted sign (troubleshooting section)",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "troubleshooting_derived_consumption_section"
     },
     {
@@ -8062,9 +8062,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
+      "community": 5,
       "norm_label": "rooms are empty, or show far fewer entities than expected (troubleshooting section)",
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "id": "troubleshooting_rooms_empty_section"
     },
     {
@@ -8120,7 +8120,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "deriveconsumption()",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_deriveconsumption"
     },
     {
@@ -8132,9 +8132,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 93,
+      "community": 85,
       "norm_label": "towatts()",
-      "community_name": "powerVal() unit normalization fix (v1.5.3)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_towatts"
     },
     {
@@ -8146,9 +8146,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 93,
+      "community": 85,
       "norm_label": "formatwatts()",
-      "community_name": "powerVal() unit normalization fix (v1.5.3)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_formatwatts"
     },
     {
@@ -8162,7 +8162,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "_samplebatterysign()",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo__samplebatterysign"
     },
     {
@@ -8176,7 +8176,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "batterysignverdict()",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_batterysignverdict"
     },
     {
@@ -8190,7 +8190,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "batterypowersign()",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_batterypowersign"
     },
     {
@@ -8204,7 +8204,7 @@
       "contributor": null,
       "community": 85,
       "norm_label": "settings_set_battery_sign()",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_settings_set_battery_sign"
     },
     {
@@ -8258,9 +8258,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
+      "community": 5,
       "norm_label": "hasnoareas computed var",
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "id": "public_dash_neumo_hasnoareas"
     },
     {
@@ -8272,9 +8272,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 95,
+      "community": 85,
       "norm_label": "deriveconsumption() (mobile)",
-      "community_name": "deriveConsumption() (mobile)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_mobile_deriveconsumption"
     },
     {
@@ -8286,9 +8286,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 95,
+      "community": 85,
       "norm_label": "towatts() (mobile)",
-      "community_name": "deriveConsumption() (mobile)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_mobile_towatts"
     },
     {
@@ -8342,9 +8342,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 95,
+      "community": 85,
       "norm_label": "batterypowersign() (mobile)",
-      "community_name": "deriveConsumption() (mobile)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_mobile_batterypowersign"
     },
     {
@@ -8412,9 +8412,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 86,
+      "community": 5,
       "norm_label": "hasnoareas computed var (mobile)",
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "id": "public_dash_neumo_mobile_hasnoareas"
     },
     {
@@ -8429,7 +8429,7 @@
       "rationale": "There is no universal convention across HA integrations for whether a positive battery power reading means charging or discharging; the dashboard defaults to positive=charging, exposes a Settings -> Energy toggle to invert it, and self-diagnoses a likely-wrong convention by sampling whether the derived consumption comes out negative more often than not over a rolling window, surfacing a named verdict with a one-tap invert rather than ever showing a bare negative consumption number.",
       "community": 85,
       "norm_label": "battery power sign convention",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "public_dash_neumo_battery_sign_convention_concept"
     },
     {
@@ -8442,9 +8442,9 @@
       "author": null,
       "contributor": null,
       "rationale": "Widened from the old check (literally zero areas in the registry) to the actually-common cause: areas exist but entities were never assigned to one. Shows a 'Go to Areas' card regardless of why it's empty.",
-      "community": 86,
+      "community": 5,
       "norm_label": "empty state case (a): no rooms discovered at all",
-      "community_name": "Empty state case (a): no rooms discovered at all",
+      "community_name": "Empty state case (b): configured energy entity doesn't exist",
       "id": "empty_state_case_a_no_areas_concept"
     },
     {
@@ -8474,7 +8474,7 @@
       "rationale": "consumption = production + gridImport - gridExport + batteryDischarge - batteryCharge. Only runs when production/gridImport/gridExport all resolve; otherwise shows an honest '-' rather than a partial derivation. An explicit consumption sensor always wins over the derivation.",
       "community": 85,
       "norm_label": "derived house consumption formula",
-      "community_name": "House consumption, derived automatically (README section)",
+      "community_name": "CHANGELOG.md",
       "id": "derived_house_consumption_formula_concept"
     },
     {
@@ -8500,7 +8500,7 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 87,
+      "community": 85,
       "norm_label": "live_dashboard_config.example.js",
       "community_name": "CHANGELOG.md",
       "id": "live_dashboard_config_example_js"
@@ -8808,9 +8808,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L515",
       "_origin": "ast",
-      "community": 75,
+      "community": 72,
       "norm_label": "[1.4.6] - 2026-08-15",
-      "community_name": "Changelog",
+      "community_name": "[1.4.6] - 2026-08-15",
       "id": "changelog_1_4_6_2026_08_15"
     },
     {
@@ -8819,9 +8819,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L486",
       "_origin": "ast",
-      "community": 75,
+      "community": 72,
       "norm_label": "fixed",
-      "community_name": "Changelog",
+      "community_name": "[1.4.6] - 2026-08-15",
       "id": "changelog_fixed_486"
     },
     {
@@ -9094,9 +9094,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L763",
       "_origin": "ast",
-      "community": 75,
+      "community": 10,
       "norm_label": "[1.1.2] - 2026-08-14",
-      "community_name": "Changelog",
+      "community_name": "[1.1.2] - 2026-08-14",
       "id": "changelog_1_1_2_2026_08_14"
     },
     {
@@ -9105,9 +9105,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L734",
       "_origin": "ast",
-      "community": 75,
+      "community": 10,
       "norm_label": "fixed",
-      "community_name": "Changelog",
+      "community_name": "[1.1.2] - 2026-08-14",
       "id": "changelog_fixed_734"
     },
     {
@@ -9226,9 +9226,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L855",
       "_origin": "ast",
-      "community": 72,
+      "community": 75,
       "norm_label": "[0.3.0] - 2026-08-13",
-      "community_name": "[0.3.0] - 2026-08-13",
+      "community_name": "Changelog",
       "id": "changelog_0_3_0_2026_08_13"
     },
     {
@@ -9237,9 +9237,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L826",
       "_origin": "ast",
-      "community": 72,
+      "community": 75,
       "norm_label": "added",
-      "community_name": "[0.3.0] - 2026-08-13",
+      "community_name": "Changelog",
       "id": "changelog_added_826"
     },
     {
@@ -9292,9 +9292,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L898",
       "_origin": "ast",
-      "community": 10,
+      "community": 75,
       "norm_label": "[0.1.0] - 2026-08-12",
-      "community_name": "[0.1.0] - 2026-08-12",
+      "community_name": "Changelog",
       "id": "changelog_0_1_0_2026_08_12"
     },
     {
@@ -9303,9 +9303,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L869",
       "_origin": "ast",
-      "community": 10,
+      "community": 75,
       "norm_label": "added",
-      "community_name": "[0.1.0] - 2026-08-12",
+      "community_name": "Changelog",
       "id": "changelog_added_869"
     },
     {
@@ -9496,10 +9496,10 @@
       "source_file": "public/discovery.js",
       "source_location": "L86",
       "_origin": "ast",
-      "id": "public_discovery_isroomrelevant",
       "community": 3,
       "community_name": "discovery.js",
-      "norm_label": "isroomrelevant()"
+      "norm_label": "isroomrelevant()",
+      "id": "public_discovery_isroomrelevant"
     },
     {
       "label": "collectConfiguredEntityModules()",
@@ -9507,10 +9507,10 @@
       "source_file": "public/discovery.js",
       "source_location": "L147",
       "_origin": "ast",
-      "id": "public_discovery_collectconfiguredentitymodules",
       "community": 3,
       "community_name": "discovery.js",
-      "norm_label": "collectconfiguredentitymodules()"
+      "norm_label": "collectconfiguredentitymodules()",
+      "id": "public_discovery_collectconfiguredentitymodules"
     },
     {
       "label": "findDuplicateDevices()",
@@ -9518,10 +9518,10 @@
       "source_file": "public/discovery.js",
       "source_location": "L443",
       "_origin": "ast",
-      "id": "public_discovery_findduplicatedevices",
       "community": 3,
       "community_name": "discovery.js",
-      "norm_label": "findduplicatedevices()"
+      "norm_label": "findduplicatedevices()",
+      "id": "public_discovery_findduplicatedevices"
     },
     {
       "label": "[1.7.1] - 2026-09-14",
@@ -9529,10 +9529,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "changelog_1_7_1_2026_09_14",
       "community": 75,
       "community_name": "Changelog",
-      "norm_label": "[1.7.1] - 2026-09-14"
+      "norm_label": "[1.7.1] - 2026-09-14",
+      "id": "changelog_1_7_1_2026_09_14"
     },
     {
       "label": "Added",
@@ -9540,10 +9540,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L39",
       "_origin": "ast",
-      "id": "changelog_added_39",
       "community": 75,
       "community_name": "Changelog",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_39"
     },
     {
       "label": "Added",
@@ -9551,10 +9551,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L66",
       "_origin": "ast",
-      "id": "changelog_added_66",
       "community": 70,
       "community_name": "[1.6.0] - 2026-08-27",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_66"
     },
     {
       "label": "Fixed",
@@ -9562,10 +9562,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L142",
       "_origin": "ast",
-      "id": "changelog_fixed_142",
       "community": 61,
       "community_name": "[1.5.4] - 2026-08-21",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_142"
     },
     {
       "label": "Added",
@@ -9573,10 +9573,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L189",
       "_origin": "ast",
-      "id": "changelog_added_189",
       "community": 61,
       "community_name": "[1.5.4] - 2026-08-21",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_189"
     },
     {
       "label": "Fixed",
@@ -9584,10 +9584,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L224",
       "_origin": "ast",
-      "id": "changelog_fixed_224",
       "community": 69,
       "community_name": "[1.5.3] - 2026-08-20",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_224"
     },
     {
       "label": "Added",
@@ -9595,10 +9595,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L243",
       "_origin": "ast",
-      "id": "changelog_added_243",
       "community": 69,
       "community_name": "[1.5.3] - 2026-08-20",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_243"
     },
     {
       "label": "Fixed",
@@ -9606,10 +9606,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L279",
       "_origin": "ast",
-      "id": "changelog_fixed_279",
       "community": 94,
       "community_name": "[1.5.2] - 2026-08-20",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_279"
     },
     {
       "label": "Added",
@@ -9617,10 +9617,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L327",
       "_origin": "ast",
-      "id": "changelog_added_327",
       "community": 80,
       "community_name": "[1.5.1] - 2026-08-16",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_327"
     },
     {
       "label": "Added",
@@ -9628,10 +9628,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L384",
       "_origin": "ast",
-      "id": "changelog_added_384",
       "community": 91,
       "community_name": "[1.5.0] - 2026-08-16",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_384"
     },
     {
       "label": "Fixed",
@@ -9639,10 +9639,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L433",
       "_origin": "ast",
-      "id": "changelog_fixed_433",
       "community": 79,
       "community_name": "[1.4.9] - 2026-08-16",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_433"
     },
     {
       "label": "Fixed",
@@ -9650,10 +9650,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L457",
       "_origin": "ast",
-      "id": "changelog_fixed_457",
       "community": 68,
       "community_name": "[1.4.8] - 2026-08-16",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_457"
     },
     {
       "label": "Added",
@@ -9661,10 +9661,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L469",
       "_origin": "ast",
-      "id": "changelog_added_469",
       "community": 68,
       "community_name": "[1.4.8] - 2026-08-16",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_469"
     },
     {
       "label": "Fixed",
@@ -9672,10 +9672,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L496",
       "_origin": "ast",
-      "id": "changelog_fixed_496",
       "community": 89,
       "community_name": "[1.4.7] - 2026-08-15",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_496"
     },
     {
       "label": "Fixed",
@@ -9683,10 +9683,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L517",
       "_origin": "ast",
-      "id": "changelog_fixed_517",
-      "community": 75,
-      "community_name": "Changelog",
-      "norm_label": "fixed"
+      "community": 72,
+      "community_name": "[1.4.6] - 2026-08-15",
+      "norm_label": "fixed",
+      "id": "changelog_fixed_517"
     },
     {
       "label": "Fixed",
@@ -9694,10 +9694,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L533",
       "_origin": "ast",
-      "id": "changelog_fixed_533",
       "community": 67,
       "community_name": "[1.4.5] - 2026-08-15",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_533"
     },
     {
       "label": "Added",
@@ -9705,10 +9705,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L550",
       "_origin": "ast",
-      "id": "changelog_added_550",
       "community": 67,
       "community_name": "[1.4.5] - 2026-08-15",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_550"
     },
     {
       "label": "Fixed",
@@ -9716,10 +9716,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L561",
       "_origin": "ast",
-      "id": "changelog_fixed_561",
       "community": 66,
       "community_name": "[1.4.4] - 2026-08-15",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_561"
     },
     {
       "label": "Fixed",
@@ -9727,10 +9727,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L584",
       "_origin": "ast",
-      "id": "changelog_fixed_584",
       "community": 83,
       "community_name": "[1.4.3] - 2026-08-14",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_584"
     },
     {
       "label": "Fixed",
@@ -9738,10 +9738,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L603",
       "_origin": "ast",
-      "id": "changelog_fixed_603",
       "community": 82,
       "community_name": "[1.4.2] - 2026-08-14",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_603"
     },
     {
       "label": "Fixed",
@@ -9749,10 +9749,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L635",
       "_origin": "ast",
-      "id": "changelog_fixed_635",
       "community": 65,
       "community_name": "[1.4.1] - 2026-08-14",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_635"
     },
     {
       "label": "Added",
@@ -9760,10 +9760,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L651",
       "_origin": "ast",
-      "id": "changelog_added_651",
       "community": 65,
       "community_name": "[1.4.1] - 2026-08-14",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_651"
     },
     {
       "label": "Changed",
@@ -9771,10 +9771,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L666",
       "_origin": "ast",
-      "id": "changelog_changed_666",
       "community": 16,
       "community_name": "[1.4.0] - 2026-08-14",
-      "norm_label": "changed"
+      "norm_label": "changed",
+      "id": "changelog_changed_666"
     },
     {
       "label": "Added",
@@ -9782,10 +9782,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L692",
       "_origin": "ast",
-      "id": "changelog_added_692",
       "community": 16,
       "community_name": "[1.4.0] - 2026-08-14",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_692"
     },
     {
       "label": "Fixed",
@@ -9793,10 +9793,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L704",
       "_origin": "ast",
-      "id": "changelog_fixed_704",
       "community": 16,
       "community_name": "[1.4.0] - 2026-08-14",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_704"
     },
     {
       "label": "Fixed",
@@ -9804,10 +9804,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L716",
       "_origin": "ast",
-      "id": "changelog_fixed_716",
       "community": 77,
       "community_name": "[1.3.1] - 2026-08-14",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_716"
     },
     {
       "label": "Added",
@@ -9815,10 +9815,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L728",
       "_origin": "ast",
-      "id": "changelog_added_728",
       "community": 76,
       "community_name": "[1.3.0] - 2026-08-14",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_728"
     },
     {
       "label": "Added",
@@ -9826,10 +9826,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L744",
       "_origin": "ast",
-      "id": "changelog_added_744",
       "community": 64,
       "community_name": "[1.2.0] - 2026-08-14",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_744"
     },
     {
       "label": "Changed",
@@ -9837,10 +9837,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L756",
       "_origin": "ast",
-      "id": "changelog_changed_756",
       "community": 64,
       "community_name": "[1.2.0] - 2026-08-14",
-      "norm_label": "changed"
+      "norm_label": "changed",
+      "id": "changelog_changed_756"
     },
     {
       "label": "Fixed",
@@ -9848,10 +9848,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L765",
       "_origin": "ast",
-      "id": "changelog_fixed_765",
-      "community": 75,
-      "community_name": "Changelog",
-      "norm_label": "fixed"
+      "community": 10,
+      "community_name": "[1.1.2] - 2026-08-14",
+      "norm_label": "fixed",
+      "id": "changelog_fixed_765"
     },
     {
       "label": "Fixed",
@@ -9859,10 +9859,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L782",
       "_origin": "ast",
-      "id": "changelog_fixed_782",
       "community": 74,
       "community_name": "[1.1.1] - 2026-08-14",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_782"
     },
     {
       "label": "Added",
@@ -9870,10 +9870,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L798",
       "_origin": "ast",
-      "id": "changelog_added_798",
       "community": 63,
       "community_name": "[1.1.0] - 2026-08-14",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_798"
     },
     {
       "label": "Fixed",
@@ -9881,10 +9881,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L809",
       "_origin": "ast",
-      "id": "changelog_fixed_809",
       "community": 63,
       "community_name": "[1.1.0] - 2026-08-14",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_809"
     },
     {
       "label": "Fixed",
@@ -9892,10 +9892,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L818",
       "_origin": "ast",
-      "id": "changelog_fixed_818",
       "community": 73,
       "community_name": "[1.0.1] - 2026-08-14",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_818"
     },
     {
       "label": "Added",
@@ -9903,10 +9903,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L837",
       "_origin": "ast",
-      "id": "changelog_added_837",
       "community": 62,
       "community_name": "[1.0.0] - 2026-08-13",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_837"
     },
     {
       "label": "Fixed",
@@ -9914,10 +9914,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L848",
       "_origin": "ast",
-      "id": "changelog_fixed_848",
       "community": 62,
       "community_name": "[1.0.0] - 2026-08-13",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_848"
     },
     {
       "label": "Added",
@@ -9925,10 +9925,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L857",
       "_origin": "ast",
-      "id": "changelog_added_857",
-      "community": 72,
-      "community_name": "[0.3.0] - 2026-08-13",
-      "norm_label": "added"
+      "community": 75,
+      "community_name": "Changelog",
+      "norm_label": "added",
+      "id": "changelog_added_857"
     },
     {
       "label": "Fixed",
@@ -9936,10 +9936,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L869",
       "_origin": "ast",
-      "id": "changelog_fixed_869",
       "community": 81,
       "community_name": "[0.2.1] - 2026-08-13",
-      "norm_label": "fixed"
+      "norm_label": "fixed",
+      "id": "changelog_fixed_869"
     },
     {
       "label": "Added",
@@ -9947,10 +9947,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L887",
       "_origin": "ast",
-      "id": "changelog_added_887",
       "community": 71,
       "community_name": "[0.2.0] - 2026-08-12",
-      "norm_label": "added"
+      "norm_label": "added",
+      "id": "changelog_added_887"
     },
     {
       "label": "Added",
@@ -9958,10 +9958,10 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L900",
       "_origin": "ast",
-      "id": "changelog_added_900",
-      "community": 10,
-      "community_name": "[0.1.0] - 2026-08-12",
-      "norm_label": "added"
+      "community": 75,
+      "community_name": "Changelog",
+      "norm_label": "added",
+      "id": "changelog_added_900"
     },
     {
       "label": "diagReasonGroups",
@@ -10018,6 +10018,17 @@
       "community_name": "discovery.js",
       "norm_label": "diagduplicatedevices",
       "id": "public_dash_neumo_mobile_diagduplicatedevices"
+    },
+    {
+      "label": "Compatibilit\u00e0 con Home Assistant 2026.9.0",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L8",
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "Changelog",
+      "norm_label": "compatibilita con home assistant 2026.9.0",
+      "id": "changelog_compatibilita_ha_2026_9_0"
     }
   ],
   "links": [
@@ -10067,9 +10078,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L147",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery",
-      "target": "public_discovery_collectconfiguredentitymodules",
-      "confidence_score": 1.0
+      "target": "public_discovery_collectconfiguredentitymodules"
     },
     {
       "relation": "contains",
@@ -10167,9 +10178,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L443",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery",
-      "target": "public_discovery_findduplicatedevices",
-      "confidence_score": 1.0
+      "target": "public_discovery_findduplicatedevices"
     },
     {
       "relation": "contains",
@@ -10207,9 +10218,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L86",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery",
-      "target": "public_discovery_isroomrelevant",
-      "confidence_score": 1.0
+      "target": "public_discovery_isroomrelevant"
     },
     {
       "relation": "contains",
@@ -10278,9 +10289,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L683",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoveralarm",
-      "target": "public_discovery_domainof",
-      "confidence_score": 1.0
+      "target": "public_discovery_domainof"
     },
     {
       "relation": "calls",
@@ -10289,9 +10300,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L484",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverallofdomain",
-      "target": "public_discovery_domainof",
-      "confidence_score": 1.0
+      "target": "public_discovery_domainof"
     },
     {
       "relation": "calls",
@@ -10300,9 +10311,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L530",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discovercameras",
-      "target": "public_discovery_domainof",
-      "confidence_score": 1.0
+      "target": "public_discovery_domainof"
     },
     {
       "relation": "calls",
@@ -10311,9 +10322,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L656",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverenergyentities",
-      "target": "public_discovery_domainof",
-      "confidence_score": 1.0
+      "target": "public_discovery_domainof"
     },
     {
       "relation": "calls",
@@ -10322,9 +10333,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L496",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverpeople",
-      "target": "public_discovery_domainof",
-      "confidence_score": 1.0
+      "target": "public_discovery_domainof"
     },
     {
       "relation": "calls",
@@ -10333,9 +10344,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L244",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverrooms",
-      "target": "public_discovery_domainof",
-      "confidence_score": 1.0
+      "target": "public_discovery_domainof"
     },
     {
       "relation": "calls",
@@ -10344,9 +10355,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L504",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverweather",
-      "target": "public_discovery_domainof",
-      "confidence_score": 1.0
+      "target": "public_discovery_domainof"
     },
     {
       "relation": "calls",
@@ -10366,9 +10377,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L266",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverrooms",
-      "target": "public_discovery_guessareaicon",
-      "confidence_score": 1.0
+      "target": "public_discovery_guessareaicon"
     },
     {
       "relation": "calls",
@@ -10377,9 +10388,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L683",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoveralarm",
-      "target": "public_discovery_isexcluded",
-      "confidence_score": 1.0
+      "target": "public_discovery_isexcluded"
     },
     {
       "relation": "calls",
@@ -10388,9 +10399,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L484",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverallofdomain",
-      "target": "public_discovery_isexcluded",
-      "confidence_score": 1.0
+      "target": "public_discovery_isexcluded"
     },
     {
       "relation": "calls",
@@ -10399,9 +10410,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L530",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discovercameras",
-      "target": "public_discovery_isexcluded",
-      "confidence_score": 1.0
+      "target": "public_discovery_isexcluded"
     },
     {
       "relation": "calls",
@@ -10410,9 +10421,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L653",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverenergyentities",
-      "target": "public_discovery_isexcluded",
-      "confidence_score": 1.0
+      "target": "public_discovery_isexcluded"
     },
     {
       "relation": "calls",
@@ -10421,9 +10432,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L293",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverrooms",
-      "target": "public_discovery_isexcluded",
-      "confidence_score": 1.0
+      "target": "public_discovery_isexcluded"
     },
     {
       "relation": "calls",
@@ -10443,9 +10454,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L553",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discovercameras",
-      "target": "public_discovery_friendlyname",
-      "confidence_score": 1.0
+      "target": "public_discovery_friendlyname"
     },
     {
       "relation": "calls",
@@ -10454,9 +10465,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L663",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverenergyentities",
-      "target": "public_discovery_friendlyname",
-      "confidence_score": 1.0
+      "target": "public_discovery_friendlyname"
     },
     {
       "relation": "calls",
@@ -10465,9 +10476,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L243",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverrooms",
-      "target": "public_discovery_friendlyname",
-      "confidence_score": 1.0
+      "target": "public_discovery_friendlyname"
     },
     {
       "relation": "calls",
@@ -10498,9 +10509,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L290",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverrooms",
-      "target": "public_discovery_powersensorforswitch",
-      "confidence_score": 1.0
+      "target": "public_discovery_powersensorforswitch"
     },
     {
       "relation": "references",
@@ -10539,9 +10550,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L262",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverrooms",
-      "target": "public_discovery_collectconfiguredentitymodules",
-      "confidence_score": 1.0
+      "target": "public_discovery_collectconfiguredentitymodules"
     },
     {
       "relation": "calls",
@@ -10550,9 +10561,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L317",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_discoverrooms",
-      "target": "public_discovery_isroomrelevant",
-      "confidence_score": 1.0
+      "target": "public_discovery_isroomrelevant"
     },
     {
       "relation": "calls",
@@ -10602,9 +10613,9 @@
       "source_file": "public/discovery.js",
       "source_location": "L804",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_discovery_buildexportedconfig",
-      "target": "public_discovery_resolvevisible",
-      "confidence_score": 1.0
+      "target": "public_discovery_resolvevisible"
     },
     {
       "relation": "calls",
@@ -10736,9 +10747,9 @@
       "source_file": "public/ha-backend-demo.js",
       "source_location": "L427",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_ha_backend_demo_connect",
-      "target": "public_ha_backend_demo_rand",
-      "confidence_score": 1.0
+      "target": "public_ha_backend_demo_rand"
     },
     {
       "relation": "contains",
@@ -10930,9 +10941,9 @@
       "source_file": "public/panel.js",
       "source_location": "L316",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_flush",
-      "target": "public_panel_toplainstates",
-      "confidence_score": 1.0
+      "target": "public_panel_toplainstates"
     },
     {
       "relation": "calls",
@@ -10941,9 +10952,9 @@
       "source_file": "public/panel.js",
       "source_location": "L149",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_fetchdailylastsample",
-      "target": "public_panel_isoday",
-      "confidence_score": 1.0
+      "target": "public_panel_isoday"
     },
     {
       "relation": "calls",
@@ -10974,9 +10985,9 @@
       "source_file": "public/panel.js",
       "source_location": "L194",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_fetchhistory",
-      "target": "public_panel_fetchrawhistory",
-      "confidence_score": 1.0
+      "target": "public_panel_fetchrawhistory"
     },
     {
       "relation": "calls",
@@ -10985,9 +10996,9 @@
       "source_file": "public/panel.js",
       "source_location": "L347",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handlehistory",
-      "target": "public_panel_fetchhistory",
-      "confidence_score": 1.0
+      "target": "public_panel_fetchhistory"
     },
     {
       "relation": "calls",
@@ -10996,9 +11007,9 @@
       "source_file": "public/panel.js",
       "source_location": "L413",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handleenergytoday",
-      "target": "public_panel_fetchtodaystatsdelta",
-      "confidence_score": 1.0
+      "target": "public_panel_fetchtodaystatsdelta"
     },
     {
       "relation": "method",
@@ -11230,9 +11241,9 @@
       "source_file": "public/panel.js",
       "source_location": "L330",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handlecall",
-      "target": "public_panel_casapanel_reply",
-      "confidence_score": 1.0
+      "target": "public_panel_casapanel_reply"
     },
     {
       "relation": "calls",
@@ -11241,9 +11252,9 @@
       "source_file": "public/panel.js",
       "source_location": "L460",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handlecamerastream",
-      "target": "public_panel_casapanel_reply",
-      "confidence_score": 1.0
+      "target": "public_panel_casapanel_reply"
     },
     {
       "relation": "calls",
@@ -11252,9 +11263,9 @@
       "source_file": "public/panel.js",
       "source_location": "L388",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handleenergyprefs",
-      "target": "public_panel_casapanel_reply",
-      "confidence_score": 1.0
+      "target": "public_panel_casapanel_reply"
     },
     {
       "relation": "calls",
@@ -11263,9 +11274,9 @@
       "source_file": "public/panel.js",
       "source_location": "L409",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handleenergytoday",
-      "target": "public_panel_casapanel_reply",
-      "confidence_score": 1.0
+      "target": "public_panel_casapanel_reply"
     },
     {
       "relation": "calls",
@@ -11274,9 +11285,9 @@
       "source_file": "public/panel.js",
       "source_location": "L343",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handlehistory",
-      "target": "public_panel_casapanel_reply",
-      "confidence_score": 1.0
+      "target": "public_panel_casapanel_reply"
     },
     {
       "relation": "calls",
@@ -11285,9 +11296,9 @@
       "source_file": "public/panel.js",
       "source_location": "L361",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handleregistries",
-      "target": "public_panel_casapanel_reply",
-      "confidence_score": 1.0
+      "target": "public_panel_casapanel_reply"
     },
     {
       "relation": "calls",
@@ -11296,9 +11307,9 @@
       "source_file": "public/panel.js",
       "source_location": "L426",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handleuserdataget",
-      "target": "public_panel_casapanel_reply",
-      "confidence_score": 1.0
+      "target": "public_panel_casapanel_reply"
     },
     {
       "relation": "calls",
@@ -11307,9 +11318,9 @@
       "source_file": "public/panel.js",
       "source_location": "L439",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_panel_casapanel_handleuserdataset",
-      "target": "public_panel_casapanel_reply",
-      "confidence_score": 1.0
+      "target": "public_panel_casapanel_reply"
     },
     {
       "relation": "calls",
@@ -11496,9 +11507,9 @@
       "source_file": "public/prefs.js",
       "source_location": "L67",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_prefs_load",
-      "target": "public_prefs_readlocal",
-      "confidence_score": 1.0
+      "target": "public_prefs_readlocal"
     },
     {
       "relation": "calls",
@@ -11507,9 +11518,9 @@
       "source_file": "public/prefs.js",
       "source_location": "L79",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_prefs_save",
-      "target": "public_prefs_writelocal",
-      "confidence_score": 1.0
+      "target": "public_prefs_writelocal"
     },
     {
       "relation": "indirect_call",
@@ -11529,9 +11540,9 @@
       "source_file": "public/prefs.js",
       "source_location": "L101",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_prefs_diagrowline",
-      "target": "public_prefs_padcol",
-      "confidence_score": 1.0
+      "target": "public_prefs_padcol"
     },
     {
       "relation": "calls",
@@ -11540,9 +11551,9 @@
       "source_file": "public/prefs.js",
       "source_location": "L127",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "public_prefs_diagtext",
-      "target": "public_prefs_padcol",
-      "confidence_score": 1.0
+      "target": "public_prefs_padcol"
     },
     {
       "relation": "calls",
@@ -20188,9 +20199,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_changelog",
-      "target": "changelog_1_7_1_2026_09_14",
-      "confidence_score": 1.0
+      "target": "changelog_1_7_1_2026_09_14"
     },
     {
       "relation": "contains",
@@ -20208,9 +20219,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L39",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_7_0_2026_08_27",
-      "target": "changelog_added_39",
-      "confidence_score": 1.0
+      "target": "changelog_added_39"
     },
     {
       "relation": "contains",
@@ -20218,9 +20229,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_7_1_2026_09_14",
-      "target": "changelog_added",
-      "confidence_score": 1.0
+      "target": "changelog_added"
     },
     {
       "relation": "contains",
@@ -20238,9 +20249,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L66",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_6_0_2026_08_27",
-      "target": "changelog_added_66",
-      "confidence_score": 1.0
+      "target": "changelog_added_66"
     },
     {
       "relation": "contains",
@@ -20268,9 +20279,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L189",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_5_4_2026_08_21",
-      "target": "changelog_added_189",
-      "confidence_score": 1.0
+      "target": "changelog_added_189"
     },
     {
       "relation": "contains",
@@ -20288,9 +20299,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L142",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_5_4_2026_08_21",
-      "target": "changelog_fixed_142",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_142"
     },
     {
       "relation": "contains",
@@ -20318,9 +20329,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L243",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_5_3_2026_08_20",
-      "target": "changelog_added_243",
-      "confidence_score": 1.0
+      "target": "changelog_added_243"
     },
     {
       "relation": "contains",
@@ -20338,9 +20349,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L224",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_5_3_2026_08_20",
-      "target": "changelog_fixed_224",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_224"
     },
     {
       "relation": "contains",
@@ -20358,9 +20369,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L279",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_5_2_2026_08_20",
-      "target": "changelog_fixed_279",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_279"
     },
     {
       "relation": "contains",
@@ -20378,9 +20389,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L327",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_5_1_2026_08_16",
-      "target": "changelog_added_327",
-      "confidence_score": 1.0
+      "target": "changelog_added_327"
     },
     {
       "relation": "contains",
@@ -20398,9 +20409,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L384",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_5_0_2026_08_16",
-      "target": "changelog_added_384",
-      "confidence_score": 1.0
+      "target": "changelog_added_384"
     },
     {
       "relation": "contains",
@@ -20418,9 +20429,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L433",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_9_2026_08_16",
-      "target": "changelog_fixed_433",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_433"
     },
     {
       "relation": "contains",
@@ -20438,9 +20449,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L469",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_8_2026_08_16",
-      "target": "changelog_added_469",
-      "confidence_score": 1.0
+      "target": "changelog_added_469"
     },
     {
       "relation": "contains",
@@ -20458,9 +20469,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L457",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_8_2026_08_16",
-      "target": "changelog_fixed_457",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_457"
     },
     {
       "relation": "contains",
@@ -20478,9 +20489,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L496",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_7_2026_08_15",
-      "target": "changelog_fixed_496",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_496"
     },
     {
       "relation": "contains",
@@ -20498,9 +20509,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L517",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_6_2026_08_15",
-      "target": "changelog_fixed_517",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_517"
     },
     {
       "relation": "contains",
@@ -20518,9 +20529,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L550",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_5_2026_08_15",
-      "target": "changelog_added_550",
-      "confidence_score": 1.0
+      "target": "changelog_added_550"
     },
     {
       "relation": "contains",
@@ -20538,9 +20549,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L533",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_5_2026_08_15",
-      "target": "changelog_fixed_533",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_533"
     },
     {
       "relation": "contains",
@@ -20568,9 +20579,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L561",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_4_2026_08_15",
-      "target": "changelog_fixed_561",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_561"
     },
     {
       "relation": "contains",
@@ -20588,9 +20599,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L584",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_3_2026_08_14",
-      "target": "changelog_fixed_584",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_584"
     },
     {
       "relation": "contains",
@@ -20608,9 +20619,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L603",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_2_2026_08_14",
-      "target": "changelog_fixed_603",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_603"
     },
     {
       "relation": "contains",
@@ -20628,9 +20639,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L651",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_1_2026_08_14",
-      "target": "changelog_added_651",
-      "confidence_score": 1.0
+      "target": "changelog_added_651"
     },
     {
       "relation": "contains",
@@ -20648,9 +20659,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L635",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_1_2026_08_14",
-      "target": "changelog_fixed_635",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_635"
     },
     {
       "relation": "contains",
@@ -20668,9 +20679,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L692",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_0_2026_08_14",
-      "target": "changelog_added_692",
-      "confidence_score": 1.0
+      "target": "changelog_added_692"
     },
     {
       "relation": "contains",
@@ -20688,9 +20699,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L666",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_0_2026_08_14",
-      "target": "changelog_changed_666",
-      "confidence_score": 1.0
+      "target": "changelog_changed_666"
     },
     {
       "relation": "contains",
@@ -20708,9 +20719,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L704",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_4_0_2026_08_14",
-      "target": "changelog_fixed_704",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_704"
     },
     {
       "relation": "contains",
@@ -20728,9 +20739,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L716",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_3_1_2026_08_14",
-      "target": "changelog_fixed_716",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_716"
     },
     {
       "relation": "contains",
@@ -20748,9 +20759,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L728",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_3_0_2026_08_14",
-      "target": "changelog_added_728",
-      "confidence_score": 1.0
+      "target": "changelog_added_728"
     },
     {
       "relation": "contains",
@@ -20768,9 +20779,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L744",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_2_0_2026_08_14",
-      "target": "changelog_added_744",
-      "confidence_score": 1.0
+      "target": "changelog_added_744"
     },
     {
       "relation": "contains",
@@ -20788,9 +20799,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L756",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_2_0_2026_08_14",
-      "target": "changelog_changed_756",
-      "confidence_score": 1.0
+      "target": "changelog_changed_756"
     },
     {
       "relation": "contains",
@@ -20808,9 +20819,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L765",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_1_2_2026_08_14",
-      "target": "changelog_fixed_765",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_765"
     },
     {
       "relation": "contains",
@@ -20828,9 +20839,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L782",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_1_1_2026_08_14",
-      "target": "changelog_fixed_782",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_782"
     },
     {
       "relation": "contains",
@@ -20848,9 +20859,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L798",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_1_0_2026_08_14",
-      "target": "changelog_added_798",
-      "confidence_score": 1.0
+      "target": "changelog_added_798"
     },
     {
       "relation": "contains",
@@ -20868,9 +20879,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L809",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_1_0_2026_08_14",
-      "target": "changelog_fixed_809",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_809"
     },
     {
       "relation": "contains",
@@ -20888,9 +20899,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L818",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_0_1_2026_08_14",
-      "target": "changelog_fixed_818",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_818"
     },
     {
       "relation": "contains",
@@ -20908,9 +20919,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L837",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_0_0_2026_08_13",
-      "target": "changelog_added_837",
-      "confidence_score": 1.0
+      "target": "changelog_added_837"
     },
     {
       "relation": "contains",
@@ -20928,9 +20939,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L848",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_1_0_0_2026_08_13",
-      "target": "changelog_fixed_848",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_848"
     },
     {
       "relation": "contains",
@@ -20948,9 +20959,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L857",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_0_3_0_2026_08_13",
-      "target": "changelog_added_857",
-      "confidence_score": 1.0
+      "target": "changelog_added_857"
     },
     {
       "relation": "contains",
@@ -20968,9 +20979,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L869",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_0_2_1_2026_08_13",
-      "target": "changelog_fixed_869",
-      "confidence_score": 1.0
+      "target": "changelog_fixed_869"
     },
     {
       "relation": "contains",
@@ -20988,9 +20999,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L887",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_0_2_0_2026_08_12",
-      "target": "changelog_added_887",
-      "confidence_score": 1.0
+      "target": "changelog_added_887"
     },
     {
       "relation": "contains",
@@ -21008,9 +21019,9 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L900",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "changelog_0_1_0_2026_08_12",
-      "target": "changelog_added_900",
-      "confidence_score": 1.0
+      "target": "changelog_added_900"
     },
     {
       "relation": "calls",
@@ -21231,6 +21242,16 @@
       "weight": 1.0,
       "source": "public_dash_neumo_mobile_diagreasongroups",
       "target": "public_discovery_findduplicatedevices"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "changelog_1_7_1_2026_09_14",
+      "target": "changelog_compatibilita_ha_2026_9_0"
     },
     {
       "relation": "semantically_similar_to",
@@ -21589,5 +21610,5 @@
       "source_file": "CHANGELOG.md"
     }
   ],
-  "built_at_commit": "464d25dc96e020bdef6962ba005719131a5db0cf"
+  "built_at_commit": "33ddefd5bce25fd4dd0519023d13dbf250c2976e"
 }

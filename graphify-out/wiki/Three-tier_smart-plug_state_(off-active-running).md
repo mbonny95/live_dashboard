@@ -24,8 +24,8 @@
 ## Relationships
 
 - [discovery.js](discovery.js.md) (2 shared connections)
-- [Instantaneous power unit setting (Auto/W/kW)](Instantaneous_power_unit_setting_%28Auto-W-kW%29.md) (1 shared connections)
-- [_boot](_boot.md) (1 shared connections)
+- [CHANGELOG.md](CHANGELOG.md.md) (1 shared connections)
+- [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (1 shared connections)
 
 ## Source Files
 

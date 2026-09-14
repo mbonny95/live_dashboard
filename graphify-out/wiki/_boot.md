@@ -1,6 +1,6 @@
 # _boot
 
-> 50 nodes
+> 49 nodes
 
 ## Key Concepts
 
@@ -16,7 +16,6 @@
 - **loadScript()** (5 connections) — `public/dash_neumo.html`
 - **Component._camStartStream()** (5 connections) — `public/dash_neumo_mobile.html`
 - **loadUserConfig()** (5 connections) — `public/dash_neumo.html`
-- **loadScript() cache-bust propagation fix** (4 connections) — `CHANGELOG.md`
 - **bust()** (4 connections) — `public/dash_neumo.html`
 - **_startSnapTimer()** (4 connections) — `public/dash_neumo.html`
 - **_stopSnapTimer()** (4 connections) — `public/dash_neumo.html`
@@ -29,14 +28,14 @@
 - **_attachHlsJs()** (3 connections) — `public/dash_neumo.html`
 - **_resolveEnergyDaily()** (3 connections) — `public/dash_neumo.html`
 - **mergeConfig()** (3 connections) — `public/dash_neumo_mobile.html`
-- *... and 25 more nodes in this community*
+- **bust()** (3 connections) — `public/dash_neumo_mobile.html`
+- *... and 24 more nodes in this community*
 
 ## Relationships
 
-- [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (5 shared connections)
+- [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (4 shared connections)
 - [renderVals](renderVals.md) (3 shared connections)
 - [v1.5.4 changelog entry](v1.5.4_changelog_entry.md) (2 shared connections)
-- [Three-tier smart-plug state (off/active/running)](Three-tier_smart-plug_state_%28off-active-running%29.md) (1 shared connections)
 - [Casa View](Casa_View.md) (1 shared connections)
 
 ## Source Files
@@ -48,8 +47,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 126 (70%)
-- INFERRED: 54 (30%)
+- EXTRACTED: 124 (70%)
+- INFERRED: 52 (30%)
 - AMBIGUOUS: 0 (0%)
 
 ---

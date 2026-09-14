@@ -34,11 +34,10 @@
 ## Relationships
 
 - [PREFS](PREFS.md) (20 shared connections)
-- [Empty state case (a): no rooms discovered at all](Empty_state_case_%28a%29-_no_rooms_discovered_at_all.md) (4 shared connections)
+- [Empty state case (b): configured energy entity doesn't exist](Empty_state_case_%28b%29-_configured_energy_entity_doesn%27t_exist.md) (5 shared connections)
 - [_boot](_boot.md) (3 shared connections)
 - [_panelLpMenu](_panelLpMenu.md) (3 shared connections)
-- [Instantaneous power unit setting (Auto/W/kW)](Instantaneous_power_unit_setting_%28Auto-W-kW%29.md) (2 shared connections)
-- [Empty state case (b): configured energy entity doesn't exist](Empty_state_case_%28b%29-_configured_energy_entity_doesn%27t_exist.md) (1 shared connections)
+- [CHANGELOG.md](CHANGELOG.md.md) (2 shared connections)
 
 ## Source Files
 

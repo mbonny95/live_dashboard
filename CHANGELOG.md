@@ -5,6 +5,38 @@ All notable changes to this project are documented here. Format follows
 
 ## [1.7.1] - 2026-09-14
 
+### Compatibilità con Home Assistant 2026.9.0
+
+Nessuna modifica necessaria alla dashboard: gli attributi di stato che legge
+(`friendly_name`, `device_class`, `media_title`, `entity_picture`) sono
+invariati. La rimozione di `battery_level` non la riguarda — i valori di
+batteria si configurano come id di sensori, non come attributi.
+
+**Attenzione ai dispositivi Matter dopo l'aggiornamento.** Su alcune
+installazioni 2026.9.0 ri-registra i dispositivi Matter come nuovi: lo stesso
+apparecchio fisico compare due volte, e le entità che rispondono ai comandi
+migrano sulla copia nuova, che nasce **senza area** e con il nome di fabbrica.
+Le entità originali restano orfane con il nome e l'area che avevi scelto.
+
+Poiché la dashboard raggruppa per area, i dispositivi finiti sulla copia senza
+area **scompaiono dalle stanze**. Caso osservato: 12 tapparelle
+SwitchBot Relay Switch 2PM sparite tutte insieme.
+
+Come rimediare, per ogni dispositivo:
+
+1. Impostazioni → Dispositivi → Matter, apri la copia che **ha i comandi**
+   (apri/chiudi, accendi/spegni) — non quella con le sole entità diagnostiche.
+2. Assegna l'area e rinominala. Accetta il rinomino delle entità proposto.
+3. Verifica che i comandi agiscano sul dispositivo fisico.
+4. Elimina l'entità orfana rimasta (quella senza dispositivo).
+
+Le due copie si accoppiano confrontando il **serial number**, non il nome: il
+nome è proprio la cosa che diverge.
+
+Da questa versione la sezione **Diagnostica** del pannello impostazioni segnala
+il caso da sola, elencando i dispositivi con serial duplicato e indicando quale
+area riassegnare.
+
 ### Added
 
 - **Diagnostica now says why an entity doesn't show up.** Found on a real

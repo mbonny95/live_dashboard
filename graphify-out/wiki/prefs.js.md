@@ -1,6 +1,6 @@
 # prefs.js
 
-> 10 nodes
+> 11 nodes
 
 ## Key Concepts
 
@@ -9,6 +9,7 @@
 - **padCol()** (3 connections) — `public/prefs.js`
 - **diagRowLine()** (3 connections) — `public/prefs.js`
 - **diagText()** (3 connections) — `public/prefs.js`
+- **createExternalModules()** (3 connections) — `public/support.js`
 - **readLocal()** (2 connections) — `public/prefs.js`
 - **writeLocal()** (2 connections) — `public/prefs.js`
 - **save()** (2 connections) — `public/prefs.js`
@@ -17,16 +18,17 @@
 
 ## Relationships
 
-- [support.js](support.js.md) (1 shared connections)
+- [support.js](support.js.md) (2 shared connections)
 
 ## Source Files
 
 - `public/prefs.js`
+- `public/support.js`
 
 ## Audit Trail
 
-- EXTRACTED: 28 (97%)
-- INFERRED: 1 (3%)
+- EXTRACTED: 30 (94%)
+- INFERRED: 2 (6%)
 - AMBIGUOUS: 0 (0%)
 
 ---

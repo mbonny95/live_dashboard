@@ -1,6 +1,6 @@
 # support.js
 
-> 65 nodes
+> 64 nodes
 
 ## Key Concepts
 
@@ -29,12 +29,12 @@
 - **parseDcDocument()** (3 connections) — `public/support.js`
 - **parseDcText()** (3 connections) — `public/support.js`
 - **parseDataProps()** (3 connections) — `public/support.js`
-- *... and 40 more nodes in this community*
+- *... and 39 more nodes in this community*
 
 ## Relationships
 
+- [prefs.js](prefs.js.md) (2 shared connections)
 - [discovery.js](discovery.js.md) (1 shared connections)
-- [prefs.js](prefs.js.md) (1 shared connections)
 
 ## Source Files
 
@@ -42,8 +42,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 278 (99%)
-- INFERRED: 4 (1%)
+- EXTRACTED: 276 (99%)
+- INFERRED: 3 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---
