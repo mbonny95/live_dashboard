@@ -1,6 +1,6 @@
 # _boot
 
-> 49 nodes
+> 48 nodes
 
 ## Key Concepts
 
@@ -13,7 +13,6 @@
 - **_camStartFastPoll()** (6 connections) — `public/dash_neumo.html`
 - **Component.componentDidMount()** (6 connections) — `public/dash_neumo_mobile.html`
 - **Three-Layer Camera Live View** (5 connections) — `public/dash_neumo.html`
-- **loadScript()** (5 connections) — `public/dash_neumo.html`
 - **Component._camStartStream()** (5 connections) — `public/dash_neumo_mobile.html`
 - **loadUserConfig()** (5 connections) — `public/dash_neumo.html`
 - **bust()** (4 connections) — `public/dash_neumo.html`
@@ -29,11 +28,12 @@
 - **_resolveEnergyDaily()** (3 connections) — `public/dash_neumo.html`
 - **mergeConfig()** (3 connections) — `public/dash_neumo_mobile.html`
 - **bust()** (3 connections) — `public/dash_neumo_mobile.html`
-- *... and 24 more nodes in this community*
+- **loadScript()** (3 connections) — `public/dash_neumo_mobile.html`
+- *... and 23 more nodes in this community*
 
 ## Relationships
 
-- [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (4 shared connections)
+- [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (7 shared connections)
 - [renderVals](renderVals.md) (3 shared connections)
 - [v1.5.4 changelog entry](v1.5.4_changelog_entry.md) (2 shared connections)
 - [Casa View](Casa_View.md) (1 shared connections)
@@ -47,8 +47,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 124 (70%)
-- INFERRED: 52 (30%)
+- EXTRACTED: 120 (70%)
+- INFERRED: 51 (30%)
 - AMBIGUOUS: 0 (0%)
 
 ---

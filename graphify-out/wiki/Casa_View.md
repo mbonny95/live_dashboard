@@ -1,15 +1,15 @@
 # Casa View
 
-> 43 nodes
+> 47 nodes
 
 ## Key Concepts
 
 - **Casa View** (9 connections) — `public/dash_neumo.html`
 - **Room Detail Side Panel** (8 connections) — `public/dash_neumo.html`
 - **Tab Navigation** (5 connections) — `public/dash_neumo.html`
+- **Energy New Dual-Ring Widget** (5 connections) — `public/dash_neumo.html`
 - **Camera Home Widget** (5 connections) — `public/dash_neumo.html`
 - **Room Card** (4 connections) — `public/dash_neumo.html`
-- **Energy New Dual-Ring Widget** (4 connections) — `public/dash_neumo.html`
 - **Energy Double/Single Ring Selection** (4 connections) — `public/dash_neumo.html`
 - **Camera Detail Modal** (4 connections) — `public/dash_neumo.html`
 - **Settings Screen** (4 connections) — `public/dash_neumo.html`
@@ -22,14 +22,14 @@
 - **Energy Tab** (3 connections) — `public/dash_neumo.html`
 - **Energy History Bar Chart** (3 connections) — `public/dash_neumo.html`
 - **Vehicle (Auto) Tab** (3 connections) — `public/dash_neumo.html`
+- **Panel Covers Section** (3 connections) — `public/dash_neumo.html`
 - **Energy Old Single-Ring Widget** (2 connections) — `public/dash_neumo.html`
 - **Energy Compact Widget** (2 connections) — `public/dash_neumo.html`
 - **Camera Home Single Tile** (2 connections) — `public/dash_neumo.html`
 - **Camera Home Multi Grid** (2 connections) — `public/dash_neumo.html`
 - **Fuel Gauge** (2 connections) — `public/dash_neumo.html`
-- **Panel Covers Section** (2 connections) — `public/dash_neumo.html`
 - **Weather Detail Panel** (2 connections) — `public/dash_neumo.html`
-- *... and 18 more nodes in this community*
+- *... and 22 more nodes in this community*
 
 ## Relationships
 
@@ -38,11 +38,12 @@
 ## Source Files
 
 - `public/dash_neumo.html`
+- `public/dash_neumo_mobile.html`
 
 ## Audit Trail
 
-- EXTRACTED: 97 (89%)
-- INFERRED: 12 (11%)
+- EXTRACTED: 105 (90%)
+- INFERRED: 12 (10%)
 - AMBIGUOUS: 0 (0%)
 
 ---

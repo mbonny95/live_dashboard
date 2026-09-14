@@ -38,7 +38,7 @@
 - [renderVals](renderVals.md) (2 shared connections)
 - [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (2 shared connections)
 - [Changelog](Changelog.md) (1 shared connections)
-- [Three-tier smart-plug state (off/active/running)](Three-tier_smart-plug_state_%28off-active-running%29.md) (1 shared connections)
+- [discovery.js](discovery.js.md) (1 shared connections)
 
 ## Source Files
 

@@ -1,6 +1,6 @@
 # Diagnostics panel (settings gear → Diagnostica)
 
-> 37 nodes
+> 38 nodes
 
 ## Key Concepts
 
@@ -9,6 +9,7 @@
 - **panel_custom tag derived from deploy folder fix** (5 connections) — `CHANGELOG.md`
 - **README: HACS installation instructions** (5 connections) — `README.md`
 - **Energy charts empty/wrong: daily-counter vs power-role mistakes** (5 connections) — `TROUBLESHOOTING.md`
+- **loadScript()** (5 connections) — `public/dash_neumo.html`
 - **Four-tab settings panel (Stanze/Energia/Telecamere/Diagnostica)** (4 connections) — `CHANGELOG.md`
 - **Double-ring energy model (consumption/production identities)** (4 connections) — `CHANGELOG.md`
 - **loadScript() cache-bust propagation fix** (4 connections) — `CHANGELOG.md`
@@ -28,15 +29,13 @@
 - **README.it: tabella mappatura ruoli energia** (2 connections) — `README.it.md`
 - **README.it: come si legge l'anello** (2 connections) — `README.it.md`
 - **README: settings panel vs config.js precedence** (2 connections) — `README.md`
-- **Start here: Settings → Diagnostica** (2 connections) — `TROUBLESHOOTING.md`
-- *... and 12 more nodes in this community*
+- *... and 13 more nodes in this community*
 
 ## Relationships
 
-- [_boot](_boot.md) (4 shared connections)
+- [_boot](_boot.md) (7 shared connections)
+- [discovery.js](discovery.js.md) (2 shared connections)
 - [CHANGELOG.md](CHANGELOG.md.md) (2 shared connections)
-- [discovery.js](discovery.js.md) (1 shared connections)
-- [Three-tier smart-plug state (off/active/running)](Three-tier_smart-plug_state_%28off-active-running%29.md) (1 shared connections)
 
 ## Source Files
 
@@ -44,11 +43,12 @@
 - `README.it.md`
 - `README.md`
 - `TROUBLESHOOTING.md`
+- `public/dash_neumo.html`
 
 ## Audit Trail
 
-- EXTRACTED: 70 (71%)
-- INFERRED: 26 (27%)
+- EXTRACTED: 74 (72%)
+- INFERRED: 27 (26%)
 - AMBIGUOUS: 2 (2%)
 
 ---

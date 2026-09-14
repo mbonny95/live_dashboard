@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '1.7.1';
+const VERSION = '1.8.0';
 console.info(`[live_dashboard] v${VERSION}`);
 
 const FLUSH_MS = 600;
@@ -226,6 +226,66 @@ async function fetchTodayStatsDelta(hass, entityId) {
   return a != null && b != null ? Math.max(0, b - a) : null;
 }
 
+// Hourly deltas for the last 24 hours (v1.8.0's ring strip), for whichever
+// role statistic_ids are passed — same 'sum'-diff technique as the two
+// functions above, just bucketed by hour instead of day, and merging
+// multiple ids per role (a role can legitimately have more than one
+// contributing sensor, same as _resolveEnergyDaily's sumToday). One extra
+// bucket is fetched (25h window) so the oldest included hour still has a
+// prior sum to diff against — without it the first real hour would come
+// back null instead of a value.
+async function fetchHourlyEnergy(hass, idsByRole) {
+  const allIds = Array.from(new Set(
+    [].concat(idsByRole.production || [], idsByRole.gridImport || [], idsByRole.gridExport || [], idsByRole.consumption || [])
+  ));
+  if (!allIds.length) return null;
+  const end = new Date();
+  const start = new Date(end.getTime() - 25 * 3600000);
+  const stats = await hass.callWS({
+    type: 'recorder/statistics_during_period',
+    start_time: start.toISOString(),
+    end_time: end.toISOString(),
+    statistic_ids: allIds,
+    period: 'hour',
+    types: ['sum']
+  });
+  const roleDeltas = (ids) => {
+    if (!ids || !ids.length) return null;
+    const byHour = new Map();
+    for (const id of ids) {
+      const rows = (stats && stats[id]) || [];
+      for (const r of rows) {
+        if (r.sum == null) continue;
+        byHour.set(r.start, (byHour.get(r.start) || 0) + r.sum);
+      }
+    }
+    const keys = Array.from(byHour.keys()).sort();
+    if (keys.length < 2) return null;
+    const out = new Map();
+    for (let i = 1; i < keys.length; i++) {
+      const a = byHour.get(keys[i - 1]), b = byHour.get(keys[i]);
+      out.set(keys[i], Math.max(0, b - a));
+    }
+    return out;
+  };
+  const production = roleDeltas(idsByRole.production);
+  const gridImport = roleDeltas(idsByRole.gridImport);
+  const gridExport = roleDeltas(idsByRole.gridExport);
+  const consumption = roleDeltas(idsByRole.consumption);
+  if (!production && !gridImport) return null;
+  const allHours = new Set();
+  [production, gridImport, gridExport, consumption].forEach((m) => { if (m) for (const k of m.keys()) allHours.add(k); });
+  const sortedHours = Array.from(allHours).sort().slice(-24);
+  if (!sortedHours.length) return null;
+  return sortedHours.map((hourStart) => ({
+    hourStart,
+    production: production ? (production.has(hourStart) ? production.get(hourStart) : null) : null,
+    gridImport: gridImport ? (gridImport.has(hourStart) ? gridImport.get(hourStart) : null) : null,
+    gridExport: gridExport ? (gridExport.has(hourStart) ? gridExport.get(hourStart) : null) : null,
+    consumption: consumption ? (consumption.has(hourStart) ? consumption.get(hourStart) : null) : null
+  }));
+}
+
 // --- element ----------------------------------------------------------------
 
 class CasaPanel extends HTMLElement {
@@ -417,6 +477,19 @@ class CasaPanel extends HTMLElement {
     }
   }
 
+  async _handleEnergyHourly(msg) {
+    if (!this._hass) {
+      this._reply(msg.id, 'casa:energy-hourly-result', { ok: false, error: 'hass not ready' });
+      return;
+    }
+    try {
+      const result = await fetchHourlyEnergy(this._hass, msg.ids || {});
+      this._reply(msg.id, 'casa:energy-hourly-result', { ok: true, result });
+    } catch (e) {
+      this._reply(msg.id, 'casa:energy-hourly-result', { ok: false, error: (e && e.message) || String(e) });
+    }
+  }
+
   // frontend/get_user_data returns { value } (null if the key was never
   // set) rather than the value directly — HA's own convention for this
   // websocket command, unlike callWS results elsewhere in this file that
@@ -485,6 +558,8 @@ class CasaPanel extends HTMLElement {
       this._handleEnergyPrefs(d);
     } else if (d.type === 'casa:energy-today') {
       this._handleEnergyToday(d);
+    } else if (d.type === 'casa:energy-hourly') {
+      this._handleEnergyHourly(d);
     } else if (d.type === 'casa:user-data-get') {
       this._handleUserDataGet(d);
     } else if (d.type === 'casa:user-data-set') {

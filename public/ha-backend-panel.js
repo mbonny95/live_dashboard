@@ -9,6 +9,7 @@
 //    backend.registries() -> Promise<{ areas, devices, entities }>
 //    backend.energyPrefs() -> Promise<object|null>   raw energy/get_prefs response
 //    backend.energyToday(entity_id) -> Promise<number|null>   today's stats delta
+//    backend.energyHourly(idsByRole) -> Promise<Array|null>   last 24h, hourly deltas
 //    backend.close() -> void
 //
 //  This file runs INSIDE the iframe that panel.js (the casa-panel custom
@@ -21,6 +22,7 @@
 //    registries()   posts 'casa:registries'    -> parent runs hass.callWS(...) x3
 //    energyPrefs()  posts 'casa:energy-prefs'   -> parent runs hass.callWS('energy/get_prefs')
 //    energyToday()  posts 'casa:energy-today'   -> parent runs hass.callWS('recorder/statistics_during_period')
+//    energyHourly() posts 'casa:energy-hourly'  -> parent runs hass.callWS('recorder/statistics_during_period')
 //    userDataGet()  posts 'casa:user-data-get'  -> parent runs hass.callWS('frontend/get_user_data')
 //    userDataSet()  posts 'casa:user-data-set'  -> parent runs hass.callWS('frontend/set_user_data')
 //    cameraStream() posts 'casa:camera-stream'  -> parent runs hass.callWS('camera/stream')
@@ -68,7 +70,7 @@ async function connect(handlers, readyTimeoutMs) {
       return;
     }
     if (d.type === 'casa:call-result' || d.type === 'casa:history-result' || d.type === 'casa:registries-result'
-      || d.type === 'casa:energy-prefs-result' || d.type === 'casa:energy-today-result'
+      || d.type === 'casa:energy-prefs-result' || d.type === 'casa:energy-today-result' || d.type === 'casa:energy-hourly-result'
       || d.type === 'casa:user-data-get-result' || d.type === 'casa:user-data-set-result'
       || d.type === 'casa:camera-stream-result') {
       const p = pending.get(d.id);
@@ -141,6 +143,10 @@ async function connect(handlers, readyTimeoutMs) {
 
     energyToday: function (entity_id) {
       return send('casa:energy-today', { entity_id });
+    },
+
+    energyHourly: function (ids) {
+      return send('casa:energy-hourly', { ids });
     },
 
     userDataGet: function () {

@@ -1,6 +1,6 @@
 # renderVals
 
-> 59 nodes
+> 67 nodes
 
 ## Key Concepts
 
@@ -29,14 +29,13 @@
 - **unit()** (4 connections) — `public/dash_neumo.html`
 - **isOn()** (4 connections) — `public/dash_neumo.html`
 - **dec()** (4 connections) — `public/dash_neumo.html`
-- *... and 34 more nodes in this community*
+- *... and 42 more nodes in this community*
 
 ## Relationships
 
 - [PREFS](PREFS.md) (20 shared connections)
 - [Empty state case (b): configured energy entity doesn't exist](Empty_state_case_%28b%29-_configured_energy_entity_doesn%27t_exist.md) (5 shared connections)
 - [_boot](_boot.md) (3 shared connections)
-- [_panelLpMenu](_panelLpMenu.md) (3 shared connections)
 - [CHANGELOG.md](CHANGELOG.md.md) (2 shared connections)
 
 ## Source Files
@@ -46,8 +45,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 224 (77%)
-- INFERRED: 67 (23%)
+- EXTRACTED: 239 (76%)
+- INFERRED: 75 (24%)
 - AMBIGUOUS: 0 (0%)
 
 ---

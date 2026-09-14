@@ -3,6 +3,44 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.8.0] - 2026-09-14
+
+### Added
+
+- **Storia oraria nell'anello.** Sotto l'anello energia della card Solare
+  (nel layout largo e in quello compatto degli install con telecamere),
+  dentro l'incasso neumorfico consueto, una striscia di 24 barre impilate —
+  una per ora delle ultime 24 — con la stessa grammatica dell'anello, solo
+  lineare invece che radiale: base salvia (autoconsumo), sopra terracotta
+  (prelievo), in cima salvia chiaro (immissione, solo nelle ore in cui il
+  tetto ha prodotto più del consumo). Dati dalle statistiche orarie già in
+  Home Assistant (`recorder/statistics_during_period`, periodo `hour`) sugli
+  stessi `statistic_id` della sorgente energia già configurata — nessuna
+  entità nuova, nessuna modifica al `recorder`. Una sola chiamata
+  all'apertura della vista, ricaricata al cambio d'ora, mai a ogni refresh di
+  stato. Quando le statistiche sono assenti o vuote la card resta
+  esattamente quella di prima — nessun placeholder, nessun errore — e il
+  motivo compare in Diagnostica → Anello energia → Striscia oraria (v1.7.1
+  sapeva già dirlo per le entità mancanti dalle stanze; ora lo sa dire anche
+  per questo). Storico parziale (meno di 24 ore) mostra solo le ore che ci
+  sono, allineate a destra, senza riempire di zeri. Un'installazione solo
+  rete (senza fotovoltaico) mostra comunque la striscia, tutta terracotta.
+- **Posizione reale sulle tapparelle.** La card cover del pannello stanza
+  usa la sua posizione come sfondo: una banda a righe (stessa tinta
+  terracotta della grammatica energia) scende dall'alto per la frazione
+  chiusa — al 62% aperto la banda copre il 38% della card, con una battuta
+  di 2px dove si ferma. Lo slider di posizione resta identico (stessa
+  posizione, stesso comportamento al rilascio, stessi pulsanti): la banda è
+  pura lettura, zero superficie interattiva in più, stessi bersagli tattili
+  di prima (verificato: 44×44px, stesso numero). Tapparella completamente
+  aperta: nessuna banda e nessun bordo residuo. Cover senza `current_position`
+  esposto: nessuna banda, card invariata — mai una posizione finta al posto
+  di nessuna posizione. Durante il trascinamento la banda segue il valore
+  ottimistico dello slider, non quello confermato, così non scatta al
+  rilascio. La room card della griglia in home resta quella di sempre (solo
+  testo, nessuna banda) — un controllo lì si presterebbe ad ambiguità col
+  tap che apre la stanza.
+
 ## [1.7.1] - 2026-09-14
 
 ### Compatibilità con Home Assistant 2026.9.0

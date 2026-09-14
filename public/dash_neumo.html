@@ -35,6 +35,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 [data-r="casa"]{display:grid;gap:14px;grid-template-columns:minmax(0,.86fr) minmax(0,1.3fr) minmax(0,.94fr);min-height:100%}
 [data-r="hgroup"]{display:flex;align-items:center;gap:9px;flex:none}
+[data-r="cover-band"]{transition:height .5s ease}
 [data-r="rooms"]{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:min-content;align-content:start;flex:1;min-height:0;overflow-y:auto}
 [data-r="mini"]{display:grid;gap:11px;grid-template-columns:repeat(2,minmax(0,1fr))}
 [data-r="two"]{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr));flex:none}
@@ -346,7 +347,36 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <span style="font:600 12.5px/1 var(--font-body)">{{ l.val }}</span>
 </div>
 </sc-for>
+<sc-if value="{{ hasHourlyStrip }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:20px;padding:16px 16px 12px;margin-top:16px;flex:none">
+<div style="display:flex;align-items:stretch;gap:3px;height:96px">
+<sc-for list="{{ hourlyBars }}" as="b" hint-placeholder-count="24">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:2px">
+<sc-if value="{{ b.hasFeed }}" hint-placeholder-val="{{ false }}">
+<div style="height:{{ b.feedH }};border-radius:{{ b.feedRadius }};background:var(--feed)" title="{{ b.title }}"></div>
+</sc-if>
+<sc-if value="{{ b.hasGrid }}" hint-placeholder-val="{{ false }}">
+<div style="height:{{ b.gridH }};border-radius:{{ b.gridRadius }};background:var(--acc)" title="{{ b.title }}"></div>
+</sc-if>
+<sc-if value="{{ b.hasAuto }}" hint-placeholder-val="{{ false }}">
+<div style="height:{{ b.autoH }};border-radius:{{ b.autoRadius }};background:var(--sage)" title="{{ b.title }}"></div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:9px;font:600 10px/1 var(--font-body);color:var(--tx2);letter-spacing:.05em">
+<sc-for list="{{ hourlyAxisLabels }}" as="a" hint-placeholder-count="5">
+<span>{{ a }}</span>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{ hasHourlyPeak }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 10.5px/1.45 var(--font-body);color:var(--tx2);margin-top:3px">{{ hourlyPeakLabel }}</div>
+</sc-if>
+</sc-if>
+<sc-if value="{{ hasHourlyStripGap }}" hint-placeholder-val="{{ false }}">
 <div style="flex:1;min-height:0"></div>
+</sc-if>
 </sc-if>
 <sc-if value="{{ hasOldRing }}" hint-placeholder-val="{{ true }}">
 <div style="position:relative;width:178px;height:178px;margin:0 auto 14px;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center;flex:none">
@@ -422,6 +452,33 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </sc-for>
 </div>
 <div style="font:500 11px/1.35 var(--font-body);color:var(--tx2);text-align:center;margin-top:9px">{{ ringCompactSummary }}</div>
+<sc-if value="{{ hasHourlyStrip }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:12px 12px 9px;margin-top:9px">
+<div style="display:flex;align-items:stretch;gap:2px;height:64px">
+<sc-for list="{{ hourlyBars }}" as="b" hint-placeholder-count="24">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:1px">
+<sc-if value="{{ b.hasFeed }}" hint-placeholder-val="{{ false }}">
+<div style="height:{{ b.feedH }};border-radius:{{ b.feedRadius }};background:var(--feed)" title="{{ b.title }}"></div>
+</sc-if>
+<sc-if value="{{ b.hasGrid }}" hint-placeholder-val="{{ false }}">
+<div style="height:{{ b.gridH }};border-radius:{{ b.gridRadius }};background:var(--acc)" title="{{ b.title }}"></div>
+</sc-if>
+<sc-if value="{{ b.hasAuto }}" hint-placeholder-val="{{ false }}">
+<div style="height:{{ b.autoH }};border-radius:{{ b.autoRadius }};background:var(--sage)" title="{{ b.title }}"></div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:7px;font:600 9px/1 var(--font-body);color:var(--tx2);letter-spacing:.05em">
+<sc-for list="{{ hourlyAxisLabels }}" as="a" hint-placeholder-count="5">
+<span>{{ a }}</span>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{ hasHourlyPeak }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 10px/1.4 var(--font-body);color:var(--tx2);text-align:center;margin-top:5px">{{ hourlyPeakLabel }}</div>
+</sc-if>
+</sc-if>
 </sc-if>
 <sc-if value="{{ hasOldRing }}" hint-placeholder-val="{{ true }}">
 <div style="position:relative;width:124px;height:124px;margin:0 auto 11px;border-radius:999px;box-shadow:var(--nu-ins);display:grid;place-items:center;flex:none">
@@ -882,8 +939,11 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.covers }}</div>
 <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:22px">
 <sc-for list="{{ panel.covers }}" as="c" hint-placeholder-count="1">
-<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
-<div style="display:flex;align-items:center;gap:12px;margin-bottom:13px">
+<div style="position:relative;overflow:hidden;background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
+<sc-if value="{{ c.hasBand }}" hint-placeholder-val="{{ false }}">
+<div data-r="cover-band" style="position:absolute;top:0;left:0;right:0;height:{{ c.bandPct }};background:repeating-linear-gradient(180deg,rgba(198,113,57,.22) 0 6px,rgba(198,113,57,.13) 6px 12px);border-bottom:{{ c.bandBorder }}"></div>
+</sc-if>
+<div style="position:relative;display:flex;align-items:center;gap:12px;margin-bottom:13px">
 <svg width="20" height="20" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-blind"></use></svg>
 <div style="flex:1;min-width:0">
 <div style="font:600 14px/1.2 var(--font-body)">{{ c.name }}</div>
@@ -902,7 +962,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </div>
 <sc-if value="{{ c.hasPosition }}" hint-placeholder-val="{{ false }}">
-<input type="range" min="0" max="100" value="{{ c.pos }}" onInput="{{ c.drag }}" onPointerUp="{{ c.setPos }}" onKeyUp="{{ c.setPos }}" style="touch-action:none;user-select:none">
+<input type="range" min="0" max="100" value="{{ c.pos }}" onInput="{{ c.drag }}" onPointerUp="{{ c.setPos }}" onKeyUp="{{ c.setPos }}" style="position:relative;touch-action:none;user-select:none">
 </sc-if>
 </div>
 </sc-for>
@@ -1332,6 +1392,10 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ S.diagRingInUse }}</span>
 <span style="font:600 11px/1.4 var(--font-body);color:var(--tx);text-align:right">{{ diagRingValue }}</span>
 </div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ S.diagHourlyInUse }}</span>
+<span style="font:600 11px/1.4 var(--font-body);color:var(--tx);text-align:right">{{ diagHourlyValue }}</span>
+</div>
 </div>
 </sc-if>
 
@@ -1610,7 +1674,7 @@ async function loadUserConfig() {
 class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: 'casa', room: null, allRooms: false, theme: null, hist: null, range: 7, weather: false, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
     settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false,
-    diagReasonsOpen: false, diagReasonGroupsOpen: {} };
+    diagReasonsOpen: false, diagReasonGroupsOpen: {}, hourlyEnergy: undefined };
   // Safe synchronous defaults: the first render happens before
   // componentDidMount's dynamic imports resolve, so these must already be
   // usable — _boot() below replaces them and forces a re-render via setState.
@@ -1641,7 +1705,15 @@ class Component extends DCLogic {
   bare = new URLSearchParams(location.search).has('bare');
 
   componentDidMount() {
-    this.timer = setInterval(() => this.setState({ now: Date.now() }), 15000);
+    this.timer = setInterval(() => {
+      this.setState({ now: Date.now() });
+      // Ring strip (v1.8.0): re-fetch only when the wall clock has actually
+      // crossed into a new hour since the last fetch — hourly statistics
+      // don't change any faster than that, so this rides the existing 15s
+      // tick instead of its own timer.
+      const hourKey = Math.floor(Date.now() / 3600000);
+      if (this._hourlyEnergyHourKey !== undefined && hourKey !== this._hourlyEnergyHourKey) this._loadHourlyEnergy();
+    }, 15000);
     this._onVisibility = () => {
       if (document.visibilityState === 'hidden') { this._stopSnapTimer(); this._camStopFastPoll(); }
       else {
@@ -1863,7 +1935,43 @@ class Component extends DCLogic {
     const { prefs, storage } = await window.CasaPrefs.load(be).catch(() => ({ prefs: { v: 1 }, storage: 'local' }));
     this.setState({ prefs, prefsStorage: storage }); // force a re-render now that cfg/registries/t/prefs are real
     this._loadHistory();
+    this._loadHourlyEnergy();
     this._startSnapTimer();
+  }
+
+  // Ring strip (v1.8.0) — the same statistic_ids _resolveEnergyDaily() just
+  // resolved (config.js first, then HA Energy prefs, then auto-discovery),
+  // fetched at hour resolution instead of daily. One call per view-open
+  // (here, and again only when the wall clock crosses into a new hour — see
+  // the setInterval in componentDidMount), never on every 15s/state tick:
+  // hourly statistics only change once an hour anyway. this.state.hourlyEnergy
+  // stays `undefined` until this resolves at least once (distinct from
+  // `null`, which means "resolved, but no statistics were found" — the
+  // Diagnostica row below tells the two apart).
+  async _loadHourlyEnergy() {
+    this._hourlyEnergyHourKey = Math.floor(Date.now() / 3600000);
+    if (!this.be || !this.be.energyHourly) return;
+    const en = this.cfg.energy || {};
+    const resolved = (this.energyDaily && this.energyDaily.diag && this.energyDaily.diag.resolvedIds) || {};
+    const ids = {
+      production: en.productionToday ? [en.productionToday] : (resolved.production || []),
+      gridImport: en.gridToday ? [en.gridToday] : (resolved.gridImport || []),
+      gridExport: en.gridExportToday ? [en.gridExportToday] : (resolved.gridExport || []),
+      consumption: en.consumptionToday ? [en.consumptionToday] : []
+    };
+    if (!ids.production.length && !ids.gridImport.length && !ids.gridExport.length && !ids.consumption.length) {
+      this.setState({ hourlyEnergy: null });
+      return;
+    }
+    try {
+      const result = await this.be.energyHourly(ids);
+      this.setState({ hourlyEnergy: result });
+    } catch (e) {
+      // "Mai una card rotta" — a failed fetch leaves whatever was already
+      // showing (including the very first `undefined`, which just keeps the
+      // strip hidden) rather than surfacing an error in the card itself.
+      console.warn('[live_dashboard] hourly energy fetch failed', e);
+    }
   }
 
   // Resolves today's production/grid-import/grid-export totals for the
@@ -3024,6 +3132,67 @@ class Component extends DCLogic {
     // sensor, per the "single ring fallback" degradation).
     const ringLegendCols = 'repeat(' + ringLegend.length + ', 1fr)';
 
+    // Ring strip (v1.8.0) — same stacking grammar as the ring itself, just
+    // linear instead of radial: autoconsumo at the base, prelievo above it,
+    // immissione on top (only where production outran consumption that
+    // hour). Built only for the wide "Solare" card (hasNewRing) — the mock
+    // this was built against (mock-v1.8-standalone.html, block 1a) shows
+    // only that card. Grid-import and grid-export are read directly from
+    // their own statistic when the install has one, per the spec this was
+    // built against ("usa quelli invece di derivarli" — they're the meter's
+    // own reading, not a subtraction); only autoconsumo is ever derived,
+    // same min/subtract formula as the daily autoconsumo above, just
+    // per-hour.
+    let hourlyBars = [], hourlyAxisLabels = [], hasHourlyStrip = false, hourlyPeakLabel = '';
+    if (hasNewRing && this.state.hourlyEnergy && this.state.hourlyEnergy.length) {
+      const raw = this.state.hourlyEnergy.map((h) => {
+        let auto = null;
+        if (h.consumption != null && h.gridImport != null) auto = Math.max(0, h.consumption - h.gridImport);
+        else if (h.production != null && h.gridExport != null) auto = Math.max(0, h.production - h.gridExport);
+        return {
+          hourStart: h.hourStart,
+          auto: auto != null ? auto : 0,
+          grid: h.gridImport != null ? h.gridImport : 0,
+          feed: h.gridExport != null ? h.gridExport : 0
+        };
+      });
+      const maxTotal = Math.max.apply(null, [0.001].concat(raw.map((r) => r.auto + r.grid + r.feed)));
+      const TOP_RADIUS = '3px 3px 0 0', NO_RADIUS = '0';
+      // Plain fixed-point, not this.dec() — that formats with the current
+      // locale (it-IT renders a decimal comma), which would break the CSS
+      // percentage this feeds straight into a style= hole.
+      const pct = (v) => ((v / maxTotal) * 100).toFixed(2) + '%';
+      hourlyBars = raw.map((r) => {
+        const hasFeed = r.feed > 0, hasGrid = r.grid > 0, hasAuto = r.auto > 0;
+        const hourLabel = String(new Date(r.hourStart).getHours()).padStart(2, '0') + ':00';
+        return {
+          hasFeed, hasGrid, hasAuto,
+          feedH: pct(r.feed), gridH: pct(r.grid), autoH: pct(r.auto),
+          feedRadius: hasFeed ? TOP_RADIUS : NO_RADIUS,
+          gridRadius: !hasFeed && hasGrid ? TOP_RADIUS : NO_RADIUS,
+          autoRadius: !hasFeed && !hasGrid && hasAuto ? TOP_RADIUS : NO_RADIUS,
+          title: hourLabel + ' · ' + this.t('energy.selfConsumptionLabel') + ' ' + this.dec(r.auto, 2) + ' kWh'
+            + ' · ' + this.strings.fromGrid + ' ' + this.dec(r.grid, 2) + ' kWh'
+            + ' · ' + this.t('energy.feedIn') + ' ' + this.dec(r.feed, 2) + ' kWh'
+        };
+      });
+      hasHourlyStrip = true;
+      // Six-hour ticks by bar POSITION (0, 6, 12, 18, last) labeled with that
+      // bar's actual clock hour — right, not assumed, when the window isn't
+      // midnight-aligned or history is partial (fewer than 24 bars).
+      const axisPositions = [0, 6, 12, 18, raw.length - 1].filter((i, idx, arr) => i >= 0 && i < raw.length && arr.indexOf(i) === idx);
+      hourlyAxisLabels = axisPositions.map((i) => String(new Date(raw[i].hourStart).getHours()).padStart(2, '0'));
+      let peakIdx = -1, peakVal = -1;
+      raw.forEach((r, i) => { const solar = r.auto + r.feed; if (solar > peakVal) { peakVal = solar; peakIdx = i; } });
+      if (peakIdx !== -1 && peakVal > 0) {
+        hourlyPeakLabel = this.t('energy.hourlyPeak', { time: String(new Date(raw[peakIdx].hourStart).getHours()).padStart(2, '0') + ':00' });
+      }
+    }
+    // diagHourlyValue (Diagnostica's dashboard counterpart for this strip)
+    // is computed further down, alongside diagRingValue — both need `S`,
+    // which isn't assigned (`const S = this.strings`) until inside the
+    // settings-panel block below this point.
+
     // House consumption, derived when config.energy.consumption isn't set
     // (v1.6.0) — see deriveConsumption() above for the formula and why an
     // explicit sensor always wins. Sampled into the battery-sign buffer
@@ -3298,7 +3467,21 @@ class Component extends DCLogic {
               delete d[id];
               this.setState({ coverDrag: d });
             };
+            // Band (v1.8.0) — reads `live` (whether the cover reports a
+            // position at all), not `hasPosition` (whether it accepts a
+            // position *command*): a cover can report position without
+            // supporting set_cover_position, and the band is a read-only
+            // reflection of the real shutter, independent of the slider's
+            // own gating. Uses `pos`, the same drag-aware value the slider
+            // shows, so the band tracks the finger during a drag instead of
+            // snapping to the stale live value like the slider itself would
+            // without that same override. No band at all when fully open
+            // (0% height) — a height:0 band with its border still visible is
+            // exactly the artifact the mock called out and fixed.
+            const hasBand = live !== undefined && pos < 100;
+            const bandBorder = hasBand && pos > 0 ? '2px solid rgba(140,73,26,.35)' : 'none';
             return { id, name: this.fn(id), pos, hasPosition,
+              hasBand, bandPct: Math.round(100 - pos) + '%', bandBorder,
               sub: live === undefined ? this.s(id) : pos === 0 ? this.t('cover.closed') : pos === 100 ? this.t('cover.fullyOpen') : this.t('cover.openAt', { pct: pos }),
               up: () => { clearDrag(); this.cover(id, 'open_cover'); },
               down: () => { clearDrag(); this.cover(id, 'close_cover'); },
@@ -3470,7 +3653,7 @@ class Component extends DCLogic {
     // clock tick" reasoning as the block above.
     let diagConfigAttempts = [], diagConfigSummary = '', diagConfigOutsideIframe = false;
     let diagEnergyInstantRows = [], diagEnergyDailyRows = [], diagPrefsFailed = false, diagEnvRows = [];
-    let diagCameraRows = [], diagRingValue = '', diagAlarmRows = [];
+    let diagCameraRows = [], diagRingValue = '', diagHourlyValue = '', diagAlarmRows = [];
     let diagReasonGroups = [], diagReasonTotalLabel = '', hasDiagReasonGroups = false, diagHasHighSeverityReason = false;
     let hasDiagDuplicateDevices = false, diagDuplicateDevices = [], diagDuplicateDevicesTitle = '';
     let doDiag = () => {};
@@ -3546,6 +3729,18 @@ class Component extends DCLogic {
         : prodT == null ? this.t('diag.ringMissing', { field: S.diagRoleProduction })
         : gridT == null ? this.t('diag.ringMissing', { field: S.diagRoleGridImport })
         : S.diagRingSingleGeneric;
+
+      // Diagnostica's dashboard counterpart for the hourly strip's three
+      // silent outcomes (CLAUDE.md: no console-only message for the end
+      // user). `undefined` (never resolved — fetch in flight, or no backend
+      // support) is distinct from `null` (resolved, no statistics found for
+      // any configured id): the loading state doesn't accuse the install of
+      // anything.
+      diagHourlyValue = !hasEnergy ? S.diagHourlyNoEnergy
+        : this.state.hourlyEnergy === undefined ? S.diagHourlyLoading
+        : this.state.hourlyEnergy === null ? S.diagHourlyMissing
+        : this.state.hourlyEnergy.length < 24 ? this.t('diag.hourlyPartial', { n: this.state.hourlyEnergy.length })
+        : S.diagHourlyFull;
 
       if (hasAlarm) {
         const capLabels = [];
@@ -3868,7 +4063,9 @@ class Component extends DCLogic {
       diagEnergyInstantRows, diagEnergyDailyRows, diagPrefsFailed,
       diagEnvRows,
       diagCameraRows, hasDiagCameraRows: diagCameraRows.length > 0,
-      diagRingValue, hasDiagRingRow: !!diagRingValue,
+      diagRingValue, hasDiagRingRow: !!diagRingValue, diagHourlyValue,
+      hourlyBars, hourlyAxisLabels, hasHourlyStrip, hourlyPeakLabel, hasHourlyPeak: !!hourlyPeakLabel,
+      hasHourlyStripGap: !hasHourlyStrip,
       diagAlarmRows,
       diagReasonsOpen: this.state.diagReasonsOpen, diagReasonsToggle: () => this.setState({ diagReasonsOpen: !this.state.diagReasonsOpen }),
       diagReasonsChevRotate: this.state.diagReasonsOpen ? 'rotate(180deg)' : 'rotate(0deg)',

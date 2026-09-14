@@ -530,6 +530,48 @@ async function connect(handlers) {
         return null;
       },
 
+      // v1.8.0's hourly ring strip. Real statistic_ids are unknowable in the
+      // demo (nothing is actually recorded), so this recognizes only the
+      // fixed ids DEMO_CONFIG.energy itself hands out above and — if none of
+      // the requested ids match any of those — returns null, the same shape
+      // a real install with no recorder history for that statistic_id would
+      // give back. That's what the `missing` scenario (config points at
+      // `*_missing` ids) exercises: the "statistiche assenti" card state.
+      // Otherwise it synthesizes a full 24-hour solar bell keyed to each
+      // bucket's actual local hour-of-day — not the loop index — so the
+      // peak always lands on 13:00 regardless of when the demo is loaded,
+      // and the "no export sensor" / "no production at all" shapes are
+      // reproduced by omitting those series when the caller didn't ask for
+      // them (mirrors the `partial` scenario's gridExport: null).
+      energyHourly: async function (ids) {
+        await new Promise((r) => setTimeout(r, 90));
+        const known = new Set(['sensor.solar_energy_today', 'sensor.grid_import_today', 'sensor.grid_export_today']);
+        const requested = [].concat((ids && ids.production) || [], (ids && ids.gridImport) || [], (ids && ids.gridExport) || [], (ids && ids.consumption) || []);
+        if (!requested.some((id) => known.has(id))) return null;
+        const hasProduction = ((ids && ids.production) || []).some((id) => known.has(id));
+        const hasExport = ((ids && ids.gridExport) || []).some((id) => known.has(id));
+        const now = new Date();
+        const out = [];
+        for (let i = 0; i < 24; i++) {
+          const dt = new Date(now);
+          dt.setMinutes(0, 0, 0);
+          dt.setHours(dt.getHours() - (23 - i));
+          const hod = dt.getHours();
+          const solar = hasProduction ? Math.max(0, 1.45 * Math.exp(-Math.pow(hod - 13, 2) / 18)) : 0;
+          const load = 0.35 + 0.25 * Math.exp(-Math.pow(hod - 8, 2) / 4) + 0.45 * Math.exp(-Math.pow(hod - 20.5, 2) / 6);
+          const gridImport = Math.max(0, load - solar);
+          const gridExport = hasExport ? Math.max(0, solar - load) : 0;
+          out.push({
+            hourStart: dt.toISOString(),
+            production: hasProduction ? Math.round(solar * 100) / 100 : null,
+            gridImport: Math.round(gridImport * 100) / 100,
+            gridExport: hasExport ? Math.round(gridExport * 100) / 100 : null,
+            consumption: null
+          });
+        }
+        return out;
+      },
+
       close: function () {
         closed = true;
         if (timer) clearInterval(timer);
