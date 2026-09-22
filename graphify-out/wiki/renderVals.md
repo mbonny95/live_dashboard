@@ -1,6 +1,6 @@
 # renderVals
 
-> 67 nodes
+> 62 nodes
 
 ## Key Concepts
 
@@ -22,21 +22,23 @@
 - **n()** (5 connections) — `public/dash_neumo.html`
 - **plugThresholdW()** (5 connections) — `public/dash_neumo.html`
 - **call()** (5 connections) — `public/dash_neumo.html`
+- **runValve()** (5 connections) — `public/dash_neumo.html`
 - **diagEnergyDaily()** (5 connections) — `public/dash_neumo.html`
 - **applianceState()** (5 connections) — `public/dash_neumo.html`
 - **Component.plugStatus()** (5 connections) — `public/dash_neumo_mobile.html`
 - **Component.call()** (5 connections) — `public/dash_neumo_mobile.html`
 - **unit()** (4 connections) — `public/dash_neumo.html`
 - **isOn()** (4 connections) — `public/dash_neumo.html`
-- **dec()** (4 connections) — `public/dash_neumo.html`
-- *... and 42 more nodes in this community*
+- *... and 37 more nodes in this community*
 
 ## Relationships
 
 - [PREFS](PREFS.md) (20 shared connections)
 - [Empty state case (b): configured energy entity doesn't exist](Empty_state_case_%28b%29-_configured_energy_entity_doesn%27t_exist.md) (5 shared connections)
 - [_boot](_boot.md) (3 shared connections)
+- [_panelLpMenu](_panelLpMenu.md) (3 shared connections)
 - [CHANGELOG.md](CHANGELOG.md.md) (2 shared connections)
+- [prefs.js](prefs.js.md) (1 shared connections)
 
 ## Source Files
 
@@ -45,8 +47,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 239 (76%)
-- INFERRED: 75 (24%)
+- EXTRACTED: 231 (78%)
+- INFERRED: 67 (22%)
 - AMBIGUOUS: 0 (0%)
 
 ---

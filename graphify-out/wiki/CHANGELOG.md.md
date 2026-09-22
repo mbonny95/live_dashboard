@@ -1,6 +1,6 @@
 # CHANGELOG.md
 
-> 42 nodes
+> 40 nodes
 
 ## Key Concepts
 
@@ -9,7 +9,6 @@
 - **README.md** (6 connections) — `README.md`
 - **Instantaneous power unit setting (Auto/W/kW)** (6 connections) — `CHANGELOG.md`
 - **Battery power sign convention** (6 connections) — `public/dash_neumo.html`
-- **TROUBLESHOOTING.md** (5 connections) — `TROUBLESHOOTING.md`
 - **v1.5.3 changelog entry** (5 connections) — `CHANGELOG.md`
 - **House consumption, derived automatically (changelog entry)** (5 connections) — `CHANGELOG.md`
 - **README.it.md** (4 connections) — `README.it.md`
@@ -29,16 +28,17 @@
 - **Start here: Settings -> Diagnostica (TROUBLESHOOTING section)** (2 connections) — `TROUBLESHOOTING.md`
 - **Reading the ring (README section)** (2 connections) — `README.md`
 - **Instantaneous power unit (README section)** (2 connections) — `README.md`
-- *... and 17 more nodes in this community*
+- **Enabling Energy (README section)** (2 connections) — `README.md`
+- *... and 15 more nodes in this community*
 
 ## Relationships
 
 - [Empty state case (b): configured energy entity doesn't exist](Empty_state_case_%28b%29-_configured_energy_entity_doesn%27t_exist.md) (3 shared connections)
 - [v1.5.4 changelog entry](v1.5.4_changelog_entry.md) (2 shared connections)
 - [renderVals](renderVals.md) (2 shared connections)
-- [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (2 shared connections)
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md.md) (2 shared connections)
 - [Changelog](Changelog.md) (1 shared connections)
-- [discovery.js](discovery.js.md) (1 shared connections)
+- [Three-tier smart-plug state (off/active/running)](Three-tier_smart-plug_state_%28off-active-running%29.md) (1 shared connections)
 
 ## Source Files
 
@@ -51,8 +51,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 90 (74%)
-- INFERRED: 31 (26%)
+- EXTRACTED: 84 (73%)
+- INFERRED: 31 (27%)
 - AMBIGUOUS: 0 (0%)
 
 ---

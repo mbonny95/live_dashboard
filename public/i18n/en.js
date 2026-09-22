@@ -60,6 +60,8 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   diagEnvVersion: 'Version', diagEnvVersionDev: 'dev/demo (no ?v=)',
   diagEnvBackend: 'Backend', diagEnvBackendPanel: 'panel', diagEnvBackendDemo: 'demo',
   diagEnvIframe: 'Inside HA panel', diagEnvIframeYes: 'yes', diagEnvIframeNo: 'no',
+  diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'yes', diagEnvEmbedIframeNo: 'no',
+  diagEnvNotApplicableDemo: 'n/a (demo)', diagEnvUnknown: 'not known yet',
   diagEnvLang: 'Detected language', diagEnvAreas: 'Areas seen by discovery', diagEnvEntities: 'Entities seen by discovery',
   diagEnvRooms: 'Rooms resulting', diagEnvCameras: 'Cameras resulting', diagEnvPrefsOutcome: 'energy/get_prefs outcome',
   diagEnvPrefsOk: 'ok', diagEnvPrefsFailed: 'failed', diagEnvPrefsUnknown: 'not attempted',
@@ -74,6 +76,10 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   diagHourlyInUse: 'Hourly strip', diagHourlyNoEnergy: 'none (energy not configured)',
   diagHourlyLoading: 'loading…', diagHourlyMissing: 'no hourly statistics found',
   diagHourlyFull: '24 hours available',
+  // v1.8.1 — recent actions (call() ring buffer) and irrigation
+  diagActionsHeading: 'Recent actions', diagActionsEmpty: 'No actions this session.',
+  diagActionOk: 'ok', diagActionTimeout: 'timeout', diagActionError: 'error', diagActionPending: 'pending',
+  diagIrrigationHeading: 'Irrigation',
   diagSourceDomain: 'found via the alarm_control_panel domain',
   diagAlarmHeading: 'Alarm', diagAlarmEntity: 'Entity', diagAlarmFoundVia: 'Found via',
   diagAlarmCapabilities: 'Declared capabilities', diagAlarmDisarmOnly: 'disarm only',
@@ -155,8 +161,13 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'irrigation.et0Today': 'ET₀ today', 'irrigation.etcShort': 'ETc', 'irrigation.etcToday': 'ETc today',
   'irrigation.minutes': '{n} min', 'irrigation.needsWaterMatch': 'water', 'irrigation.recommendedMin': 'recommended {n} min',
   'irrigation.soilOf': '{zone} soil', 'irrigation.lastRun': 'Last watered · {when}',
+  'irrigation.running': 'Running', 'irrigation.runningFor': 'Running · {n} min',
+  'irrigation.diagEndsAt': 'closing at {time}', 'irrigation.diagClosedAt': 'expired, closed at {time}',
 
   'light.brightnessSuffix': 'brightness',
+
+  'toast.timeout': 'no response from Home Assistant (timeout)', 'toast.error': 'command failed',
+  'toast.genericTarget': 'Command',
 
   'lock.locked': 'locked', 'lock.unlocked': 'unlocked',
   'lock.lockAction': 'Lock', 'lock.unlockAction': 'Unlock',

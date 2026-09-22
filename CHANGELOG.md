@@ -3,6 +3,79 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.8.1] - 2026-09-22
+
+Patch nata da una issue: "i pulsanti dell'irrigazione e la riga del clima non
+rispondono, zero errori in console, Home Assistant è raggiungibile". La causa
+non era un bug nel percorso tap → servizio HA (intatto), ma il fatto che
+niente in questo progetto guardasse mai l'esito di quel percorso.
+
+### Fixed
+
+- **`call()` non era più fire-and-forget silenzioso.** Ogni chiamata
+  servizio passa ora da un unico punto che registra esito (`ok`/`error`/
+  `timeout`) e durata in un ring buffer di sessione (ultime 20), mostrato in
+  Diagnostica → **Ultime azioni** — la sezione da incollare in una issue
+  d'ora in poi. Un errore o un timeout mostra anche un toast in basso, col
+  nome dell'entità e il motivo; un successo no, perché si vede già dallo
+  stato che cambia. `call()` non rifiuta mai la promise che ritorna, quindi
+  resta sicuro da chiamare senza `await` come già faceva la maggior parte
+  del codice.
+- **Il timeout si riconosce da un codice, non da una stringa.** Il timeout a
+  15s di `ha-backend-panel.js` marca l'errore con `.code = 'timeout'`, non
+  più solo un testo in italiano da confrontare a mano.
+- **I pulsanti durata irrigazione erano tappabili una seconda volta prima
+  che il primo tap avesse un esito.** Ora vanno visibilmente incassati dal
+  tap all'esito e ignorano un secondo tap nel frattempo.
+- **La riga clima nel pannello stanza sembrava un pulsante e non lo è mai
+  stata.** Tolta l'ombra in rilievo: resta una riga piatta, stesso testo,
+  stessa altezza, nessun cursore a mano.
+
+### Added
+
+- **Lo stato dell'irrigazione viene dalla valvola, non dal pulsante.**
+  Valvola `on` → i tre pulsanti durata diventano "In corso · N min" +
+  **Ferma**; chiusa, tornano i pulsanti. Vale solo per zone con `valve` — le
+  zone `buttons` (input_button) restano come sempre, perché questa
+  dashboard non ha modo di sapere quando finiscono.
+- **La chiusura temporizzata non dipende più solo da un `setTimeout` nella
+  scheda che l'ha avviata.** La scadenza è salvata su `frontend/user_data`
+  (o `localStorage` in demo) e controllata ogni 15s da qualunque client sia
+  aperto, più una volta all'apertura — così ricaricare la pagina, chiudere
+  la scheda o passare dal telefono al tablet non lascia la valvola aperta.
+  Il `setTimeout` originale resta come percorso veloce quando la scheda è
+  ancora viva. **Non basta con zero dashboard aperte**: il README ora lo
+  dice esplicitamente, con `buttons` + automazione (o il timer nativo della
+  valvola) come alternativa garantita lato HA.
+- **Diagnostica → Irrigazione**: per ogni zona con una scadenza attiva o
+  appena scaduta, "chiusura prevista alle HH:MM" o "scaduta, chiusa alle
+  HH:MM".
+- **Diagnostica → Ambiente**: nuova riga `embed_iframe (panel_custom)` —
+  come panel.js stesso vede la propria configurazione `panel_custom`, non
+  solo come dash_neumo.html vede il proprio iframe (già mostrato).
+- Demo: nuovo scenario `?demo&scenario=call-timeout` — ogni chiamata
+  `switch.*` va in timeout con lo stesso `.code` del timeout reale a 15s,
+  per provare il percorso toast/ring-buffer/pulsante-incassato senza
+  aspettare 15 secondi veri né avere hardware reale.
+
+---
+
+**English summary.** This patch traces back to a support issue: irrigation
+buttons and the climate row "don't respond," no console errors, Home
+Assistant reachable. The tap → service-call path was intact; nothing ever
+read its outcome. `call()` is now the single choke point for every service
+call, logging outcome/duration to a session ring buffer (Diagnostica →
+**Recent actions** — the section to paste into a future issue) and toasting
+on error/timeout. Irrigation duration buttons go visibly pressed until their
+outcome resolves and ignore a second tap meanwhile. Irrigation state now
+comes from the valve entity, not the last-tapped button, and the timed
+auto-close survives a reload or a fully-closed tab via a deadline saved to
+`frontend/user_data` (localStorage in demo), checked every 15s by whichever
+client is open — see the README for why zero open dashboards still needs
+`buttons` + an automation, or the valve's own timer, for a hard guarantee.
+The climate/fan/vacuum row in the room panel no longer looks like a button,
+because it never was one.
+
 ## [1.8.0] - 2026-09-14
 
 ### Added

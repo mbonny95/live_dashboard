@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '1.8.0';
+const VERSION = '1.8.1';
 console.info(`[live_dashboard] v${VERSION}`);
 
 const FLUSH_MS = 600;
@@ -373,7 +373,17 @@ class CasaPanel extends HTMLElement {
     this._lastFlush = Date.now();
     if (!this._hass || !this._iframe) return;
     this._iframe.contentWindow.postMessage(
-      { type: 'casa:hass-states', states: toPlainStates(this._hass.states), language: this._hass.language },
+      {
+        type: 'casa:hass-states', states: toPlainStates(this._hass.states), language: this._hass.language,
+        // v1.8.1 — whether *this* custom element (not the dash_neumo*.html
+        // iframe it mounts, which is always nested by construction) is
+        // itself running inside a frame, i.e. whether panel_custom's own
+        // `embed_iframe: true` (see README) actually took effect for this
+        // install. A support-issue-shaped question ("is embed_iframe on?")
+        // that the Diagnostica panel can answer without the user reading
+        // their own configuration.yaml.
+        embedIframe: window.self !== window.top
+      },
       this._targetOrigin
     );
   }
@@ -500,7 +510,10 @@ class CasaPanel extends HTMLElement {
       return;
     }
     try {
-      const result = await this._hass.callWS({ type: 'frontend/get_user_data', key: 'live_dashboard' });
+      // v1.8.1: key is caller-supplied (irrigation end-times use a key
+      // separate from prefs' 'live_dashboard') — default kept for callers
+      // still on the pre-v1.8.1 no-arg contract.
+      const result = await this._hass.callWS({ type: 'frontend/get_user_data', key: msg.key || 'live_dashboard' });
       this._reply(msg.id, 'casa:user-data-get-result', { ok: true, result: (result && result.value) || null });
     } catch (e) {
       this._reply(msg.id, 'casa:user-data-get-result', { ok: false, error: (e && e.message) || String(e) });
@@ -513,7 +526,7 @@ class CasaPanel extends HTMLElement {
       return;
     }
     try {
-      await this._hass.callWS({ type: 'frontend/set_user_data', key: 'live_dashboard', value: msg.value });
+      await this._hass.callWS({ type: 'frontend/set_user_data', key: msg.key || 'live_dashboard', value: msg.value });
       this._reply(msg.id, 'casa:user-data-set-result', { ok: true });
     } catch (e) {
       this._reply(msg.id, 'casa:user-data-set-result', { ok: false, error: (e && e.message) || String(e) });

@@ -434,7 +434,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-for>
 
 <sc-for list="{{ r.extras }}" as="e" hint-placeholder-count="1">
-<div data-dim="{{ e.quiet }}" data-entity-id="{{ e.id }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:16px;padding:10px 13px">
+<!-- v1.8.1: read-only row — see dash_neumo.html's copy of panel.extras. -->
+<div data-dim="{{ e.quiet }}" data-entity-id="{{ e.id }}" style="display:flex;align-items:center;gap:11px;background:transparent;border-bottom:1px solid var(--nu-d);padding:10px 13px">
 <svg width="17" height="17" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ e.iconRef }}"></use></svg>
 <div style="flex:1;min-width:0;font:600 12.5px/1.2 var(--font-body)">{{ e.name }}</div>
 <div style="font:500 12px/1 var(--font-body);color:var(--tx2)">{{ e.val }}</div>
@@ -544,14 +545,23 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 {{ z.lastRunLine }}
 </div>
 
+<sc-if value="{{ z.showButtons }}" hint-placeholder-val="{{ true }}">
 <div data-m="three" style="margin-top:13px">
 <sc-for list="{{ z.buttons }}" as="b" hint-placeholder-count="3">
-<button onClick="{{ b.run }}" style="height:50px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1 var(--font-body);color:var(--accT);display:flex;align-items:center;justify-content:center;gap:6px">
+<button data-sel="{{ b.pending }}" onClick="{{ b.run }}" style="height:50px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1 var(--font-body);color:var(--accT);display:flex;align-items:center;justify-content:center;gap:6px">
 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-timer"></use></svg>
 {{ b.label }}
 </button>
 </sc-for>
 </div>
+</sc-if>
+<sc-if value="{{ z.isRunning }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:10px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:15px;padding:0 14px;height:50px;margin-top:13px">
+<svg width="15" height="15" fill="none" stroke="var(--accT)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-timer"></use></svg>
+<span style="flex:1;font:600 12.5px/1 var(--font-body);color:var(--accT)">{{ z.runningLabel }}</span>
+<button onClick="{{ z.stop }}" style="height:44px;padding:0 14px;border-radius:12px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--tx2);flex:none">{{ S.stop }}</button>
+</div>
+</sc-if>
 
 <button onClick="{{ z.toggleChart }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;margin-top:10px;border-radius:14px;background:transparent;font:600 11.5px/1 var(--font-body);color:var(--tx2)">
 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-chart"></use></svg>
@@ -1099,6 +1109,41 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ hasDiagActions }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagActionsHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-if value="{{ hasDiagActionRows }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ diagActionRows }}" as="row" hint-placeholder-count="3">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;user-select:text">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:9px">
+<span style="font:600 11.5px/1.4 var(--font-body);color:var(--tx)">{{ row.domainService }}</span>
+<span style="font:500 10px/1.4 var(--font-body);color:var(--tx2)">{{ row.time }}</span>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:9px;margin-top:2px">
+<span style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);word-break:break-all">{{ row.entityId }}</span>
+<span data-tone="{{ row.tone }}" style="font:600 10.5px/1.4 var(--font-body);color:var(--tx2);white-space:nowrap;flex:none">{{ row.outcomeLabel }} · {{ row.msLabel }}</span>
+</div>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ noDiagActionRows }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 11px/1.4 var(--font-body);color:var(--tx2);padding:9px 11px">{{ S.diagActionsEmpty }}</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasDiagIrrigationRows }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagIrrigationHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-for list="{{ diagIrrigationRows }}" as="row" hint-placeholder-count="1">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ row.name }}</span>
+<span style="font:600 11px/1.4 var(--font-body);color:var(--tx);text-align:right">{{ row.value }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
 <div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.environment }}</div>
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
 <sc-for list="{{ diagEnvRows }}" as="row" hint-placeholder-count="5">
@@ -1279,6 +1324,16 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<!-- Action toast (v1.8.1) — see dash_neumo.html's copy for the "why" (no
+     mount animation). Cleared above both the tab bar and the scenario bar
+     so it's never obscured by either. -->
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;z-index:20;left:16px;right:16px;bottom:calc(160px + env(safe-area-inset-bottom));background:var(--page);box-shadow:0 18px 44px rgba(20,24,30,.3);border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:10px;color:var(--tx)">
+<svg width="17" height="17" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-alert"></use></svg>
+<span style="font:600 12.5px/1.4 var(--font-body)">{{ toastText }}</span>
+</div>
+</sc-if>
+
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:900},&quot;startTab&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;casa&quot;,&quot;stanze&quot;,&quot;irrigazione&quot;,&quot;energia&quot;,&quot;auto&quot;,&quot;meteo&quot;],&quot;default&quot;:&quot;casa&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;themePref&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;auto&quot;,&quot;day&quot;,&quot;night&quot;],&quot;default&quot;:&quot;auto&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comportamento&quot;},&quot;showModes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Comportamento&quot;}}">
@@ -1372,13 +1427,24 @@ async function loadUserConfig() {
 class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
     settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false,
-    diagReasonsOpen: false, diagReasonGroupsOpen: {}, hourlyEnergy: undefined };
+    diagReasonsOpen: false, diagReasonGroupsOpen: {}, hourlyEnergy: undefined,
+    toast: null, irrigationEnds: {}, irrPending: {} };
   cfg = mergeConfig({});
   registries = { areas: [], devices: [], entities: [] };
   discovery = null;
   // Diagnostica panel (v1.5.1) — see dash_neumo.html's copy for why.
   configDiag = null;
   energyDiag = null;
+  panelEmbedIframe = null;
+  _actionLog = [];
+  _irrigationLastClosed = {};
+  // Guards against _checkIrrigationEnds() double-firing turn_off for the
+  // same valve when two 15s ticks land close enough together that the
+  // first tick's setState hasn't flushed before the second tick reads
+  // state (observed under a fast-forwarded clock in testing; a real 15s
+  // gap makes it very unlikely, but the guard is cheap and turn_off
+  // isn't a call worth sending twice).
+  _irrigationClosing = new Set();
   t = (key) => key;
   // See dash_neumo.html's copy of this field for why it's a Proxy, not {}.
   strings = new Proxy({}, { get: () => '' });
@@ -1394,6 +1460,7 @@ class Component extends DCLogic {
       // copy of this timer for why.
       const hourKey = Math.floor(Date.now() / 3600000);
       if (this._hourlyEnergyHourKey !== undefined && hourKey !== this._hourlyEnergyHourKey) this._loadHourlyEnergy();
+      this._checkIrrigationEnds();
     }, 15000);
     this._onVisibility = () => {
       if (document.visibilityState === 'hidden') { this._stopSnapTimer(); this._camStopFastPoll(); }
@@ -1533,7 +1600,8 @@ class Component extends DCLogic {
     const be = await window.CasaBackend.connect({
       onStates: (s) => this.setState({ st: s }),
       onStatus: (s) => this.setState({ status: s }),
-      onLanguage: (l) => this.setState({ hassLanguage: l })
+      onLanguage: (l) => this.setState({ hassLanguage: l }),
+      onEmbedIframe: (v) => { this.panelEmbedIframe = v; }
     });
     const kind = be.kind;
     const cfg = mergeConfig(kind === 'demo' ? window.CasaBackendDemo.DEMO_CONFIG : userConfig);
@@ -1565,7 +1633,20 @@ class Component extends DCLogic {
     this.setState({ prefs, prefsStorage: storage });
     this._loadHistory();
     this._loadHourlyEnergy();
+    this._loadIrrigationEnds();
     this._startSnapTimer();
+  }
+
+  // Irrigation auto-close (v1.8.1) — see dash_neumo.html's copy of this
+  // method for the full rationale; kept identical here.
+  async _loadIrrigationEnds() {
+    try {
+      const ends = await window.CasaPrefs.loadIrrigationEnds(this.be);
+      this.setState({ irrigationEnds: ends || {} });
+      this._checkIrrigationEnds(ends || {});
+    } catch (e) {
+      console.warn('[live_dashboard] irrigation end-times unavailable', e);
+    }
   }
 
   // Ring strip (v1.8.0) — see dash_neumo.html's copy of this method for the
@@ -1820,11 +1901,77 @@ class Component extends DCLogic {
     else sub = c.relayOn ? this.t('switch.running') : this.t('switch.off');
     return { level: c.level, watts: c.watts, on: c.relayOn, sub };
   }
-  call(domain, service, data) { if (this.be) this.be.call(domain, service, data); }
+  // v1.8.1 — see dash_neumo.html's copy of this method for the full
+  // rationale; kept identical here.
+  call(domain, service, data) {
+    if (!this.be) return Promise.resolve({ ok: false, outcome: 'error', error: 'backend not ready' });
+    const rawId = data && (data.entity_id !== undefined ? data.entity_id : (data.target && data.target.entity_id));
+    const entityLabel = Array.isArray(rawId) ? rawId.join(', ') : (rawId || null);
+    const entry = { t: Date.now(), domain, service, entity_id: entityLabel, outcome: 'pending', error: null, ms: null };
+    this._actionLog = [entry].concat(this._actionLog).slice(0, 20);
+    this.setState({ actionLogTick: Date.now() });
+    const start = Date.now();
+    return Promise.resolve(this.be.call(domain, service, data)).then(
+      () => {
+        entry.outcome = 'ok';
+        entry.ms = Date.now() - start;
+        this.setState({ actionLogTick: Date.now() });
+        return { ok: true };
+      },
+      (err) => {
+        entry.outcome = (err && err.code === 'timeout') ? 'timeout' : 'error';
+        entry.error = (err && err.message) || String(err);
+        entry.ms = Date.now() - start;
+        this.setState({ actionLogTick: Date.now() });
+        this._showActionToast(entityLabel, entry.outcome);
+        return { ok: false, outcome: entry.outcome, error: entry.error };
+      }
+    );
+  }
+  _showActionToast(entityLabel, outcome) {
+    const firstId = entityLabel ? entityLabel.split(',')[0].trim() : null;
+    const name = firstId ? this.fn(firstId) : this.t('toast.genericTarget');
+    const reason = outcome === 'timeout' ? this.t('toast.timeout') : this.t('toast.error');
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.setState({ toast: { text: name + ' — ' + reason } });
+    this._toastTimer = setTimeout(() => { this._toastTimer = null; this.setState({ toast: null }); }, 6000);
+  }
   cover(id, service, extra) { this.call('cover', service, Object.assign({ entity_id: id }, extra || {})); }
   runValve(id, minutes) {
-    this.call('switch', 'turn_on', { entity_id: id });
+    const started = this.call('switch', 'turn_on', { entity_id: id });
     setTimeout(() => this.call('switch', 'turn_off', { entity_id: id }), minutes * 60000);
+    return started.then((res) => {
+      if (res && res.ok) {
+        const endsAt = Date.now() + minutes * 60000;
+        const next = Object.assign({}, this.state.irrigationEnds, { [id]: endsAt });
+        this.setState({ irrigationEnds: next });
+        window.CasaPrefs.saveIrrigationEnds(this.be, next).catch(() => {});
+      }
+      return res;
+    });
+  }
+  _checkIrrigationEnds(endsOverride) {
+    const ends = endsOverride || this.state.irrigationEnds || {};
+    const ids = Object.keys(ends);
+    if (!ids.length) return;
+    const next = Object.assign({}, ends);
+    const now = Date.now();
+    let changed = false;
+    for (const id of ids) {
+      const st = this.s(id);
+      if (st === 'off') { this._irrigationClosing.delete(id); delete next[id]; changed = true; continue; }
+      if (st === 'on' && now >= next[id] && !this._irrigationClosing.has(id)) {
+        this._irrigationClosing.add(id);
+        this.call('switch', 'turn_off', { entity_id: id }).then(() => this._irrigationClosing.delete(id));
+        this._irrigationLastClosed = Object.assign({}, this._irrigationLastClosed, { [id]: now });
+        delete next[id];
+        changed = true;
+      }
+    }
+    if (changed) {
+      this.setState({ irrigationEnds: next });
+      window.CasaPrefs.saveIrrigationEnds(this.be, next).catch(() => {});
+    }
   }
   chartOn(k) { return !!this.state.charts[k]; }
   toggleChart(k) {
@@ -2092,6 +2239,7 @@ class Component extends DCLogic {
       version: ASSET_V || null,
       backend: this.kind || null,
       insideIframe: window.parent !== window,
+      embedIframe: this.panelEmbedIframe,
       lang: this.lang || null,
       areaCount: (this.registries.areas || []).length,
       entityCount: (this.registries.entities || []).length,
@@ -2723,6 +2871,22 @@ class Component extends DCLogic {
       }
       const chartVisible = this.chartOn('zone' + i);
       const zoneSpark = this.spark(this.state.hist ? this.state.hist['zone' + i] : null, 240, 54);
+      // v1.8.1 — see dash_neumo.html's copy of this block for the full
+      // rationale; kept identical here.
+      const irrPending = this.state.irrPending || {};
+      const isRunning = !!(z.valve && this.isOn(z.valve));
+      const endsAt = z.valve ? (this.state.irrigationEnds || {})[z.valve] : undefined;
+      const remainMin = endsAt != null ? Math.max(0, Math.round((endsAt - this.state.now) / 60000)) : null;
+      const makeDurationButton = (label, key, run) => ({
+        label, pending: !!irrPending[key],
+        run: () => {
+          if (irrPending[key]) return;
+          this.setState({ irrPending: Object.assign({}, this.state.irrPending, { [key]: true }) });
+          Promise.resolve(run()).then(() => {
+            this.setState({ irrPending: Object.assign({}, this.state.irrPending, { [key]: false }) });
+          });
+        }
+      });
       return {
         name: z.name, advisory: adv || '—', tone: zoneTone(adv),
         urgenza: (z.advisory ? (this.at(z.advisory, 'urgenza') || '') : '') + (mins > 0 ? ' · ' + this.t('irrigation.recommendedMin', { n: mins }) : ''),
@@ -2733,10 +2897,13 @@ class Component extends DCLogic {
         showChart: chartVisible, chartLabel: chartVisible ? this.t('chart.hide') : this.t('chart.show48h'),
         toggleChart: () => this.toggleChart('zone' + i),
         spark: zoneSpark, sparkRef: this._bindAttr('points', zoneSpark),
+        isRunning, showButtons: !isRunning,
+        runningLabel: remainMin != null ? this.t('irrigation.runningFor', { n: remainMin }) : this.t('irrigation.running'),
+        stop: () => this.call('switch', 'turn_off', { entity_id: z.valve }),
         // See dash_neumo.html for why there are two mechanisms here.
         buttons: (z.buttons && z.buttons.length)
-          ? z.buttons.map((b) => ({ label: this.t('irrigation.minutes', { n: b.minutes }), run: () => this.call('input_button', 'press', { entity_id: b.entity }) }))
-          : (z.valve ? (z.durations || [5, 10, 15]).map((m) => ({ label: this.t('irrigation.minutes', { n: m }), run: () => this.runValve(z.valve, m) })) : [])
+          ? z.buttons.map((b) => makeDurationButton(this.t('irrigation.minutes', { n: b.minutes }), 'btn:' + b.entity, () => this.call('input_button', 'press', { entity_id: b.entity })))
+          : (z.valve ? (z.durations || [5, 10, 15]).map((m) => makeDurationButton(this.t('irrigation.minutes', { n: m }), 'valve:' + z.valve + ':' + m, () => this.runValve(z.valve, m))) : [])
       };
     });
 
@@ -2884,6 +3051,7 @@ class Component extends DCLogic {
     let diagCameraRows = [], diagRingValue = '', diagHourlyValue = '', diagAlarmRows = [];
     let diagReasonGroups = [], diagReasonTotalLabel = '', hasDiagReasonGroups = false, diagHasHighSeverityReason = false;
     let hasDiagDuplicateDevices = false, diagDuplicateDevices = [], diagDuplicateDevicesTitle = '';
+    let diagActionRows = [], hasDiagActions = false, diagIrrigationRows = [], hasDiagIrrigationRows = false;
     let doDiag = () => {};
     let settingsTabs = [], powerUnitOptions = [], plugThresholdOptions = [];
     let showBatterySignControl = false, batterySignOptions = [], batterySignLiveLabel = '', batterySignSuspect = false, batterySignInvert = () => {};
@@ -2922,11 +3090,36 @@ class Component extends DCLogic {
         counterWarn: r.counterWarn
       }));
 
+      // Recent actions / irrigation (v1.8.1) — see dash_neumo.html's copy of
+      // this block for the full rationale; kept identical here.
+      const outcomeLabel = (o) => o === 'ok' ? S.diagActionOk : o === 'timeout' ? S.diagActionTimeout : o === 'error' ? S.diagActionError : S.diagActionPending;
+      diagActionRows = this._actionLog.map((e) => ({
+        time: new Date(e.t).toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        domainService: e.domain + '.' + e.service,
+        entityId: e.entity_id || '—',
+        outcome: e.outcome,
+        outcomeLabel: outcomeLabel(e.outcome),
+        tone: (e.outcome === 'error' || e.outcome === 'timeout') ? 'warn' : '',
+        msLabel: e.ms != null ? e.ms + 'ms' : '—'
+      }));
+      hasDiagActions = true;
+
+      const hhmm = (ms) => new Date(ms).toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' });
+      diagIrrigationRows = irrZones.filter((z) => z.valve).map((z) => {
+        const endsAt = (this.state.irrigationEnds || {})[z.valve];
+        const lastClosed = this._irrigationLastClosed[z.valve];
+        if (endsAt != null) return { name: z.name, value: this.t('irrigation.diagEndsAt', { time: hhmm(endsAt) }) };
+        if (lastClosed != null) return { name: z.name, value: this.t('irrigation.diagClosedAt', { time: hhmm(lastClosed) }) };
+        return null;
+      }).filter(Boolean);
+      hasDiagIrrigationRows = diagIrrigationRows.length > 0;
+
       const env = this.diagEnvironment();
       diagEnvRows = [
         { label: S.diagEnvVersion, value: env.version || S.diagEnvVersionDev },
         { label: S.diagEnvBackend, value: env.backend === 'demo' ? S.diagEnvBackendDemo : env.backend === 'panel' ? S.diagEnvBackendPanel : (env.backend || '—') },
         { label: S.diagEnvIframe, value: env.insideIframe ? S.diagEnvIframeYes : S.diagEnvIframeNo },
+        { label: S.diagEnvEmbedIframe, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.embedIframe === true ? S.diagEnvEmbedIframeYes : env.embedIframe === false ? S.diagEnvEmbedIframeNo : S.diagEnvUnknown },
         { label: S.diagEnvLang, value: env.lang || '—' },
         { label: S.diagEnvAreas, value: String(env.areaCount) },
         { label: S.diagEnvEntities, value: String(env.entityCount) },
@@ -3074,6 +3267,7 @@ class Component extends DCLogic {
           dailyHeading: S.diagEnergyDailyHeading,
           dailyPrefsFailedNote: diagPrefsFailed ? S.diagPrefsFailedMsg : null,
           dailyRows: diagEnergyDailyRows.map((r) => ({ roleLabel: r.roleLabel, sourceLabel: r.sourceLabel, idsLabel: r.idsLabel, valueLabel: r.valueLabel, counterWarnLabel: r.counterWarn ? S.diagCounterWarn : null })),
+          actionsHeading: S.diagActionsHeading, actionsEmptyLabel: S.diagActionsEmpty, actionRows: diagActionRows,
           envHeading: S.environment,
           envRows: diagEnvRows,
           reasonsHeading: S.diagReasonsHeading, reasonsTotalLabel: diagReasonTotalLabel,
@@ -3106,8 +3300,13 @@ class Component extends DCLogic {
     }) : [];
     const scenarioBarPad = scenarioBarVisible ? 'calc(190px + env(safe-area-inset-bottom))' : 'calc(134px + env(safe-area-inset-bottom))';
 
+    // Action toast (v1.8.1) — see dash_neumo.html's copy of this block.
+    const hasToast = !!this.state.toast;
+    const toastText = this.state.toast ? this.state.toast.text : '';
+
     return {
       S: this.strings, isDemo: this.kind === 'demo',
+      hasToast, toastText,
       scenarioBarVisible, scenarioItems, scenarioBarPad,
       theme, tabs,
       toggleTheme: () => this.setState({ theme: theme === 'night' ? 'day' : 'night' }),
@@ -3239,6 +3438,8 @@ class Component extends DCLogic {
       diagEnvRows,
       diagCameraRows, hasDiagCameraRows: diagCameraRows.length > 0,
       diagRingValue, hasDiagRingRow: !!diagRingValue, diagHourlyValue,
+      diagActionRows, hasDiagActions, hasDiagActionRows: diagActionRows.length > 0, noDiagActionRows: diagActionRows.length === 0,
+      diagIrrigationRows, hasDiagIrrigationRows,
       hourlyBars, hourlyAxisLabels, hasHourlyStrip, hourlyPeakLabel, hasHourlyPeak: !!hourlyPeakLabel,
       hasHourlyStripGap: !hasHourlyStrip,
       diagAlarmRows,

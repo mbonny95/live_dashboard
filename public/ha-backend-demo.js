@@ -346,7 +346,14 @@ const SCENARIOS = [
       'sensor.house_power': { state: '850', attributes: { unit_of_measurement: 'w' } },
       'sensor.grid_import_power': { state: '0.0012', attributes: { unit_of_measurement: 'MW' } },
       'sensor.grid_export_power': { state: '4100', attributes: { unit_of_measurement: 'BTU/h' } }
-    } }
+    } },
+  // v1.8.1 — exercises the action-log/toast "timeout" path (dash_neumo*
+  // .html's call()) without a 15s real wait or real hardware, same spirit
+  // as `partial`/`missing` for the energy/discovery diagnostics: every
+  // `switch.*` service call rejects with the same .code:'timeout' shape
+  // ha-backend-panel.js's real 15s timeout produces, after a short delay —
+  // see demoBackend().call below for where this id is actually read.
+  { id: 'call-timeout', name: 'Chiamate switch in timeout' }
 ];
 const SCENARIO_MAP = {};
 SCENARIOS.forEach((s) => { SCENARIO_MAP[s.id] = s; });
@@ -450,6 +457,17 @@ async function connect(handlers) {
       kind: BACKEND_KIND,
 
       call: async function (domain, service, data) {
+        // v1.8.1 — `?demo&scenario=call-timeout`: every switch.* call (the
+        // irrigation valve domain) rejects instead of succeeding, with the
+        // same .code:'timeout' shape ha-backend-panel.js's real 15s
+        // CALL_TIMEOUT_MS produces, so the toast/action-log/pending-button
+        // path is provable without waiting 15s or owning real hardware.
+        if (ACTIVE_SCENARIO_ID === 'call-timeout' && domain === 'switch') {
+          await new Promise((r) => setTimeout(r, 400));
+          const err = new Error('timeout in attesa della risposta da Home Assistant (demo)');
+          err.code = 'timeout';
+          throw err;
+        }
         await new Promise((r) => setTimeout(r, 120));
         const targets = ids(data);
 

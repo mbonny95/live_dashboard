@@ -694,14 +694,23 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 
 <div style="flex:1;min-height:0"></div>
+<sc-if value="{{ z.showButtons }}" hint-placeholder-val="{{ true }}">
 <div data-r="btns" style="flex:none">
 <sc-for list="{{ z.buttons }}" as="b" hint-placeholder-count="3">
-<button onClick="{{ b.run }}" style="height:46px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1 var(--font-body);color:var(--accT);display:flex;align-items:center;justify-content:center;gap:6px">
+<button data-sel="{{ b.pending }}" onClick="{{ b.run }}" style="height:46px;border-radius:15px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1 var(--font-body);color:var(--accT);display:flex;align-items:center;justify-content:center;gap:6px">
 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-timer"></use></svg>
 {{ b.label }}
 </button>
 </sc-for>
 </div>
+</sc-if>
+<sc-if value="{{ z.isRunning }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:center;gap:10px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:15px;padding:0 14px;height:46px;flex:none">
+<svg width="15" height="15" fill="none" stroke="var(--accT)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-timer"></use></svg>
+<span style="flex:1;font:600 12.5px/1 var(--font-body);color:var(--accT)">{{ z.runningLabel }}</span>
+<button onClick="{{ z.stop }}" style="height:44px;padding:0 14px;border-radius:12px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12px/1 var(--font-body);color:var(--tx2);flex:none">{{ S.stop }}</button>
+</div>
+</sc-if>
 </div>
 </sc-for>
 </div>
@@ -1042,7 +1051,10 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.other }}</div>
 <div style="display:flex;flex-direction:column;gap:9px">
 <sc-for list="{{ panel.extras }}" as="e" hint-placeholder-count="2">
-<div data-dim="{{ e.quiet }}" data-entity-id="{{ e.id }}" style="display:flex;align-items:center;gap:11px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:18px;padding:0 15px;height:52px">
+<!-- v1.8.1: read-only row (climate/fan/vacuum/... — no control here), so
+     no card depth and no fill: a raised nu-sm box reads as tappable and
+     these have never done anything on tap. -->
+<div data-dim="{{ e.quiet }}" data-entity-id="{{ e.id }}" style="display:flex;align-items:center;gap:11px;background:transparent;border-bottom:1px solid var(--nu-d);padding:0 15px;height:52px">
 <svg width="18" height="18" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ e.iconRef }}"></use></svg>
 <span style="flex:1;font:600 13px/1.2 var(--font-body)">{{ e.name }}</span>
 <span style="font:600 12.5px/1 var(--font-body);color:var(--tx2)">{{ e.val }}</span>
@@ -1411,6 +1423,41 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ hasDiagActions }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagActionsHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-if value="{{ hasDiagActionRows }}" hint-placeholder-val="{{ true }}">
+<sc-for list="{{ diagActionRows }}" as="row" hint-placeholder-count="3">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px;user-select:text">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:9px">
+<span style="font:600 11.5px/1.4 var(--font-body);color:var(--tx)">{{ row.domainService }}</span>
+<span style="font:500 10px/1.4 var(--font-body);color:var(--tx2)">{{ row.time }}</span>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:9px;margin-top:2px">
+<span style="font:500 10.5px/1.4 var(--font-body);color:var(--tx2);word-break:break-all">{{ row.entityId }}</span>
+<span data-tone="{{ row.tone }}" style="font:600 10.5px/1.4 var(--font-body);color:var(--tx2);white-space:nowrap;flex:none">{{ row.outcomeLabel }} · {{ row.msLabel }}</span>
+</div>
+</div>
+</sc-for>
+</sc-if>
+<sc-if value="{{ noDiagActionRows }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 11px/1.4 var(--font-body);color:var(--tx2);padding:9px 11px">{{ S.diagActionsEmpty }}</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasDiagIrrigationRows }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.diagIrrigationHeading }}</div>
+<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+<sc-for list="{{ diagIrrigationRows }}" as="row" hint-placeholder-count="1">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:9px;background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:9px 11px">
+<span style="font:500 11px/1.4 var(--font-body);color:var(--tx2)">{{ row.name }}</span>
+<span style="font:600 11px/1.4 var(--font-body);color:var(--tx);text-align:right">{{ row.value }}</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
 <div style="font:600 10.5px/1 var(--font-body);color:var(--tx2);margin:0 2px 6px">{{ S.environment }}</div>
 <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
 <sc-for list="{{ diagEnvRows }}" as="row" hint-placeholder-count="5">
@@ -1571,6 +1618,19 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 
+<!-- Action toast (v1.8.1) — failed/timed-out service calls only, see
+     call()/_showActionToast(). No mount animation: a template-driven one
+     (an `animation:` in style=) would replay on every unrelated re-render
+     this sc-if's parent gets while the toast happens to still be showing,
+     not just once on mount — static styling only, like the templating
+     constraints for this file call for. -->
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;z-index:70;left:50%;bottom:28px;transform:translateX(-50%);max-width:min(420px,calc(100vw - 32px));background:var(--page);box-shadow:0 18px 44px rgba(20,24,30,.3);border-radius:16px;padding:13px 18px;display:flex;align-items:center;gap:10px;color:var(--tx)">
+<svg width="17" height="17" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use href="#i-alert"></use></svg>
+<span style="font:600 12.5px/1.4 var(--font-body)">{{ toastText }}</span>
+</div>
+</sc-if>
+
 </div>
 
 </x-dc>
@@ -1674,7 +1734,8 @@ async function loadUserConfig() {
 class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: 'casa', room: null, allRooms: false, theme: null, hist: null, range: 7, weather: false, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
     settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false,
-    diagReasonsOpen: false, diagReasonGroupsOpen: {}, hourlyEnergy: undefined };
+    diagReasonsOpen: false, diagReasonGroupsOpen: {}, hourlyEnergy: undefined,
+    toast: null, irrigationEnds: {}, irrPending: {} };
   // Safe synchronous defaults: the first render happens before
   // componentDidMount's dynamic imports resolve, so these must already be
   // usable — _boot() below replaces them and forces a re-render via setState.
@@ -1686,6 +1747,26 @@ class Component extends DCLogic {
   // failure is exactly the case this screen exists for).
   configDiag = null;
   energyDiag = null;
+  // v1.8.1 — see onEmbedIframe above (null = not yet known / demo backend
+  // never sends it, distinct from a real false).
+  panelEmbedIframe = null;
+  // Ring buffer of the last 20 call() outcomes — Diagnostica's "Recent
+  // actions" section reads this directly, same instance-field-not-state
+  // pattern as camDiag (mutated in place, a setState elsewhere in the same
+  // call() triggers the re-render that picks it up).
+  _actionLog = [];
+  // Auto-close deadlines for irrigation valves started from this dashboard
+  // — { [valveEntityId]: endsAtEpochMs } — loaded from frontend/user_data
+  // (or localStorage in demo mode) at boot, in state (not an instance
+  // field) because SETTINGS_SET_ROOM-style renders need to react to it.
+  _irrigationLastClosed = {};
+  // Guards against _checkIrrigationEnds() double-firing turn_off for the
+  // same valve when two 15s ticks land close enough together that the
+  // first tick's setState hasn't flushed before the second tick reads
+  // state (observed under a fast-forwarded clock in testing; a real 15s
+  // gap makes it very unlikely, but the guard is cheap and turn_off
+  // isn't a call worth sending twice).
+  _irrigationClosing = new Set();
   t = (key) => key;
   // Static-label dictionary, exposed to the template as `S`. A Proxy
   // returning '' for any key — not a plain {} — because the real i18n
@@ -1713,6 +1794,8 @@ class Component extends DCLogic {
       // tick instead of its own timer.
       const hourKey = Math.floor(Date.now() / 3600000);
       if (this._hourlyEnergyHourKey !== undefined && hourKey !== this._hourlyEnergyHourKey) this._loadHourlyEnergy();
+      // Irrigation auto-close (v1.8.1) — see _checkIrrigationEnds().
+      this._checkIrrigationEnds();
     }, 15000);
     this._onVisibility = () => {
       if (document.visibilityState === 'hidden') { this._stopSnapTimer(); this._camStopFastPoll(); }
@@ -1892,7 +1975,13 @@ class Component extends DCLogic {
     const be = await window.CasaBackend.connect({
       onStates: (s) => this.setState({ st: s }),
       onStatus: (s) => this.setState({ status: s }),
-      onLanguage: (l) => this.setState({ hassLanguage: l })
+      onLanguage: (l) => this.setState({ hassLanguage: l }),
+      // v1.8.1 — instance field, not state: read once by diagEnvironment()
+      // on the next render an unrelated setState already triggers (onStates
+      // fires in the same tick this app receives its first hass-states push
+      // that carries it), same "no extra render just for this" reasoning as
+      // camDiag elsewhere in this file.
+      onEmbedIframe: (v) => { this.panelEmbedIframe = v; }
     });
     const kind = be.kind;
     // The demo backend ships its own config so Energy/Irrigation/Vehicle/
@@ -1936,7 +2025,23 @@ class Component extends DCLogic {
     this.setState({ prefs, prefsStorage: storage }); // force a re-render now that cfg/registries/t/prefs are real
     this._loadHistory();
     this._loadHourlyEnergy();
+    this._loadIrrigationEnds();
     this._startSnapTimer();
+  }
+
+  // Irrigation auto-close (v1.8.1) — loads whatever deadlines were saved
+  // by any client (this one on a previous visit, or another one entirely)
+  // and immediately checks them once: a valve whose time already passed
+  // while nothing was open gets closed on the very next dashboard that
+  // opens, not only on that dashboard's next 15s tick.
+  async _loadIrrigationEnds() {
+    try {
+      const ends = await window.CasaPrefs.loadIrrigationEnds(this.be);
+      this.setState({ irrigationEnds: ends || {} });
+      this._checkIrrigationEnds(ends || {});
+    } catch (e) {
+      console.warn('[live_dashboard] irrigation end-times unavailable', e);
+    }
   }
 
   // Ring strip (v1.8.0) — the same statistic_ids _resolveEnergyDaily() just
@@ -2251,13 +2356,109 @@ class Component extends DCLogic {
     else sub = c.relayOn ? this.t('switch.running') : this.t('switch.off');
     return { level: c.level, watts: c.watts, on: c.relayOn, sub };
   }
-  call(domain, service, data) { if (this.be) this.be.call(domain, service, data); }
+  // v1.8.1 — the single point every service call goes through, so every
+  // one can be logged (Diagnostica → Recent actions, the ring buffer a
+  // support issue is now asked to paste) and every failure can reach the
+  // screen (the toast below). Previously fire-and-forget: `this.be.call()`
+  // was invoked but its promise never read, so a real timeout or a
+  // rejected service call and a genuine success were indistinguishable
+  // from here — reported as "the buttons don't respond, no console
+  // errors" because nothing ever surfaced the rejection at all. This
+  // always resolves (never rejects) precisely so it stays safe to call
+  // fire-and-forget exactly like before, for the many call sites in this
+  // file that still do.
+  call(domain, service, data) {
+    if (!this.be) return Promise.resolve({ ok: false, outcome: 'error', error: 'backend not ready' });
+    const rawId = data && (data.entity_id !== undefined ? data.entity_id : (data.target && data.target.entity_id));
+    const entityLabel = Array.isArray(rawId) ? rawId.join(', ') : (rawId || null);
+    const entry = { t: Date.now(), domain, service, entity_id: entityLabel, outcome: 'pending', error: null, ms: null };
+    this._actionLog = [entry].concat(this._actionLog).slice(0, 20);
+    this.setState({ actionLogTick: Date.now() });
+    const start = Date.now();
+    return Promise.resolve(this.be.call(domain, service, data)).then(
+      () => {
+        entry.outcome = 'ok';
+        entry.ms = Date.now() - start;
+        this.setState({ actionLogTick: Date.now() });
+        return { ok: true };
+      },
+      (err) => {
+        // .code, not the error message text — ha-backend-panel.js's real
+        // 15s timeout (and the demo's `call-timeout` scenario) both set
+        // it explicitly for exactly this comparison.
+        entry.outcome = (err && err.code === 'timeout') ? 'timeout' : 'error';
+        entry.error = (err && err.message) || String(err);
+        entry.ms = Date.now() - start;
+        this.setState({ actionLogTick: Date.now() });
+        this._showActionToast(entityLabel, entry.outcome);
+        return { ok: false, outcome: entry.outcome, error: entry.error };
+      }
+    );
+  }
+  // Toast on failure only — a successful action is already visible in the
+  // state that just changed, so a toast there would just be noise. One at
+  // a time: a new failure replaces whatever toast is already showing and
+  // restarts the 6s auto-close, rather than queuing.
+  _showActionToast(entityLabel, outcome) {
+    const firstId = entityLabel ? entityLabel.split(',')[0].trim() : null;
+    const name = firstId ? this.fn(firstId) : this.t('toast.genericTarget');
+    const reason = outcome === 'timeout' ? this.t('toast.timeout') : this.t('toast.error');
+    if (this._toastTimer) clearTimeout(this._toastTimer);
+    this.setState({ toast: { text: name + ' — ' + reason } });
+    this._toastTimer = setTimeout(() => { this._toastTimer = null; this.setState({ toast: null }); }, 6000);
+  }
   cover(id, service, extra) { this.call('cover', service, Object.assign({ entity_id: id }, extra || {})); }
-  // Generic "run this valve for N minutes" for irrigation zones: just two
-  // standard switch calls, no per-duration helper entity required in HA.
+  // Generic "run this valve for N minutes" for irrigation zones: two
+  // standard switch calls (no per-duration helper entity required in HA),
+  // plus (v1.8.1) a persisted deadline so the close isn't only a setTimeout
+  // living in this one tab — see _checkIrrigationEnds().
   runValve(id, minutes) {
-    this.call('switch', 'turn_on', { entity_id: id });
+    const started = this.call('switch', 'turn_on', { entity_id: id });
     setTimeout(() => this.call('switch', 'turn_off', { entity_id: id }), minutes * 60000);
+    return started.then((res) => {
+      if (res && res.ok) {
+        const endsAt = Date.now() + minutes * 60000;
+        const next = Object.assign({}, this.state.irrigationEnds, { [id]: endsAt });
+        this.setState({ irrigationEnds: next });
+        window.CasaPrefs.saveIrrigationEnds(this.be, next).catch(() => {});
+      }
+      return res;
+    });
+  }
+  // The persisted-deadline side of runValve(): every 15s (piggybacked on
+  // the tick componentDidMount already runs) and once at boot, close any
+  // valve whose time is up — from *whichever* client happens to be open,
+  // not only the one that started it — and drop any entry whose valve
+  // turns out to already be off (closed by hand, by HA, or by the fast-path
+  // setTimeout above). _irrigationLastClosed is read-only bookkeeping for
+  // the Diagnostica row below; it's never persisted, so it only covers
+  // auto-closes this session actually witnessed.
+  // `endsOverride`: setState isn't guaranteed synchronous in this
+  // framework, so a caller that just set irrigationEnds (namely
+  // _loadIrrigationEnds(), right after its own setState) passes the fresh
+  // value directly instead of risking a read of the pre-setState state.
+  _checkIrrigationEnds(endsOverride) {
+    const ends = endsOverride || this.state.irrigationEnds || {};
+    const ids = Object.keys(ends);
+    if (!ids.length) return;
+    const next = Object.assign({}, ends);
+    const now = Date.now();
+    let changed = false;
+    for (const id of ids) {
+      const st = this.s(id);
+      if (st === 'off') { this._irrigationClosing.delete(id); delete next[id]; changed = true; continue; }
+      if (st === 'on' && now >= next[id] && !this._irrigationClosing.has(id)) {
+        this._irrigationClosing.add(id);
+        this.call('switch', 'turn_off', { entity_id: id }).then(() => this._irrigationClosing.delete(id));
+        this._irrigationLastClosed = Object.assign({}, this._irrigationLastClosed, { [id]: now });
+        delete next[id];
+        changed = true;
+      }
+    }
+    if (changed) {
+      this.setState({ irrigationEnds: next });
+      window.CasaPrefs.saveIrrigationEnds(this.be, next).catch(() => {});
+    }
   }
 
   spark(arr, w, h) {
@@ -2606,6 +2807,7 @@ class Component extends DCLogic {
       version: ASSET_V || null,
       backend: this.kind || null,
       insideIframe: window.parent !== window,
+      embedIframe: this.panelEmbedIframe,
       lang: this.lang || null,
       areaCount: (this.registries.areas || []).length,
       entityCount: (this.registries.entities || []).length,
@@ -3312,6 +3514,31 @@ class Component extends DCLogic {
         if (!isNaN(t)) last = t.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + ' · ' + t.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
       }
       const zoneSpark = this.spark(this.state.hist ? this.state.hist['zone' + i] : null, 240, 44);
+      // Running state (v1.8.1) comes from the valve itself, not from
+      // whichever button was last tapped — so it's correct even when
+      // another client started the run, or HA started it directly. Only
+      // meaningful for `valve` zones: `buttons` (input_button) zones have
+      // no entity whose state means "running", so this dashboard has no
+      // way to know — the spec for this release is explicit that they
+      // stay exactly as before.
+      const irrPending = this.state.irrPending || {};
+      const isRunning = !!(z.valve && this.isOn(z.valve));
+      const endsAt = z.valve ? (this.state.irrigationEnds || {})[z.valve] : undefined;
+      const remainMin = endsAt != null ? Math.max(0, Math.round((endsAt - this.state.now) / 60000)) : null;
+      // Guards against a second tap landing before the first call's
+      // outcome is known — the button goes visibly "incassato" (inset,
+      // data-sel reuses the app's existing pressed-state rule) and ignores
+      // taps until call() resolves, which it now always does (see call()).
+      const makeDurationButton = (label, key, run) => ({
+        label, pending: !!irrPending[key],
+        run: () => {
+          if (irrPending[key]) return;
+          this.setState({ irrPending: Object.assign({}, this.state.irrPending, { [key]: true }) });
+          Promise.resolve(run()).then(() => {
+            this.setState({ irrPending: Object.assign({}, this.state.irrPending, { [key]: false }) });
+          });
+        }
+      });
       return {
         name: z.name, advisory: adv || '—', tone: zoneTone(adv),
         urgenza: (z.advisory ? (this.at(z.advisory, 'urgenza') || '') : '') + (mins > 0 ? ' · ' + this.t('irrigation.recommendedMin', { n: mins }) : ''),
@@ -3320,14 +3547,17 @@ class Component extends DCLogic {
         mmWeek: z.weekMm ? this.val(z.weekMm, 1, ' mm') : '—', last,
         lastRunLine: this.t('irrigation.lastRun', { when: last }),
         spark: zoneSpark, sparkRef: this._bindAttr('points', zoneSpark),
+        isRunning, showButtons: !isRunning,
+        runningLabel: remainMin != null ? this.t('irrigation.runningFor', { n: remainMin }) : this.t('irrigation.running'),
+        stop: () => this.call('switch', 'turn_off', { entity_id: z.valve }),
         // Two ways to run a timed watering: a `valve` switch this dashboard
         // opens/closes itself (durations are just labels), or `buttons` —
         // one input_button per duration, for installs where a script/
         // automation already owns the timing and there's no switch to
         // drive directly. `buttons` wins if both happen to be set.
         buttons: (z.buttons && z.buttons.length)
-          ? z.buttons.map((b) => ({ label: this.t('irrigation.minutes', { n: b.minutes }), run: () => this.call('input_button', 'press', { entity_id: b.entity }) }))
-          : (z.valve ? (z.durations || [5, 10, 15]).map((m) => ({ label: this.t('irrigation.minutes', { n: m }), run: () => this.runValve(z.valve, m) })) : [])
+          ? z.buttons.map((b) => makeDurationButton(this.t('irrigation.minutes', { n: b.minutes }), 'btn:' + b.entity, () => this.call('input_button', 'press', { entity_id: b.entity })))
+          : (z.valve ? (z.durations || [5, 10, 15]).map((m) => makeDurationButton(this.t('irrigation.minutes', { n: m }), 'valve:' + z.valve + ':' + m, () => this.runValve(z.valve, m))) : [])
       };
     });
 
@@ -3653,6 +3883,7 @@ class Component extends DCLogic {
     // clock tick" reasoning as the block above.
     let diagConfigAttempts = [], diagConfigSummary = '', diagConfigOutsideIframe = false;
     let diagEnergyInstantRows = [], diagEnergyDailyRows = [], diagPrefsFailed = false, diagEnvRows = [];
+    let diagActionRows = [], hasDiagActions = false, diagIrrigationRows = [], hasDiagIrrigationRows = false;
     let diagCameraRows = [], diagRingValue = '', diagHourlyValue = '', diagAlarmRows = [];
     let diagReasonGroups = [], diagReasonTotalLabel = '', hasDiagReasonGroups = false, diagHasHighSeverityReason = false;
     let hasDiagDuplicateDevices = false, diagDuplicateDevices = [], diagDuplicateDevicesTitle = '';
@@ -3694,11 +3925,48 @@ class Component extends DCLogic {
         counterWarn: r.counterWarn
       }));
 
+      // Recent actions (v1.8.1) — the ring buffer call() maintains, turned
+      // into rows. Placed above Environment both here and in the copy-
+      // diagnostics text (prefs.js's diagText) — this is the section a
+      // support issue is asked to paste, so it should be the first thing a
+      // reader hits, not buried under config/energy diagnostics that were
+      // already fine on the reporting install.
+      const outcomeLabel = (o) => o === 'ok' ? S.diagActionOk : o === 'timeout' ? S.diagActionTimeout : o === 'error' ? S.diagActionError : S.diagActionPending;
+      diagActionRows = this._actionLog.map((e) => ({
+        time: new Date(e.t).toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        domainService: e.domain + '.' + e.service,
+        entityId: e.entity_id || '—',
+        outcome: e.outcome,
+        outcomeLabel: outcomeLabel(e.outcome),
+        tone: (e.outcome === 'error' || e.outcome === 'timeout') ? 'warn' : '',
+        msLabel: e.ms != null ? e.ms + 'ms' : '—'
+      }));
+      hasDiagActions = true;
+
+      // Irrigation (v1.8.1) — one row per zone that has something to
+      // report: an active deadline, or one this session watched expire.
+      // Zones with neither (never run, or `buttons`-only — see runValve's
+      // comment) contribute nothing, same "only what's actionable" spirit
+      // as the discard-reason groups above.
+      const hhmm = (ms) => new Date(ms).toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' });
+      diagIrrigationRows = irrZones.filter((z) => z.valve).map((z) => {
+        const endsAt = (this.state.irrigationEnds || {})[z.valve];
+        const lastClosed = this._irrigationLastClosed[z.valve];
+        if (endsAt != null) return { name: z.name, value: this.t('irrigation.diagEndsAt', { time: hhmm(endsAt) }) };
+        if (lastClosed != null) return { name: z.name, value: this.t('irrigation.diagClosedAt', { time: hhmm(lastClosed) }) };
+        return null;
+      }).filter(Boolean);
+      hasDiagIrrigationRows = diagIrrigationRows.length > 0;
+
       const env = this.diagEnvironment();
       diagEnvRows = [
         { label: S.diagEnvVersion, value: env.version || S.diagEnvVersionDev },
         { label: S.diagEnvBackend, value: env.backend === 'demo' ? S.diagEnvBackendDemo : env.backend === 'panel' ? S.diagEnvBackendPanel : (env.backend || '—') },
         { label: S.diagEnvIframe, value: env.insideIframe ? S.diagEnvIframeYes : S.diagEnvIframeNo },
+        // env.backend === 'demo' never sends embedIframe at all (see
+        // ha-backend-demo.js — there is no real panel_custom config to
+        // report on), so null there reads distinctly from a real false.
+        { label: S.diagEnvEmbedIframe, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.embedIframe === true ? S.diagEnvEmbedIframeYes : env.embedIframe === false ? S.diagEnvEmbedIframeNo : S.diagEnvUnknown },
         { label: S.diagEnvLang, value: env.lang || '—' },
         { label: S.diagEnvAreas, value: String(env.areaCount) },
         { label: S.diagEnvEntities, value: String(env.entityCount) },
@@ -3873,6 +4141,7 @@ class Component extends DCLogic {
           dailyHeading: S.diagEnergyDailyHeading,
           dailyPrefsFailedNote: diagPrefsFailed ? S.diagPrefsFailedMsg : null,
           dailyRows: diagEnergyDailyRows.map((r) => ({ roleLabel: r.roleLabel, sourceLabel: r.sourceLabel, idsLabel: r.idsLabel, valueLabel: r.valueLabel, counterWarnLabel: r.counterWarn ? S.diagCounterWarn : null })),
+          actionsHeading: S.diagActionsHeading, actionsEmptyLabel: S.diagActionsEmpty, actionRows: diagActionRows,
           envHeading: S.environment,
           envRows: diagEnvRows,
           reasonsHeading: S.diagReasonsHeading, reasonsTotalLabel: diagReasonTotalLabel,
@@ -3907,8 +4176,14 @@ class Component extends DCLogic {
     }) : [];
     const scenarioBarPad = scenarioBarVisible ? '58px' : '22px';
 
+    // Action toast (v1.8.1) — visible on any tab, so computed unconditionally
+    // rather than inside the settingsOpen block below.
+    const hasToast = !!this.state.toast;
+    const toastText = this.state.toast ? this.state.toast.text : '';
+
     return {
       S: this.strings,
+      hasToast, toastText,
       theme,
       toggleTheme: () => this.setState({ theme: theme === 'night' ? 'day' : 'night' }),
       themeIcon: theme === 'night' ? '#i-moon' : '#i-sun',
@@ -4064,6 +4339,8 @@ class Component extends DCLogic {
       diagEnvRows,
       diagCameraRows, hasDiagCameraRows: diagCameraRows.length > 0,
       diagRingValue, hasDiagRingRow: !!diagRingValue, diagHourlyValue,
+      diagActionRows, hasDiagActions, hasDiagActionRows: diagActionRows.length > 0, noDiagActionRows: diagActionRows.length === 0,
+      diagIrrigationRows, hasDiagIrrigationRows,
       hourlyBars, hourlyAxisLabels, hasHourlyStrip, hourlyPeakLabel, hasHourlyPeak: !!hourlyPeakLabel,
       hasHourlyStripGap: !hasHourlyStrip,
       diagAlarmRows,

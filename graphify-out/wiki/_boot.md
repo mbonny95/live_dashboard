@@ -1,6 +1,6 @@
 # _boot
 
-> 48 nodes
+> 46 nodes
 
 ## Key Concepts
 
@@ -13,6 +13,7 @@
 - **_camStartFastPoll()** (6 connections) — `public/dash_neumo.html`
 - **Component.componentDidMount()** (6 connections) — `public/dash_neumo_mobile.html`
 - **Three-Layer Camera Live View** (5 connections) — `public/dash_neumo.html`
+- **loadScript()** (5 connections) — `public/dash_neumo.html`
 - **Component._camStartStream()** (5 connections) — `public/dash_neumo_mobile.html`
 - **loadUserConfig()** (5 connections) — `public/dash_neumo.html`
 - **bust()** (4 connections) — `public/dash_neumo.html`
@@ -23,20 +24,20 @@
 - **_camStopFastPoll()** (4 connections) — `public/dash_neumo.html`
 - **Component._ensureHlsJs()** (4 connections) — `public/dash_neumo_mobile.html`
 - **hls.js vendoring open question** (3 connections) — `CHANGELOG.md`
-- **Diagnostics: Energy daily totals block** (3 connections) — `CHANGELOG.md`
 - **_attachHlsJs()** (3 connections) — `public/dash_neumo.html`
-- **_resolveEnergyDaily()** (3 connections) — `public/dash_neumo.html`
 - **mergeConfig()** (3 connections) — `public/dash_neumo_mobile.html`
 - **bust()** (3 connections) — `public/dash_neumo_mobile.html`
 - **loadScript()** (3 connections) — `public/dash_neumo_mobile.html`
-- *... and 23 more nodes in this community*
+- **Component._startSnapTimer()** (3 connections) — `public/dash_neumo_mobile.html`
+- *... and 21 more nodes in this community*
 
 ## Relationships
 
-- [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (7 shared connections)
+- [Diagnostics panel (settings gear → Diagnostica)](Diagnostics_panel_%28settings_gear_%E2%86%92_Diagnostica%29.md) (3 shared connections)
 - [renderVals](renderVals.md) (3 shared connections)
 - [v1.5.4 changelog entry](v1.5.4_changelog_entry.md) (2 shared connections)
 - [Casa View](Casa_View.md) (1 shared connections)
+- [panel_custom tag derived from deploy folder fix](panel_custom_tag_derived_from_deploy_folder_fix.md) (1 shared connections)
 
 ## Source Files
 
@@ -47,8 +48,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 120 (70%)
-- INFERRED: 51 (30%)
+- EXTRACTED: 118 (70%)
+- INFERRED: 50 (30%)
 - AMBIGUOUS: 0 (0%)
 
 ---

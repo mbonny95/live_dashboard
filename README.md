@@ -353,6 +353,16 @@ wire that second part, pick whichever matches your setup:
   per duration) and there's no switch to drive directly. Takes over from
   `valve` if both are set.
 
+**`valve`'s timed close needs at least one dashboard open.** The close is a
+deadline saved to `frontend/user_data` (or, without Home Assistant behind it,
+`localStorage`) and checked by whichever client is open every 15s, plus once
+when any client opens — not tied to the tab that started the run, so
+reloading it or closing it doesn't leave the valve open. But with **zero**
+dashboards open when the time is up, nothing closes it: for a guarantee that
+doesn't depend on a browser tab existing, use `buttons` with a script/
+automation that owns the timing on the HA side, or your valve's own native
+timer if it has one.
+
 Everything else (`advisory`, `deficit`, `weekMm`, `lastRun`, `et0`, `etc`,
 `effectiveRain`, `summary`) is optional and only appears if you set it.
 **The agronomic math (ET₀/ETc, accumulated deficit) is not part of this

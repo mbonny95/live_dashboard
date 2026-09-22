@@ -22,28 +22,32 @@
 
 const STORAGE_KEY = 'live_dashboard_prefs';
 const USER_DATA_KEY = 'live_dashboard';
+// v1.8.1 — irrigation end-times share the same frontend/get_user_data
+// channel as prefs, under a separate key (see loadIrrigationEnds below):
+// backend.userDataGet/userDataSet now take the key explicitly instead of
+// having 'live_dashboard' baked in, so any caller can use its own key on
+// the same storage mechanism (HA account when available, localStorage —
+// this file's own readLocalKeyed/writeLocalKeyed — otherwise).
+const IRRIGATION_USER_DATA_KEY = 'live_dashboard_irrigation';
+const IRRIGATION_STORAGE_KEY = 'live_dashboard_irrigation_ends';
 
 const DEFAULT_PREFS = { v: 1 };
 
-function readLocal() {
+function readLocalKeyed(storageKey, fallback) {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return Object.assign({}, DEFAULT_PREFS);
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return fallback;
     const parsed = JSON.parse(raw);
-    // A prefs object from a future/unrecognized version, or corrupted
-    // storage, degrades to defaults rather than crashing the boot — same
-    // "never fail loud on stored user data" spirit as mergeConfig() does
-    // for a broken config.js.
-    if (!parsed || typeof parsed !== 'object' || parsed.v !== 1) return Object.assign({}, DEFAULT_PREFS);
+    if (!parsed || typeof parsed !== 'object') return fallback;
     return parsed;
   } catch (e) {
-    return Object.assign({}, DEFAULT_PREFS);
+    return fallback;
   }
 }
 
-function writeLocal(prefs) {
+function writeLocalKeyed(storageKey, value) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+    localStorage.setItem(storageKey, JSON.stringify(value));
     return true;
   } catch (e) {
     // Private browsing / storage quota — nothing more this layer can do;
@@ -52,10 +56,24 @@ function writeLocal(prefs) {
   }
 }
 
+function readLocal() {
+  const v = readLocalKeyed(STORAGE_KEY, null);
+  // A prefs object from a future/unrecognized version, or corrupted
+  // storage, degrades to defaults rather than crashing the boot — same
+  // "never fail loud on stored user data" spirit as mergeConfig() does
+  // for a broken config.js.
+  if (!v || v.v !== 1) return Object.assign({}, DEFAULT_PREFS);
+  return v;
+}
+
+function writeLocal(prefs) {
+  return writeLocalKeyed(STORAGE_KEY, prefs);
+}
+
 async function load(backend) {
   if (backend && backend.userDataGet) {
     try {
-      const value = await backend.userDataGet();
+      const value = await backend.userDataGet(USER_DATA_KEY);
       if (value && typeof value === 'object' && value.v === 1) return { prefs: value, storage: 'hass' };
       if (value == null) return { prefs: Object.assign({}, DEFAULT_PREFS), storage: 'hass' };
       // Unrecognized shape from the user's HA account — fall through to
@@ -70,7 +88,7 @@ async function load(backend) {
 async function save(backend, prefs) {
   if (backend && backend.userDataSet) {
     try {
-      await backend.userDataSet(prefs);
+      await backend.userDataSet(USER_DATA_KEY, prefs);
       return 'hass';
     } catch (e) {
       console.warn('[casa] frontend/set_user_data failed, falling back to localStorage:', e.message || e);
@@ -78,6 +96,37 @@ async function save(backend, prefs) {
   }
   writeLocal(prefs);
   return 'local';
+}
+
+// Irrigation end-times (v1.8.1) — { [valveEntityId]: endsAtEpochMs }, so a
+// timed run closes on whichever client notices first, not only the tablet
+// that started it. Demo mode's backend implements neither userData method
+// (see ha-backend-demo.js), so this always falls through to localStorage
+// there — the same "works from file://" fallback prefs already relies on,
+// no special-casing needed here.
+async function loadIrrigationEnds(backend) {
+  if (backend && backend.userDataGet) {
+    try {
+      const value = await backend.userDataGet(IRRIGATION_USER_DATA_KEY);
+      if (value && typeof value === 'object') return value;
+      if (value == null) return {};
+    } catch (e) {
+      console.warn('[casa] frontend/get_user_data (irrigation) unavailable, falling back to localStorage:', e.message || e);
+    }
+  }
+  return readLocalKeyed(IRRIGATION_STORAGE_KEY, {});
+}
+
+async function saveIrrigationEnds(backend, ends) {
+  if (backend && backend.userDataSet) {
+    try {
+      await backend.userDataSet(IRRIGATION_USER_DATA_KEY, ends);
+      return;
+    } catch (e) {
+      console.warn('[casa] frontend/set_user_data (irrigation) failed, falling back to localStorage:', e.message || e);
+    }
+  }
+  writeLocalKeyed(IRRIGATION_STORAGE_KEY, ends);
 }
 
 // A valid, re-loadable config.js — comments are nice-to-have, not the bar;
@@ -123,6 +172,16 @@ function diagText(d) {
   });
   lines.push('');
 
+  // v1.8.1 — the ring buffer of recent service calls, right above
+  // Environment in both the panel and this text export (this is the
+  // section issue reporters are asked to paste).
+  if (d.actionsHeading && d.actionRows) {
+    lines.push(d.actionsHeading);
+    if (!d.actionRows.length) lines.push('  ' + d.actionsEmptyLabel);
+    d.actionRows.forEach((r) => lines.push('  ' + diagRowLine([r.time, r.domainService, r.entityId, r.outcomeLabel, r.msLabel], [10, 22, 34, 10])));
+    lines.push('');
+  }
+
   lines.push(d.envHeading);
   d.envRows.forEach((r) => lines.push('  ' + padCol(r.label, 28) + r.value));
 
@@ -159,6 +218,9 @@ async function copyToClipboard(text) {
   }
 }
 
-window.CasaPrefs = { DEFAULT_PREFS, USER_DATA_KEY, load, save, exportText, diagText, copyToClipboard };
+window.CasaPrefs = {
+  DEFAULT_PREFS, USER_DATA_KEY, load, save, exportText, diagText, copyToClipboard,
+  loadIrrigationEnds, saveIrrigationEnds
+};
 
 })();

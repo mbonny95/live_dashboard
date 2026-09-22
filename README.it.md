@@ -362,6 +362,17 @@ combacia con il tuo impianto:
   quick-action per ogni durata) e non c'è uno switch da comandare
   direttamente. Ha la precedenza su `valve` se sono impostati entrambi.
 
+**La chiusura temporizzata di `valve` richiede almeno una dashboard aperta.**
+La chiusura è una scadenza salvata su `frontend/user_data` (o, senza Home
+Assistant dietro, su `localStorage`) e controllata da qualunque client sia
+aperto ogni 15 secondi, più una volta quando un client si apre — non è legata
+alla scheda che ha avviato l'irrigazione, quindi ricaricarla o chiuderla non
+lascia la valvola aperta. Ma con **zero** dashboard aperte quando scade il
+tempo, niente la chiude: per una garanzia che non dipenda dall'esistenza di
+una scheda del browser, usa `buttons` con uno script/un'automazione che
+possiede la temporizzazione lato HA, oppure il timer nativo della valvola se
+ce l'ha.
+
 Tutto il resto (`advisory`, `deficit`, `weekMm`, `lastRun`, `et0`, `etc`,
 `effectiveRain`, `summary`) è opzionale e compare solo se lo imposti.
 **La parte agronomica (ET₀/ETc, deficit accumulato) non fa parte di questo

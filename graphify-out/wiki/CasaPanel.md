@@ -28,7 +28,7 @@
 - **fetchRawHistory()** (2 connections) — `public/panel.js`
 - **fetchTodayStatsDelta()** (2 connections) — `public/panel.js`
 - **.hass()** (2 connections) — `public/panel.js`
-- **FOLDER_NAME** (1 connections) — `public/panel.js`
+- **loadHourlyEnergy()** (1 connections) — `public/dash_neumo.html`
 - *... and 7 more nodes in this community*
 
 ## Relationships

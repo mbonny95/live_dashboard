@@ -23,8 +23,8 @@
 //    energyPrefs()  posts 'casa:energy-prefs'   -> parent runs hass.callWS('energy/get_prefs')
 //    energyToday()  posts 'casa:energy-today'   -> parent runs hass.callWS('recorder/statistics_during_period')
 //    energyHourly() posts 'casa:energy-hourly'  -> parent runs hass.callWS('recorder/statistics_during_period')
-//    userDataGet()  posts 'casa:user-data-get'  -> parent runs hass.callWS('frontend/get_user_data')
-//    userDataSet()  posts 'casa:user-data-set'  -> parent runs hass.callWS('frontend/set_user_data')
+//    userDataGet(key) posts 'casa:user-data-get' -> parent runs hass.callWS('frontend/get_user_data')
+//    userDataSet(key, value) posts 'casa:user-data-set' -> parent runs hass.callWS('frontend/set_user_data')
 //    cameraStream() posts 'casa:camera-stream'  -> parent runs hass.callWS('camera/stream')
 //  panel.js answers with the matching '*-result' message, matched back up by
 //  a request id.
@@ -67,6 +67,7 @@ async function connect(handlers, readyTimeoutMs) {
     if (d.type === 'casa:hass-states') {
       handlers.onStates(Object.assign({}, d.states));
       if (handlers.onLanguage && d.language) handlers.onLanguage(d.language);
+      if (handlers.onEmbedIframe && d.embedIframe !== undefined) handlers.onEmbedIframe(d.embedIframe);
       return;
     }
     if (d.type === 'casa:call-result' || d.type === 'casa:history-result' || d.type === 'casa:registries-result'
@@ -115,7 +116,13 @@ async function connect(handlers, readyTimeoutMs) {
       const id = ++reqId;
       const timeout = setTimeout(() => {
         pending.delete(id);
-        reject(new Error('timeout in attesa della risposta da Home Assistant'));
+        // .code, not just message text: callers (dash_neumo*.html's call()
+        // action log / toast) need to tell "timed out" apart from "HA
+        // rejected the service call" without matching a localized-sounding
+        // English string — v1.8.1.
+        const err = new Error('timeout in attesa della risposta da Home Assistant');
+        err.code = 'timeout';
+        reject(err);
       }, CALL_TIMEOUT_MS);
       pending.set(id, { resolve, reject, timeout });
       window.parent.postMessage(Object.assign({ type, id }, payload), window.location.origin);
@@ -149,12 +156,12 @@ async function connect(handlers, readyTimeoutMs) {
       return send('casa:energy-hourly', { ids });
     },
 
-    userDataGet: function () {
-      return send('casa:user-data-get', {});
+    userDataGet: function (key) {
+      return send('casa:user-data-get', { key });
     },
 
-    userDataSet: function (value) {
-      return send('casa:user-data-set', { value });
+    userDataSet: function (key, value) {
+      return send('casa:user-data-set', { key, value });
     },
 
     // Resolves { url } (an HA-relative /api/hls/<token>/master_m3u8 path,
