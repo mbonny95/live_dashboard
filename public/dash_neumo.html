@@ -1896,7 +1896,7 @@ class Component extends DCLogic {
       if (Date.now() >= this.camCloseAt) this._closeCam();
       else this.setState({});
     }, 1000);
-    this.setState({ cam: id, camStreamLayer: null, camStreamUrl: null, camFastTick: null });
+    this.setState({ cam: id, camStreamLayer: null, camStreamUrl: null, camStillSrc: null });
     this._camStartStream(id);
   }
   _closeCam() {
@@ -1907,7 +1907,11 @@ class Component extends DCLogic {
     // so a slow response for a camera the user already closed (or switched
     // away from) can't land afterwards and flip the now-wrong stream on.
     this.camStreamReqId = (this.camStreamReqId || 0) + 1;
-    this.setState({ cam: null, camStreamLayer: null, camStreamUrl: null });
+    this._camVideoRefKey = null;
+    this._camVideoRefFn = null;
+    this._hlsVideo = null;
+    this._hlsUrl = null;
+    this.setState({ cam: null, camStreamLayer: null, camStreamUrl: null, camPlayingUrl: null, camStillSrc: null });
   }
   _revealCam(id) {
     this.setState({ camRevealed: Object.assign({}, this.state.camRevealed, { [id]: true }) });
@@ -1941,19 +1945,27 @@ class Component extends DCLogic {
         const url = result && result.url;
         diag.wsOk = !!url;
         if (reqId === this.camStreamReqId && url) {
-          const canNative = !!document.createElement('video').canPlayType('application/vnd.apple.mpegurl');
-          if (canNative) {
+          // v1.9.0 — hls.js first wherever Media Source exists (Chrome,
+          // Firefox, Android, desktop Safari, iOS 17.1+), native HLS only
+          // where hls.js can't run. The old order trusted canPlayType():
+          // Chrome now answers "maybe" for HLS but its native player can't
+          // parse the fMP4/HEVC streams Home Assistant produces for many
+          // cameras (seen on a real Imou: DEMUXER_ERROR_COULD_NOT_PARSE),
+          // while hls.js plays the same stream fine.
+          if (window.MediaSource || window.ManagedMediaSource) {
+            const hlsReady = await this._ensureHlsJs();
+            if (reqId !== this.camStreamReqId) return;
+            if (hlsReady && window.Hls.isSupported()) {
+              diag.layer = 'hlsjs';
+              this._setCamDiag(id, diag);
+              this.setState({ camStreamLayer: 'hlsjs', camStreamUrl: url, camPlayingUrl: null });
+              return;
+            }
+          }
+          if (this._camCanNative()) {
             diag.layer = 'hls-native';
             this._setCamDiag(id, diag);
-            this.setState({ camStreamLayer: 'hls-native', camStreamUrl: url });
-            return;
-          }
-          const hlsReady = await this._ensureHlsJs();
-          if (reqId !== this.camStreamReqId) return;
-          if (hlsReady) {
-            diag.layer = 'hls.js';
-            this._setCamDiag(id, diag);
-            this.setState({ camStreamLayer: 'hlsjs', camStreamUrl: url });
+            this.setState({ camStreamLayer: 'hls-native', camStreamUrl: url, camPlayingUrl: null });
             return;
           }
         }
@@ -1969,13 +1981,85 @@ class Component extends DCLogic {
     this._camStartFastPoll(id);
   }
 
+  // v1.9.0 — one stable ref callback per (layer, url). A fresh arrow on
+  // every render made React detach and re-run the ref each time, and the
+  // detail view re-renders every second (the auto-close countdown) plus on
+  // every state push: each run re-set `src` (or re-attached hls.js), which
+  // restarts the media load. Measured on a real camera: 14 reloads in 10 s,
+  // playback never past 0.45 s — a "Live" that was really a stuttering
+  // first frame. Also mutes for real: React doesn't reliably reflect the
+  // template's `muted` attribute, so camera audio played out loud.
+  _camVideoRef(layer, url) {
+    const key = layer + '|' + url;
+    if (this._camVideoRefKey === key && this._camVideoRefFn) return this._camVideoRefFn;
+    this._camVideoRefKey = key;
+    this._camVideoRefFn = (el) => {
+      if (!el) return;
+      el.muted = true;
+      el.defaultMuted = true;
+      if (!el._casaPlayingHook) {
+        el._casaPlayingHook = true;
+        el.addEventListener('playing', () => {
+          const cur = el.getAttribute('data-url');
+          if (cur && this.state.camPlayingUrl !== cur) this.setState({ camPlayingUrl: cur });
+        });
+        // Native layer only: hls.js reports its own failures (see
+        // _attachHlsJs), and a <video> error under hls.js is hls.js's to
+        // recover from.
+        el.addEventListener('error', () => {
+          if (el.getAttribute('data-layer') === 'hls-native') {
+            this._camLayerFailed('hls-native', el.error ? el.error.message || String(el.error.code) : null);
+          }
+        });
+      }
+      el.setAttribute('data-url', url || '');
+      el.setAttribute('data-layer', layer);
+      if (layer === 'hlsjs') {
+        if (this._hlsInstance && this._hlsVideo === el && this._hlsUrl === url) return;
+        this._attachHlsJs(el, url);
+        this._hlsVideo = el;
+        this._hlsUrl = url;
+      } else if (url && el.getAttribute('src') !== url) {
+        el.setAttribute('src', url);
+      }
+    };
+    return this._camVideoRefFn;
+  }
+
+  _camCanNative() {
+    return !!document.createElement('video').canPlayType('application/vnd.apple.mpegurl');
+  }
+
+  // v1.9.0 — a layer that was chosen but fails while playing (hls.js fatal
+  // error, <video> error event) steps down instead of leaving a black box:
+  // hls.js -> native HLS (if the browser has it) -> fast stills. Recorded in
+  // Diagnostica, so "why is my camera only showing previews" has an answer.
+  _camLayerFailed(layer, detail) {
+    const id = this.state.cam;
+    if (!id || this.state.camStreamLayer !== layer) return;
+    if (this._hlsInstance) { try { this._hlsInstance.destroy(); } catch (e) { /* already torn down */ } this._hlsInstance = null; }
+    this._hlsVideo = null;
+    this._hlsUrl = null;
+    const diag = Object.assign({}, (this.camDiag || {})[id], { failedLayer: layer, failDetail: detail || null });
+    if (layer === 'hlsjs' && this.state.camStreamUrl && this._camCanNative()) {
+      diag.layer = 'hls-native';
+      this._setCamDiag(id, diag);
+      this.setState({ camStreamLayer: 'hls-native', camPlayingUrl: null });
+      return;
+    }
+    diag.layer = 'snapshot';
+    this._setCamDiag(id, diag);
+    this.setState({ camStreamLayer: 'snapshot', camStreamUrl: null, camPlayingUrl: null, camStillSrc: null });
+    this._camStartFastPoll(id);
+  }
+
   _setCamDiag(id, diag) {
     this.camDiag = Object.assign({}, this.camDiag, { [id]: diag });
   }
 
   // Lazily loads the vendored hls.js (v1.9.0, ~390 KB) exactly once per
-  // session, the first time a browser without native HLS opens a camera
-  // detail — never paid by installs that never open one. Resolves false
+  // session, the first time a camera detail opens on a browser with Media
+  // Source — never paid by installs that never open one. Resolves false
   // only if vendor/ is missing (a half-copied manual install), in which
   // case the fast-still layer takes over as before.
   _ensureHlsJs() {
@@ -1993,6 +2077,9 @@ class Component extends DCLogic {
     if (this._hlsInstance) { try { this._hlsInstance.destroy(); } catch (e) { /* already torn down */ } this._hlsInstance = null; }
     if (!video || !url || !window.Hls) return;
     const hls = new window.Hls();
+    hls.on(window.Hls.Events.ERROR, (evt, data) => {
+      if (data && data.fatal && this._hlsInstance === hls) this._camLayerFailed('hlsjs', data.details || data.type);
+    });
     hls.loadSource(url);
     hls.attachMedia(video);
     this._hlsInstance = hls;
@@ -2007,15 +2094,37 @@ class Component extends DCLogic {
   // just at start, since _openCam can move to a different camera while this
   // timer is still alive) and suspended in the background the same way the
   // slower preview timer already is.
+  // v1.9.0 — load-chained instead of a fixed 400 ms timer: the next still
+  // is requested only after the previous one arrived, and preloaded off
+  // screen so the shown frame is swapped, never blanked. A fixed timer
+  // replaced the URL faster than a slow camera could answer (measured: one
+  // still = 8.5 s on a real ONVIF camera), so no frame ever finished.
   _camStartFastPoll(id) {
     this._camStopFastPoll();
     if (document.visibilityState === 'hidden') return;
-    this.camFastTimer = setInterval(() => {
-      if (this.state.cam !== id) { this._camStopFastPoll(); return; }
-      this.setState({ camFastTick: Date.now() });
-    }, 400);
+    const gen = this._camStillGen;
+    const step = () => {
+      if (gen !== this._camStillGen || this.state.cam !== id || this.state.camStreamLayer !== 'snapshot') return;
+      const pic = this.at(id, 'entity_picture');
+      if (!pic) { this.camFastTimer = setTimeout(step, 1500); return; }
+      const url = pic + (pic.indexOf('?') === -1 ? '?' : '&') + '_cb=' + Date.now();
+      const pre = new Image();
+      pre.onload = () => {
+        if (gen !== this._camStillGen) return;
+        this.setState({ camStillSrc: url });
+        this.camFastTimer = setTimeout(step, 400);
+      };
+      pre.onerror = () => { if (gen === this._camStillGen) this.camFastTimer = setTimeout(step, 1500); };
+      pre.src = url;
+    };
+    // Next tick, not now: callers set camStreamLayer: 'snapshot' right
+    // before calling this, and that setState hasn't landed yet.
+    this.camFastTimer = setTimeout(step, 0);
   }
-  _camStopFastPoll() { if (this.camFastTimer) { clearInterval(this.camFastTimer); this.camFastTimer = null; } }
+  _camStopFastPoll() {
+    this._camStillGen = (this._camStillGen || 0) + 1;
+    if (this.camFastTimer) { clearTimeout(this.camFastTimer); this.camFastTimer = null; }
+  }
 
   async _boot() {
     await Promise.all([
@@ -2544,11 +2653,15 @@ class Component extends DCLogic {
   // (via `ref="{{ xRef }}"`) omits the real attribute entirely, and this
   // callback sets it imperatively once React has mounted a real node with
   // a real value to give it.
+  // v1.9.0 — idempotent: the ref runs again on every render (a new arrow
+  // each time), and re-setting `src` to the *same* value still restarts an
+  // <img>/<video> load. On a camera whose snapshot takes seconds, that
+  // aborted every load before it finished — nothing ever showed.
   _bindAttr(name, value) {
     return (el) => {
       if (!el) return;
-      if (value == null || value === '') el.removeAttribute(name);
-      else el.setAttribute(name, value);
+      if (value == null || value === '') { if (el.hasAttribute(name)) el.removeAttribute(name); }
+      else if (el.getAttribute(name) !== String(value)) el.setAttribute(name, value);
     };
   }
 
@@ -3145,14 +3258,17 @@ class Component extends DCLogic {
     const camLayerVideo = camStreamLayer === 'hls-native' || camStreamLayer === 'hlsjs';
     const camLayerSnapshot = camStreamLayer === 'snapshot' && camCur && !!camCur.picture;
     const camStreamSrc = camLayerSnapshot
-      ? camCur.picture + (camCur.picture.indexOf('?') === -1 ? '?' : '&') + '_cb=' + (this.state.camFastTick || this.state.snapTick)
+      ? (this.state.camStillSrc || camCur.picture + (camCur.picture.indexOf('?') === -1 ? '?' : '&') + '_cb=' + this.state.snapTick)
       : '';
     const camNoStream = camOpen && !camLayerVideo && !camLayerSnapshot;
-    const camVideoRef = camStreamLayer === 'hlsjs'
-      ? (el) => this._attachHlsJs(el, camStreamUrl)
-      : this._bindAttr('src', camStreamUrl);
+    const camVideoRef = camLayerVideo ? this._camVideoRef(camStreamLayer, camStreamUrl) : null;
     const camShowBadge = camLayerVideo || camLayerSnapshot;
-    const camBadgeLabel = camStreamLayer === 'snapshot' ? this.t('cameras.snapshotBadge') : this.strings.live;
+    // "Live" only once frames actually play: Home Assistant can take 15 s or
+    // more to start a stream on first request, and a black box labeled Live
+    // reads as broken.
+    const camVideoPlaying = camLayerVideo && this.state.camPlayingUrl === camStreamUrl;
+    const camBadgeLabel = camStreamLayer === 'snapshot' ? this.t('cameras.snapshotBadge')
+      : camVideoPlaying ? this.strings.live : this.strings.camConnecting;
     const camRemainingS = camOpen ? Math.max(0, Math.ceil((this.camCloseAt - Date.now()) / 1000)) : 0;
     const camCountdown = Math.floor(camRemainingS / 60) + ':' + String(camRemainingS % 60).padStart(2, '0');
 
@@ -4084,7 +4200,9 @@ class Component extends DCLogic {
         if (!d) return { label: c.name, value: S.diagCamNotOpened };
         const layerLabel = S[camLayerLabelKeys[d.layer]] || d.layer || '—';
         const wsLabel = !d.wsAttempted ? S.diagCamWsNotAttempted : d.wsOk ? S.diagCamWsOk : S.diagCamWsFailed;
-        return { label: c.name, value: layerLabel + ' · ' + wsLabel };
+        const fellBack = d.failedLayer ? ' · ' + S.diagCamFellBack + ' ' + (S[camLayerLabelKeys[d.failedLayer]] || d.failedLayer)
+          + (d.failDetail ? ' (' + d.failDetail + ')' : '') : '';
+        return { label: c.name, value: layerLabel + ' · ' + wsLabel + fellBack };
       });
 
       diagRingValue = !hasEnergy ? S.diagRingNoEnergy

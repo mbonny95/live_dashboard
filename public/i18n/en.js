@@ -15,7 +15,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   houseMode: 'House mode', whoIsHome: "Who's home", lightsOffShort: 'Lights off', allOffShort: 'Everything off.',
   coversDown: 'Covers down', coversUp: 'Covers up', now: 'Now', producedToday: 'Produced today',
   consumption: 'House consumption', controls: 'Controls',
-  surveillance: 'Surveillance', motion: 'Motion', live: 'Live', camAutoClose: 'Closes automatically in',
+  surveillance: 'Surveillance', motion: 'Motion', live: 'Live', camConnecting: 'Connecting…', camAutoClose: 'Closes automatically in',
   noAreasTitle: 'No areas found', noAreasCta: 'Go to Areas',
   noAreasBody: "This dashboard builds itself from Home Assistant's areas: assign your entities to an area to see rooms here.",
   fromGridHint: 'Energy drawn from the grid today — not total house consumption',
@@ -71,7 +71,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
 
   // v1.5.4 — cameras/ring/alarm, static labels
   diagCameraHeading: 'Cameras — live', diagCamNotOpened: 'not opened yet',
-  diagCamLayerNative: 'native HLS', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'fast previews',
+  diagCamFellBack: 'fell back after', diagCamLayerNative: 'native HLS', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'fast previews',
   diagCamWsNotAttempted: 'camera/stream unavailable on this backend', diagCamWsOk: 'camera/stream ok', diagCamWsFailed: 'camera/stream failed',
   diagRingHeading: 'Energy ring', diagRingInUse: 'In use', diagRingNoEnergy: 'no ring (energy not configured)',
   diagRingDoubleLabel: 'double ring', diagRingSingleGeneric: 'single ring',

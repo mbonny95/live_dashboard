@@ -2,7 +2,7 @@
 
 > God node · 21 connections · `public/panel.js`
 
-**Community:** [CasaPanel Host Bridge](CasaPanel_Host_Bridge.md)
+**Community:** [CasaPanel / panel.js](CasaPanel_-_panel.js.md)
 
 ## Connections by Relation
 

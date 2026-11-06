@@ -1,23 +1,23 @@
 # _boot()
 
-> God node · 15 connections · `public/dash_neumo.html`
+> God node · 15 connections · `public/dash_neumo_mobile.html`
 
-**Community:** [Boot and Prefs](Boot_and_Prefs.md)
+**Community:** [_boot / prefs.js](_boot_-_prefs.js.md)
 
 ## Connections by Relation
 
 ### calls
 - componentDidMount() `EXTRACTED`
-- loadUserConfig() `EXTRACTED`
 - load() `EXTRACTED`
 - _resolveEnergyDaily() `EXTRACTED`
 - connect() `EXTRACTED`
-- casaGetStrings() `EXTRACTED`
-- loadScript() `EXTRACTED`
-- _loadHourlyEnergy() ring strip `EXTRACTED`
+- bust() `EXTRACTED`
+- loadUserConfig() `EXTRACTED`
+- _loadHourlyEnergy() `EXTRACTED`
 - casaResolveLang() `EXTRACTED`
+- casaGetStrings() `EXTRACTED`
 - casaMakeT() `EXTRACTED`
-- bust() cache-busting helper `EXTRACTED`
+- loadScript() `EXTRACTED`
 - _startSnapTimer() `EXTRACTED`
 - _loadIrrigationEnds() `EXTRACTED`
 - mergeConfig() `EXTRACTED`

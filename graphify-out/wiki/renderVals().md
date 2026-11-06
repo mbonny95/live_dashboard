@@ -1,40 +1,46 @@
 # renderVals()
 
-> God node · 31 connections · `public/dash_neumo.html`
+> God node · 28 connections · `public/dash_neumo_mobile.html`
 
-**Community:** [Desktop Component Logic](Desktop_Component_Logic.md)
+**Community:** [renderVals / _camStartFastPoll](renderVals_-__camStartFastPoll.md)
 
 ## Connections by Relation
 
 ### calls
-- diagEnvironment() `EXTRACTED`
-- plugStatus() `EXTRACTED`
+- discoverCameras() `EXTRACTED`
+- _camVideoRef() `EXTRACTED`
+- _bindAttr() `EXTRACTED`
 - ROOMS_RESULT() `EXTRACTED`
-- _settingsProblemTab() `EXTRACTED`
-- applianceItems() `EXTRACTED`
-- roomSummary() `INFERRED`
-- findDuplicateDevices() `EXTRACTED`
-- _openCam() `EXTRACTED`
+- diagEnvironment() `EXTRACTED`
 - _closeCam() `EXTRACTED`
-- batterySignVerdict() `EXTRACTED`
-- runValve() `INFERRED`
-- SECTION_ORDER() / SECTION_ORDER_DEFAULT_RESOLVED() `EXTRACTED`
+- plugStatus() `EXTRACTED`
+- SETTINGS_* handlers (room/entity/camera/module/section/power unit/plug threshold/battery sign/reset) `EXTRACTED`
+- _settingsProblemTab() `EXTRACTED`
+- roomDetail() `EXTRACTED`
+- findDuplicateDevices() `EXTRACTED`
+- copyToClipboard() `EXTRACTED`
+- _openCam() `EXTRACTED`
+- formatWatts() `EXTRACTED`
+- ALL_CAMERAS_RESULT() `INFERRED`
+- exportText() `EXTRACTED`
+- _revealCam() `EXTRACTED`
 - diagEnergyInstant() `EXTRACTED`
 - diagEnergyDaily() `EXTRACTED`
-- alarmGuardedCall() `EXTRACTED`
-- _attachHlsJs() `EXTRACTED`
-- deriveConsumption() `EXTRACTED`
-- cover() `EXTRACTED`
-- _bindAttr() ref callback `EXTRACTED`
-- ENTITY_HIDDEN_SET() `INFERRED`
+- ALARM_ID() `EXTRACTED`
 
 ### implements
-- Alarm PIN pad template (sc-if pinOpen) `INFERRED`
-- Diagnostica Recent actions template (diagActionRows / noDiagActionRows) `INFERRED`
-- diagEnvRows (Diagnostica > Ambiente) `INFERRED`
-- doDiag (copy diagnostics text) `INFERRED`
-- doExport (config.js export to clipboard) `INFERRED`
-- Hourly ring strip (hourlyBars) `INFERRED`
+- Energy view block of renderVals (rings, hourly strip, flows) `INFERRED`
+- Irrigation zones block of renderVals (durations, irrPending) `INFERRED`
+
+### references
+- alarmGuardedCall() `EXTRACTED`
+- doDiag (Diagnostica copy) `EXTRACTED`
+- Diagnostica Ultime azioni rows (noDiagActionRows) `EXTRACTED`
+- Diagnostica camera rows (layer, WS, fell back) `EXTRACTED`
+- Diagnostica Ambiente rows (incl. React runtime source) `EXTRACTED`
+
+### shares_data_with
+- Alarm PIN pad template `INFERRED`
 
 ---
 

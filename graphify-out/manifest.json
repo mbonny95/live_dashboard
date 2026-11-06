@@ -30,14 +30,14 @@
     "semantic_hash": "f085ec6bdcc047587c9e8fda616fed43"
   },
   "public/i18n/en.js": {
-    "mtime": 1793997537.1648877,
-    "ast_hash": "2b0d6dae8064388e8a071a2aff2cb3a4",
-    "semantic_hash": "2b0d6dae8064388e8a071a2aff2cb3a4"
+    "mtime": 1793999727.9040284,
+    "ast_hash": "fb2dabdc33354b1e2694554b00cd710c",
+    "semantic_hash": "fb2dabdc33354b1e2694554b00cd710c"
   },
   "public/i18n/it.js": {
-    "mtime": 1793997537.1645584,
-    "ast_hash": "f9d5536f58910fff45010f2fb335bc81",
-    "semantic_hash": "f9d5536f58910fff45010f2fb335bc81"
+    "mtime": 1793999727.903845,
+    "ast_hash": "2a0206d9128a3f2a00c2e6193aac85b1",
+    "semantic_hash": "2a0206d9128a3f2a00c2e6193aac85b1"
   },
   "public/live_dashboard_config.example.js": {
     "mtime": 1787826978.3426723,
@@ -65,19 +65,19 @@
     "semantic_hash": "6719db3df8abacac7cc567ed9e6fe6e8"
   },
   "CHANGELOG.md": {
-    "mtime": 1793998071.5536656,
-    "ast_hash": "0346e03d475e15739ce842c41276876c",
-    "semantic_hash": "0346e03d475e15739ce842c41276876c"
+    "mtime": 1794000065.5886917,
+    "ast_hash": "e3a2889774bdd751b6fcb09189f91776",
+    "semantic_hash": "e3a2889774bdd751b6fcb09189f91776"
   },
   "README.it.md": {
-    "mtime": 1793998239.3285615,
-    "ast_hash": "6918bbb539621a52c444c38e49466fb5",
-    "semantic_hash": "6918bbb539621a52c444c38e49466fb5"
+    "mtime": 1794000059.1818972,
+    "ast_hash": "429f72433c71efca9463650d632a2ffc",
+    "semantic_hash": "429f72433c71efca9463650d632a2ffc"
   },
   "README.md": {
-    "mtime": 1793998239.3284016,
-    "ast_hash": "cab0bca3aa651e66bc125eb9e607e214",
-    "semantic_hash": "cab0bca3aa651e66bc125eb9e607e214"
+    "mtime": 1794000059.1816216,
+    "ast_hash": "7c70332de12c03d23193f74a250f4977",
+    "semantic_hash": "7c70332de12c03d23193f74a250f4977"
   },
   "TROUBLESHOOTING.md": {
     "mtime": 1793998336.152545,
@@ -85,14 +85,14 @@
     "semantic_hash": "55f75317332685af0db2f56333e292de"
   },
   "public/dash_neumo.html": {
-    "mtime": 1793998272.8102965,
-    "ast_hash": "5930d93b9ef0dd8d4d439c4a3b6fa157",
-    "semantic_hash": "5930d93b9ef0dd8d4d439c4a3b6fa157"
+    "mtime": 1794000065.5891447,
+    "ast_hash": "cc0a8512d162c2bb17ee168763f6f4b0",
+    "semantic_hash": "cc0a8512d162c2bb17ee168763f6f4b0"
   },
   "public/dash_neumo_mobile.html": {
-    "mtime": 1793997825.4939156,
-    "ast_hash": "674e02419df425f735959199ef10ef48",
-    "semantic_hash": "674e02419df425f735959199ef10ef48"
+    "mtime": 1793999917.6363416,
+    "ast_hash": "82511a60ba00751b6f24f4b55c4b9c48",
+    "semantic_hash": "82511a60ba00751b6f24f4b55c4b9c48"
   },
   "assets/icon-256.png": {
     "mtime": 1786733001.0,

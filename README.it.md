@@ -482,12 +482,14 @@ telecamere da mantenere a mano.
   davvero fare** (v1.5.4). Toccare un'anteprima prova, in ordine, il primo
   strato che funziona:
   1. Uno stream HLS reale via il componente `stream` di Home Assistant,
-     suonato nativamente — solo Safari, iOS, e molte webview iOS.
-  2. Lo stesso stream tramite `hls.js` 1.7.4, incluso in `public/vendor/`
-     dalla v1.9.0 e caricato solo a questo punto (~390 KB, mai su una pagina
-     che non apre una telecamera) — Chrome, Firefox, Android e la maggior
-     parte delle companion app, che non hanno HLS nativo. Il pannello
-     Diagnostica mostra quale strato è realmente in uso.
+     riprodotto con `hls.js` 1.7.4 — incluso in `public/vendor/` dalla
+     v1.9.0 e caricato solo a questo punto (~390 KB, mai su una pagina che
+     non apre una telecamera). Chrome, Firefox, Android, Safari desktop,
+     iOS 17.1+ e la maggior parte delle companion app.
+  2. Lo stesso stream riprodotto nativamente dal browser, dove hls.js non
+     gira (iOS prima della 17.1). Il pannello Diagnostica mostra quale
+     strato è realmente in uso, e da quale è ripiegato se uno strato ha
+     fallito durante la riproduzione.
   3. Fermi immagine rapidi (2–3 al secondo) dallo stesso endpoint
      `entity_picture` già usato dalle anteprime, con l'etichetta "anteprima
      aggiornata" invece di "live" — il ripiego quando la telecamera non ha

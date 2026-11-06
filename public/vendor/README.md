@@ -11,7 +11,7 @@ from the upstream package, and update this table and
 | `react-dom-18.3.1.production.min.js` | `react-dom` (UMD) | 18.3.1 | MIT (`LICENSE-react.txt`) | always, before `support.js` |
 | `fonts/caprasimo-latin*.woff2` | Caprasimo (Google Fonts, v6) | 1.0 | OFL-1.1 (`fonts/OFL-Caprasimo.txt`) | always, headings |
 | `fonts/figtree-latin*.woff2` | Figtree variable (Google Fonts, v9) | — | OFL-1.1 (`fonts/OFL-Figtree.txt`) | always, body text |
-| `hls.light.min.js` | `hls.js` (`dist/hls.light.min.js`) | 1.7.4 | Apache-2.0 (`LICENSE-hls.js.txt`) | only when a camera's live view opens on a browser without native HLS (Chrome, Android, most companion apps) |
+| `hls.light.min.js` | `hls.js` (`dist/hls.light.min.js`) | 1.7.4 | Apache-2.0 (`LICENSE-hls.js.txt`) | only when a camera's live view opens, on any browser with Media Source (all but iOS before 17.1) |
 
 Integrity:
 

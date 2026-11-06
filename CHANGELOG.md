@@ -39,6 +39,35 @@ rete di sicurezza che gira dentro Home Assistant.
   installazione: 30 secondi, 4 messaggi, 13 entità, ~14 KB. Uno snapshot
   completo viene comunque reinviato ogni 5 minuti e a ogni ricaricamento
   dell'iframe, come rete di sicurezza.
+- **Il live delle telecamere non era mai davvero live (dalla 1.5.4).**
+  Provato su una telecamera reale (Imou, HEVC 2560×1440):
+  - lo stream ripartiva da capo a ogni render (il conto alla rovescia ne
+    fa uno al secondo): 14 ricaricamenti in 10 secondi, riproduzione mai
+    oltre 0,45 s. La causa era una callback `ref` nuova a ogni render che
+    reimpostava `src`. Ora ogni stream ha una callback stabile e non tocca
+    più niente se non cambia;
+  - l'audio della telecamera usciva ad alto volume dal tablet: React non
+    applicava l'attributo `muted` del template. Ora il video è muto
+    davvero;
+  - il livello dei fermi immagine rapidi non mostrava nessun fotogramma
+    sulle telecamere lente (un fermo immagine = 8,5 s su quella provata):
+    l'URL cambiava ogni 400 ms e a ogni render, annullando ogni
+    caricamento. Ora il fotogramma successivo si chiede solo quando il
+    precedente è arrivato, caricato fuori schermo e poi sostituito. Stesso
+    test: prima immagine dopo 2 s, poi una ogni 2-3 s. `_bindAttr` non
+    riscrive più un attributo con lo stesso valore, che riavviava il
+    caricamento di qualunque `<img>`;
+  - ordine dei livelli: prima hls.js ovunque esista Media Source, l'HLS
+    nativo solo dove hls.js non gira (iOS prima della 17.1). Chrome
+    risponde "maybe" a `canPlayType` per HLS ma il suo player nativo è il
+    meno prevedibile; è la stessa scelta del frontend di Home Assistant;
+  - se un livello fallisce mentre gira (errore fatale di hls.js, errore
+    del `<video>`) si scende al successivo — hls.js, HLS nativo, fermi
+    immagine — invece di restare su un riquadro nero con scritto "Live".
+    Diagnostica → Telecamere dice da quale livello è ripiegata e perché;
+  - il badge dice "Connessione…" finché il video non parte davvero (Home
+    Assistant può metterci 10-15 s ad avviare uno stream) e "Live" solo
+    dopo.
 
 ### Added
 
@@ -61,11 +90,12 @@ rete di sicurezza che gira dentro Home Assistant.
   `switch.*` sia `valve.*`. Validato su un'installazione reale (blueprint
   caricato da HA, trigger e azioni validi per `validate_config`).
 - **`hls.js` 1.7.4 incluso** (`vendor/hls.light.min.js`, ~390 KB, Apache-2.0),
-  caricato solo quando si apre il live di una telecamera su un browser senza
-  HLS nativo (Chrome, Android, la maggior parte delle companion app). Prima
+  caricato solo quando si apre il live di una telecamera, su ogni browser con
+  Media Source (tutti tranne iOS prima della 17.1). Prima
   quel livello del live era scritto ma sempre inattivo, e quegli utenti
   vedevano al massimo i fermi immagine rapidi. Il file è identico a quello
-  del pacchetto npm (integrità sha512 del registry verificata).
+  del pacchetto npm (integrità sha512 del registry verificata). Provato su
+  una telecamera reale, desktop e mobile: riproduzione continua, muta.
 - **Diagnostica → Ambiente → "Runtime React"**: "incluso nella dashboard"
   oppure "da CDN (unpkg) — vendor/ mancante, serve internet".
 - **Test e CI.** 20 test con il test runner di Node, senza dipendenze
@@ -83,8 +113,6 @@ rete di sicurezza che gira dentro Home Assistant.
   diventata semplice: è incluso, e si carica solo quando serve.
 - `public/vendor/README.md` elenca ogni file incluso con versione, licenza e
   hash.
-- Il live con hls.js è stato verificato riproducendo uno stream HLS di
-  prova con il file incluso; con una telecamera reale resta da provare.
 
 ---
 
@@ -101,8 +129,13 @@ keypad or password field); the code is never stored or logged. A new
 automation blueprint closes irrigation valves left open past a maximum time
 from inside Home Assistant, covering the zero-open-dashboards gap noted in
 1.8.1. `hls.js` 1.7.4 ships in `vendor/` and loads only when a camera's
-live view opens on a browser without native HLS. 20 dependency-free Node
-tests and a CI workflow on push/PR.
+live view opens. The camera live view, broken since 1.5.4, now actually
+plays: a new ref callback on every render restarted the stream every
+second (14 reloads in 10 s on a real camera), camera audio played unmuted,
+and the fast-still fallback never finished a frame on slow cameras. Layer
+order is now hls.js first, native HLS where hls.js can't run, stills last,
+with automatic fallback on a runtime error and a "Connecting…" badge until
+frames play. 20 dependency-free Node tests and a CI workflow on push/PR.
 
 ## [1.8.1] - 2026-09-22
 

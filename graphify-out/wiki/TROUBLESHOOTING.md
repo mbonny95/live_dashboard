@@ -2,7 +2,7 @@
 
 > God node · 18 connections · `TROUBLESHOOTING.md`
 
-**Community:** [Troubleshooting and Layout Density](Troubleshooting_and_Layout_Density.md)
+**Community:** [TROUBLESHOOTING / Diagnostics panel](TROUBLESHOOTING_-_Diagnostics_panel.md)
 
 ## Connections by Relation
 

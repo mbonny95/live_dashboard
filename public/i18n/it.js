@@ -15,7 +15,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   houseMode: 'Modalità casa', whoIsHome: 'Chi è in casa', lightsOffShort: 'Spegni luci', allOffShort: 'Tutto spento.',
   coversDown: 'Tapparelle giù', coversUp: 'Tapparelle su', now: 'Adesso', producedToday: 'Prodotti oggi',
   consumption: 'Consumo casa', controls: 'Controlli',
-  surveillance: 'Sorveglianza', motion: 'Movimento', live: 'Live', camAutoClose: 'Chiusura automatica tra',
+  surveillance: 'Sorveglianza', motion: 'Movimento', live: 'Live', camConnecting: 'Connessione…', camAutoClose: 'Chiusura automatica tra',
   noAreasTitle: 'Nessuna area trovata', noAreasCta: 'Vai alle Aree',
   noAreasBody: "Questa dashboard si costruisce dalle aree di Home Assistant: assegna le tue entità a un'area per vedere le stanze qui.",
   fromGridHint: 'Energia prelevata dalla rete oggi — non è il consumo totale della casa',
@@ -71,7 +71,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   // v1.5.4 — camere/anello/allarme, static labels
   diagCameraHeading: 'Telecamere — live', diagCamNotOpened: 'non ancora aperta',
-  diagCamLayerNative: 'HLS nativo', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'anteprime rapide',
+  diagCamFellBack: 'ripiego dopo errore di', diagCamLayerNative: 'HLS nativo', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'anteprime rapide',
   diagCamWsNotAttempted: 'camera/stream non disponibile su questo backend', diagCamWsOk: 'camera/stream ok', diagCamWsFailed: 'camera/stream fallito',
   diagRingHeading: 'Anello energia', diagRingInUse: 'In uso', diagRingNoEnergy: 'nessun anello (energia non configurata)',
   diagRingDoubleLabel: 'anello doppio', diagRingSingleGeneric: 'anello singolo',
