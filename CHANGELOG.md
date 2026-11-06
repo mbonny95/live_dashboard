@@ -3,6 +3,53 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.9.0] - Unreleased
+
+### Fixed
+
+- **La dashboard dipendeva da internet per partire, senza dirlo.**
+  `support.js` scaricava React 18.3.1 da `unpkg.com` a ogni caricamento: un
+  Home Assistant senza accesso a internet, una rete che blocca le CDN o un
+  disservizio di unpkg rischiavano uno schermo vuoto, senza nessun messaggio
+  sul tablet. Il README diceva "no dependencies". Ora `react` e `react-dom`
+  sono in `public/vendor/` (~140 KB, licenza MIT inclusa), caricati con due
+  tag `<script>` prima di `support.js`. Il runtime trova già
+  `window.React` e salta il download. I file sono **identici byte per byte** a
+  quelli che arrivavano da unpkg: lo SHA-384 coincide con l'SRI già fissato
+  in `support.js`. Nomi di file con la versione dentro invece di `?v=`, perché
+  il contenuto di react@18.3.1 non cambia mai. Se `vendor/` manca (copia
+  manuale a metà), la CDN resta come fallback, come prima.
+
+### Added
+
+- **Diagnostica → Ambiente → "Runtime React"**: "incluso nella dashboard"
+  oppure "da CDN (unpkg) — vendor/ mancante, serve internet". Così il
+  fallback non resta invisibile a chi usa il tablet a muro.
+
+### Note
+
+- I font (Caprasimo, Figtree) arrivano ancora da Google Fonts. Offline la
+  pagina ripiega sul font di sistema e funziona lo stesso: è un
+  peggioramento estetico, non uno schermo vuoto. Includerli è un possibile
+  passo successivo.
+- La domanda aperta della 1.5.4 su `hls.js` partiva dall'idea che sarebbe
+  stata "la prima dipendenza di terze parti a runtime". Non era così: React lo
+  era già, da CDN. Ora c'è una cartella `vendor/` e un modo collaudato per
+  includere una libreria, e la stessa strada vale anche per `hls.js`.
+
+---
+
+**English summary.** The dashboard silently required internet access:
+`support.js` fetched React 18.3.1 from unpkg on every load, so a local-only
+Home Assistant, a CDN-blocking network or an unpkg outage could leave a blank
+wall tablet with nothing on screen to explain why. React and ReactDOM now ship
+in `public/vendor/`, byte-identical to the unpkg files (their SHA-384 matches
+the SRI already pinned in `support.js`), loaded before `support.js` so its CDN
+fetch never runs. If `vendor/` is missing the CDN still works as a fallback.
+Settings → Diagnostica → Environment gains a "React runtime" row showing which
+copy ran. Web fonts still come from Google Fonts. Offline they degrade to the
+system font, not to a blank screen.
+
 ## [1.8.1] - 2026-09-22
 
 Patch nata da una issue: "i pulsanti dell'irrigazione e la riga del clima non

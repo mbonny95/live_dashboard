@@ -62,6 +62,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   diagEnvIframe: 'Dentro il pannello HA', diagEnvIframeYes: 'sì', diagEnvIframeNo: 'no',
   diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'sì', diagEnvEmbedIframeNo: 'no',
   diagEnvNotApplicableDemo: 'n/d (demo)', diagEnvUnknown: 'non ancora noto',
+  diagEnvRuntime: 'Runtime React', diagEnvRuntimeLocal: 'incluso nella dashboard', diagEnvRuntimeCdn: 'da CDN (unpkg) — vendor/ mancante, serve internet',
   diagEnvLang: 'Lingua rilevata', diagEnvAreas: 'Aree viste da discovery', diagEnvEntities: 'Entità viste da discovery',
   diagEnvRooms: 'Stanze risultanti', diagEnvCameras: 'Telecamere risultanti', diagEnvPrefsOutcome: 'Esito energy/get_prefs',
   diagEnvPrefsOk: 'ok', diagEnvPrefsFailed: 'fallito', diagEnvPrefsUnknown: 'non tentato',

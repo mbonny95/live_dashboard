@@ -3,6 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- v1.9.0 — React ships with the dashboard instead of coming from unpkg on
+     every load: support.js's loadReactUmd() skips its CDN fetch when
+     window.React/ReactDOM already exist, so these two plain tags (before
+     support.js, same file:// constraint as every other script here) are the
+     whole switch. Byte-identical to the unpkg files support.js pins by SRI.
+     A missing vendor/ file (half-copied manual install) still falls back to
+     the CDN; CASA_REACT_SOURCE records which one actually ran, for
+     Diagnostica → Ambiente. Versioned file names, not ?v=: the content of
+     react@18.3.1 never changes, so there's nothing to cache-bust. -->
+<script src="./vendor/react-18.3.1.production.min.js"></script>
+<script src="./vendor/react-dom-18.3.1.production.min.js"></script>
+<script>window.CASA_REACT_SOURCE = (window.React && window.ReactDOM) ? 'local' : 'cdn';</script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -2245,7 +2257,8 @@ class Component extends DCLogic {
       entityCount: (this.registries.entities || []).length,
       roomCount: roomsRes.rooms.length + roomsRes.overflow.length,
       cameraCount: this.ALL_CAMERAS_RESULT().length,
-      prefsOutcome: !this.energyDiag ? 'unknown' : this.energyDiag.prefsFailed ? 'failed' : 'ok'
+      prefsOutcome: !this.energyDiag ? 'unknown' : this.energyDiag.prefsFailed ? 'failed' : 'ok',
+      reactSource: window.CASA_REACT_SOURCE || null
     };
   }
 
@@ -3121,6 +3134,7 @@ class Component extends DCLogic {
         { label: S.diagEnvIframe, value: env.insideIframe ? S.diagEnvIframeYes : S.diagEnvIframeNo },
         { label: S.diagEnvEmbedIframe, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.embedIframe === true ? S.diagEnvEmbedIframeYes : env.embedIframe === false ? S.diagEnvEmbedIframeNo : S.diagEnvUnknown },
         { label: S.diagEnvLang, value: env.lang || '—' },
+        { label: S.diagEnvRuntime, value: env.reactSource === 'local' ? S.diagEnvRuntimeLocal : env.reactSource === 'cdn' ? S.diagEnvRuntimeCdn : S.diagEnvUnknown },
         { label: S.diagEnvAreas, value: String(env.areaCount) },
         { label: S.diagEnvEntities, value: String(env.entityCount) },
         { label: S.diagEnvRooms, value: String(env.roomCount) },

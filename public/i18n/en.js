@@ -62,6 +62,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   diagEnvIframe: 'Inside HA panel', diagEnvIframeYes: 'yes', diagEnvIframeNo: 'no',
   diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'yes', diagEnvEmbedIframeNo: 'no',
   diagEnvNotApplicableDemo: 'n/a (demo)', diagEnvUnknown: 'not known yet',
+  diagEnvRuntime: 'React runtime', diagEnvRuntimeLocal: 'bundled with the dashboard', diagEnvRuntimeCdn: 'from CDN (unpkg) — vendor/ missing, needs internet',
   diagEnvLang: 'Detected language', diagEnvAreas: 'Areas seen by discovery', diagEnvEntities: 'Entities seen by discovery',
   diagEnvRooms: 'Rooms resulting', diagEnvCameras: 'Cameras resulting', diagEnvPrefsOutcome: 'energy/get_prefs outcome',
   diagEnvPrefsOk: 'ok', diagEnvPrefsFailed: 'failed', diagEnvPrefsUnknown: 'not attempted',

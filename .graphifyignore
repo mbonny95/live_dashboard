@@ -1,0 +1,4 @@
+# Third-party minified code: AST noise, not part of the project map.
+public/vendor/
+# Local design mocks, not shipped.
+mock-*.html

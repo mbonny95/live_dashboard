@@ -1,46 +1,32 @@
-# Changelog
+# CHANGELOG
 
-> 12 nodes
+> God node · 35 connections · `CHANGELOG.md`
 
-## Key Concepts
+**Community:** [Energy Schema and Irrigation History](Energy_Schema_and_Irrigation_History.md)
 
-- **Changelog** (31 connections) — `CHANGELOG.md`
-- **[1.7.0] - 2026-08-27** (3 connections) — `CHANGELOG.md`
-- **[1.4.7] - 2026-08-15** (3 connections) — `CHANGELOG.md`
-- **[0.3.0] - 2026-08-13** (3 connections) — `CHANGELOG.md`
-- **[1.7.1] - 2026-09-14** (3 connections) — `CHANGELOG.md`
-- **Added** (2 connections) — `CHANGELOG.md`
-- **Fixed** (1 connections) — `CHANGELOG.md`
-- **Added** (1 connections) — `CHANGELOG.md`
-- **Added** (1 connections) — `CHANGELOG.md`
-- **Fixed** (1 connections) — `CHANGELOG.md`
-- **Added** (1 connections) — `CHANGELOG.md`
-- **Compatibilità con Home Assistant 2026.9.0** (1 connections) — `CHANGELOG.md`
+## Connections by Relation
 
-## Relationships
-
-- [CHANGELOG.md](CHANGELOG.md.md) (1 shared connections)
-- [\[0.1.0\] - 2026-08-12](%5B0.1.0%5D_-_2026-08-12.md) (1 shared connections)
-- [\[0.2.0\] - 2026-08-12](%5B0.2.0%5D_-_2026-08-12.md) (1 shared connections)
-- [\[0.2.1\] - 2026-08-13](%5B0.2.1%5D_-_2026-08-13.md) (1 shared connections)
-- [\[1.0.0\] - 2026-08-13](%5B1.0.0%5D_-_2026-08-13.md) (1 shared connections)
-- [\[1.0.1\] - 2026-08-14](%5B1.0.1%5D_-_2026-08-14.md) (1 shared connections)
-- [\[1.1.0\] - 2026-08-14](%5B1.1.0%5D_-_2026-08-14.md) (1 shared connections)
-- [\[1.1.1\] - 2026-08-14](%5B1.1.1%5D_-_2026-08-14.md) (1 shared connections)
-- [\[1.1.2\] - 2026-08-14](%5B1.1.2%5D_-_2026-08-14.md) (1 shared connections)
-- [\[1.2.0\] - 2026-08-14](%5B1.2.0%5D_-_2026-08-14.md) (1 shared connections)
-- [\[1.3.0\] - 2026-08-14](%5B1.3.0%5D_-_2026-08-14.md) (1 shared connections)
-- [\[1.3.1\] - 2026-08-14](%5B1.3.1%5D_-_2026-08-14.md) (1 shared connections)
-
-## Source Files
-
-- `CHANGELOG.md`
-
-## Audit Trail
-
-- EXTRACTED: 51 (100%)
-- INFERRED: 0 (0%)
-- AMBIGUOUS: 0 (0%)
+### references
+- v1.8.1 — Recent actions log, irrigation state from valve `EXTRACTED`
+- v1.5.4 — Live camera layers, smart plug levels, alarm discovery `EXTRACTED`
+- v1.6.0 — Derived house consumption, demo scenarios `EXTRACTED`
+- v1.9.0 — Vendored React runtime, offline start `EXTRACTED`
+- v1.4.0 — Double ring, energy/get_prefs `EXTRACTED`
+- v1.5.0 — Settings panel `EXTRACTED`
+- v1.5.1 — Diagnostics panel `EXTRACTED`
+- v1.7.1 — Diagnostica: why an entity doesn't show up `EXTRACTED`
+- v1.5.2 — Cover slider long-press fix `EXTRACTED`
+- v1.5.3 — Power units, settings tabs `EXTRACTED`
+- v1.8.0 — Hourly ring strip, cover position band `EXTRACTED`
+- A tag is not a release (push tag + gh release create) `EXTRACTED`
+- v0.1.0 — First public release `EXTRACTED`
+- v1.1.2 — Config-referenced entity exclusion `EXTRACTED`
+- v1.3.0 — HACS support `EXTRACTED`
+- v1.4.1 — Multi-array energy summing `EXTRACTED`
+- v1.4.8 — Room tiles min-content, more domains `EXTRACTED`
+- v1.4.9 — Multi-camera home card `EXTRACTED`
+- v0.2.0 — Cameras `EXTRACTED`
+- v0.2.1 — Folder-derived panel tag `EXTRACTED`
 
 ---
 

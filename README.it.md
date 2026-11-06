@@ -45,6 +45,12 @@ vedi [Modalità demo](#modalità-demo) più sotto.
   Assistant 2022.x in poi; qualunque versione ragionevolmente recente va bene.
 - Niente npm, niente build step. Solo HTML/CSS/JS semplice, caricato come
   moduli ES direttamente da `config/www/`.
+- Nessun accesso a internet necessario per funzionare (v1.9.0). L'unica
+  libreria a runtime, React 18.3.1, è inclusa in `public/vendor/` invece di
+  arrivare da una CDN, quindi un Home Assistant solo locale disegna comunque
+  la dashboard. Impostazioni → Diagnostica → Ambiente → "Runtime React" dice
+  quale copia è stata usata davvero. I due font web arrivano ancora da Google
+  Fonts: offline la pagina ripiega sul font di sistema e resta usabile.
 
 ## Installazione
 

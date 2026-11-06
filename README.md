@@ -53,6 +53,12 @@ no Home Assistant required. It shows invented data and a `DEMO` badge; see
   Home Assistant 2022.x; anything reasonably current works.
 - No npm, no build step. Everything is plain HTML/CSS/JS, loaded as ES
   modules straight from `config/www/`.
+- No internet access needed to run (v1.9.0). The one runtime library, React
+  18.3.1, ships in `public/vendor/` instead of being fetched from a CDN, so a
+  local-only Home Assistant still draws the dashboard. Settings →
+  Diagnostica → Environment → "React runtime" shows which copy actually ran.
+  The two web fonts still come from Google Fonts: offline, the page falls
+  back to the system font and stays fully usable.
 
 ## Installation
 

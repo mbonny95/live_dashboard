@@ -1,50 +1,35 @@
 # CasaPanel
 
-> 32 nodes
+> God node · 21 connections · `public/panel.js`
 
-## Key Concepts
+**Community:** [CasaPanel Host Bridge](CasaPanel_Host_Bridge.md)
 
-- **CasaPanel** (21 connections) — `public/panel.js`
-- **._onMessage()** (11 connections) — `public/panel.js`
-- **panel.js** (10 connections) — `public/panel.js`
-- **._reply()** (10 connections) — `public/panel.js`
-- **fetchHistory()** (4 connections) — `public/panel.js`
-- **._flush()** (4 connections) — `public/panel.js`
-- **._handleHistory()** (4 connections) — `public/panel.js`
-- **._handleEnergyToday()** (4 connections) — `public/panel.js`
-- **._handleEnergyHourly()** (4 connections) — `public/panel.js`
-- **fetchDailyCounterHistory()** (3 connections) — `public/panel.js`
-- **fetchDailyLastSample()** (3 connections) — `public/panel.js`
-- **fetchHourlyEnergy()** (3 connections) — `public/panel.js`
-- **._schedule()** (3 connections) — `public/panel.js`
-- **._handleCall()** (3 connections) — `public/panel.js`
-- **._handleRegistries()** (3 connections) — `public/panel.js`
-- **._handleEnergyPrefs()** (3 connections) — `public/panel.js`
-- **._handleUserDataGet()** (3 connections) — `public/panel.js`
-- **._handleUserDataSet()** (3 connections) — `public/panel.js`
-- **._handleCameraStream()** (3 connections) — `public/panel.js`
-- **toPlainStates()** (2 connections) — `public/panel.js`
-- **isoDay()** (2 connections) — `public/panel.js`
-- **fetchRawHistory()** (2 connections) — `public/panel.js`
-- **fetchTodayStatsDelta()** (2 connections) — `public/panel.js`
-- **.hass()** (2 connections) — `public/panel.js`
-- **loadHourlyEnergy()** (1 connections) — `public/dash_neumo.html`
-- *... and 7 more nodes in this community*
+## Connections by Relation
 
-## Relationships
+### indirect_call
+- panel.js `INFERRED`
 
-- No strong cross-community connections detected
-
-## Source Files
-
-- `public/dash_neumo.html`
-- `public/panel.js`
-
-## Audit Trail
-
-- EXTRACTED: 118 (98%)
-- INFERRED: 2 (2%)
-- AMBIGUOUS: 0 (0%)
+### method
+- ._onMessage() `EXTRACTED`
+- ._reply() `EXTRACTED`
+- ._flush() `EXTRACTED`
+- ._handleEnergyHourly() `EXTRACTED`
+- ._handleEnergyToday() `EXTRACTED`
+- ._handleHistory() `EXTRACTED`
+- ._handleCall() `EXTRACTED`
+- ._handleCameraStream() `EXTRACTED`
+- ._handleEnergyPrefs() `EXTRACTED`
+- ._handleRegistries() `EXTRACTED`
+- ._handleUserDataGet() `EXTRACTED`
+- ._handleUserDataSet() `EXTRACTED`
+- ._schedule() `EXTRACTED`
+- .hass() `EXTRACTED`
+- .connectedCallback() `EXTRACTED`
+- .constructor() `EXTRACTED`
+- .disconnectedCallback() `EXTRACTED`
+- .narrow() `EXTRACTED`
+- .panel() `EXTRACTED`
+- .route() `EXTRACTED`
 
 ---
 
