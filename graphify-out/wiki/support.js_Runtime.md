@@ -1,6 +1,6 @@
 # support.js Runtime
 
-> 65 nodes · cohesion 0.07
+> 61 nodes · cohesion 0.07
 
 ## Key Concepts
 
@@ -17,7 +17,6 @@
 - **collectProps()** (6 connections) — `public/support.js`
 - **walkComponent()** (6 connections) — `public/support.js`
 - **walkFor()** (6 connections) — `public/support.js`
-- **loadReactUmd()** (5 connections) — `public/support.js`
 - **walkIf()** (5 connections) — `public/support.js`
 - **walkText()** (5 connections) — `public/support.js`
 - **cssToObj()** (4 connections) — `public/support.js`
@@ -29,14 +28,14 @@
 - **walkDeckChildren()** (4 connections) — `public/support.js`
 - **compileTemplate()** (3 connections) — `public/support.js`
 - **createComponentFactory()** (3 connections) — `public/support.js`
-- *... and 40 more nodes in this community*
+- **createPseudoSheet()** (3 connections) — `public/support.js`
+- *... and 36 more nodes in this community*
 
 ## Relationships
 
+- [Mobile Boot and Vendored Runtime](Mobile_Boot_and_Vendored_Runtime.md) (3 shared connections)
+- [Boot and Prefs](Boot_and_Prefs.md) (2 shared connections)
 - [Registry Discovery](Registry_Discovery.md) (2 shared connections)
-- [prefs.js Persistence](prefs.js_Persistence.md) (1 shared connections)
-- [Diagnostica Environment](Diagnostica_Environment.md) (1 shared connections)
-- [Mobile Boot and Runtime Loading](Mobile_Boot_and_Runtime_Loading.md) (1 shared connections)
 
 ## Source Files
 
@@ -44,8 +43,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 279 (98%)
-- INFERRED: 6 (2%)
+- EXTRACTED: 269 (99%)
+- INFERRED: 4 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---

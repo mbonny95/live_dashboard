@@ -21,7 +21,11 @@
 <x-dc>
 <helmet>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Caprasimo:wght@400&family=Figtree:wght@400;600;700&display=swap');
+/* v1.9.0 — fonts ship in ./vendor/fonts/ (OFL, see vendor/README.md) instead of Google Fonts: the page looks the same with no internet. Figtree is variable, one file per subset covers every weight used here. */
+@font-face{font-family:'Caprasimo';font-style:normal;font-weight:400;font-display:swap;src:url('./vendor/fonts/caprasimo-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Caprasimo';font-style:normal;font-weight:400;font-display:swap;src:url('./vendor/fonts/caprasimo-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Figtree';font-style:normal;font-weight:300 900;font-display:swap;src:url('./vendor/fonts/figtree-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Figtree';font-style:normal;font-weight:300 900;font-display:swap;src:url('./vendor/fonts/figtree-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
 :root{--font-heading:"Caprasimo",system-ui,sans-serif;--font-body:"Figtree",system-ui,sans-serif}
 :root,[data-theme="day"]{--page:#eaeef4;--gr:#e0e5ec;--nu-d:#a3b1c6;--nu-l:#ffffff;--tx:#2b303b;--tx2:#5a6377;
 --acc:#c67139;--accT:#8c491a;--sage:#7a8a5e;--sageT:#4f5c39;--feed:#b3c194;--onAcc:#fff;--tint:rgba(198,113,57,.13);--warn:#b4741c;--alert:#a83e2b;--ok:#4f5c39}
@@ -1630,6 +1634,49 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 </sc-if>
 
+<!-- Alarm PIN pad (v1.9.0) — see alarmGuardedCall() in renderVals. Opens
+     only for a panel declaring code_format. No mount animation, same reason
+     as the toast below: with live state updates, a style= animation would
+     replay on every unrelated re-render while the pad is open. -->
+<sc-if value="{{ pinOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ pinCancel }}" style="position:fixed;inset:0;background:rgba(20,24,30,.52);backdrop-filter:blur(3px);z-index:46"></div>
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;z-index:47;inset:0;display:grid;place-items:center;padding:20px;pointer-events:none;color:var(--tx)">
+<div style="width:min(340px,100%);background:var(--page);box-shadow:0 22px 54px rgba(20,24,30,.3);border-radius:30px;padding:22px;pointer-events:auto">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:44px;height:44px;border-radius:17px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="20" height="20" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shield"></use></svg>
+</div>
+<div style="flex:1;min-width:0">
+<div style="font-family:var(--font-heading);font-size:19px;line-height:1.15">{{ S.pinTitle }}</div>
+<div style="font:500 11.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ pinAction }}</div>
+</div>
+<button onClick="{{ pinCancel }}" aria-label="{{ S.pinCancel }}" style="width:44px;height:44px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="17" height="17" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+<sc-if value="{{ pinNumeric }}" hint-placeholder-val="{{ true }}">
+<div style="height:52px;margin-top:18px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-ins);display:grid;place-items:center;font:700 22px/1 var(--font-body);letter-spacing:8px;color:var(--tx)">{{ pinDots }}</div>
+</sc-if>
+<sc-if value="{{ pinIsText }}" hint-placeholder-val="{{ false }}">
+<input type="password" autocomplete="off" aria-label="{{ S.pinTitle }}" value="{{ pinValue }}" onChange="{{ pinInput }}" onKeyDown="{{ pinKeyDown }}" style="display:block;width:100%;height:52px;margin-top:18px;border:0;outline:0;border-radius:16px;background:var(--gr);box-shadow:var(--nu-ins);text-align:center;font:700 18px/1 var(--font-body);color:var(--tx)">
+</sc-if>
+<sc-if value="{{ pinHasError }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11.5px/1.4 var(--font-body);color:var(--accT);margin-top:10px;text-align:center">{{ S.pinRejected }}</div>
+</sc-if>
+<sc-if value="{{ pinNumeric }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:repeat(3,64px);gap:12px;justify-content:center;margin-top:18px">
+<sc-for list="{{ pinKeys }}" as="k" hint-placeholder-count="12">
+<button onClick="{{ k.run }}" aria-label="{{ k.aria }}" data-sel="{{ k.isOk }}" style="width:64px;height:64px;border-radius:20px;background:var(--gr);box-shadow:var(--nu-sm);font:600 20px/1 var(--font-body);color:var(--tx)">{{ k.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ pinIsText }}" hint-placeholder-val="{{ false }}">
+<button onClick="{{ pinSubmit }}" data-sel="true" style="display:block;width:100%;height:52px;margin-top:14px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);font:600 14px/1 var(--font-body);color:var(--tx)">{{ pinSubmitLabel }}</button>
+</sc-if>
+</div>
+</div>
+</sc-if>
+
 <!-- Action toast (v1.8.1) — failed/timed-out service calls only, see
      call()/_showActionToast(). No mount animation: a template-driven one
      (an `animation:` in style=) would replay on every unrelated re-render
@@ -1747,7 +1794,7 @@ class Component extends DCLogic {
   state = { st: {}, status: 'connecting', tab: 'casa', room: null, allRooms: false, theme: null, hist: null, range: 7, weather: false, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
     settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false,
     diagReasonsOpen: false, diagReasonGroupsOpen: {}, hourlyEnergy: undefined,
-    toast: null, irrigationEnds: {}, irrPending: {} };
+    toast: null, irrigationEnds: {}, irrPending: {}, pin: null };
   // Safe synchronous defaults: the first render happens before
   // componentDidMount's dynamic imports resolve, so these must already be
   // usable — _boot() below replaces them and forces a re-render via setState.
@@ -1877,9 +1924,9 @@ class Component extends DCLogic {
   //   1. camera/stream in HLS format, played natively (<video src>) —
   //      Safari/iOS/many iOS webviews only; the only layer that is a real
   //      live stream.
-  //   2. same URL, played via a vendored hls.js — written, but the vendor
-  //      file ships in no release yet (open question, see CLAUDE.md); inert
-  //      until someone drops public/vendor/hls.light.min.js in place.
+  //   2. same URL, played via the vendored hls.js (public/vendor/
+  //      hls.light.min.js, shipped since v1.9.0) — Chrome/Android/most
+  //      companion apps, which have no native HLS.
   //   3. camera_proxy stills (the same endpoint the previews already use
   //      successfully), cache-busted at a fast interval, only while the
   //      detail view is open — see _camStartFastPoll.
@@ -1926,11 +1973,11 @@ class Component extends DCLogic {
     this.camDiag = Object.assign({}, this.camDiag, { [id]: diag });
   }
 
-  // Lazily probes for a vendored hls.js exactly once per session: no vendor
-  // file shipped in this release (open question — see CLAUDE.md), so on
-  // every install today this resolves false after one harmless 404 the
-  // first time a non-Safari browser opens a camera detail — never paid by
-  // installs that never open one, and never repeated after the first try.
+  // Lazily loads the vendored hls.js (v1.9.0, ~390 KB) exactly once per
+  // session, the first time a browser without native HLS opens a camera
+  // detail — never paid by installs that never open one. Resolves false
+  // only if vendor/ is missing (a half-copied manual install), in which
+  // case the fast-still layer takes over as before.
   _ensureHlsJs() {
     if (window.Hls) return Promise.resolve(true);
     if (!this._hlsJsLoadPromise) {
@@ -3242,24 +3289,58 @@ class Component extends DCLogic {
     const supp = isNaN(feat) ? 0 : feat;
     // A code_format-declaring entity fails `failed to perform action` if we
     // call arm/disarm without `code` — same profile as the cover
-    // SET_POSITION guard elsewhere in this file. No PIN pad in this release
-    // (CLAUDE.md's v1.5.4 spec, point 3 — deliberately deferred), so a
-    // gated action stays a no-op with an explicit note instead of a
-    // service call that goes out and silently fails. code_arm_required
+    // SET_POSITION guard elsewhere in this file. So a gated action never
+    // goes out without a code: since v1.9.0 it opens the PIN pad (see
+    // alarmGuardedCall below); before that it was a no-op with a note,
+    // never a service call that silently fails. code_arm_required
     // only ever softens *arming* — HA's alarm_control_panel model has no
     // equivalent bypass for disarm, so disarm is gated on code_format alone.
     const alarmCodeFormat = hasAlarm ? this.at(alarmId, 'code_format') : null;
     const alarmCodeArmRequired = hasAlarm ? this.at(alarmId, 'code_arm_required') : undefined;
     const alarmNeedsCodeArm = !!alarmCodeFormat && alarmCodeArmRequired !== false;
     const alarmNeedsCodeDisarm = !!alarmCodeFormat;
-    const alarmGuardedCall = (service, needsCode) => needsCode ? () => {} : () => this.call('alarm_control_panel', service, { entity_id: alarmId });
-    const alarmBtns = hasAlarm ? [{ label: this.t('alarm.disarmed'), sel: alarmSt === 'disarmed', run: alarmGuardedCall('alarm_disarm', alarmNeedsCodeDisarm) }] : [];
+    // v1.9.0 — PIN pad. A gated action opens the pad instead of doing
+    // nothing. The code lives only in this.state.pin while the pad is open:
+    // never stored, never logged (call() records entity and service, not
+    // data), never shown in clear. code_format 'number' gets a keypad;
+    // anything else ('text', or an old-style regex) a password field with
+    // the system keyboard, since a digits-only pad couldn't type it.
+    const alarmGuardedCall = (service, needsCode, label) => needsCode
+      ? () => this.setState({ pin: { service, label, value: '', busy: false, error: false } })
+      : () => this.call('alarm_control_panel', service, { entity_id: alarmId });
+    const pin = hasAlarm ? this.state.pin : null;
+    const pinOpen = !!pin;
+    const pinNumeric = alarmCodeFormat === 'number';
+    const pinSet = (patch) => { if (this.state.pin) this.setState({ pin: Object.assign({}, this.state.pin, patch) }); };
+    const pinCancel = () => this.setState({ pin: null });
+    const pinSubmit = () => {
+      const p = this.state.pin;
+      if (!p || p.busy || !p.value) return;
+      pinSet({ busy: true, error: false });
+      // Pad stays open until HA answers: a wrong code clears the digits and
+      // says so here, next to where it was typed, on top of call()'s toast.
+      this.call('alarm_control_panel', p.service, { entity_id: alarmId, code: p.value }).then((res) => {
+        if (!this.state.pin) return;
+        if (res && res.ok) this.setState({ pin: null });
+        else pinSet({ busy: false, error: true, value: '' });
+      });
+    };
+    const pinDigit = (d) => () => { const p = this.state.pin; if (p && !p.busy && p.value.length < 12) pinSet({ value: p.value + d, error: false }); };
+    const pinBack = () => { const p = this.state.pin; if (p && !p.busy) pinSet({ value: p.value.slice(0, -1) }); };
+    const pinKeys = !pinOpen || !pinNumeric ? [] : ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+      .map((d) => ({ label: d, aria: d, run: pinDigit(d), isOk: false }))
+      .concat([
+        { label: '⌫', aria: this.strings.pinBackspace, run: pinBack, isOk: false },
+        { label: '0', aria: '0', run: pinDigit('0'), isOk: false },
+        { label: pin.busy ? '…' : 'OK', aria: this.strings.pinConfirm, run: pinSubmit, isOk: true }
+      ]);
+    const alarmBtns = hasAlarm ? [{ label: this.t('alarm.disarmed'), sel: alarmSt === 'disarmed', run: alarmGuardedCall('alarm_disarm', alarmNeedsCodeDisarm, this.t('alarm.disarmed')) }] : [];
     if (hasAlarm) [[1, 'armed_home', 'alarm_arm_home', this.t('alarm.btnHome')],
      [2, 'armed_away', 'alarm_arm_away', this.t('alarm.btnAway')],
      [4, 'armed_night', 'alarm_arm_night', this.t('alarm.btnNight')],
      [16, 'armed_custom_bypass', 'alarm_arm_custom_bypass', this.t('alarm.btnCustom')],
      [32, 'armed_vacation', 'alarm_arm_vacation', this.t('alarm.btnVacation')]].forEach((b) => {
-      if (supp & b[0]) alarmBtns.push({ label: b[3], sel: alarmSt === b[1], run: alarmGuardedCall(b[2], alarmNeedsCodeArm) });
+      if (supp & b[0]) alarmBtns.push({ label: b[3], sel: alarmSt === b[1], run: alarmGuardedCall(b[2], alarmNeedsCodeArm, b[3]) });
     });
     const alarmCodeNote = hasAlarm && (alarmNeedsCodeArm || alarmNeedsCodeDisarm) ? this.t('alarm.codeRequired') : '';
 
@@ -4227,6 +4308,12 @@ class Component extends DCLogic {
       casaSections,
       hasAlarm, alarmLabel: al[0], alarmTone: al[1], alarmStroke: alarmSt === 'disarmed' ? 'var(--tx2)' : 'var(--acc)', alarmBtns,
       hasAlarmCodeNote: !!alarmCodeNote, alarmCodeNote,
+      pinOpen, pinNumeric, pinIsText: pinOpen && !pinNumeric, pinKeys, pinCancel, pinSubmit,
+      pinAction: pin ? pin.label : '', pinValue: pin ? pin.value : '', pinHasError: !!(pin && pin.error),
+      pinDots: pin && pin.value ? '•'.repeat(pin.value.length) : '',
+      pinSubmitLabel: pin && pin.busy ? '…' : this.strings.pinConfirm,
+      pinInput: (e) => { const p = this.state.pin; if (p && !p.busy) pinSet({ value: e.target.value, error: false }); },
+      pinKeyDown: (e) => { if (e.key === 'Enter') pinSubmit(); else if (e.key === 'Escape') pinCancel(); },
       hasCameras, hasCamTab, camList, camMain, camMulti, camCols: String(camCols),
       camHomeSingle, camHomeMulti, camHomeTiles,
       camHeadline, camSub, goCams,

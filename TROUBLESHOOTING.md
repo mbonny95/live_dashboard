@@ -13,7 +13,7 @@ rendered, though — for a genuinely blank/black panel, see the next section.
 
 ### Before you open an issue: try it in `?demo&scenario=…`
 
-The demo backend (`ha-backend-demo.js`) can be forced into seven fixed data
+The demo backend (`ha-backend-demo.js`) can be forced into nine fixed data
 states, each reachable as a URL — open `dash_neumo.html?demo&scenario=<id>`
 (or `dash_neumo_mobile.html` on a narrow screen) straight from `file://`, no
 Home Assistant needed. A thin dark bar at the bottom of the demo lets you
@@ -29,12 +29,14 @@ for screenshots.
 | `partial` | only production + grid-import configured — no export sensor, no battery: exercises the single-ring energy fallback |
 | `missing` | config points at entity IDs that don't exist — exercises the empty-state / Diagnostica indicators |
 | `odd-units` | power sensors declaring `Kw`, `w`, `MW`, and one unrecognized unit |
+| `call-timeout` | every `switch.*` call times out — exercises the error toast and Diagnostica → Recent actions |
+| `alarm-pin` | the alarm panel declares `code_format: number` — every arm/disarm opens the PIN pad; the demo accepts `1234` only |
 
 If a bug reproduces in one of these, paste the exact `?demo&scenario=…` link
 into the issue — it's a fixed, shareable data state, so whoever picks up the
 issue sees precisely what you saw without needing your Home Assistant
 instance. If it *doesn't* reproduce in the closest matching scenario, that's
-useful too: it means the bug depends on something these seven states don't
+useful too: it means the bug depends on something these nine states don't
 cover (a specific sensor value, a device quirk), which is worth saying in the
 issue.
 
@@ -106,19 +108,25 @@ issue.
 
 ### Too many rooms / the grid looks cramped
 
-- The Casa view is fixed at 1200×800 with no scroll, sized for about 8 tiles.
-  Rooms beyond `rooms.max` (default 8) go behind the "+N rooms" button next
-  to the "Rooms" heading instead of being squeezed into the grid. Use
-  `rooms.order` / `rooms.hide` in `config.js` to control which 8 are pinned.
+- The rooms column shows up to `rooms.max` tiles (default 12, since v1.4.8),
+  two per row, each sized to its content, and scrolls inside the column once
+  it's full — scrolling is expected, typography and touch targets are never
+  shrunk to fit (the old "everything on one 1280×800 screen" rule was
+  retired in v1.4.9). Rooms beyond `rooms.max` go behind the "+N rooms"
+  button next to the "Rooms" heading. Settings → Rooms hides and reorders
+  them without editing files; `rooms.order` / `rooms.hide` in `config.js`
+  set the installation default.
 
 ### An entity I expect just doesn't show up anywhere
 
-Check, in order: is it disabled or hidden in the entity registry; does it (or
-its device) have an area assigned; is its domain one of
-`light/switch/cover/media_player/climate/fan/vacuum` or a `sensor` with
-`device_class: temperature`/`humidity` (any other sensor domain isn't grouped
-into rooms at all — it can still be wired into Energy/Irrigation/Vehicle via
-`config.js`, which take explicit entity IDs).
+Start from Settings → Diagnostica → "N entities not shown" (v1.7.1): every
+entity discovery skipped is listed there with the reason — no area, unknown
+area, no live state, claimed by a module, disabled/hidden, diagnostic
+entity. If it isn't in that list, check that its domain is one rooms show
+(see "Known limits" in README.md for the full list of domains and sensor
+`device_class`es); any other sensor isn't grouped into rooms at all, but can
+still be wired into Energy/Irrigation/Vehicle via `config.js`, which take
+explicit entity IDs.
 
 ### Entities show `unavailable` in grey
 
@@ -242,11 +250,14 @@ one.
 ### Alarm buttons tap but nothing happens
 
 If the entity declares a `code_format` (a PIN/code the integration
-requires), this dashboard deliberately does **not** call the service
-without one — there's no PIN pad yet, so arm/disarm on that entity is a
-no-op with a note under the buttons explaining why, rather than a silent
-`failed to perform action`. Use the Home Assistant app for that panel until
-a code entry lands here.
+requires), every arm/disarm opens a PIN pad first (v1.9.0): a numeric
+keypad for `code_format: number`, a password field with the system keyboard
+otherwise. A code the panel rejects keeps the pad open with "Code not
+accepted" and an error toast. The code is never saved, logged or included
+in "Copy diagnostics". If a tap still does nothing, open Settings →
+Diagnostica → Recent actions: it shows the call and Home Assistant's
+answer. Before v1.9.0 there was no pad, and a code-gated action was a no-op
+with a note under the buttons.
 
 ### A whole section (Energy / Irrigation / Vehicle / Cameras / Modes / People) is missing
 

@@ -353,8 +353,18 @@ const SCENARIOS = [
   // `switch.*` service call rejects with the same .code:'timeout' shape
   // ha-backend-panel.js's real 15s timeout produces, after a short delay —
   // see demoBackend().call below for where this id is actually read.
-  { id: 'call-timeout', name: 'Chiamate switch in timeout' }
+  { id: 'call-timeout', name: 'Chiamate switch in timeout' },
+  // v1.9.0 — a panel that declares code_format, so every arm/disarm opens
+  // the PIN pad. The demo accepts DEMO_ALARM_CODE only; anything else
+  // fails the same way a real panel does, to show the "code not accepted"
+  // path. Pure data, like every other scenario: the check below is keyed
+  // on the entity's own code_format attribute, not on this scenario's id.
+  { id: 'alarm-pin', name: 'Allarme con codice (1234)',
+    states: {
+      'alarm_control_panel.demo_home': { attributes: { code_format: 'number', code_arm_required: true } }
+    } }
 ];
+const DEMO_ALARM_CODE = '1234';
 const SCENARIO_MAP = {};
 SCENARIOS.forEach((s) => { SCENARIO_MAP[s.id] = s; });
 
@@ -467,6 +477,13 @@ async function connect(handlers) {
           const err = new Error('timeout in attesa della risposta da Home Assistant (demo)');
           err.code = 'timeout';
           throw err;
+        }
+        if (domain === 'alarm_control_panel') {
+          const needsCode = ids(data).some((id) => states[id] && states[id].attributes && states[id].attributes.code_format);
+          if (needsCode && (data && data.code) !== DEMO_ALARM_CODE) {
+            await new Promise((r) => setTimeout(r, 300));
+            throw new Error('Invalid alarm code (demo)');
+          }
         }
         await new Promise((r) => setTimeout(r, 120));
         const targets = ids(data);

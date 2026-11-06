@@ -5,6 +5,11 @@ All notable changes to this project are documented here. Format follows
 
 ## [1.9.0] - Unreleased
 
+Release "funziona anche senza internet, e chiede il codice". Tutto quello che
+la dashboard carica all'avvio ora arriva dall'installazione stessa, la
+centrale d'allarme con PIN si comanda dalla dashboard, e l'irrigazione ha una
+rete di sicurezza che gira dentro Home Assistant.
+
 ### Fixed
 
 - **La dashboard dipendeva da internet per partire, senza dirlo.**
@@ -13,42 +18,91 @@ All notable changes to this project are documented here. Format follows
   disservizio di unpkg rischiavano uno schermo vuoto, senza nessun messaggio
   sul tablet. Il README diceva "no dependencies". Ora `react` e `react-dom`
   sono in `public/vendor/` (~140 KB, licenza MIT inclusa), caricati con due
-  tag `<script>` prima di `support.js`. Il runtime trova già
-  `window.React` e salta il download. I file sono **identici byte per byte** a
-  quelli che arrivavano da unpkg: lo SHA-384 coincide con l'SRI già fissato
-  in `support.js`. Nomi di file con la versione dentro invece di `?v=`, perché
-  il contenuto di react@18.3.1 non cambia mai. Se `vendor/` manca (copia
-  manuale a metà), la CDN resta come fallback, come prima.
+  tag `<script>` prima di `support.js`: il runtime trova già `window.React`
+  e salta il download. I file sono **identici byte per byte** a quelli di
+  unpkg: lo SHA-384 coincide con l'SRI già fissato in `support.js`, e un test
+  lo ricontrolla. Se `vendor/` manca (copia manuale a metà), la CDN resta
+  come fallback.
+- **Font da Google Fonts.** Caprasimo e Figtree ora sono in
+  `public/vendor/fonts/` (woff2, licenza OFL, ~53 KB in tutto). Figtree è
+  variabile: un file per sottoinsieme copre tutti i pesi usati, compreso il
+  500 che prima veniva simulato dal browser. Verificato sul campo: zero
+  richieste fuori dall'installazione all'avvio.
+- **Ogni aggiornamento di stato copiava tutto `hass.states` nell'iframe.**
+  `panel.js` inviava ogni 600 ms una copia completa di tutte le entità
+  (su un'installazione reale: 666 entità, ~175 KB a messaggio) e la
+  dashboard si ridisegnava anche quando l'aggiornamento riguardava
+  un'entità che non mostra. Ora dopo il primo snapshot passa solo ciò che è
+  cambiato (`casa:hass-states-delta`): Home Assistant sostituisce l'oggetto
+  di un'entità quando cambia, quindi basta confrontare i riferimenti. Un
+  aggiornamento che non cambia nulla non invia nulla. Misurato sulla stessa
+  installazione: 30 secondi, 4 messaggi, 13 entità, ~14 KB. Uno snapshot
+  completo viene comunque reinviato ogni 5 minuti e a ogni ricaricamento
+  dell'iframe, come rete di sicurezza.
 
 ### Added
 
+- **Tastierino PIN per l'allarme.** Una centrale che dichiara
+  `code_format` prima mostrava solo la nota "usa l'app Home Assistant". Ora
+  ogni inserimento/disinserimento apre un tastierino (tasti da 64 px) per
+  `code_format: number`, oppure un campo password con la tastiera di
+  sistema per i codici alfanumerici. Il tastierino resta aperto finché Home
+  Assistant risponde: con un codice sbagliato cancella le cifre e dice
+  "Codice non accettato", oltre al toast. Il codice non viene mai salvato,
+  registrato in Diagnostica → Ultime azioni, né incluso in "Copia
+  diagnostica". Nuovo scenario demo `?demo&scenario=alarm-pin` (codice
+  `1234`).
+- **Blueprint "irrigation safety close".** In
+  `blueprints/automation/live_dashboard/`, importabile con un clic dal
+  README: chiude le valvole rimaste aperte oltre un tempo massimo (20 minuti
+  di default), chiunque le abbia aperte, più quelle ancora aperte al
+  riavvio di Home Assistant. Copre il limite dichiarato nella 1.8.1: con
+  zero dashboard aperte la chiusura temporizzata non partiva. Gestisce sia
+  `switch.*` sia `valve.*`. Validato su un'installazione reale (blueprint
+  caricato da HA, trigger e azioni validi per `validate_config`).
+- **`hls.js` 1.7.4 incluso** (`vendor/hls.light.min.js`, ~390 KB, Apache-2.0),
+  caricato solo quando si apre il live di una telecamera su un browser senza
+  HLS nativo (Chrome, Android, la maggior parte delle companion app). Prima
+  quel livello del live era scritto ma sempre inattivo, e quegli utenti
+  vedevano al massimo i fermi immagine rapidi. Il file è identico a quello
+  del pacchetto npm (integrità sha512 del registry verificata).
 - **Diagnostica → Ambiente → "Runtime React"**: "incluso nella dashboard"
-  oppure "da CDN (unpkg) — vendor/ mancante, serve internet". Così il
-  fallback non resta invisibile a chi usa il tablet a muro.
+  oppure "da CDN (unpkg) — vendor/ mancante, serve internet".
+- **Test e CI.** 20 test con il test runner di Node, senza dipendenze
+  (`node --test 'tests/*.test.mjs'`): ordine delle sezioni, visibilità,
+  prese smart, duplicati Matter, motivi di scarto di `discoverRooms`,
+  integrità dei file in `vendor/`, nessuna risorsa esterna nelle pagine,
+  stesse chiavi in `it.js` ed `en.js`, `VERSION` allineata al CHANGELOG.
+  Nuovo workflow `.github/workflows/test.yml` su push e pull request.
 
 ### Note
 
-- I font (Caprasimo, Figtree) arrivano ancora da Google Fonts. Offline la
-  pagina ripiega sul font di sistema e funziona lo stesso: è un
-  peggioramento estetico, non uno schermo vuoto. Includerli è un possibile
-  passo successivo.
 - La domanda aperta della 1.5.4 su `hls.js` partiva dall'idea che sarebbe
-  stata "la prima dipendenza di terze parti a runtime". Non era così: React lo
-  era già, da CDN. Ora c'è una cartella `vendor/` e un modo collaudato per
-  includere una libreria, e la stessa strada vale anche per `hls.js`.
+  stata "la prima dipendenza di terze parti a runtime". Non era così: React
+  lo era già, da CDN. Con `vendor/` e il test di integrità la decisione è
+  diventata semplice: è incluso, e si carica solo quando serve.
+- `public/vendor/README.md` elenca ogni file incluso con versione, licenza e
+  hash.
+- Il live con hls.js è stato verificato riproducendo uno stream HLS di
+  prova con il file incluso; con una telecamera reale resta da provare.
 
 ---
 
-**English summary.** The dashboard silently required internet access:
-`support.js` fetched React 18.3.1 from unpkg on every load, so a local-only
-Home Assistant, a CDN-blocking network or an unpkg outage could leave a blank
-wall tablet with nothing on screen to explain why. React and ReactDOM now ship
-in `public/vendor/`, byte-identical to the unpkg files (their SHA-384 matches
-the SRI already pinned in `support.js`), loaded before `support.js` so its CDN
-fetch never runs. If `vendor/` is missing the CDN still works as a fallback.
-Settings → Diagnostica → Environment gains a "React runtime" row showing which
-copy ran. Web fonts still come from Google Fonts. Offline they degrade to the
-system font, not to a blank screen.
+**English summary.** Everything the dashboard loads at startup now comes
+from the installation itself: React 18.3.1 (byte-identical to the unpkg
+files, SHA-384 matching the SRI in `support.js`) and the Caprasimo/Figtree
+web fonts ship in `public/vendor/`, so a local-only Home Assistant no longer
+risks a blank wall tablet; Diagnostica → Environment shows which React copy
+ran. `panel.js` now pushes only changed entities to the iframe after one
+full snapshot (measured on a real 666-entity install: ~14 KB in 30 s instead
+of a ~175 KB snapshot per update), with a full resync every 5 minutes and on
+iframe reload. Alarm panels declaring `code_format` get a PIN pad (numeric
+keypad or password field); the code is never stored or logged. A new
+automation blueprint closes irrigation valves left open past a maximum time
+from inside Home Assistant, covering the zero-open-dashboards gap noted in
+1.8.1. `hls.js` 1.7.4 ships in `vendor/` and loads only when a camera's
+live view opens on a browser without native HLS. 20 dependency-free Node
+tests and a CI workflow on push/PR.
 
 ## [1.8.1] - 2026-09-22
 

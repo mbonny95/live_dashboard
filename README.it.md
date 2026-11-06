@@ -45,12 +45,13 @@ vedi [Modalità demo](#modalità-demo) più sotto.
   Assistant 2022.x in poi; qualunque versione ragionevolmente recente va bene.
 - Niente npm, niente build step. Solo HTML/CSS/JS semplice, caricato come
   moduli ES direttamente da `config/www/`.
-- Nessun accesso a internet necessario per funzionare (v1.9.0). L'unica
-  libreria a runtime, React 18.3.1, è inclusa in `public/vendor/` invece di
-  arrivare da una CDN, quindi un Home Assistant solo locale disegna comunque
-  la dashboard. Impostazioni → Diagnostica → Ambiente → "Runtime React" dice
-  quale copia è stata usata davvero. I due font web arrivano ancora da Google
-  Fonts: offline la pagina ripiega sul font di sistema e resta usabile.
+- Nessun accesso a internet necessario per funzionare (v1.9.0). React
+  18.3.1, i due font web (Caprasimo, Figtree) e `hls.js` per il live delle
+  telecamere sono inclusi in `public/vendor/` invece di arrivare da una CDN o
+  da Google Fonts, quindi un Home Assistant solo locale disegna la dashboard
+  esattamente com'è pensata. Impostazioni → Diagnostica → Ambiente →
+  "Runtime React" dice quale copia di React è stata usata davvero. Versioni,
+  licenze e hash: `public/vendor/README.md`.
 
 ## Installazione
 
@@ -379,6 +380,16 @@ una scheda del browser, usa `buttons` con uno script/un'automazione che
 possiede la temporizzazione lato HA, oppure il timer nativo della valvola se
 ce l'ha.
 
+**Rete di sicurezza dentro Home Assistant (v1.9.0).** Il repo include un
+blueprint di automazione, [`irrigation_safety_close.yaml`](blueprints/automation/live_dashboard/irrigation_safety_close.yaml),
+che chiude le valvole rimaste aperte oltre un tempo massimo (20 minuti di
+default), chiunque le abbia aperte, più quelle ancora aperte quando Home
+Assistant si riavvia. Gira dentro HA, quindi copre anche il caso di zero
+dashboard aperte. Imposta il massimo un po' sopra la durata più lunga fra le
+`durations`. [Importalo con un clic](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fmbonny95%2Flive_dashboard%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Flive_dashboard%2Firrigation_safety_close.yaml), oppure copia il file in
+`config/blueprints/automation/live_dashboard/`, poi crea un'automazione dal
+blueprint e scegli le stesse entità `valve`.
+
 Tutto il resto (`advisory`, `deficit`, `weekMm`, `lastRun`, `et0`, `etc`,
 `effectiveRain`, `summary`) è opzionale e compare solo se lo imposti.
 **La parte agronomica (ET₀/ETc, deficit accumulato) non fa parte di questo
@@ -472,19 +483,18 @@ telecamere da mantenere a mano.
   strato che funziona:
   1. Uno stream HLS reale via il componente `stream` di Home Assistant,
      suonato nativamente — solo Safari, iOS, e molte webview iOS.
-  2. Lo stesso stream tramite un `hls.js` vendorizzato, se qualcuno lo ha
-     copiato in `public/vendor/` — nessuna release lo include oggi, quindi
-     questo strato è sempre inattivo per ora; il pannello Diagnostica mostra
-     quale strato è realmente in uso.
+  2. Lo stesso stream tramite `hls.js` 1.7.4, incluso in `public/vendor/`
+     dalla v1.9.0 e caricato solo a questo punto (~390 KB, mai su una pagina
+     che non apre una telecamera) — Chrome, Firefox, Android e la maggior
+     parte delle companion app, che non hanno HLS nativo. Il pannello
+     Diagnostica mostra quale strato è realmente in uso.
   3. Fermi immagine rapidi (2–3 al secondo) dallo stesso endpoint
      `entity_picture` già usato dalle anteprime, con l'etichetta "anteprima
-     aggiornata" invece di "live" — è quello che oggi ottengono la maggior
-     parte degli utenti Android/companion app e la maggior parte delle
-     telecamere RTSP/ONVIF/generic, che non espongono uno stream MJPEG (il
-     vecchio approccio `/api/camera_proxy_stream/`) e su Android non esiste
-     HLS nativo. Non è una live fluida, ma si muove, su qualunque
-     telecamera, su qualunque piattaforma, senza dipendenze. Gira solo col
-     dettaglio aperto, e si sospende con la scheda/pagina.
+     aggiornata" invece di "live" — il ripiego quando la telecamera non ha
+     il supporto `stream` in Home Assistant, o `camera/stream` fallisce. Non
+     è una live fluida, ma si muove, su qualunque telecamera, su qualunque
+     piattaforma. Gira solo col dettaglio aperto, e si sospende con la
+     scheda/pagina.
   Il dettaglio si chiude da solo dopo 2 minuti, o al tap.
 - **Privacy per le telecamere interne**: elenca un entity_id in
   `hideUntilTap` e la sua tessera mostra solo un'icona — nessuna anteprima

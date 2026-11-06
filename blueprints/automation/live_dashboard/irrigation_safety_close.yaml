@@ -1,0 +1,81 @@
+blueprint:
+  name: Live Dashboard — irrigation safety close
+  description: >
+    Closes an irrigation valve that has stayed open longer than a maximum
+    time, whoever opened it. The dashboard's own timed close (zone `valve`,
+    v1.8.1) needs at least one dashboard open when the time is up; this
+    automation runs inside Home Assistant, so it also covers the case of
+    zero open dashboards, a tablet that lost power, or a valve opened by
+    hand. Set the maximum a bit above the longest duration you offer on the
+    dashboard (e.g. durations 5/10/15 → 20 minutes): it's a safety net, the
+    dashboard still closes on time when it can. Also closes any of these
+    valves still open when Home Assistant starts, because a `for:` timer
+    doesn't survive a restart.
+  domain: automation
+  source_url: https://github.com/mbonny95/live_dashboard/blob/main/blueprints/automation/live_dashboard/irrigation_safety_close.yaml
+  input:
+    valves:
+      name: Valves
+      description: The same switch.* (or valve.*) entities set as `valve` in the dashboard's irrigation zones.
+      selector:
+        entity:
+          multiple: true
+          filter:
+            - domain: switch
+            - domain: valve
+    max_minutes:
+      name: Maximum open time
+      description: Minutes after which an open valve is closed.
+      default: 20
+      selector:
+        number:
+          min: 1
+          max: 240
+          unit_of_measurement: min
+
+mode: parallel
+max: 20
+
+triggers:
+  - trigger: state
+    entity_id: !input valves
+    to:
+      - "on"
+      - "open"
+    for:
+      minutes: !input max_minutes
+    id: too_long
+  - trigger: homeassistant
+    event: start
+    id: restart
+
+variables:
+  valves: !input valves
+
+actions:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: too_long
+        sequence:
+          # switch.* closes with turn_off, valve.* with close_valve.
+          - action: "{{ 'valve.close_valve' if trigger.entity_id.startswith('valve.') else 'switch.turn_off' }}"
+            target:
+              entity_id: "{{ trigger.entity_id }}"
+      - conditions:
+          - condition: trigger
+            id: restart
+        sequence:
+          - variables:
+              open_switches: "{{ valves | select('match', 'switch\\.') | select('is_state', 'on') | list }}"
+              open_valves: "{{ valves | select('match', 'valve\\.') | select('is_state', 'open') | list }}"
+          - if: "{{ open_switches | count > 0 }}"
+            then:
+              - action: switch.turn_off
+                target:
+                  entity_id: "{{ open_switches }}"
+          - if: "{{ open_valves | count > 0 }}"
+            then:
+              - action: valve.close_valve
+                target:
+                  entity_id: "{{ open_valves }}"

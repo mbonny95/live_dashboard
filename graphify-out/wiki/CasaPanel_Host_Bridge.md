@@ -5,7 +5,7 @@
 ## Key Concepts
 
 - **CasaPanel** (21 connections) — `public/panel.js`
-- **panel.js** (11 connections) — `public/panel.js`
+- **panel.js** (12 connections) — `public/panel.js`
 - **._onMessage()** (11 connections) — `public/panel.js`
 - **._reply()** (10 connections) — `public/panel.js`
 - **._flush()** (4 connections) — `public/panel.js`
@@ -33,7 +33,7 @@
 
 ## Relationships
 
-- [Mobile Boot and Runtime Loading](Mobile_Boot_and_Runtime_Loading.md) (1 shared connections)
+- [Mobile Boot and Vendored Runtime](Mobile_Boot_and_Vendored_Runtime.md) (2 shared connections)
 
 ## Source Files
 
@@ -42,7 +42,7 @@
 ## Audit Trail
 
 - EXTRACTED: 116 (97%)
-- INFERRED: 3 (3%)
+- INFERRED: 4 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

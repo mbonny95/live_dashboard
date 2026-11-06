@@ -62,6 +62,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   diagEnvIframe: 'Inside HA panel', diagEnvIframeYes: 'yes', diagEnvIframeNo: 'no',
   diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'yes', diagEnvEmbedIframeNo: 'no',
   diagEnvNotApplicableDemo: 'n/a (demo)', diagEnvUnknown: 'not known yet',
+  pinTitle: 'Alarm code', pinCancel: 'Cancel', pinConfirm: 'Confirm', pinBackspace: 'Delete one digit', pinRejected: 'Code not accepted. Try again.',
   diagEnvRuntime: 'React runtime', diagEnvRuntimeLocal: 'bundled with the dashboard', diagEnvRuntimeCdn: 'from CDN (unpkg) — vendor/ missing, needs internet',
   diagEnvLang: 'Detected language', diagEnvAreas: 'Areas seen by discovery', diagEnvEntities: 'Entities seen by discovery',
   diagEnvRooms: 'Rooms resulting', diagEnvCameras: 'Cameras resulting', diagEnvPrefsOutcome: 'energy/get_prefs outcome',
@@ -110,7 +111,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   'alarm.btnAway': 'Away', 'alarm.btnHome': 'Home', 'alarm.btnNight': 'Night', 'alarm.btnVacation': 'Vacation',
   'alarm.btnCustom': 'Custom',
   'alarm.disarmed': 'Disarmed', 'alarm.pending': 'Pending…', 'alarm.triggered': 'ALARM TRIGGERED',
-  'alarm.codeRequired': 'This panel requires a code: use the Home Assistant app to arm/disarm.',
+  'alarm.codeRequired': 'This panel requires a code: you will be asked for it on every command.',
 
   'appliance.energyToday': '{val} today',
 

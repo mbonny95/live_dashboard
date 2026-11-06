@@ -53,12 +53,12 @@ no Home Assistant required. It shows invented data and a `DEMO` badge; see
   Home Assistant 2022.x; anything reasonably current works.
 - No npm, no build step. Everything is plain HTML/CSS/JS, loaded as ES
   modules straight from `config/www/`.
-- No internet access needed to run (v1.9.0). The one runtime library, React
-  18.3.1, ships in `public/vendor/` instead of being fetched from a CDN, so a
-  local-only Home Assistant still draws the dashboard. Settings →
-  Diagnostica → Environment → "React runtime" shows which copy actually ran.
-  The two web fonts still come from Google Fonts: offline, the page falls
-  back to the system font and stays fully usable.
+- No internet access needed to run (v1.9.0). React 18.3.1, the two web
+  fonts (Caprasimo, Figtree) and `hls.js` for camera live view ship in
+  `public/vendor/` instead of coming from a CDN or Google Fonts, so a
+  local-only Home Assistant draws the dashboard exactly as designed.
+  Settings → Diagnostica → Environment → "React runtime" shows which React
+  copy actually ran. Versions, licenses and hashes: `public/vendor/README.md`.
 
 ## Installation
 
@@ -369,6 +369,16 @@ doesn't depend on a browser tab existing, use `buttons` with a script/
 automation that owns the timing on the HA side, or your valve's own native
 timer if it has one.
 
+**Safety net inside Home Assistant (v1.9.0).** This repo ships an automation
+blueprint, [`irrigation_safety_close.yaml`](blueprints/automation/live_dashboard/irrigation_safety_close.yaml),
+that closes any of your valves left open longer than a maximum time
+(default 20 minutes), whoever opened it, plus any still open when Home
+Assistant restarts. It runs on the HA side, so it covers zero open
+dashboards too. Set the maximum a bit above your longest `durations` entry.
+[Import it with one click](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2Fmbonny95%2Flive_dashboard%2Fblob%2Fmain%2Fblueprints%2Fautomation%2Flive_dashboard%2Firrigation_safety_close.yaml), or copy the file to
+`config/blueprints/automation/live_dashboard/`, then create an automation
+from it and pick the same `valve` entities.
+
 Everything else (`advisory`, `deficit`, `weekMm`, `lastRun`, `et0`, `etc`,
 `effectiveRain`, `summary`) is optional and only appears if you set it.
 **The agronomic math (ET₀/ETc, accumulated deficit) is not part of this
@@ -458,18 +468,17 @@ maintain.
   (v1.5.4). Tapping a preview tries, in order, the first one that works:
   1. A real HLS stream via Home Assistant's `stream` integration, played
      natively — Safari, iOS, and many iOS webviews only.
-  2. The same stream through a vendored `hls.js`, if one has been dropped
-     into `public/vendor/` — none ships with this project today, so this
-     layer is currently always inactive; the Diagnostics panel shows which
-     layer is actually in use.
+  2. The same stream through `hls.js` 1.7.4, shipped in `public/vendor/`
+     since v1.9.0 and loaded only at this point (~390 KB, never on a page
+     that doesn't open a camera) — Chrome, Firefox, Android and most
+     companion apps, which have no native HLS. The Diagnostics panel shows
+     which layer is actually in use.
   3. Fast still-image polling (2–3 frames/second) from the same
      `entity_picture` endpoint the tiles already use, labeled "preview
-     refreshing" instead of "live" — this is what most Android/companion-app
-     users and most RTSP/ONVIF/generic cameras get today, since they don't
-     expose an MJPEG stream (the old `/api/camera_proxy_stream/` approach)
-     and Android has no native HLS. It's not a smooth live feed, but it
-     moves, on any camera, on any platform, with no dependencies. Only runs
-     while the detail view is open, and pauses with the tab/page.
+     refreshing" instead of "live" — the fallback when the camera has no
+     `stream` support in Home Assistant, or `camera/stream` fails. It's not
+     a smooth live feed, but it moves, on any camera, on any platform. Only
+     runs while the detail view is open, and pauses with the tab/page.
   The detail view closes automatically after 2 minutes, or on tap.
 - **Privacy for indoor cameras**: list an entity_id in `hideUntilTap` and its
   tile shows only an icon — no preview loads — until someone taps it once to

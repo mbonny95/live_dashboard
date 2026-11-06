@@ -62,6 +62,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   diagEnvIframe: 'Dentro il pannello HA', diagEnvIframeYes: 'sì', diagEnvIframeNo: 'no',
   diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'sì', diagEnvEmbedIframeNo: 'no',
   diagEnvNotApplicableDemo: 'n/d (demo)', diagEnvUnknown: 'non ancora noto',
+  pinTitle: 'Codice allarme', pinCancel: 'Annulla', pinConfirm: 'Conferma', pinBackspace: 'Cancella una cifra', pinRejected: 'Codice non accettato. Riprova.',
   diagEnvRuntime: 'Runtime React', diagEnvRuntimeLocal: 'incluso nella dashboard', diagEnvRuntimeCdn: 'da CDN (unpkg) — vendor/ mancante, serve internet',
   diagEnvLang: 'Lingua rilevata', diagEnvAreas: 'Aree viste da discovery', diagEnvEntities: 'Entità viste da discovery',
   diagEnvRooms: 'Stanze risultanti', diagEnvCameras: 'Telecamere risultanti', diagEnvPrefsOutcome: 'Esito energy/get_prefs',
@@ -110,7 +111,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'alarm.btnAway': 'Fuori', 'alarm.btnHome': 'In casa', 'alarm.btnNight': 'Notte', 'alarm.btnVacation': 'Vacanza',
   'alarm.btnCustom': 'Personalizzato',
   'alarm.disarmed': 'Disinserito', 'alarm.pending': 'In attesa…', 'alarm.triggered': 'ALLARME IN CORSO',
-  'alarm.codeRequired': 'Questa centrale richiede un codice: usa l’app Home Assistant per inserire/disinserire.',
+  'alarm.codeRequired': 'Questa centrale richiede un codice: te lo chiederemo a ogni comando.',
 
   'appliance.energyToday': '{val} oggi',
 

@@ -1,46 +1,40 @@
 # renderVals()
 
-> God node · 75 connections · `public/dash_neumo_mobile.html`
+> God node · 31 connections · `public/dash_neumo.html`
 
-**Community:** [Desktop Component Core](Desktop_Component_Core.md)
+**Community:** [Desktop Component Logic](Desktop_Component_Logic.md)
 
 ## Connections by Relation
 
 ### calls
-- [PREFS()](PREFS%28%29.md) `EXTRACTED`
-- call() `EXTRACTED`
-- plugStatus() `EXTRACTED`
-- MODULE_VISIBLE() `EXTRACTED`
 - diagEnvironment() `EXTRACTED`
-- roomDetail() `EXTRACTED`
-- powerVal() `EXTRACTED`
+- plugStatus() `EXTRACTED`
 - ROOMS_RESULT() `EXTRACTED`
 - _settingsProblemTab() `EXTRACTED`
-- roomSummary() `EXTRACTED`
-- powerSensorForSwitch() `EXTRACTED`
-- deriveConsumption() `EXTRACTED`
-- runValve() `EXTRACTED`
-- _bindAttr() `EXTRACTED`
-- CONFIG_HIDDEN() `EXTRACTED`
-- ENTITY_HIDDEN_SET() `EXTRACTED`
-- SECTION_ORDER() `EXTRACTED`
-- SETTINGS_SET_ENTITY() `EXTRACTED`
-- ALL_ROOMS_RESULT() `EXTRACTED`
+- applianceItems() `EXTRACTED`
+- roomSummary() `INFERRED`
+- findDuplicateDevices() `EXTRACTED`
+- _openCam() `EXTRACTED`
+- _closeCam() `EXTRACTED`
+- batterySignVerdict() `EXTRACTED`
+- runValve() `INFERRED`
+- SECTION_ORDER() / SECTION_ORDER_DEFAULT_RESOLVED() `EXTRACTED`
 - diagEnergyInstant() `EXTRACTED`
+- diagEnergyDaily() `EXTRACTED`
+- alarmGuardedCall() `EXTRACTED`
+- _attachHlsJs() `EXTRACTED`
+- deriveConsumption() `EXTRACTED`
+- cover() `EXTRACTED`
+- _bindAttr() ref callback `EXTRACTED`
+- ENTITY_HIDDEN_SET() `INFERRED`
 
-### references
-- [Component (extends DCLogic)](Component_%28extends_DCLogic%29.md) `EXTRACTED`
-- Diagnostica settings panel `EXTRACTED`
-
-### shares_data_with
-- _actionLog (recent actions, max 20) `EXTRACTED`
-- configDiag (config load attempts) `EXTRACTED`
-- state.hourlyEnergy / hourlyBars ring strip `EXTRACTED`
-- x-dc template (sc-if / sc-for markup) `EXTRACTED`
-- camDiag (per-camera stream layer diagnostics) `EXTRACTED`
-- Energy double ring (outer self/grid, inner self/feed) `EXTRACTED`
-- noDiagActionRows template value `EXTRACTED`
-- Demo scenario bar `EXTRACTED`
+### implements
+- Alarm PIN pad template (sc-if pinOpen) `INFERRED`
+- Diagnostica Recent actions template (diagActionRows / noDiagActionRows) `INFERRED`
+- diagEnvRows (Diagnostica > Ambiente) `INFERRED`
+- doDiag (copy diagnostics text) `INFERRED`
+- doExport (config.js export to clipboard) `INFERRED`
+- Hourly ring strip (hourlyBars) `INFERRED`
 
 ---
 

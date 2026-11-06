@@ -1,4 +1,5 @@
-// Plain-Node test, no framework/deps: run with `node tests/mapEnergyPrefs.test.mjs`.
+// Plain-Node test, no framework/deps: run with `node tests/mapEnergyPrefs.test.mjs`
+// (or the whole suite: `node --test 'tests/*.test.mjs'`).
 // discovery.js is a classic script (window.CasaDiscovery global, see the note
 // at the bottom of that file for why it isn't an ES module) — loaded here via
 // vm so this exercises the exact shipped source, not a reimplementation.

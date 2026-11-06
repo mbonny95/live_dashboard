@@ -58,14 +58,28 @@ function normalizeData(data) {
 async function connect(handlers, readyTimeoutMs) {
   const pending = new Map();
   let reqId = 0;
+  let current = null;
 
   function onMessage(e) {
     if (e.source !== window.parent) return;
     const d = e.data;
     if (!d || typeof d !== 'object') return;
 
-    if (d.type === 'casa:hass-states') {
-      handlers.onStates(Object.assign({}, d.states));
+    // v1.9.0 — panel.js sends one full snapshot ('casa:hass-states'), then
+    // only what changed ('casa:hass-states-delta'). `current` is this
+    // frame's copy the deltas patch; the app still receives a fresh object
+    // on every update, exactly as before. Applying the same message twice
+    // (connect() below routes the very first one through onMessage too) is
+    // harmless: both message kinds are idempotent.
+    if (d.type === 'casa:hass-states' || d.type === 'casa:hass-states-delta') {
+      if (d.type === 'casa:hass-states') {
+        current = Object.assign({}, d.states);
+      } else {
+        if (!current) return; // a delta before any snapshot has nothing to patch
+        Object.assign(current, d.changed);
+        for (const id of d.removed || []) delete current[id];
+      }
+      handlers.onStates(Object.assign({}, current));
       if (handlers.onLanguage && d.language) handlers.onLanguage(d.language);
       if (handlers.onEmbedIframe && d.embedIframe !== undefined) handlers.onEmbedIframe(d.embedIframe);
       return;

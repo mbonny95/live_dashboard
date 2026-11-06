@@ -10,14 +10,14 @@
     "semantic_hash": "b0730d51a8048adc3f89db25a32e2f8c"
   },
   "public/ha-backend-demo.js": {
-    "mtime": 1790109453.717303,
-    "ast_hash": "a13622640fb12e5703217542dd335c99",
-    "semantic_hash": "a13622640fb12e5703217542dd335c99"
+    "mtime": 1793997549.7139754,
+    "ast_hash": "e4b8eb642998ba2743816378b24fc46a",
+    "semantic_hash": "e4b8eb642998ba2743816378b24fc46a"
   },
   "public/ha-backend-panel.js": {
-    "mtime": 1790109423.1530871,
-    "ast_hash": "d63b346e94e9440e6c9bc0e402d3d265",
-    "semantic_hash": "d63b346e94e9440e6c9bc0e402d3d265"
+    "mtime": 1793997425.0488186,
+    "ast_hash": "a36fd175a0a5cf4cf7cc845d5c777ae1",
+    "semantic_hash": "a36fd175a0a5cf4cf7cc845d5c777ae1"
   },
   "public/ha-backend.js": {
     "mtime": 1786566636.0360527,
@@ -30,14 +30,14 @@
     "semantic_hash": "f085ec6bdcc047587c9e8fda616fed43"
   },
   "public/i18n/en.js": {
-    "mtime": 1793996445.2571344,
-    "ast_hash": "27e650f5740dfc368262fc94ab42dbba",
-    "semantic_hash": "27e650f5740dfc368262fc94ab42dbba"
+    "mtime": 1793997537.1648877,
+    "ast_hash": "2b0d6dae8064388e8a071a2aff2cb3a4",
+    "semantic_hash": "2b0d6dae8064388e8a071a2aff2cb3a4"
   },
   "public/i18n/it.js": {
-    "mtime": 1793996445.2570539,
-    "ast_hash": "eb95a59ea5908d81c446feb686119f31",
-    "semantic_hash": "eb95a59ea5908d81c446feb686119f31"
+    "mtime": 1793997537.1645584,
+    "ast_hash": "f9d5536f58910fff45010f2fb335bc81",
+    "semantic_hash": "f9d5536f58910fff45010f2fb335bc81"
   },
   "public/live_dashboard_config.example.js": {
     "mtime": 1787826978.3426723,
@@ -45,9 +45,9 @@
     "semantic_hash": "194cb72c25cba2083743016c52db199d"
   },
   "public/panel.js": {
-    "mtime": 1793996542.806977,
-    "ast_hash": "281b992cc6532ebf7577f469d41a384a",
-    "semantic_hash": "281b992cc6532ebf7577f469d41a384a"
+    "mtime": 1793997425.04857,
+    "ast_hash": "8aba00c2490c997e9ab17c48d9ae8495",
+    "semantic_hash": "8aba00c2490c997e9ab17c48d9ae8495"
   },
   "public/support.js": {
     "mtime": 1786560396.1043806,
@@ -55,9 +55,9 @@
     "semantic_hash": "951ae391b8ae72ef12e671c2fad23353"
   },
   "tests/mapEnergyPrefs.test.mjs": {
-    "mtime": 1786735146.1085238,
-    "ast_hash": "b3b0b55a2b39ac4b79056a2a348fd65c",
-    "semantic_hash": "b3b0b55a2b39ac4b79056a2a348fd65c"
+    "mtime": 1793997385.5994654,
+    "ast_hash": "00d452964fd1f7d72bcfeb25d913da01",
+    "semantic_hash": "00d452964fd1f7d72bcfeb25d913da01"
   },
   ".github/workflows/release.yml": {
     "mtime": 1786719880.7250504,
@@ -65,34 +65,34 @@
     "semantic_hash": "6719db3df8abacac7cc567ed9e6fe6e8"
   },
   "CHANGELOG.md": {
-    "mtime": 1793996563.2206187,
-    "ast_hash": "95a4a3819c6c4de2b14633d3ca321887",
-    "semantic_hash": "95a4a3819c6c4de2b14633d3ca321887"
+    "mtime": 1793998071.5536656,
+    "ast_hash": "0346e03d475e15739ce842c41276876c",
+    "semantic_hash": "0346e03d475e15739ce842c41276876c"
   },
   "README.it.md": {
-    "mtime": 1793996563.2201977,
-    "ast_hash": "ad4ee0c4d9af9054eff3022455b95a1d",
-    "semantic_hash": "ad4ee0c4d9af9054eff3022455b95a1d"
+    "mtime": 1793998239.3285615,
+    "ast_hash": "6918bbb539621a52c444c38e49466fb5",
+    "semantic_hash": "6918bbb539621a52c444c38e49466fb5"
   },
   "README.md": {
-    "mtime": 1793996563.2198586,
-    "ast_hash": "0820e491147710e813d428a6233c0baf",
-    "semantic_hash": "0820e491147710e813d428a6233c0baf"
+    "mtime": 1793998239.3284016,
+    "ast_hash": "cab0bca3aa651e66bc125eb9e607e214",
+    "semantic_hash": "cab0bca3aa651e66bc125eb9e607e214"
   },
   "TROUBLESHOOTING.md": {
-    "mtime": 1787822781.9057539,
-    "ast_hash": "c5064812a52889f7b54a9762fe6a039d",
-    "semantic_hash": "c5064812a52889f7b54a9762fe6a039d"
+    "mtime": 1793998336.152545,
+    "ast_hash": "55f75317332685af0db2f56333e292de",
+    "semantic_hash": "55f75317332685af0db2f56333e292de"
   },
   "public/dash_neumo.html": {
-    "mtime": 1793996445.256309,
-    "ast_hash": "013cb7b08e2dd3954ce5a987aa27ed8b",
-    "semantic_hash": "013cb7b08e2dd3954ce5a987aa27ed8b"
+    "mtime": 1793998272.8102965,
+    "ast_hash": "5930d93b9ef0dd8d4d439c4a3b6fa157",
+    "semantic_hash": "5930d93b9ef0dd8d4d439c4a3b6fa157"
   },
   "public/dash_neumo_mobile.html": {
-    "mtime": 1793996445.2568042,
-    "ast_hash": "c36d4bf05d2d6dcda1ac129170edf12c",
-    "semantic_hash": "c36d4bf05d2d6dcda1ac129170edf12c"
+    "mtime": 1793997825.4939156,
+    "ast_hash": "674e02419df425f735959199ef10ef48",
+    "semantic_hash": "674e02419df425f735959199ef10ef48"
   },
   "assets/icon-256.png": {
     "mtime": 1786733001.0,
@@ -148,5 +148,25 @@
     "mtime": 1787819323.7601056,
     "ast_hash": "5bfc81bad564fd45418c33fbe3c5c198",
     "semantic_hash": "5bfc81bad564fd45418c33fbe3c5c198"
+  },
+  "tests/assets.test.mjs": {
+    "mtime": 1793997847.2026494,
+    "ast_hash": "7bdab8a9afbaa7eea70212de5f032333",
+    "semantic_hash": "7bdab8a9afbaa7eea70212de5f032333"
+  },
+  "tests/discovery.test.mjs": {
+    "mtime": 1793997381.4384754,
+    "ast_hash": "a50ec2047e8c25fdaa66cac579e3e1d7",
+    "semantic_hash": "a50ec2047e8c25fdaa66cac579e3e1d7"
+  },
+  ".github/workflows/test.yml": {
+    "mtime": 1793997385.5973313,
+    "ast_hash": "40f68b088bdfc844c33d918211d01728",
+    "semantic_hash": "40f68b088bdfc844c33d918211d01728"
+  },
+  "blueprints/automation/live_dashboard/irrigation_safety_close.yaml": {
+    "mtime": 1793997645.8971891,
+    "ast_hash": "4d1977bac652911badbfc1de55bcadda",
+    "semantic_hash": "4d1977bac652911badbfc1de55bcadda"
   }
 }

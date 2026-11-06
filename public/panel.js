@@ -9,7 +9,7 @@
 //     hass, and the result is posted back down.
 //
 // The iframe boundary exists because dash_neumo.html runs its own
-// React (loaded from unpkg) which must not collide with the HA frontend's
+// React (vendored in ./vendor/ since v1.9.0) which must not collide with the HA frontend's
 // own React/webcomponents in the same document.
 
 // HA serves /local/ with long cache headers, so a deploy needs an explicit
@@ -27,6 +27,10 @@ const VERSION = '1.9.0';
 console.info(`[live_dashboard] v${VERSION}`);
 
 const FLUSH_MS = 600;
+// v1.9.0 — after the first full snapshot only changed entities cross the
+// iframe boundary (see _flush). A full snapshot is still re-sent this
+// often, as a safety net against anything the reference diff could miss.
+const FULL_RESYNC_MS = 5 * 60 * 1000;
 const CALL_TIMEOUT_MS = 15000;
 
 // The custom element's tag name has to be known synchronously the moment
@@ -296,6 +300,12 @@ class CasaPanel extends HTMLElement {
     this._ready = false;
     this._timer = null;
     this._lastFlush = 0;
+    // entity_id -> the hass.states object last posted to the iframe. null
+    // means "next flush is a full snapshot" (first one, or after the iframe
+    // (re)announced itself with casa:ready).
+    this._sentRefs = null;
+    this._lastFull = 0;
+    this._sentLanguage = null;
     this._onMessage = this._onMessage.bind(this);
   }
 
@@ -369,12 +379,51 @@ class CasaPanel extends HTMLElement {
     }
   }
 
+  // v1.9.0 — differential push. Home Assistant replaces an entity's object
+  // in hass.states when that entity changes and keeps the same object when
+  // it doesn't, so comparing references finds exactly what changed without
+  // reading a single attribute. Before this, every flush structured-cloned
+  // the whole hass.states (hundreds to thousands of entities, attributes
+  // included) into the iframe every 600 ms, and re-rendered the dashboard
+  // even when the hass update was about something it never shows. Now an
+  // update that touches nothing posts nothing, and one that touches a light
+  // posts one light.
   _flush() {
     this._lastFlush = Date.now();
     if (!this._hass || !this._iframe) return;
+    const states = this._hass.states;
+    const language = this._hass.language;
+    const embedIframe = window.self !== window.top;
+    if (this._sentRefs && this._lastFlush - this._lastFull < FULL_RESYNC_MS) {
+      const changed = {};
+      const removed = [];
+      let n = 0;
+      for (const id in states) {
+        if (this._sentRefs.get(id) !== states[id]) {
+          const e = states[id];
+          changed[id] = { state: e.state, attributes: e.attributes };
+          this._sentRefs.set(id, e);
+          n++;
+        }
+      }
+      for (const id of this._sentRefs.keys()) {
+        if (!(id in states)) { removed.push(id); this._sentRefs.delete(id); }
+      }
+      if (!n && !removed.length && language === this._sentLanguage) return;
+      this._sentLanguage = language;
+      this._iframe.contentWindow.postMessage(
+        { type: 'casa:hass-states-delta', changed, removed, language, embedIframe },
+        this._targetOrigin
+      );
+      return;
+    }
+    this._sentRefs = new Map();
+    for (const id in states) this._sentRefs.set(id, states[id]);
+    this._lastFull = this._lastFlush;
+    this._sentLanguage = language;
     this._iframe.contentWindow.postMessage(
       {
-        type: 'casa:hass-states', states: toPlainStates(this._hass.states), language: this._hass.language,
+        type: 'casa:hass-states', states: toPlainStates(states), language,
         // v1.8.1 — whether *this* custom element (not the dash_neumo*.html
         // iframe it mounts, which is always nested by construction) is
         // itself running inside a frame, i.e. whether panel_custom's own
@@ -382,7 +431,7 @@ class CasaPanel extends HTMLElement {
         // install. A support-issue-shaped question ("is embed_iframe on?")
         // that the Diagnostica panel can answer without the user reading
         // their own configuration.yaml.
-        embedIframe: window.self !== window.top
+        embedIframe
       },
       this._targetOrigin
     );
@@ -560,6 +609,7 @@ class CasaPanel extends HTMLElement {
     if (!d || typeof d !== 'object') return;
     if (d.type === 'casa:ready') {
       this._ready = true;
+      this._sentRefs = null; // a (re)loaded iframe has no copy to patch: send everything
       this._flush();
     } else if (d.type === 'casa:call') {
       this._handleCall(d);
