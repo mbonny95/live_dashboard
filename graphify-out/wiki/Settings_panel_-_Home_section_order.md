@@ -16,12 +16,12 @@
 
 ## Relationships
 
-- [CHANGELOG / Config at config/www/live_da](CHANGELOG_-_Config_at_config-www-live_da.md) (3 shared connections)
+- [CHANGELOG / CHANGELOG v1.0.0](CHANGELOG_-_CHANGELOG_v1.0.0.md) (3 shared connections)
 - [Settings panel tabs / Density before one-screen fi](Settings_panel_tabs_-_Density_before_one-screen_fi.md) (2 shared connections)
-- [TROUBLESHOOTING / Diagnostics panel](TROUBLESHOOTING_-_Diagnostics_panel.md) (1 shared connections)
-- [Templating constraints / Deferred src/href/points bin](Templating_constraints_-_Deferred_src-href-points_bin.md) (1 shared connections)
-- [Live Dashboard — irrigation  / Timed irrigation close deadl](Live_Dashboard_%E2%80%94_irrigation__-_Timed_irrigation_close_deadl.md) (1 shared connections)
-- [README / CHANGELOG v1.9.0](README_-_CHANGELOG_v1.9.0.md) (1 shared connections)
+- [Diagnostics panel / Diagnostica -> Ultime azioni](Diagnostics_panel_-_Diagnostica_-__Ultime_azioni.md) (1 shared connections)
+- [Templating constraints / Never same expression in two](Templating_constraints_-_Never_same_expression_in_two.md) (1 shared connections)
+- [CHANGELOG v1.8.1 / Live Dashboard — irrigation ](CHANGELOG_v1.8.1_-_Live_Dashboard_%E2%80%94_irrigation_.md) (1 shared connections)
+- [README / Panel custom element tag der](README_-_Panel_custom_element_tag_der.md) (1 shared connections)
 
 ## Source Files
 

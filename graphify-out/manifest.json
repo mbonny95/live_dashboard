@@ -45,9 +45,9 @@
     "semantic_hash": "194cb72c25cba2083743016c52db199d"
   },
   "public/panel.js": {
-    "mtime": 1793997425.04857,
-    "ast_hash": "8aba00c2490c997e9ab17c48d9ae8495",
-    "semantic_hash": "8aba00c2490c997e9ab17c48d9ae8495"
+    "mtime": 1794338982.5610602,
+    "ast_hash": "dc2e432d5f9695c95ff754655d79eae7",
+    "semantic_hash": "dc2e432d5f9695c95ff754655d79eae7"
   },
   "public/support.js": {
     "mtime": 1786560396.1043806,
@@ -85,14 +85,14 @@
     "semantic_hash": "55f75317332685af0db2f56333e292de"
   },
   "public/dash_neumo.html": {
-    "mtime": 1794000065.5891447,
-    "ast_hash": "cc0a8512d162c2bb17ee168763f6f4b0",
-    "semantic_hash": "cc0a8512d162c2bb17ee168763f6f4b0"
+    "mtime": 1794339403.8911066,
+    "ast_hash": "c826389de2c4db8468282fc3da8deef4",
+    "semantic_hash": "c826389de2c4db8468282fc3da8deef4"
   },
   "public/dash_neumo_mobile.html": {
-    "mtime": 1793999917.6363416,
-    "ast_hash": "82511a60ba00751b6f24f4b55c4b9c48",
-    "semantic_hash": "82511a60ba00751b6f24f4b55c4b9c48"
+    "mtime": 1794339403.8932605,
+    "ast_hash": "8e45418c8a700d3e10842ffc64d9e16a",
+    "semantic_hash": "8e45418c8a700d3e10842ffc64d9e16a"
   },
   "assets/icon-256.png": {
     "mtime": 1786733001.0,
@@ -150,9 +150,9 @@
     "semantic_hash": "5bfc81bad564fd45418c33fbe3c5c198"
   },
   "tests/assets.test.mjs": {
-    "mtime": 1793997847.2026494,
-    "ast_hash": "7bdab8a9afbaa7eea70212de5f032333",
-    "semantic_hash": "7bdab8a9afbaa7eea70212de5f032333"
+    "mtime": 1794339107.019761,
+    "ast_hash": "760c01797796bb636ae36184d8cfe8f0",
+    "semantic_hash": "760c01797796bb636ae36184d8cfe8f0"
   },
   "tests/discovery.test.mjs": {
     "mtime": 1793997381.4384754,
@@ -168,5 +168,15 @@
     "mtime": 1793997645.8971891,
     "ast_hash": "4d1977bac652911badbfc1de55bcadda",
     "semantic_hash": "4d1977bac652911badbfc1de55bcadda"
+  },
+  "public/casa-core.js": {
+    "mtime": 1794339403.895126,
+    "ast_hash": "1cc2a5ee56956d88a55be30b161b068f",
+    "semantic_hash": "1cc2a5ee56956d88a55be30b161b068f"
+  },
+  "public/version.json": {
+    "mtime": 1794338982.5612068,
+    "ast_hash": "bd11e5d3bcfb9a0bb9ede957bc99e649",
+    "semantic_hash": "bd11e5d3bcfb9a0bb9ede957bc99e649"
   }
 }

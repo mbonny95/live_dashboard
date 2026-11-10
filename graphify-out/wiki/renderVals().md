@@ -1,46 +1,47 @@
 # renderVals()
 
-> God node · 28 connections · `public/dash_neumo_mobile.html`
+> God node · 35 connections · `public/dash_neumo.html`
 
-**Community:** [renderVals / _camStartFastPoll](renderVals_-__camStartFastPoll.md)
+**Community:** [renderVals / dash_neumo.html](renderVals_-_dash_neumo.html.md)
 
 ## Connections by Relation
 
 ### calls
-- discoverCameras() `EXTRACTED`
-- _camVideoRef() `EXTRACTED`
-- _bindAttr() `EXTRACTED`
-- ROOMS_RESULT() `EXTRACTED`
+- [PREFS()](PREFS%28%29.md) `EXTRACTED`
+- call() `EXTRACTED`
+- powerVal() `EXTRACTED`
+- ALL_ROOMS_RESULT() `EXTRACTED`
 - diagEnvironment() `EXTRACTED`
-- _closeCam() `EXTRACTED`
-- plugStatus() `EXTRACTED`
-- SETTINGS_* handlers (room/entity/camera/module/section/power unit/plug threshold/battery sign/reset) `EXTRACTED`
-- _settingsProblemTab() `EXTRACTED`
-- roomDetail() `EXTRACTED`
-- findDuplicateDevices() `EXTRACTED`
-- copyToClipboard() `EXTRACTED`
-- _openCam() `EXTRACTED`
-- formatWatts() `EXTRACTED`
-- ALL_CAMERAS_RESULT() `INFERRED`
-- exportText() `EXTRACTED`
-- _revealCam() `EXTRACTED`
-- diagEnergyInstant() `EXTRACTED`
-- diagEnergyDaily() `EXTRACTED`
+- ROOMS_RESULT() `EXTRACTED`
+- _camVideoRef() `EXTRACTED`
+- SECTION_ORDER() `EXTRACTED`
+- deriveConsumption() `EXTRACTED`
+- _bindAttr() `EXTRACTED`
+- ALL_CAMERAS_RESULT() `EXTRACTED`
+- ALARM() `EXTRACTED`
 - ALARM_ID() `EXTRACTED`
 
-### implements
-- Energy view block of renderVals (rings, hourly strip, flows) `INFERRED`
-- Irrigation zones block of renderVals (durations, irrPending) `INFERRED`
-
 ### references
+- Diagnostics rows view-model (config, energy, actions, irrigation, env, ring/camera/alarm, discard reasons) `EXTRACTED`
+- Settings rows view-model (rooms, cameras, modules, section order, room detail, export) `EXTRACTED`
+- Energy double ring and legend view-model (ringSeg, ringLegend) `EXTRACTED`
+- Hourly strip view-model (hourlyBars, hourlyAxisLabels, hourlyPeakLabel) `EXTRACTED`
+- Alarm buttons view-model (supported_features bitmask) `EXTRACTED`
+- Camera overlay layer values (camLayerVideo, camLayerSnapshot, camNoStream, badge, countdown) `EXTRACTED`
+- Room cards view-model (buildRoom, pills) `EXTRACTED`
+- Energy now cells view-model (consumption derived/measured) `EXTRACTED`
+- PIN pad values (pinOpen, pinNumeric, pinKeys, pinSubmit) `EXTRACTED`
+- Component extends CasaCore.base(DCLogic) `EXTRACTED`
 - alarmGuardedCall() `EXTRACTED`
-- doDiag (Diagnostica copy) `EXTRACTED`
-- Diagnostica Ultime azioni rows (noDiagActionRows) `EXTRACTED`
-- Diagnostica camera rows (layer, WS, fell back) `EXTRACTED`
-- Diagnostica Ambiente rows (incl. React runtime source) `EXTRACTED`
-
-### shares_data_with
-- Alarm PIN pad template `INFERRED`
+- Camera list and home tiles view-model `EXTRACTED`
+- Casa column-3 section order view-model `EXTRACTED`
+- Header view-model: greeting, modes, weather icon, people, status `EXTRACTED`
+- Scenario bar and toast view-model `EXTRACTED`
+- Weather station / meteo view-model `EXTRACTED`
+- Energy history bar chart view-model (axis ticks, bar widths, period cells) `EXTRACTED`
+- Irrigation zones view-model `EXTRACTED`
+- Active-now items and quick actions view-model `EXTRACTED`
+- Room panel view-model (switches, lights, covers band, sensors) `EXTRACTED`
 
 ---
 

@@ -1,29 +1,38 @@
 # PREFS()
 
-> God node · 17 connections · `public/dash_neumo.html`
+> God node · 28 connections · `public/casa-core.js`
 
-**Community:** [PREFS / SAVE_PREFS](PREFS_-_SAVE_PREFS.md)
+**Community:** [CasaComponentBase / PREFS](CasaComponentBase_-_PREFS.md)
 
 ## Connections by Relation
 
 ### calls
+- [renderVals() (mobile)](renderVals%28%29_%28mobile%29.md) `EXTRACTED`
+- [renderVals()](renderVals%28%29.md) `EXTRACTED`
+- ALL_ROOMS_RESULT() `EXTRACTED`
 - ROOMS_RESULT() `EXTRACTED`
-- SETTINGS_SET_ENTITY() `EXTRACTED`
-- batteryPowerSign() `EXTRACTED`
+- SECTION_ORDER() `EXTRACTED`
+- Settings rows view-model (rooms, cameras, modules, section order, room detail, export) `EXTRACTED`
+- MODULE_VISIBLE() `EXTRACTED`
+- formatWatts() `EXTRACTED`
 - plugThresholdW() `EXTRACTED`
-- SETTINGS_CLEAR_CAMERA() `EXTRACTED`
-- SETTINGS_CLEAR_ENTITY() `EXTRACTED`
-- SETTINGS_CLEAR_ROOM() `EXTRACTED`
+- batteryPowerSign() `EXTRACTED`
+- ENTITY_HIDDEN_SET() `EXTRACTED`
 - SETTINGS_MOVE_ROOM() `EXTRACTED`
 - SETTINGS_MOVE_SECTION() `EXTRACTED`
-- SETTINGS_RESET_SECTIONS() `EXTRACTED`
 - SETTINGS_SET_BATTERY_SIGN() `EXTRACTED`
-- SETTINGS_SET_CAMERA() `EXTRACTED`
-- SETTINGS_SET_MODULE() `EXTRACTED`
+- SETTINGS_SET_ENTITY() `EXTRACTED`
 - SETTINGS_SET_PLUG_THRESHOLD() `EXTRACTED`
 - SETTINGS_SET_POWER_UNIT() `EXTRACTED`
-- SETTINGS_SET_ROOM() `EXTRACTED`
-- SETTINGS_TOGGLE_TAPGATE() `EXTRACTED`
+- View-model: settings panel (rooms, cameras, modules, section order, room detail, power unit, plug threshold, battery sign) `EXTRACTED`
+- SETTINGS_CLEAR_CAMERA() `EXTRACTED`
+- SETTINGS_CLEAR_ENTITY() `EXTRACTED`
+
+### references
+- [CasaComponentBase](CasaComponentBase.md) `EXTRACTED`
+
+### shares_data_with
+- state.prefs `EXTRACTED`
 
 ---
 

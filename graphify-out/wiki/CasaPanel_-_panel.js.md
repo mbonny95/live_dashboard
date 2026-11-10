@@ -1,11 +1,11 @@
 # CasaPanel / panel.js
 
-> 31 nodes
+> 32 nodes
 
 ## Key Concepts
 
 - **CasaPanel** (21 connections) — `public/panel.js`
-- **panel.js** (11 connections) — `public/panel.js`
+- **panel.js** (14 connections) — `public/panel.js`
 - **._onMessage()** (11 connections) — `public/panel.js`
 - **._reply()** (10 connections) — `public/panel.js`
 - **fetchHistory()** (4 connections) — `public/panel.js`
@@ -22,18 +22,20 @@
 - **._handleUserDataGet()** (3 connections) — `public/panel.js`
 - **._handleUserDataSet()** (3 connections) — `public/panel.js`
 - **._handleCameraStream()** (3 connections) — `public/panel.js`
+- **resolveAssetVersion()** (2 connections) — `public/panel.js`
 - **toPlainStates()** (2 connections) — `public/panel.js`
 - **isoDay()** (2 connections) — `public/panel.js`
 - **fetchRawHistory()** (2 connections) — `public/panel.js`
 - **fetchTodayStatsDelta()** (2 connections) — `public/panel.js`
 - **fetchHourlyEnergy()** (2 connections) — `public/panel.js`
-- **.hass()** (2 connections) — `public/panel.js`
-- **FOLDER_NAME** (1 connections) — `public/panel.js`
-- *... and 6 more nodes in this community*
+- **.connectedCallback()** (2 connections) — `public/panel.js`
+- *... and 7 more nodes in this community*
 
 ## Relationships
 
-- [_boot / prefs.js](_boot_-_prefs.js.md) (1 shared connections)
+- [_boot / casa-core.js](_boot_-_casa-core.js.md) (1 shared connections)
+- [renderVals / dash_neumo.html](renderVals_-_dash_neumo.html.md) (1 shared connections)
+- [renderVals / dash_neumo_mobile.html](renderVals_-_dash_neumo_mobile.html.md) (1 shared connections)
 
 ## Source Files
 
@@ -41,9 +43,9 @@
 
 ## Audit Trail
 
-- EXTRACTED: 117 (98%)
-- INFERRED: 2 (2%)
-- AMBIGUOUS: 0 (0%)
+- EXTRACTED: 120 (96%)
+- INFERRED: 4 (3%)
+- AMBIGUOUS: 1 (1%)
 
 ---
 

@@ -26,6 +26,17 @@
 const VERSION = '1.9.0';
 console.info(`[live_dashboard] v${VERSION}`);
 
+async function resolveAssetVersion() {
+  try {
+    const r = await fetch(new URL('./version.json', import.meta.url).href, { cache: 'no-store' });
+    if (r.ok) {
+      const j = await r.json();
+      if (j && typeof j.version === 'string' && j.version) return j.version;
+    }
+  } catch (e) { /* missing or unreadable: fall back to this module's VERSION */ }
+  return VERSION;
+}
+
 const FLUSH_MS = 600;
 // v1.9.0 — after the first full snapshot only changed entities cross the
 // iframe boundary (see _flush). A full snapshot is still re-sent this
@@ -326,8 +337,17 @@ class CasaPanel extends HTMLElement {
     // re-checking on resize (e.g. on-screen keyboard, iOS rotation) would
     // reload the iframe mid-session and drop whatever state the user is in.
     const page = window.innerWidth < MOBILE_BREAKPOINT_PX ? 'dash_neumo_mobile.html' : 'dash_neumo.html';
-    iframe.src = new URL(`./${page}?v=${VERSION}`, import.meta.url).href;
     this._iframe = iframe;
+    // v2 — the page's ?v= comes from version.json, fetched past the cache,
+    // not from this module's own VERSION: Home Assistant serves /local/ with
+    // a 31-day cache and this module is pinned by panel_custom's module_url,
+    // so a new release of the pages (the part that changes) reaches every
+    // tablet on its next load without editing configuration.yaml or
+    // restarting HA. VERSION stays as the fallback when version.json can't
+    // be read.
+    resolveAssetVersion().then((v) => {
+      if (this._iframe === iframe) iframe.src = new URL(`./${page}?v=${encodeURIComponent(v)}`, import.meta.url).href;
+    });
     this._targetOrigin = window.location.origin;
     this.appendChild(iframe);
 

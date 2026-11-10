@@ -1,6 +1,6 @@
 # support.js / walk
 
-> 62 nodes
+> 61 nodes
 
 ## Key Concepts
 
@@ -29,13 +29,13 @@
 - **parseDcDocument()** (3 connections) — `public/support.js`
 - **parseDcText()** (3 connections) — `public/support.js`
 - **parseDataProps()** (3 connections) — `public/support.js`
-- *... and 37 more nodes in this community*
+- *... and 36 more nodes in this community*
 
 ## Relationships
 
-- [dash_neumo.html / call](dash_neumo.html_-_call.md) (3 shared connections)
-- [discovery.js / renderVals](discovery.js_-_renderVals.md) (2 shared connections)
-- [_boot / prefs.js](_boot_-_prefs.js.md) (1 shared connections)
+- [_boot / casa-core.js](_boot_-_casa-core.js.md) (3 shared connections)
+- [prefs.js / _checkIrrigationEnds](prefs.js_-__checkIrrigationEnds.md) (2 shared connections)
+- [discovery.js / discoverRooms](discovery.js_-_discoverRooms.md) (2 shared connections)
 
 ## Source Files
 
@@ -43,8 +43,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 271 (98%)
-- INFERRED: 5 (2%)
+- EXTRACTED: 269 (99%)
+- INFERRED: 4 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---

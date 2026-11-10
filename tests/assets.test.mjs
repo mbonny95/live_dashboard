@@ -34,9 +34,8 @@ test('vendored hls.js is present, pinned, and where both pages look for it', () 
   const actual = 'sha384-' + crypto.createHash('sha384').update(fs.readFileSync(file)).digest('base64');
   assert.equal(actual, 'sha384-vpNtFjJmrPAaL9LfqByx3MxTVjqrtQ6Ue6UVNnFeghNrhE0uvpydDr3tkTVcBgDz');
   assert.ok(fs.readFileSync(pub('vendor', 'README.md'), 'utf8').includes(actual), 'vendor/README.md records the hash');
-  for (const page of ['dash_neumo.html', 'dash_neumo_mobile.html']) {
-    assert.ok(fs.readFileSync(pub(page), 'utf8').includes("bust('./vendor/hls.light.min.js')"), page);
-  }
+  // v2: the camera code lives in casa-core.js, shared by both pages.
+  assert.ok(fs.readFileSync(pub('casa-core.js'), 'utf8').includes("bust('./vendor/hls.light.min.js')"), 'casa-core.js');
 });
 
 test('both pages load vendored React before support.js', () => {
@@ -86,5 +85,34 @@ test('pages load no fonts, styles or scripts from the internet', () => {
     for (const m of html.matchAll(/url\('\.\/vendor\/fonts\/([^']+)'\)/g)) {
       assert.ok(fs.existsSync(pub('vendor', 'fonts', m[1])), page + ': missing ' + m[1]);
     }
+  }
+});
+
+// v2 — support.js is generated from a dc-runtime source that isn't in this
+// repo: it's a frozen dependency, like vendor/. A change here is either an
+// accident or a deliberate runtime upgrade that must update this hash.
+test('support.js is unchanged (frozen runtime)', () => {
+  const actual = 'sha384-' + crypto.createHash('sha384').update(fs.readFileSync(pub('support.js'))).digest('base64');
+  assert.equal(actual, 'sha384-xAg2t0rI8+cBnVqE9RknRsPnD0SffYVAeU0LLdbctda9Goznx4uSZzjsKpFk4ncI');
+});
+
+// version.json is what the pages' ?v= comes from (see panel.js
+// resolveAssetVersion); VERSION is its fallback — they must agree.
+test('version.json matches panel.js VERSION', () => {
+  const version = fs.readFileSync(pub('panel.js'), 'utf8').match(/const VERSION = '([^']+)'/)[1];
+  assert.equal(JSON.parse(fs.readFileSync(pub('version.json'), 'utf8')).version, version);
+});
+
+// v2 — the runtime evaluates each page's `class Component extends
+// window.CasaCore.base(DCLogic)` right after React loads: casa-core.js must
+// be requested before support.js, or CasaCore doesn't exist yet.
+test('both pages load casa-core.js before support.js', () => {
+  assert.ok(fs.existsSync(pub('casa-core.js')));
+  for (const page of ['dash_neumo.html', 'dash_neumo_mobile.html']) {
+    const html = fs.readFileSync(pub(page), 'utf8');
+    const core = html.indexOf("./casa-core.js");
+    const support = html.indexOf('<script src="./support.js">');
+    assert.ok(core > 0 && support > core, page);
+    assert.ok(html.includes('class Component extends window.CasaCore.base(DCLogic)'), page);
   }
 });

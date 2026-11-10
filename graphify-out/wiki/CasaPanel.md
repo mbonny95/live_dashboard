@@ -23,8 +23,8 @@
 - ._handleUserDataGet() `EXTRACTED`
 - ._handleUserDataSet() `EXTRACTED`
 - ._schedule() `EXTRACTED`
-- .hass() `EXTRACTED`
 - .connectedCallback() `EXTRACTED`
+- .hass() `EXTRACTED`
 - .constructor() `EXTRACTED`
 - .disconnectedCallback() `EXTRACTED`
 - .narrow() `EXTRACTED`

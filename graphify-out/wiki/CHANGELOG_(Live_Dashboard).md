@@ -2,7 +2,7 @@
 
 > God node · 36 connections · `CHANGELOG.md`
 
-**Community:** [CHANGELOG / Config at config/www/live_da](CHANGELOG_-_Config_at_config-www-live_da.md)
+**Community:** [CHANGELOG / CHANGELOG v1.0.0](CHANGELOG_-_CHANGELOG_v1.0.0.md)
 
 ## Connections by Relation
 
@@ -13,13 +13,13 @@
 - CHANGELOG v1.8.1 `EXTRACTED`
 - CHANGELOG v1.6.0 `EXTRACTED`
 - CHANGELOG v1.4.0 `EXTRACTED`
-- A tag is not a release (push tag + gh release create) `EXTRACTED`
 - CHANGELOG v0.2.0 `EXTRACTED`
 - CHANGELOG v1.4.1 `EXTRACTED`
 - CHANGELOG v1.4.5 `EXTRACTED`
 - CHANGELOG v1.5.0 `EXTRACTED`
 - CHANGELOG v1.5.3 `EXTRACTED`
 - CHANGELOG v1.8.0 `EXTRACTED`
+- A tag is not a release (push tag + gh release create) `EXTRACTED`
 - CHANGELOG v1.0.0 `EXTRACTED`
 - CHANGELOG v1.3.0 `EXTRACTED`
 - CHANGELOG v1.4.2 `EXTRACTED`

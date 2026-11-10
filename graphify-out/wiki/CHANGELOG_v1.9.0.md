@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `CHANGELOG.md`
 
-**Community:** [README / CHANGELOG v1.9.0](README_-_CHANGELOG_v1.9.0.md)
+**Community:** [CHANGELOG v1.9.0 / Camera live view actually li](CHANGELOG_v1.9.0_-_Camera_live_view_actually_li.md)
 
 ## Connections by Relation
 
@@ -13,9 +13,9 @@
 - Vendored hls.js 1.7.4 (hls.light.min.js) `EXTRACTED`
 - Alarm PIN pad `EXTRACTED`
 - Dependency-free Node test suite and CI workflow `EXTRACTED`
-- Alarm buttons tap but nothing happens `EXTRACTED`
 - Automatic camera layer fallback on runtime error `EXTRACTED`
 - Vendored React 18.3.1 runtime (public/vendor/) `EXTRACTED`
+- Alarm buttons tap but nothing happens `EXTRACTED`
 - Camera live layer order: hls.js, then native HLS, then stills `EXTRACTED`
 - Diagnostica -> Ambiente -> 'Runtime React' row `EXTRACTED`
 - Idempotent _bindAttr (no rewrite of an unchanged attribute) `EXTRACTED`
