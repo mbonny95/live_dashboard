@@ -3,7 +3,45 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [1.9.0] - Unreleased
+## [2.0.0] - Unreleased
+
+La 1.9 non è mai stata pubblicata: le sue modifiche (le prime sezioni qui
+sotto) escono direttamente con la 2.0, insieme al lavoro "major".
+
+### Changed — un solo nucleo di codice per desktop e mobile
+
+- **La logica della dashboard ora esiste una volta sola**, in
+  `public/casa-core.js`. Fino alla 1.x `dash_neumo.html` (tablet a muro) e
+  `dash_neumo_mobile.html` (telefono) avevano ciascuna una copia completa: 85
+  metodi su 86 identici, più ~800 righe uguali dentro `renderVals()`. Ogni
+  correzione andava fatta due volte (le telecamere della 1.9 ne sono
+  l'esempio), e le due copie avevano già commenti divergenti. Ora le pagine
+  contengono solo il proprio layout: template, `state` iniziale e il proprio
+  `renderVals()`, che assembla i blocchi comuni (`vmSettingsDiag`, `vmAlarm`,
+  `vmCameraDetail`, `vmEnergyRing`, `vmHourlyStrip`, `vmEnergyEmpty`,
+  `vmLiveConsumption`). Le pagine passano da 4.580/3.677 righe a
+  2.643/2.124; `casa-core.js` ~2.100 righe.
+- **Nessun cambiamento visibile, verificato.** L'output di `renderVals()` è
+  stato confrontato prima/dopo ogni passo su 378 combinazioni (9 scenari demo
+  × 2 layout × 21 stati dell'interfaccia): identico. L'unica differenza,
+  voluta e senza effetti, è un campo in più (`thumbColor`) nelle righe stanza
+  delle impostazioni del mobile, che il template mobile non usa.
+- **Gli aggiornamenti delle pagine arrivano ai tablet senza riavviare Home
+  Assistant.** `panel.js` legge la versione da `version.json` (scavalcando la
+  cache di 31 giorni con cui HA serve `/local/`) e la usa come `?v=`
+  dell'iframe: dopo questo aggiornamento non serve più cambiare
+  `module_url` né riavviare HA a ogni versione, salvo quando cambia
+  `panel.js` stesso.
+- **`support.js` è trattato come dipendenza congelata**: il suo sorgente
+  (`dc-runtime/`) non è nel repo, quindi non si modifica e un test ne fissa
+  l'hash, come per i file in `vendor/`.
+- **Test**: 32 in tutto, tra cui unità sulle funzioni che prima stavano
+  dentro le pagine e non erano raggiungibili da Node (normalizzazione W/kW,
+  consumo derivato con la convenzione del segno della batteria, prese smart,
+  regole del PIN dell'allarme e tastierino), e un test che impedisce a una
+  pagina di ridefinire un metodo già presente nel nucleo comune.
+
+### Dalla 1.9 (mai pubblicata)
 
 Release "funziona anche senza internet, e chiede il codice". Tutto quello che
 la dashboard carica all'avvio ora arriva dall'installazione stessa, la

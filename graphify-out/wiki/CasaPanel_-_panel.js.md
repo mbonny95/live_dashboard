@@ -33,8 +33,7 @@
 
 ## Relationships
 
-- [_boot / casa-core.js](_boot_-_casa-core.js.md) (1 shared connections)
-- [renderVals / dash_neumo.html](renderVals_-_dash_neumo.html.md) (1 shared connections)
+- [casa-core.js / _boot](casa-core.js_-__boot.md) (2 shared connections)
 - [renderVals / dash_neumo_mobile.html](renderVals_-_dash_neumo_mobile.html.md) (1 shared connections)
 
 ## Source Files
@@ -43,8 +42,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 120 (96%)
-- INFERRED: 4 (3%)
+- EXTRACTED: 121 (97%)
+- INFERRED: 3 (2%)
 - AMBIGUOUS: 1 (1%)
 
 ---

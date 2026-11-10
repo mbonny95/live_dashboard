@@ -33,8 +33,8 @@
 
 ## Relationships
 
-- [_boot / casa-core.js](_boot_-_casa-core.js.md) (3 shared connections)
-- [prefs.js / _checkIrrigationEnds](prefs.js_-__checkIrrigationEnds.md) (2 shared connections)
+- [casa-core.js / _boot](casa-core.js_-__boot.md) (3 shared connections)
+- [prefs.js / _loadIrrigationEnds](prefs.js_-__loadIrrigationEnds.md) (2 shared connections)
 - [discovery.js / discoverRooms](discovery.js_-_discoverRooms.md) (2 shared connections)
 
 ## Source Files

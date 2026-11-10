@@ -69,7 +69,8 @@ test('panel.js VERSION matches the newest CHANGELOG entry', () => {
   const version = fs.readFileSync(pub('panel.js'), 'utf8').match(/const VERSION = '([^']+)'/)[1];
   const changelog = fs.readFileSync(path.join(__dirname, '../CHANGELOG.md'), 'utf8');
   const newest = changelog.match(/^## \[([^\]]+)\]/m)[1];
-  assert.equal(newest, version);
+  // Development builds deployed for testing carry a -dev.N suffix.
+  assert.equal(newest, version.replace(/-dev\.\d+$/, ''));
 });
 
 // v1.9.0 — the pages start with no internet: nothing they load at startup
@@ -114,5 +115,21 @@ test('both pages load casa-core.js before support.js', () => {
     const support = html.indexOf('<script src="./support.js">');
     assert.ok(core > 0 && support > core, page);
     assert.ok(html.includes('class Component extends window.CasaCore.base(DCLogic)'), page);
+  }
+});
+
+// v2 — the point of casa-core.js is that shared logic exists once. A page
+// redefining a method the base already has would silently override it for
+// that layout only: exactly the "fixed on desktop, still broken on mobile"
+// drift this file was created to end.
+test('pages do not redefine methods that live in casa-core.js', () => {
+  const methodNames = (src) => new Set([...src.matchAll(/^  (?:async )?([A-Za-z_$][\w$]*)\s*\([^)]*\)\s*\{/gm)].map((m) => m[1]));
+  const core = methodNames(fs.readFileSync(pub('casa-core.js'), 'utf8'));
+  assert.ok(core.size > 80, 'expected the shared methods in casa-core.js');
+  for (const page of ['dash_neumo.html', 'dash_neumo_mobile.html']) {
+    const html = fs.readFileSync(pub(page), 'utf8');
+    const cls = html.slice(html.indexOf('class Component extends window.CasaCore.base(DCLogic)'));
+    const clash = [...methodNames(cls.slice(0, cls.indexOf('</script>')))].filter((m) => core.has(m));
+    assert.deepEqual(clash, [], page + ' redefines shared methods');
   }
 });

@@ -1,15 +1,13 @@
-# prefs.js / _checkIrrigationEnds
+# prefs.js / _loadIrrigationEnds
 
-> 19 nodes
+> 15 nodes
 
 ## Key Concepts
 
 - **prefs.js** (13 connections) — `public/prefs.js`
-- **_checkIrrigationEnds()** (7 connections) — `public/casa-core.js`
-- **_loadIrrigationEnds()** (5 connections) — `public/casa-core.js`
 - **load()** (4 connections) — `public/prefs.js`
-- **saveIrrigationEnds()** (4 connections) — `public/prefs.js`
-- **runValve()** (4 connections) — `public/casa-core.js`
+- **diagText()** (4 connections) — `public/prefs.js`
+- **_loadIrrigationEnds()** (4 connections) — `public/casa-core.js`
 - **readLocalKeyed()** (3 connections) — `public/prefs.js`
 - **writeLocalKeyed()** (3 connections) — `public/prefs.js`
 - **readLocal()** (3 connections) — `public/prefs.js`
@@ -18,18 +16,15 @@
 - **loadIrrigationEnds()** (3 connections) — `public/prefs.js`
 - **padCol()** (3 connections) — `public/prefs.js`
 - **diagRowLine()** (3 connections) — `public/prefs.js`
-- **diagText()** (3 connections) — `public/prefs.js`
 - **createExternalModules()** (3 connections) — `public/support.js`
-- **irrigationEnds state** (3 connections) — `public/casa-core.js`
-- **exportText()** (1 connections) — `public/prefs.js`
-- **copyToClipboard()** (1 connections) — `public/prefs.js`
+- **exportText()** (2 connections) — `public/prefs.js`
+- **copyToClipboard()** (2 connections) — `public/prefs.js`
 
 ## Relationships
 
-- [CasaComponentBase / PREFS](CasaComponentBase_-_PREFS.md) (6 shared connections)
-- [_boot / casa-core.js](_boot_-_casa-core.js.md) (2 shared connections)
+- [CasaComponentBase / vmSettingsDiag](CasaComponentBase_-_vmSettingsDiag.md) (8 shared connections)
+- [casa-core.js / _boot](casa-core.js_-__boot.md) (2 shared connections)
 - [support.js / walk](support.js_-_walk.md) (2 shared connections)
-- [renderVals / dash_neumo.html](renderVals_-_dash_neumo.html.md) (2 shared connections)
 
 ## Source Files
 
@@ -39,8 +34,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 70 (97%)
-- INFERRED: 2 (3%)
+- EXTRACTED: 54 (96%)
+- INFERRED: 2 (4%)
 - AMBIGUOUS: 0 (0%)
 
 ---

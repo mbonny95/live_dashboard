@@ -1,6 +1,6 @@
 # discovery.js / discoverRooms
 
-> 21 nodes
+> 22 nodes
 
 ## Key Concepts
 
@@ -18,17 +18,18 @@
 - **discoverAlarm()** (3 connections) — `public/discovery.js`
 - **isRoomRelevant()** (2 connections) — `public/discovery.js`
 - **guessAreaIcon()** (2 connections) — `public/discovery.js`
+- **findDuplicateDevices()** (2 connections) — `public/discovery.js`
 - **mapMdiIcon()** (2 connections) — `public/discovery.js`
 - **discoverPeople()** (2 connections) — `public/discovery.js`
 - **discoverWeather()** (2 connections) — `public/discovery.js`
-- **findDuplicateDevices()** (1 connections) — `public/discovery.js`
+- **mapEnergyPrefs()** (2 connections) — `public/discovery.js`
 - **discoverModes()** (1 connections) — `public/discovery.js`
 - **resolveEntityArea()** (1 connections) — `public/discovery.js`
 - **applyEntityVisibility()** (1 connections) — `public/discovery.js`
 
 ## Relationships
 
-- [CasaComponentBase / PREFS](CasaComponentBase_-_PREFS.md) (9 shared connections)
+- [CasaComponentBase / vmSettingsDiag](CasaComponentBase_-_vmSettingsDiag.md) (10 shared connections)
 - [support.js / walk](support.js_-_walk.md) (2 shared connections)
 
 ## Source Files
@@ -37,7 +38,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 95 (98%)
+- EXTRACTED: 98 (98%)
 - INFERRED: 2 (2%)
 - AMBIGUOUS: 0 (0%)
 

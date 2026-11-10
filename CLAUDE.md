@@ -25,6 +25,30 @@
 5. **Schema energia di Home Assistant piatto** per la sorgente `grid`:
    `stat_energy_from` al top level, non annidato in `flow_from[]`.
 
+## Dove va il codice (v2)
+
+- **La logica sta in `public/casa-core.js`, una volta sola.** Desktop
+  (`dash_neumo.html`) e mobile (`dash_neumo_mobile.html`) dichiarano
+  `class Component extends window.CasaCore.base(DCLogic)` e contengono solo
+  il proprio layout: template, `state` iniziale, `renderVals()`, e (mobile)
+  `chartOn` / `toggleChart` / `roomDetail`. Un metodo nuovo o una correzione
+  va in `casa-core.js`; un test fallisce se una pagina ridefinisce un metodo
+  della base.
+- **Blocchi comuni di `renderVals()` = metodi `vm*()`** in `casa-core.js`
+  (`vmSettingsDiag`, `vmAlarm`, `vmCameraDetail`, `vmEnergyRing`,
+  `vmHourlyStrip`, `vmEnergyEmpty`, `vmLiveConsumption`): ricevono i valori
+  che `renderVals()` ha già calcolato e restituiscono gli stessi nomi che i
+  template usano. Ciò che resta in `renderVals()` è assemblaggio del layout.
+- **`casa-core.js` si carica in `<head>` prima di `support.js`** (il runtime
+  valuta la classe del componente subito dopo React), con lo stesso `?v=`
+  della pagina. Script classico, non modulo ES, per il vincolo 3.
+- **`support.js` non si modifica**: è generato da un `dc-runtime/` che non è
+  nel repo; un test ne fissa l'hash.
+- **Refactor senza cambi visibili si verificano col confronto "golden"**:
+  l'output di `renderVals()` prima/dopo su tutti gli scenari demo, i due
+  layout e gli stati dell'interfaccia (impostazioni, stanza, telecamera, PIN).
+  Deve risultare identico.
+
 ## Densità prima del "sta tutto in una schermata"
 
 Il vincolo storico «la view Casa sta in 1280×800 senza scroll» **è stato

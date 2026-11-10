@@ -1383,6 +1383,710 @@ function base(DCLogic) {
     };
     return map[s] || [s, 'warn'];
   }
+
+  // v2 — Settings panel + Diagnostica view-model (v1.5.0 / v1.5.1 and
+  // later additions), shared by both layouts: until v2 each page's
+  // renderVals carried its own copy. `ctx` = the renderVals locals this
+  // block reads; the returned names are the ones the templates use.
+  vmSettingsDiag(ctx) {
+    const { hasAlarm, alarmId, alarmNeedsCodeArm, alarmNeedsCodeDisarm, supp, batterySign, camList, consumptionDisplayWatts, en, gridT, prodT, hasEnergy, hasNewRing, irrZones } = ctx;
+    // --- settings panel (v1.5.0) --------------------------------------------
+    // Screen 1 (rooms/cameras/sections) and screen 2 (one room's entity
+    // catalog) are only computed while the drawer is actually open — cheap
+    // insurance against doing this work on every 15s clock tick otherwise.
+    const prefsNow = this.PREFS();
+    const chNow = this.CONFIG_HIDDEN();
+    let settingsRooms = [], settingsCameras = [], settingsModules = [], settingsSectionOrder = [], settingsRoomDetail = null;
+    let doExport = () => {};
+    if (this.state.settingsOpen && this.discovery) {
+      const d = this.discovery;
+      const allRoomsRes = this.ALL_ROOMS_RESULT();
+      const allRoomsList = allRoomsRes.rooms.concat(allRoomsRes.overflow);
+      const roomOrderIds = allRoomsList.map((r) => r.id);
+      const allCamsList = this.ALL_CAMERAS_RESULT();
+      const camCfgNow = this.cfg.cameras || {};
+      const cfgTapGatedList = (camCfgNow.hideUntilTap || []).map(String);
+      // "diverso dal config": only when the panel's override actually
+      // changes the outcome vs. config.js alone — a redundant override that
+      // happens to agree with config.js is not shown as a mismatch.
+      const diffFrom = (prefsMap, key, configHiddenSet) =>
+        !!prefsMap && Object.prototype.hasOwnProperty.call(prefsMap, key) && prefsMap[key] !== !configHiddenSet.has(key);
+
+      settingsRooms = allRoomsList.map((r, idx) => {
+        const visible = d.resolveVisible(r.id, prefsNow.rooms, chNow.rooms);
+        const total = (r.catalog || []).length;
+        const hidden = (r.catalog || []).filter((e) => !d.resolveVisible(e.id, prefsNow.entities, chNow.entities)).length;
+        const diff = diffFrom(prefsNow.rooms, r.id, chNow.rooms);
+        const canUp = idx > 0, canDown = idx < allRoomsList.length - 1;
+        return {
+          id: r.id, name: r.name, icon: r.icon, iconRef: this._bindAttr('href', r.icon),
+          stroke: visible ? 'var(--acc)' : 'var(--tx2)',
+          countLabel: this.t('settings.entityCount', { n: total, m: hidden }),
+          visible, toggle: () => this.SETTINGS_SET_ROOM(r.id, !visible),
+          thumbLeft: visible ? '20px' : '2px', thumbColor: visible ? 'var(--acc)' : 'var(--nu-d)',
+          diff, diffOff: !diff, clearDiff: (e) => { if (e) e.stopPropagation(); this.SETTINGS_CLEAR_ROOM(r.id); },
+          upOpacity: canUp ? '1' : '.35', downOpacity: canDown ? '1' : '.35',
+          up: () => this.SETTINGS_MOVE_ROOM(roomOrderIds, r.id, -1),
+          down: () => this.SETTINGS_MOVE_ROOM(roomOrderIds, r.id, 1),
+          open: () => this.setState({ settingsRoom: r.id })
+        };
+      });
+
+      settingsCameras = allCamsList.map((c) => {
+        const visible = d.resolveVisible(c.id, prefsNow.cameras, chNow.cameras);
+        const tapGated = prefsNow.hideUntilTap !== undefined ? prefsNow.hideUntilTap.includes(c.id) : cfgTapGatedList.includes(c.id);
+        const diff = diffFrom(prefsNow.cameras, c.id, chNow.cameras);
+        return {
+          id: c.id, name: c.name, area: c.area,
+          visible, toggle: () => this.SETTINGS_SET_CAMERA(c.id, !visible),
+          thumbLeft: visible ? '20px' : '2px',
+          diff, diffOff: !diff, clearDiff: () => this.SETTINGS_CLEAR_CAMERA(c.id),
+          tapGated, toggleTapGate: () => this.SETTINGS_TOGGLE_TAPGATE(c.id, cfgTapGatedList)
+        };
+      });
+
+      // Module labels reuse existing tab/static strings instead of adding a
+      // parallel set of translations — "Sorveglianza"/"Elettrodomestici" etc.
+      // already exist as tab.cameras / S.appliances.
+      const moduleLabels = { energy: this.t('tab.energy'), irrigation: this.t('tab.irrigation'), cameras: this.t('tab.cameras'),
+        appliances: this.strings.appliances, vehicle: this.t('tab.vehicle') };
+      settingsModules = window.CasaDiscovery.MODULE_KEYS.map((key) => {
+        const active = d.resolveVisible(key, prefsNow.modules, chNow.modules);
+        return { key, label: moduleLabels[key], active, toggle: () => this.SETTINGS_SET_MODULE(key, !active) };
+      });
+
+      // Casa home section order (v1.7.0) — same row pattern as settingsRooms
+      // above, without the visibility toggle: alarm has none at all (it only
+      // ever shows when an alarm entity exists), and energy/cameras already
+      // have theirs in the "Sezioni" pill list right below. `dim` here is
+      // read-only feedback, not a control.
+      const sectionMeta = {
+        alarm: { label: this.strings.alarm, icon: '#i-shield', dim: !hasAlarm },
+        energy: { label: this.strings.solar, icon: '#i-solar', dim: !d.resolveVisible('energy', prefsNow.modules, chNow.modules) },
+        cameras: { label: this.strings.surveillance, icon: '#i-cam', dim: !d.resolveVisible('cameras', prefsNow.modules, chNow.modules) }
+      };
+      const sectionOrderIds = this.SECTION_ORDER();
+      settingsSectionOrder = sectionOrderIds.map((id, idx) => {
+        const m = sectionMeta[id];
+        const canUp = idx > 0, canDown = idx < sectionOrderIds.length - 1;
+        return {
+          id, label: m.label, iconRef: this._bindAttr('href', m.icon), dimOpacity: m.dim ? '.45' : '1',
+          upOpacity: canUp ? '1' : '.35', downOpacity: canDown ? '1' : '.35',
+          up: () => this.SETTINGS_MOVE_SECTION(sectionOrderIds, id, -1),
+          down: () => this.SETTINGS_MOVE_SECTION(sectionOrderIds, id, 1)
+        };
+      });
+
+      if (this.state.settingsRoom) {
+        const r = allRoomsList.find((x) => x.id === this.state.settingsRoom);
+        if (r) {
+          const entities = (r.catalog || []).map((e) => {
+            const visible = d.resolveVisible(e.id, prefsNow.entities, chNow.entities);
+            const reason = e.reasonKind === 'domain'
+              ? this.t('settings.reasonDomain', { domain: e.reasonValue })
+              : this.t('settings.reasonDeviceClass', { dc: e.reasonValue });
+            const diff = diffFrom(prefsNow.entities, e.id, chNow.entities);
+            return {
+              id: e.id, name: e.name, reason, visible, nameColor: visible ? 'var(--tx)' : 'var(--tx2)',
+              toggle: () => this.SETTINGS_SET_ENTITY(e.id, !visible), thumbLeft: visible ? '20px' : '2px',
+              diff, diffOff: !diff, clearDiff: () => this.SETTINGS_CLEAR_ENTITY(e.id)
+            };
+          }).sort((a, b) => a.name.localeCompare(b.name));
+          settingsRoomDetail = { id: r.id, name: r.name, icon: r.icon, iconRef: this._bindAttr('href', r.icon), entities, hasEntities: entities.length > 0 };
+        }
+      }
+
+      // "Esporta come config.js": a plain-object snapshot of cfg with every
+      // resolved hide/order list substituted in (discovery.js's
+      // buildExportedConfig), serialized and offered for clipboard copy —
+      // never written to disk, this page has no way to do that (see the
+      // v1.5.0 spec's "Esporta come config.js" section).
+      doExport = async () => {
+        const known = {
+          roomIds: allRoomsList.map((r) => r.id),
+          entityIds: Array.from(new Set(allRoomsList.reduce((acc, r) => acc.concat((r.catalog || []).map((e) => e.id)), []))),
+          cameraIds: allCamsList.map((c) => c.id)
+        };
+        const text = window.CasaPrefs.exportText(this.cfg, prefsNow, known);
+        const copied = await window.CasaPrefs.copyToClipboard(text);
+        this.setState({ exportSheet: { text, copied } });
+      };
+    }
+
+    // --- diagnostics panel (v1.5.1) -----------------------------------------
+    // Deliberately its own `if`, not folded into the block above: that one
+    // is gated on `this.discovery` because rooms/cameras/modules have
+    // nothing to show without it, but Diagnostica's whole reason to exist is
+    // explaining *why* discovery/config/energy resolution came up empty —
+    // it must compute regardless of whether any of that succeeded. Still
+    // gated on `settingsOpen` alone, same "don't redo this on every 15s
+    // clock tick" reasoning as the block above.
+    let diagConfigAttempts = [], diagConfigSummary = '', diagConfigOutsideIframe = false;
+    let diagEnergyInstantRows = [], diagEnergyDailyRows = [], diagPrefsFailed = false, diagEnvRows = [];
+    let diagActionRows = [], hasDiagActions = false, diagIrrigationRows = [], hasDiagIrrigationRows = false;
+    let diagCameraRows = [], diagRingValue = '', diagHourlyValue = '', diagAlarmRows = [];
+    let diagReasonGroups = [], diagReasonTotalLabel = '', hasDiagReasonGroups = false, diagHasHighSeverityReason = false;
+    let hasDiagDuplicateDevices = false, diagDuplicateDevices = [], diagDuplicateDevicesTitle = '';
+    let doDiag = () => {};
+    let settingsTabs = [], powerUnitOptions = [], plugThresholdOptions = [];
+    let showBatterySignControl = false, batterySignOptions = [], batterySignLiveLabel = '', batterySignSuspect = false, batterySignInvert = () => {};
+    if (this.state.settingsOpen) {
+      const S = this.strings;
+      const roleLabelKeys = { production: 'diagRoleProduction', consumption: 'diagRoleConsumption', gridImport: 'diagRoleGridImport', gridExport: 'diagRoleGridExport',
+        'battery.power': 'diagRoleBatteryPower', 'battery.soc': 'diagRoleBatterySoc', inverterStatus: 'diagRoleInverterStatus' };
+      const verdictLabelKeys = { ok: 'diagVerdictOk', unconfigured: 'diagVerdictUnconfigured', missing: 'diagVerdictMissing', unavailable: 'diagVerdictUnavailable' };
+      const sourceLabelKeys = { config: 'diagSourceConfig', 'ha-prefs': 'diagSourceHaPrefs', auto: 'diagSourceAuto' };
+
+      const cd = this.configDiag;
+      diagConfigAttempts = cd ? cd.attempts.map((a) => ({
+        path: a.path,
+        verdictLabel: a.defined === null ? S.diagConfigVerdictMissing : a.defined ? S.diagConfigVerdictOk : S.diagConfigVerdictNotExecuted,
+        tone: a.loadScript && a.defined === false ? 'warn' : ''
+      })) : [];
+      const notExecuted = !!cd && !cd.resolvedPath && cd.attempts.some((a) => a.loadScript && a.defined === false);
+      diagConfigSummary = !cd ? '' : cd.resolvedPath ? this.t('diag.configResolved', { path: cd.resolvedPath }) : notExecuted ? S.diagConfigNotExecutedMsg : S.diagConfigNotFound;
+      diagConfigOutsideIframe = !!cd && !cd.insideIframe;
+
+      diagEnergyInstantRows = this.diagEnergyInstant().map((r) => ({
+        role: r.role, roleLabel: S[roleLabelKeys[r.role]],
+        idLabel: r.id || S.diagNotConfiguredLabel,
+        valueLabel: r.valueLabel, verdictLabel: S[verdictLabelKeys[r.verdict]],
+        tone: (r.verdict === 'missing' || r.verdict === 'unavailable') ? 'warn' : '',
+        unitWarn: r.unitWarn
+      }));
+
+      const dailyRaw = this.diagEnergyDaily();
+      diagPrefsFailed = dailyRaw.prefsFailed;
+      diagEnergyDailyRows = dailyRaw.rows.map((r) => ({
+        role: r.role, roleLabel: S[roleLabelKeys[r.role]],
+        sourceLabel: r.source ? S[sourceLabelKeys[r.source]] : S.diagSourceNone,
+        idsLabel: r.ids.length ? r.ids.join(' + ') : S.diagNotConfiguredLabel,
+        valueLabel: r.value == null ? '—' : this.dec(r.value, 2) + ' kWh',
+        counterWarn: r.counterWarn
+      }));
+
+      // Recent actions (v1.8.1) — the ring buffer call() maintains, turned
+      // into rows. Placed above Environment both here and in the copy-
+      // diagnostics text (prefs.js's diagText) — this is the section a
+      // support issue is asked to paste, so it should be the first thing a
+      // reader hits, not buried under config/energy diagnostics that were
+      // already fine on the reporting install.
+      const outcomeLabel = (o) => o === 'ok' ? S.diagActionOk : o === 'timeout' ? S.diagActionTimeout : o === 'error' ? S.diagActionError : S.diagActionPending;
+      diagActionRows = this._actionLog.map((e) => ({
+        time: new Date(e.t).toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        domainService: e.domain + '.' + e.service,
+        entityId: e.entity_id || '—',
+        outcome: e.outcome,
+        outcomeLabel: outcomeLabel(e.outcome),
+        tone: (e.outcome === 'error' || e.outcome === 'timeout') ? 'warn' : '',
+        msLabel: e.ms != null ? e.ms + 'ms' : '—'
+      }));
+      hasDiagActions = true;
+
+      // Irrigation (v1.8.1) — one row per zone that has something to
+      // report: an active deadline, or one this session watched expire.
+      // Zones with neither (never run, or `buttons`-only — see runValve's
+      // comment) contribute nothing, same "only what's actionable" spirit
+      // as the discard-reason groups above.
+      const hhmm = (ms) => new Date(ms).toLocaleTimeString(this.lang === 'it' ? 'it-IT' : 'en-GB', { hour: '2-digit', minute: '2-digit' });
+      diagIrrigationRows = irrZones.filter((z) => z.valve).map((z) => {
+        const endsAt = (this.state.irrigationEnds || {})[z.valve];
+        const lastClosed = this._irrigationLastClosed[z.valve];
+        if (endsAt != null) return { name: z.name, value: this.t('irrigation.diagEndsAt', { time: hhmm(endsAt) }) };
+        if (lastClosed != null) return { name: z.name, value: this.t('irrigation.diagClosedAt', { time: hhmm(lastClosed) }) };
+        return null;
+      }).filter(Boolean);
+      hasDiagIrrigationRows = diagIrrigationRows.length > 0;
+
+      const env = this.diagEnvironment();
+      diagEnvRows = [
+        { label: S.diagEnvVersion, value: env.version || S.diagEnvVersionDev },
+        { label: S.diagEnvBackend, value: env.backend === 'demo' ? S.diagEnvBackendDemo : env.backend === 'panel' ? S.diagEnvBackendPanel : (env.backend || '—') },
+        { label: S.diagEnvIframe, value: env.insideIframe ? S.diagEnvIframeYes : S.diagEnvIframeNo },
+        // env.backend === 'demo' never sends embedIframe at all (see
+        // ha-backend-demo.js — there is no real panel_custom config to
+        // report on), so null there reads distinctly from a real false.
+        { label: S.diagEnvEmbedIframe, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.embedIframe === true ? S.diagEnvEmbedIframeYes : env.embedIframe === false ? S.diagEnvEmbedIframeNo : S.diagEnvUnknown },
+        { label: S.diagEnvLang, value: env.lang || '—' },
+        { label: S.diagEnvRuntime, value: env.reactSource === 'local' ? S.diagEnvRuntimeLocal : env.reactSource === 'cdn' ? S.diagEnvRuntimeCdn : S.diagEnvUnknown },
+        { label: S.diagEnvAreas, value: String(env.areaCount) },
+        { label: S.diagEnvEntities, value: String(env.entityCount) },
+        { label: S.diagEnvRooms, value: String(env.roomCount) },
+        { label: S.diagEnvCameras, value: String(env.cameraCount) },
+        { label: S.diagEnvPrefsOutcome, value: env.prefsOutcome === 'ok' ? S.diagEnvPrefsOk : env.prefsOutcome === 'failed' ? S.diagEnvPrefsFailed : S.diagEnvPrefsUnknown }
+      ];
+
+      // v1.5.4, point 5 — three diagnostics rows that answer exactly the
+      // questions that cost real debugging time this release: which camera
+      // layer actually activated (and whether camera/stream itself even
+      // answered), which energy ring is live and why the fallback one might
+      // be showing instead, and what the alarm entity/capabilities/code
+      // situation is. camDiag is populated by _camStartStream as each
+      // camera detail is opened — a camera never opened this session has no
+      // entry yet, shown as "not opened" rather than a false failure.
+      const camLayerLabelKeys = { 'hls-native': 'diagCamLayerNative', 'hlsjs': 'diagCamLayerHlsjs', 'snapshot': 'diagCamLayerSnapshot' };
+      diagCameraRows = camList.map((c) => {
+        const d = (this.camDiag || {})[c.id];
+        if (!d) return { label: c.name, value: S.diagCamNotOpened };
+        const layerLabel = S[camLayerLabelKeys[d.layer]] || d.layer || '—';
+        const wsLabel = !d.wsAttempted ? S.diagCamWsNotAttempted : d.wsOk ? S.diagCamWsOk : S.diagCamWsFailed;
+        const fellBack = d.failedLayer ? ' · ' + S.diagCamFellBack + ' ' + (S[camLayerLabelKeys[d.failedLayer]] || d.failedLayer)
+          + (d.failDetail ? ' (' + d.failDetail + ')' : '') : '';
+        return { label: c.name, value: layerLabel + ' · ' + wsLabel + fellBack };
+      });
+
+      diagRingValue = !hasEnergy ? S.diagRingNoEnergy
+        : hasNewRing ? S.diagRingDoubleLabel
+        : prodT == null ? this.t('diag.ringMissing', { field: S.diagRoleProduction })
+        : gridT == null ? this.t('diag.ringMissing', { field: S.diagRoleGridImport })
+        : S.diagRingSingleGeneric;
+
+      // Diagnostica's dashboard counterpart for the hourly strip's three
+      // silent outcomes (CLAUDE.md: no console-only message for the end
+      // user). `undefined` (never resolved — fetch in flight, or no backend
+      // support) is distinct from `null` (resolved, no statistics found for
+      // any configured id): the loading state doesn't accuse the install of
+      // anything.
+      diagHourlyValue = !hasEnergy ? S.diagHourlyNoEnergy
+        : this.state.hourlyEnergy === undefined ? S.diagHourlyLoading
+        : this.state.hourlyEnergy === null ? S.diagHourlyMissing
+        : this.state.hourlyEnergy.length < 24 ? this.t('diag.hourlyPartial', { n: this.state.hourlyEnergy.length })
+        : S.diagHourlyFull;
+
+      if (hasAlarm) {
+        const capLabels = [];
+        if (supp & 1) capLabels.push(this.t('alarm.btnHome'));
+        if (supp & 2) capLabels.push(this.t('alarm.btnAway'));
+        if (supp & 4) capLabels.push(this.t('alarm.btnNight'));
+        if (supp & 16) capLabels.push(this.t('alarm.btnCustom'));
+        if (supp & 32) capLabels.push(this.t('alarm.btnVacation'));
+        diagAlarmRows = [
+          { label: S.diagAlarmEntity, value: alarmId },
+          { label: S.diagAlarmFoundVia, value: (this.cfg && this.cfg.alarm) ? S.diagSourceConfig : S.diagSourceDomain },
+          { label: S.diagAlarmCapabilities, value: capLabels.length ? capLabels.join(', ') : S.diagAlarmDisarmOnly },
+          { label: S.diagAlarmCodeRequired, value: (alarmNeedsCodeArm || alarmNeedsCodeDisarm) ? S.diagVerdictYes : S.diagVerdictNo }
+        ];
+      }
+
+      // Diagnostica — why an entity doesn't show up (v1.7.1). discoverRooms's
+      // discardLog (see discovery.js) already has every discard reason;
+      // this just groups it, orders the groups by severity (not by count —
+      // the biggest group is almost always the least interesting
+      // "diagnostic entity" one), and turns each into a collapsible block.
+      // Unfiltered (isHidden always false, like ALL_ROOMS_RESULT) — a
+      // discard reason must be visible regardless of what the user has
+      // chosen to hide, since hiding is a deliberate choice and this screen
+      // is about problems, not preferences.
+      if (this.discovery) {
+        const REASON_ORDER = ['no_area', 'unknown_area', 'no_registry_entry', 'no_state',
+          'claimed_by_module', 'empty_room', 'hidden_by', 'disabled_by', 'diagnostic_category', 'config_category'];
+        const REASON_LABEL_KEYS = {
+          no_area: 'diagReasonNoArea', unknown_area: 'diagReasonUnknownArea', no_registry_entry: 'diagReasonNoRegistryEntry',
+          no_state: 'diagReasonNoState', claimed_by_module: 'diagReasonClaimedByModule', empty_room: 'diagReasonEmptyRoom',
+          hidden_by: 'diagReasonHiddenBy', disabled_by: 'diagReasonDisabledBy',
+          diagnostic_category: 'diagReasonDiagnosticCategory', config_category: 'diagReasonConfigCategory'
+        };
+        const REASON_EXPLAIN_KEYS = { no_area: 'diagReasonNoAreaBody', unknown_area: 'diagReasonUnknownAreaBody', no_registry_entry: 'diagReasonNoRegistryEntryBody' };
+        const HIGH_SEVERITY_REASONS = ['no_area', 'unknown_area', 'no_registry_entry'];
+        const claimModuleLabels = {
+          energy: this.t('tab.energy'), irrigation: this.t('tab.irrigation'), weatherStation: S.diagModuleWeatherStation,
+          vehicle: this.t('tab.vehicle'), appliances: S.appliances, cameras: this.t('tab.cameras'),
+          alarm: S.alarm, weather: S.diagModuleWeather, modes: S.houseMode, people: S.diagModulePeople, quickActions: S.quickActions
+        };
+
+        const discardLog = this.ALL_ROOMS_RESULT().discardLog || [];
+        const byReason = {};
+        discardLog.forEach((d) => { (byReason[d.reason] = byReason[d.reason] || []).push(d); });
+
+        diagReasonTotalLabel = this.t('diag.reasonsTotal', { n: discardLog.length });
+        diagHasHighSeverityReason = HIGH_SEVERITY_REASONS.some((r) => byReason[r] && byReason[r].length);
+        const groupsOpen = this.state.diagReasonGroupsOpen || {};
+        diagReasonGroups = REASON_ORDER.filter((r) => byReason[r] && byReason[r].length).map((reasonCode) => {
+          const entries = byReason[reasonCode];
+          const open = groupsOpen[reasonCode] !== false; // default open once the outer section is opened
+          return {
+            reason: reasonCode,
+            label: S[REASON_LABEL_KEYS[reasonCode]],
+            count: entries.length,
+            hasExplain: !!REASON_EXPLAIN_KEYS[reasonCode],
+            explain: REASON_EXPLAIN_KEYS[reasonCode] ? S[REASON_EXPLAIN_KEYS[reasonCode]] : '',
+            open, chevRotate: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            toggle: () => this.setState({ diagReasonGroupsOpen: Object.assign({}, groupsOpen, { [reasonCode]: !open }) }),
+            rows: entries.map((d) => ({
+              name: d.name,
+              entityIdLabel: d.entity_id || '—',
+              hasReasonExtra: reasonCode === 'claimed_by_module',
+              reasonExtra: reasonCode === 'claimed_by_module'
+                ? this.t('diag.reasonClaimedByModule', { module: claimModuleLabels[d.module] || d.module || '—' })
+                : ''
+            }))
+          };
+        });
+        hasDiagReasonGroups = diagReasonGroups.length > 0;
+
+        const dupPairs = this.discovery.findDuplicateDevices(this.registries) || [];
+        hasDiagDuplicateDevices = dupPairs.length > 0;
+        if (hasDiagDuplicateDevices) {
+          diagDuplicateDevicesTitle = this.t('diag.duplicateDevicesTitle', { n: dupPairs.length });
+          diagDuplicateDevices = dupPairs.map((p) => ({
+            line: this.t('diag.duplicateDeviceLine', {
+              from: p.withoutArea.name_by_user || p.withoutArea.name || p.withoutArea.model || p.withoutArea.id,
+              to: p.withArea.name_by_user || p.withArea.name || p.withArea.model || p.withArea.id
+            })
+          }));
+        }
+      }
+
+      // Settings panel navigation (v1.5.3): four flat tabs instead of one
+      // long scroll. "hasIssue" reuses the same *Rows this block already
+      // computed (see the diagnostics comment above) rather than
+      // re-deriving verdicts — kept in sync with _settingsProblemTab()'s
+      // criteria (missing/unavailable/unitWarn/counterWarn/prefsFailed/
+      // config-load warn), which decides the tab on open, before these
+      // rows exist yet. Rooms/cameras have no diagnosed failure mode.
+      const settingsTabDefs = [['stanze', S.rooms, false], ['energia', this.t('tab.energy'),
+        diagEnergyInstantRows.some((r) => r.tone === 'warn' || r.unitWarn) || diagPrefsFailed || diagEnergyDailyRows.some((r) => r.counterWarn) || batterySign.suspect]];
+      if (settingsCameras.length > 0) settingsTabDefs.push(['camere', S.settingsCameras, false]);
+      settingsTabDefs.push(['diagnostica', S.diagTitle, diagConfigAttempts.some((a) => a.tone === 'warn') || diagHasHighSeverityReason]);
+      settingsTabs = settingsTabDefs.map(([key, label, hasIssue]) => ({
+        key, label, hasIssue, sel: (this.state.settingsTab || 'stanze') === key,
+        go: () => this.setState({ settingsTab: key })
+      }));
+
+      const curPowerUnit = prefsNow.powerUnit || 'auto';
+      powerUnitOptions = [['auto', S.settingsPowerUnitAuto], ['w', S.settingsPowerUnitW], ['kw', S.settingsPowerUnitKw]]
+        .map(([key, label]) => ({ key, label, sel: curPowerUnit === key, set: () => this.SETTINGS_SET_POWER_UNIT(key) }));
+      const curPlugThreshold = this.plugThresholdW();
+      plugThresholdOptions = [1, 3, 5, 10]
+        .map((w) => ({ key: String(w), label: w + ' W', sel: curPlugThreshold === w, set: () => this.SETTINGS_SET_PLUG_THRESHOLD(w) }));
+
+      // Battery power sign convention (v1.6.0) — only meaningful when a
+      // single signed sensor is driving the consumption derivation above
+      // (deriveConsumption()): two separate always-positive sensors need no
+      // convention, and if config.energy.consumption is set directly the
+      // derivation never runs at all, so there's nothing here to tune.
+      const bat = en.battery || {};
+      showBatterySignControl = !!(bat.power && !(bat.chargePower && bat.dischargePower) && !en.consumption);
+      const curBatterySign = this.batteryPowerSign();
+      batterySignOptions = [['charge', S.settingsBatterySignCharge], ['discharge', S.settingsBatterySignDischarge]]
+        .map(([key, label]) => ({ key, label, sel: curBatterySign === key, set: () => this.SETTINGS_SET_BATTERY_SIGN(key) }));
+      batterySignLiveLabel = this.t('settingsBatterySignLive', { val: this.formatWatts(consumptionDisplayWatts) });
+      batterySignSuspect = batterySign.suspect;
+      batterySignInvert = () => this.SETTINGS_SET_BATTERY_SIGN(curBatterySign === 'charge' ? 'discharge' : 'charge');
+
+      doDiag = async () => {
+        const text = window.CasaPrefs.diagText({
+          configHeading: S.diagConfigHeading, configSummary: diagConfigSummary,
+          configAttempts: diagConfigAttempts.map((a) => ({ pathLabel: a.path, verdictLabel: a.verdictLabel })),
+          configOutsideIframeNote: diagConfigOutsideIframe ? S.diagConfigOutsideIframe : null,
+          instantHeading: S.diagEnergyInstantHeading,
+          instantRows: diagEnergyInstantRows.map((r) => ({ roleLabel: r.roleLabel, idLabel: r.idLabel, valueLabel: r.valueLabel, verdictLabel: r.verdictLabel, unitWarnLabel: r.unitWarn ? S.diagUnitMismatch : null })),
+          dailyHeading: S.diagEnergyDailyHeading,
+          dailyPrefsFailedNote: diagPrefsFailed ? S.diagPrefsFailedMsg : null,
+          dailyRows: diagEnergyDailyRows.map((r) => ({ roleLabel: r.roleLabel, sourceLabel: r.sourceLabel, idsLabel: r.idsLabel, valueLabel: r.valueLabel, counterWarnLabel: r.counterWarn ? S.diagCounterWarn : null })),
+          actionsHeading: S.diagActionsHeading, actionsEmptyLabel: S.diagActionsEmpty, actionRows: diagActionRows,
+          envHeading: S.environment,
+          envRows: diagEnvRows,
+          reasonsHeading: S.diagReasonsHeading, reasonsTotalLabel: diagReasonTotalLabel,
+          reasonGroups: diagReasonGroups.map((g) => ({
+            label: g.label, count: g.count,
+            rows: g.rows.map((r) => ({ name: r.name, entityIdLabel: r.entityIdLabel, reasonExtra: r.reasonExtra }))
+          })),
+          duplicateDevicesTitle: hasDiagDuplicateDevices ? diagDuplicateDevicesTitle : null,
+          duplicateDeviceLines: diagDuplicateDevices.map((p) => p.line)
+        });
+        const copied = await window.CasaPrefs.copyToClipboard(text);
+        this.setState({ diagSheet: { text, copied } });
+      };
+    }
+    return {
+      settingsRooms, settingsCameras, settingsModules, settingsSectionOrder, settingsRoomDetail, doExport,
+      diagConfigAttempts, diagConfigSummary, diagConfigOutsideIframe, diagEnergyInstantRows, diagEnergyDailyRows, diagPrefsFailed,
+      diagEnvRows, diagActionRows, hasDiagActions, diagIrrigationRows, hasDiagIrrigationRows, diagCameraRows,
+      diagRingValue, diagHourlyValue, diagAlarmRows, diagReasonGroups, diagReasonTotalLabel, hasDiagReasonGroups,
+      hasDiagDuplicateDevices, diagDuplicateDevices, diagDuplicateDevicesTitle, doDiag, settingsTabs, powerUnitOptions,
+      plugThresholdOptions, showBatterySignControl, batterySignOptions, batterySignLiveLabel, batterySignSuspect, batterySignInvert
+    };
+  }
+
+  // v2 — alarm card + PIN pad view-model (supported_features buttons,
+  // code_format gating, v1.9.0 PIN pad), shared by both layouts.
+  vmAlarm(ctx) {
+    const { alarmId, hasAlarm } = ctx;
+    const al = hasAlarm ? this.ALARM(alarmId) : ['', 'ok'];
+    const alarmSt = hasAlarm ? this.s(alarmId) : 'disarmed';
+    // Alarm buttons follow the entity's supported_features bitmask instead of
+    // assuming which arm modes exist — different alarm integrations declare
+    // different subsets (see discovery.js comments / README/TROUBLESHOOTING).
+    const feat = hasAlarm ? Number(this.at(alarmId, 'supported_features')) : NaN;
+    const supp = isNaN(feat) ? 0 : feat;
+    // A code_format-declaring entity fails `failed to perform action` if we
+    // call arm/disarm without `code` — same profile as the cover
+    // SET_POSITION guard elsewhere in this file. So a gated action never
+    // goes out without a code: since v1.9.0 it opens the PIN pad (see
+    // alarmGuardedCall below); before that it was a no-op with a note,
+    // never a service call that silently fails. code_arm_required
+    // only ever softens *arming* — HA's alarm_control_panel model has no
+    // equivalent bypass for disarm, so disarm is gated on code_format alone.
+    const alarmCodeFormat = hasAlarm ? this.at(alarmId, 'code_format') : null;
+    const alarmCodeArmRequired = hasAlarm ? this.at(alarmId, 'code_arm_required') : undefined;
+    const alarmNeedsCodeArm = !!alarmCodeFormat && alarmCodeArmRequired !== false;
+    const alarmNeedsCodeDisarm = !!alarmCodeFormat;
+    // v1.9.0 — PIN pad. A gated action opens the pad instead of doing
+    // nothing. The code lives only in this.state.pin while the pad is open:
+    // never stored, never logged (call() records entity and service, not
+    // data), never shown in clear. code_format 'number' gets a keypad;
+    // anything else ('text', or an old-style regex) a password field with
+    // the system keyboard, since a digits-only pad couldn't type it.
+    const alarmGuardedCall = (service, needsCode, label) => needsCode
+      ? () => this.setState({ pin: { service, label, value: '', busy: false, error: false } })
+      : () => this.call('alarm_control_panel', service, { entity_id: alarmId });
+    const pin = hasAlarm ? this.state.pin : null;
+    const pinOpen = !!pin;
+    const pinNumeric = alarmCodeFormat === 'number';
+    const pinSet = (patch) => { if (this.state.pin) this.setState({ pin: Object.assign({}, this.state.pin, patch) }); };
+    const pinCancel = () => this.setState({ pin: null });
+    const pinSubmit = () => {
+      const p = this.state.pin;
+      if (!p || p.busy || !p.value) return;
+      pinSet({ busy: true, error: false });
+      // Pad stays open until HA answers: a wrong code clears the digits and
+      // says so here, next to where it was typed, on top of call()'s toast.
+      this.call('alarm_control_panel', p.service, { entity_id: alarmId, code: p.value }).then((res) => {
+        if (!this.state.pin) return;
+        if (res && res.ok) this.setState({ pin: null });
+        else pinSet({ busy: false, error: true, value: '' });
+      });
+    };
+    const pinDigit = (d) => () => { const p = this.state.pin; if (p && !p.busy && p.value.length < 12) pinSet({ value: p.value + d, error: false }); };
+    const pinBack = () => { const p = this.state.pin; if (p && !p.busy) pinSet({ value: p.value.slice(0, -1) }); };
+    const pinKeys = !pinOpen || !pinNumeric ? [] : ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+      .map((d) => ({ label: d, aria: d, run: pinDigit(d), isOk: false }))
+      .concat([
+        { label: '⌫', aria: this.strings.pinBackspace, run: pinBack, isOk: false },
+        { label: '0', aria: '0', run: pinDigit('0'), isOk: false },
+        { label: pin.busy ? '…' : 'OK', aria: this.strings.pinConfirm, run: pinSubmit, isOk: true }
+      ]);
+    const alarmBtns = hasAlarm ? [{ label: this.t('alarm.disarmed'), sel: alarmSt === 'disarmed', run: alarmGuardedCall('alarm_disarm', alarmNeedsCodeDisarm, this.t('alarm.disarmed')) }] : [];
+    if (hasAlarm) [[1, 'armed_home', 'alarm_arm_home', this.t('alarm.btnHome')],
+     [2, 'armed_away', 'alarm_arm_away', this.t('alarm.btnAway')],
+     [4, 'armed_night', 'alarm_arm_night', this.t('alarm.btnNight')],
+     [16, 'armed_custom_bypass', 'alarm_arm_custom_bypass', this.t('alarm.btnCustom')],
+     [32, 'armed_vacation', 'alarm_arm_vacation', this.t('alarm.btnVacation')]].forEach((b) => {
+      if (supp & b[0]) alarmBtns.push({ label: b[3], sel: alarmSt === b[1], run: alarmGuardedCall(b[2], alarmNeedsCodeArm, b[3]) });
+    });
+    const alarmCodeNote = hasAlarm && (alarmNeedsCodeArm || alarmNeedsCodeDisarm) ? this.t('alarm.codeRequired') : '';
+    return {
+      al, alarmSt, supp, alarmNeedsCodeArm, alarmNeedsCodeDisarm, pin,
+      pinOpen, pinNumeric, pinSet, pinCancel, pinSubmit, pinKeys,
+      alarmBtns, alarmCodeNote
+    };
+  }
+
+  // v2 — camera detail overlay view-model: which live layer is showing,
+  // the video ref, the still URL, the Connecting/Live badge and the
+  // auto-close countdown (v1.5.4, v1.9.0). Shared by both layouts.
+  vmCameraDetail(ctx) {
+    const { camList } = ctx;
+    const camCur = camList.find((c) => c.id === this.state.cam) || null;
+    const camOpen = !!camCur;
+    // v1.5.4: layered live view — see _camStartStream for the full strategy.
+    // camStreamSrc (tier 3 only) re-reads camCur.picture on every fast tick
+    // rather than caching the URL once, same as the preview tiles above: the
+    // token inside entity_picture expires, and re-reading it from the live
+    // states object (refreshed on every hass push) is what keeps this alive
+    // past the first few minutes instead of quietly dying.
+    const camStreamLayer = camOpen ? this.state.camStreamLayer : null;
+    const camStreamUrl = camOpen ? this.state.camStreamUrl : null;
+    const camLayerVideo = camStreamLayer === 'hls-native' || camStreamLayer === 'hlsjs';
+    const camLayerSnapshot = camStreamLayer === 'snapshot' && camCur && !!camCur.picture;
+    const camStreamSrc = camLayerSnapshot
+      ? (this.state.camStillSrc || camCur.picture + (camCur.picture.indexOf('?') === -1 ? '?' : '&') + '_cb=' + this.state.snapTick)
+      : '';
+    const camNoStream = camOpen && !camLayerVideo && !camLayerSnapshot;
+    const camVideoRef = camLayerVideo ? this._camVideoRef(camStreamLayer, camStreamUrl) : null;
+    const camShowBadge = camLayerVideo || camLayerSnapshot;
+    // "Live" only once frames actually play: Home Assistant can take 15 s or
+    // more to start a stream on first request, and a black box labeled Live
+    // reads as broken.
+    const camVideoPlaying = camLayerVideo && this.state.camPlayingUrl === camStreamUrl;
+    const camBadgeLabel = camStreamLayer === 'snapshot' ? this.t('cameras.snapshotBadge')
+      : camVideoPlaying ? this.strings.live : this.strings.camConnecting;
+    const camRemainingS = camOpen ? Math.max(0, Math.ceil((this.camCloseAt - Date.now()) / 1000)) : 0;
+    const camCountdown = Math.floor(camRemainingS / 60) + ':' + String(camRemainingS % 60).padStart(2, '0');
+    return {
+      camCur, camOpen, camLayerVideo, camLayerSnapshot, camStreamSrc, camNoStream,
+      camVideoRef, camShowBadge, camBadgeLabel, camCountdown
+    };
+  }
+
+  // v2 — daily energy ring view-model (v1.4.0 double ring): autoconsumo /
+  // consumo casa derivation, which rings can be drawn, their SVG dash
+  // segments and the legend. Shared by both layouts; the colours follow
+  // the energy role grammar in CLAUDE.md (sage = sun, terracotta = grid).
+  vmEnergyRing(ctx) {
+    const { consT, energyEmptyState, exportT, gridT, prodT } = ctx;
+    let autoconsumo = null;
+    if (consT != null && gridT != null) autoconsumo = Math.max(0, consT - gridT);
+    else if (prodT != null && exportT != null) autoconsumo = Math.max(0, prodT - exportT);
+    const consumoCasa = consT != null ? consT : (autoconsumo != null && gridT != null ? autoconsumo + gridT : null);
+    // Declares itself (v1.6.0) rather than silently mixing a derived number
+    // in with measured ones — see kwhConsumedLabel below, and deriveConsumption()
+    // above for the same principle applied to the instantaneous tile.
+    const dailyConsumptionDerived = consT == null && consumoCasa != null;
+
+    // Outer ring needs production too (not just autoconsumo + prelievo) —
+    // deliberately stricter than the math alone requires, so "no production
+    // sensor at all" degrades to the old single ring rather than a new-style
+    // ring built from consumption+grid alone with no solar data behind it.
+    const hasOuterRing = prodT != null && gridT != null && autoconsumo != null && consumoCasa != null && consumoCasa > 0;
+    // Inner ring additionally needs immissione — absent (not a zero-value
+    // empty ring) when the install has no export sensor, per the spec this
+    // was built against: an empty ring reads as broken, not as "zero".
+    const hasInnerRing = hasOuterRing && exportT != null && prodT > 0;
+    // energyEmptyState (case b, above) wins over either ring — showing a
+    // ring built from whatever partial data resolved would contradict the
+    // "entity doesn't exist" explanation sitting right next to it.
+    const hasNewRing = hasOuterRing && !energyEmptyState;
+
+    const RING_GAP = 5, ORC = 540.4, IRC = 389.6; // circumferences for r=86 / r=62
+    // A segment whose share is small enough that the gap eats the whole
+    // thing (dash length rounds down to 0) still needs *some* stroke-cap —
+    // "round" draws a full circular dot at that point regardless of how
+    // short the dash is (confirmed: an exactly-0 dash with a round cap is
+    // not invisible, it's a dot of diameter = stroke-width, sitting right
+    // on the ring at an arbitrary boundary point). "butt" draws nothing for
+    // a 0-length dash, which is what "no visible segment" should look like.
+    const ringSeg = (value, shareTotal, C, offsetAcc) => {
+      const full = shareTotal > 0 ? C * (Math.max(0, value || 0) / shareTotal) : 0;
+      const dash = Math.max(0, full - RING_GAP);
+      return { dasharray: dash.toFixed(1) + ' ' + C.toFixed(1), dashoffset: (-offsetAcc).toFixed(1), full, cap: dash > 0 ? 'round' : 'butt' };
+    };
+    let outerSelf = null, outerGrid = null, innerSelf = null, innerFeed = null;
+    if (hasOuterRing) {
+      outerSelf = ringSeg(autoconsumo, consumoCasa, ORC, 0);
+      outerGrid = ringSeg(gridT, consumoCasa, ORC, outerSelf.full);
+    }
+    if (hasInnerRing) {
+      innerSelf = ringSeg(autoconsumo, prodT, IRC, 0);
+      innerFeed = ringSeg(exportT, prodT, IRC, innerSelf.full);
+    }
+    const ringLegend = [];
+    if (hasOuterRing) {
+      ringLegend.push({ color: 'var(--sage)', label: this.t('energy.selfConsumptionLabel'), val: this.dec(autoconsumo, 1) + ' kWh', num: this.dec(autoconsumo, 1), short: this.t('energy.selfShort') });
+      ringLegend.push({ color: 'var(--acc)', label: this.strings.fromGrid, val: this.dec(gridT, 1) + ' kWh', num: this.dec(gridT, 1), short: this.t('energy.gridShort') });
+    }
+    if (hasInnerRing) {
+      ringLegend.push({ color: 'var(--feed)', label: this.t('energy.feedIn'), val: this.dec(exportT, 1) + ' kWh', num: this.dec(exportT, 1), short: this.t('energy.feedShort') });
+    }
+    return {
+      autoconsumo, consumoCasa, dailyConsumptionDerived, hasOuterRing, hasInnerRing, hasNewRing,
+      outerSelf, outerGrid, innerSelf, innerFeed, ringLegend
+    };
+  }
+
+  // v2 — hourly strip under the ring (v1.8.0): 24 stacked bars with the
+  // same role grammar as the ring, axis ticks and the solar peak label.
+  // Shared by both layouts.
+  vmHourlyStrip(ctx) {
+    const { hasNewRing } = ctx;
+    let hourlyBars = [], hourlyAxisLabels = [], hasHourlyStrip = false, hourlyPeakLabel = '';
+    if (hasNewRing && this.state.hourlyEnergy && this.state.hourlyEnergy.length) {
+      const raw = this.state.hourlyEnergy.map((h) => {
+        let auto = null;
+        if (h.consumption != null && h.gridImport != null) auto = Math.max(0, h.consumption - h.gridImport);
+        else if (h.production != null && h.gridExport != null) auto = Math.max(0, h.production - h.gridExport);
+        return {
+          hourStart: h.hourStart,
+          auto: auto != null ? auto : 0,
+          grid: h.gridImport != null ? h.gridImport : 0,
+          feed: h.gridExport != null ? h.gridExport : 0
+        };
+      });
+      const maxTotal = Math.max.apply(null, [0.001].concat(raw.map((r) => r.auto + r.grid + r.feed)));
+      const TOP_RADIUS = '3px 3px 0 0', NO_RADIUS = '0';
+      // Plain fixed-point, not this.dec() — that formats with the current
+      // locale (it-IT renders a decimal comma), which would break the CSS
+      // percentage this feeds straight into a style= hole.
+      const pct = (v) => ((v / maxTotal) * 100).toFixed(2) + '%';
+      hourlyBars = raw.map((r) => {
+        const hasFeed = r.feed > 0, hasGrid = r.grid > 0, hasAuto = r.auto > 0;
+        const hourLabel = String(new Date(r.hourStart).getHours()).padStart(2, '0') + ':00';
+        return {
+          hasFeed, hasGrid, hasAuto,
+          feedH: pct(r.feed), gridH: pct(r.grid), autoH: pct(r.auto),
+          feedRadius: hasFeed ? TOP_RADIUS : NO_RADIUS,
+          gridRadius: !hasFeed && hasGrid ? TOP_RADIUS : NO_RADIUS,
+          autoRadius: !hasFeed && !hasGrid && hasAuto ? TOP_RADIUS : NO_RADIUS,
+          title: hourLabel + ' · ' + this.t('energy.selfConsumptionLabel') + ' ' + this.dec(r.auto, 2) + ' kWh'
+            + ' · ' + this.strings.fromGrid + ' ' + this.dec(r.grid, 2) + ' kWh'
+            + ' · ' + this.t('energy.feedIn') + ' ' + this.dec(r.feed, 2) + ' kWh'
+        };
+      });
+      hasHourlyStrip = true;
+      // Six-hour ticks by bar POSITION (0, 6, 12, 18, last) labeled with that
+      // bar's actual clock hour — right, not assumed, when the window isn't
+      // midnight-aligned or history is partial (fewer than 24 bars).
+      const axisPositions = [0, 6, 12, 18, raw.length - 1].filter((i, idx, arr) => i >= 0 && i < raw.length && arr.indexOf(i) === idx);
+      hourlyAxisLabels = axisPositions.map((i) => String(new Date(raw[i].hourStart).getHours()).padStart(2, '0'));
+      let peakIdx = -1, peakVal = -1;
+      raw.forEach((r, i) => { const solar = r.auto + r.feed; if (solar > peakVal) { peakVal = solar; peakIdx = i; } });
+      if (peakIdx !== -1 && peakVal > 0) {
+        hourlyPeakLabel = this.t('energy.hourlyPeak', { time: String(new Date(raw[peakIdx].hourStart).getHours()).padStart(2, '0') + ':00' });
+      }
+    }
+    return {
+      hourlyBars, hourlyAxisLabels, hasHourlyStrip, hourlyPeakLabel
+    };
+  }
+
+  // v2 — energy empty state, case b (v1.6.0): configured energy entities
+  // that don't exist in Home Assistant, shown by id instead of an empty
+  // card. Shared by both layouts.
+  vmEnergyEmpty(ctx) {
+    const { en, gridT, hasEnergy, prodT } = ctx;
+    const energyMissingIds = [];
+    if (hasEnergy) {
+      ['production', 'consumption', 'gridImport', 'gridExport'].forEach((role) => {
+        const id = en[role];
+        if (id && !(id in this.state.st)) energyMissingIds.push(id);
+      });
+      if (en.battery) {
+        ['soc', 'power', 'chargePower', 'dischargePower'].forEach((k) => {
+          const id = en.battery[k];
+          if (id && !(id in this.state.st)) energyMissingIds.push(id);
+        });
+      }
+    }
+    const energyHasLiveData = (en.production && this.n(en.production) !== null) ||
+      (en.consumption && this.n(en.consumption) !== null) ||
+      (en.gridImport && this.n(en.gridImport) !== null) ||
+      prodT !== null || gridT !== null;
+    const energyEmptyState = hasEnergy && energyMissingIds.length > 0 && !energyHasLiveData;
+    const ENERGY_MISSING_SHOWN = 3;
+    const energyMissingLabel = energyMissingIds.slice(0, ENERGY_MISSING_SHOWN).join(' · ') +
+      (energyMissingIds.length > ENERGY_MISSING_SHOWN ? ' ' + this.t('energyEmpty.more', { n: energyMissingIds.length - ENERGY_MISSING_SHOWN }) : '');
+    const openEnergySettings = () => this.setState({ settingsOpen: true, settingsRoom: null, settingsTab: 'energia' });
+    return {
+      energyEmptyState, energyMissingLabel, openEnergySettings
+    };
+  }
+
+  // v2 — instantaneous house consumption (v1.6.0 derivation, battery
+  // sign sampling and verdict). Shared by both layouts.
+  vmLiveConsumption(ctx) {
+    const { en, hasEnergy } = ctx;
+    const consumeResult = hasEnergy ? this.deriveConsumption() : { watts: null, derived: false, batteryTermUsed: false };
+    if (consumeResult.batteryTermUsed) this._sampleBatterySign(consumeResult.watts !== null && consumeResult.watts < 0);
+    const consumptionDisplayWatts = (consumeResult.watts !== null && consumeResult.watts >= 0) ? consumeResult.watts : null;
+    const consumptionIsDerived = consumeResult.derived;
+    const consumptionVal = en.consumption ? this.powerVal(en.consumption) : this.formatWatts(consumptionDisplayWatts);
+    const consumptionLabel = consumptionIsDerived ? this.t('energy.consumptionNowDerived') : this.t('energy.consumptionNow');
+    const batterySign = this.batterySignVerdict();
+    return {
+      consumptionDisplayWatts, consumptionVal, consumptionLabel, batterySign
+    };
+  }
   };
   return Base;
 }
