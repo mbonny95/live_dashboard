@@ -24,6 +24,12 @@
    HACS sempre `live_dashboard-panel`). Sbagliarlo dava schermo nero silenzioso.
 5. **Schema energia di Home Assistant piatto** per la sorgente `grid`:
    `stat_energy_from` al top level, non annidato in `flow_from[]`.
+6. **Mai la stessa espressione in due `sc-if` con `hint-placeholder-val`
+   opposti.** Due `sc-if value="{{ x }}"` affiancati, uno per lo stato vuoto e
+   uno per le righe, con placeholder `true` / `false`, rendevano **entrambi** i
+   rami nel DOM vivo, non solo al primo paint (v1.8.1, Ultime azioni). Il ramo
+   negato va esposto con un nome suo da `renderVals()` (`noDiagActionRows`),
+   non con la stessa stringa ripetuta.
 
 ## Dove va il codice (v2)
 
@@ -77,15 +83,34 @@ Orientati prima di scrivere, non ricostruire a memoria dove sta una cosa:
 - poi la voce più recente del `CHANGELOG.md`, per sapere cosa è cambiato
   nell'ultima release.
 
-## Prima di ogni commit
+La mappa può essere indietro rispetto al codice (vedi sotto): il report dice
+da quale commit è stata costruita (`Built from commit`). Per ciò che è
+cambiato dopo, fa fede il codice.
 
-Rigenera **graphify** e includi `graphify-out/` nello stesso commit delle
-modifiche al codice. Non è un artefatto di build da ignorare: è la mappa del
-repo che si legge per orientarsi, e se resta indietro descrive una versione che
-non esiste più. Un commit che tocca `public/` e lascia `graphify-out/` vecchia
-va rifatto.
+## Graphify: solo su richiesta
 
-**Niente hook post-commit in questo repo.** Rigenera a mano prima del commit. Il
+**Non si rigenera a ogni commit.** La ricostruzione semantica costa molto
+(un agente per ogni file di documenti cambiato, ~100k token l'uno) e su una
+serie di commit ravvicinati è lavoro buttato. Si rigenera **solo quando
+l'utente lo chiede** (`/graphify . --wiki`), di norma prima di una release o
+dopo un blocco di lavoro grosso, e in quel caso `graphify-out/` va in un
+commit suo. Un commit di codice non tocca `graphify-out/`.
+
+Quando si rigenera: **`public/casa-core.js` va dato all'estrazione semantica**
+come i documenti, non lasciato all'AST. La classe è definita dentro una
+funzione (`CasaCore.base(DCLogic)`) e l'AST ne vede solo le funzioni di primo
+livello: senza agente gli ~90 metodi spariscono dalla mappa.
+
+**Il numero di nodi non è un segnale di regressione.** L'estrazione è semantica
+e distribuita: quanti nodi escono dipende da come è stata spezzata quella corsa
+(492 → 571 → 615 → 513 su quattro release consecutive, tutte in crescita di
+codice). Non confrontare i totali fra due rigenerazioni e non usarli come
+baseline. **Verifica la copertura per simboli**: grep su `graphify-out/` dei nomi
+introdotti dalla release (funzioni, metodi del bridge, campi nuovi). Se ci sono
+tutti, il grafo copre il codice; se ne manca uno, quello indica il chunk
+incompleto.
+
+**Niente hook post-commit in questo repo.** Il
 hook di graphify fa un rebuild solo-AST *dopo* il commit e sovrascrive il grafo
 semantico con uno più povero (visto sul campo: 254 nodi al posto di 298). Se lo
 trovi installato, disinstallalo.
