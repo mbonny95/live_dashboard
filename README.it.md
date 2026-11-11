@@ -38,13 +38,12 @@ vedi [Modalità demo](#modalità-demo) più sotto.
 
 ## Requisiti
 
-- Home Assistant con accesso a `www/` (per copiare i file in `config/www/`)
-  e un `configuration.yaml` modificabile per l'integrazione `panel_custom`.
-- Nessuna versione minima imposta, ma le chiamate ai registri area/device/
-  entity usate qui (`config/area_registry/list` ecc.) sono standard da Home
-  Assistant 2022.x in poi; qualunque versione ragionevolmente recente va bene.
-- Niente npm, niente build step. Solo HTML/CSS/JS semplice, caricato come
-  moduli ES direttamente da `config/www/`.
+- Home Assistant **2024.11 o successivo** (serve l'API WebRTC delle
+  telecamere).
+- HACS, per l'installazione consigliata. Senza HACS, l'installazione
+  manuale qui sotto richiede accesso a `www/` e un `configuration.yaml`
+  modificabile.
+- Niente npm, niente build step. Solo HTML/CSS/JS semplice.
 - Nessun accesso a internet necessario per funzionare (v1.9.0). React
   18.3.1, i due font web (Caprasimo, Figtree) e `hls.js` per il live delle
   telecamere sono inclusi in `public/vendor/` invece di arrivare da una CDN o
@@ -55,67 +54,56 @@ vedi [Modalità demo](#modalità-demo) più sotto.
 
 ## Installazione
 
-Ci sono due modi per installarla: via HACS (consigliato — ricevi notifiche
-di aggiornamento e un update con un click ogni volta che esce una nuova
-versione), oppure copiando i file a mano. In entrambi i casi la dashboard
-che gira è la stessa; l'unica differenza reale è `module_url` e dove vivono
-i file del plugin, cosa che conta se mai passi dall'uno all'altro.
+Dalla **v2.0** Live Dashboard è un'**integrazione** di Home Assistant: serve
+lei i file della dashboard e aggiunge il pannello nella barra laterale, quindi
+non c'è nessun blocco `panel_custom` da scrivere, nessun `?v=` da aggiornare
+a ogni versione e nessun nome di cartella da azzeccare. L'installazione
+manuale (copiare i file, scrivere lo YAML) resta un'alternativa senza HACS.
 
 ### Via HACS (consigliato)
 
 1. In HACS aggiungi questo repo come repository personalizzato: **menu ⋮ →
-   Custom repositories**, URL `https://github.com/mbonny95/live_dashboard`,
-   categoria **Dashboard**.
-2. Trova "Live Dashboard" in HACS e clicca **Download**. HACS la installa in
-   `config/www/community/live_dashboard/` — quel percorso esatto, non un
-   nome a tua scelta (è la convenzione di HACS per la categoria Dashboard,
-   ed è ciò che `name:`/`module_url:` qui sotto danno per scontato).
-3. Aggiungi a `configuration.yaml`:
+   Repository personalizzati**, URL `https://github.com/mbonny95/live_dashboard`,
+   categoria **Integrazione**.
+2. Cerca "Live Dashboard" in HACS, **Scarica**, poi **riavvia Home
+   Assistant** (te lo chiede HACS).
+3. **Impostazioni → Dispositivi e servizi → Aggiungi integrazione → Live
+   Dashboard.** Conferma i valori proposti (titolo "Casa", icona
+   `mdi:home-heart`, percorso `/casa`) o cambiali; si possono modificare dopo
+   dalle opzioni dell'integrazione, senza reinstallare. Il pannello compare
+   subito nella barra laterale.
 
-   ```yaml
-   panel_custom:
-     - name: live_dashboard-panel
-       url_path: casa
-       sidebar_title: Casa
-       sidebar_icon: mdi:home-heart
-       module_url: /local/community/live_dashboard/panel.js?v=1.6.0
-       embed_iframe: true
-       trust_external_script: false
-   ```
+La tua configurazione va in **`config/www/live_dashboard_config.js`** (vedi
+"Configurare il resto" più sotto): fuori dalla cartella dell'integrazione,
+quindi gli aggiornamenti non la sovrascrivono mai. Gli aggiornamenti da HACS
+chiedono un riavvio di Home Assistant, come per ogni integrazione; nient'altro.
 
-   `name:` deve essere esattamente `live_dashboard-panel` — l'elemento del
-   pannello si registra sotto `<cartella>-panel`, derivato dalla cartella in
-   cui gira, e per un'installazione HACS quella cartella è sempre
-   `live_dashboard`. Se non corrisponde, il pannello resta uno schermo
-   vuoto/nero — ma entro un paio di secondi ora ti dice esattamente perché,
-   sia come `console.error` sia come messaggio sulla pagina stessa, con il
-   `name:` atteso e la cartella effettivamente rilevata.
+Se il pannello non compare, guarda in **Impostazioni → Riparazioni**:
+l'integrazione spiega lì cosa non va (per esempio un percorso già usato da un
+altro pannello), e **Impostazioni → Diagnostica** dentro la dashboard mostra
+"Installazione: integrazione".
 
-   Quel `?v=1.6.0` su `module_url` conta più di quanto sembri: `/local/`
-   viene servito con cache lunga, e i browser cachano i moduli ES in modo
-   particolarmente aggressivo, quindi un hard refresh da solo non forza
-   sempre un nuovo fetch di `panel.js` dopo un aggiornamento. Allinealo alla
-   versione appena installata (mostrata in HACS, e loggata in console
-   all'avvio come `[live_dashboard] vX.Y.Z`) e incrementalo di nuovo al
-   prossimo aggiornamento.
-4. **Riavvia Home Assistant** — le voci `panel_custom` si registrano
-   all'avvio, non si ricaricano a caldo, quindi modificare
-   `configuration.yaml` da solo non ha effetto finché non riavvii. Poi apri
-   la nuova voce nella sidebar.
+### Passare dalla 1.x alla 2.0
 
-**Importante — leggi prima del primo aggiornamento:**
+La 1.x era una *Dashboard* (plugin) di HACS, la 2.0 è un'*Integrazione*. HACS
+non può cambiare la categoria di un repository, quindi una volta sola:
 
-- HACS aggiorna i *file* del plugin, mai `configuration.yaml`. Il blocco
-  `panel_custom` sopra si scrive una volta sola e non va più toccato per gli
-  aggiornamenti di routine.
-- La tua config va in **`config/www/live_dashboard_config.js`** — un
-  livello sopra `config/www/community/live_dashboard/`, non dentro. Quella
-  cartella interna viene interamente sovrascritta a ogni aggiornamento HACS,
-  quindi un file di config lasciato lì viene cancellato al prossimo update;
-  `config/www/` invece non viene mai toccata da HACS. Vedi "Configurare il
-  resto" più sotto.
+1. In HACS rimuovi "Live Dashboard" (quella Dashboard). Il tuo
+   `config/www/live_dashboard_config.js` non viene toccato.
+2. Togli da `configuration.yaml` la voce `panel_custom` con
+   `name: live_dashboard-panel` (lascia le eventuali altre voci
+   `panel_custom`).
+3. Aggiungi di nuovo il repository con categoria **Integrazione**,
+   scaricalo e riavvia Home Assistant.
+4. Aggiungi l'integrazione (passo 3 qui sopra). Stesso percorso `/casa` di
+   prima.
 
-### Installazione manuale
+Se salti il passo 2, l'integrazione non si contende `/casa` con il vecchio
+pannello: lo segnala in Impostazioni → Riparazioni e nel modulo di
+configurazione, e puoi togliere il vecchio blocco oppure scegliere un altro
+percorso.
+
+### Installazione manuale (senza HACS)
 
 1. Copia l'intera cartella `public/` in `config/www/casa/` (il nome è
    arbitrario — `casa` è solo l'esempio usato qui sotto; è anche così che
@@ -576,8 +564,9 @@ anche quel comportamento.
   scelta della colonna di una stanza, editor di temi/colori, o creazione
   di nuove viste. Lovelace fa già tutto questo, ed è lo strumento giusto
   quando è quello che cerchi.
-- `panel_custom` è l'unico metodo di installazione supportato in questa
-  release — vedi CHANGELOG.md.
+- Due modi di installazione (v2): l'integrazione (HACS, consigliato) o un
+  blocco `panel_custom` manuale. Entrambi usano le stesse pagine; Diagnostica →
+  Ambiente → "Installazione" dice con quale gira una dashboard.
 
 ## Altro
 

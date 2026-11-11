@@ -129,6 +129,9 @@ function base(DCLogic) {
   // v1.8.1 — see onEmbedIframe above (null = not yet known / demo backend
   // never sends it, distinct from a real false).
   panelEmbedIframe = null;
+  // v2 — 'integration' (custom_components/live_dashboard) or 'panel_custom'
+  // (manual YAML install); null in demo mode. Sent by panel.js.
+  panelInstall = null;
   // Ring buffer of the last 20 call() outcomes — Diagnostica's "Recent
   // actions" section reads this directly, same instance-field-not-state
   // pattern as camDiag (mutated in place, a setState elsewhere in the same
@@ -577,7 +580,8 @@ function base(DCLogic) {
       // fires in the same tick this app receives its first hass-states push
       // that carries it), same "no extra render just for this" reasoning as
       // camDiag elsewhere in this file.
-      onEmbedIframe: (v) => { this.panelEmbedIframe = v; }
+      onEmbedIframe: (v) => { this.panelEmbedIframe = v; },
+      onInstall: (v) => { this.panelInstall = v; }
     });
     const kind = be.kind;
     // The demo backend ships its own config so Energy/Irrigation/Vehicle/
@@ -1408,6 +1412,7 @@ function base(DCLogic) {
       backend: this.kind || null,
       insideIframe: window.parent !== window,
       embedIframe: this.panelEmbedIframe,
+      install: this.panelInstall,
       lang: this.lang || null,
       areaCount: (this.registries.areas || []).length,
       entityCount: (this.registries.entities || []).length,
@@ -1714,6 +1719,7 @@ function base(DCLogic) {
         // env.backend === 'demo' never sends embedIframe at all (see
         // ha-backend-demo.js — there is no real panel_custom config to
         // report on), so null there reads distinctly from a real false.
+        { label: S.diagEnvInstall, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.install === 'integration' ? S.diagEnvInstallIntegration : env.install === 'panel_custom' ? S.diagEnvInstallPanelCustom : S.diagEnvUnknown },
         { label: S.diagEnvEmbedIframe, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.embedIframe === true ? S.diagEnvEmbedIframeYes : env.embedIframe === false ? S.diagEnvEmbedIframeNo : S.diagEnvUnknown },
         { label: S.diagEnvLang, value: env.lang || '—' },
         { label: S.diagEnvRuntime, value: env.reactSource === 'local' ? S.diagEnvRuntimeLocal : env.reactSource === 'cdn' ? S.diagEnvRuntimeCdn : S.diagEnvUnknown },

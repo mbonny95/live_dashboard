@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Live Dashboard",
+        "description": "Aggiunge la dashboard alla barra laterale. Il tuo file di configurazione (config/www/live_dashboard_config.js) continua a funzionare così com'è. Se usavi Live Dashboard 1.x, togli prima il suo blocco panel_custom da configuration.yaml, oppure scegli un altro percorso.",
+        "data": {
+          "sidebar_title": "Titolo nella barra laterale",
+          "sidebar_icon": "Icona nella barra laterale",
+          "url_path": "Percorso",
+          "require_admin": "Solo amministratori"
+        },
+        "data_description": {
+          "url_path": "Il pannello si apre su /<percorso>, per esempio /casa."
+        }
+      }
+    },
+    "error": {
+      "invalid_url_path": "Usa solo lettere minuscole, cifre e trattini (per esempio casa).",
+      "url_path_in_use": "Questo percorso è già usato da un altro pannello. Se è il blocco panel_custom di Live Dashboard 1.x, toglilo da configuration.yaml e riavvia Home Assistant, oppure scegli un altro percorso."
+    },
+    "abort": {
+      "single_instance_allowed": "Live Dashboard è già configurata. Puoi cambiarne le opzioni dalla pagina dell'integrazione."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Live Dashboard",
+        "description": "Dove compare la dashboard nella barra laterale.",
+        "data": {
+          "sidebar_title": "Titolo nella barra laterale",
+          "sidebar_icon": "Icona nella barra laterale",
+          "url_path": "Percorso",
+          "require_admin": "Solo amministratori"
+        },
+        "data_description": {
+          "url_path": "Il pannello si apre su /<percorso>, per esempio /casa."
+        }
+      }
+    },
+    "error": {
+      "invalid_url_path": "Usa solo lettere minuscole, cifre e trattini (per esempio casa).",
+      "url_path_in_use": "Questo percorso è già usato da un altro pannello. Scegline un altro."
+    }
+  },
+  "issues": {
+    "url_path_in_use": {
+      "title": "Live Dashboard: /{url_path} è già usato da un altro pannello",
+      "description": "Live Dashboard non ha potuto aggiungere il suo pannello perché /{url_path} appartiene già a un altro pannello. Dopo l'aggiornamento dalla 1.x è il vecchio blocco panel_custom di live_dashboard in configuration.yaml: toglilo e riavvia Home Assistant. Altrimenti scegli un altro percorso nelle opzioni dell'integrazione Live Dashboard."
+    },
+    "files_missing": {
+      "title": "Live Dashboard: mancano i file della dashboard",
+      "description": "I file della dashboard non sono stati trovati in {path}. Reinstalla Live Dashboard da HACS: il download della release li contiene, una copia del repository sorgente no."
+    }
+  }
+}

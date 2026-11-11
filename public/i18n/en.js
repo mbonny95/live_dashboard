@@ -60,7 +60,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
   diagEnvVersion: 'Version', diagEnvVersionDev: 'dev/demo (no ?v=)',
   diagEnvBackend: 'Backend', diagEnvBackendPanel: 'panel', diagEnvBackendDemo: 'demo',
   diagEnvIframe: 'Inside HA panel', diagEnvIframeYes: 'yes', diagEnvIframeNo: 'no',
-  diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'yes', diagEnvEmbedIframeNo: 'no',
+  diagEnvInstall: 'Installation', diagEnvInstallIntegration: 'integration (HACS)', diagEnvInstallPanelCustom: 'manual panel_custom (configuration.yaml)', diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'yes', diagEnvEmbedIframeNo: 'no',
   diagEnvNotApplicableDemo: 'n/a (demo)', diagEnvUnknown: 'not known yet',
   pinTitle: 'Alarm code', pinCancel: 'Cancel', pinConfirm: 'Confirm', pinBackspace: 'Delete one digit', pinRejected: 'Code not accepted. Try again.',
   diagEnvRuntime: 'React runtime', diagEnvRuntimeLocal: 'bundled with the dashboard', diagEnvRuntimeCdn: 'from CDN (unpkg) — vendor/ missing, needs internet',

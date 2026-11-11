@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Live Dashboard",
+        "description": "Adds the dashboard to the sidebar. Your configuration file (config/www/live_dashboard_config.js) keeps working as it is. If you used Live Dashboard 1.x, remove its panel_custom block from configuration.yaml first, or choose a different URL path.",
+        "data": {
+          "sidebar_title": "Sidebar title",
+          "sidebar_icon": "Sidebar icon",
+          "url_path": "URL path",
+          "require_admin": "Administrators only"
+        },
+        "data_description": {
+          "url_path": "The panel opens at /<path>, e.g. /casa."
+        }
+      }
+    },
+    "error": {
+      "invalid_url_path": "Use lowercase letters, digits and dashes only (e.g. casa).",
+      "url_path_in_use": "This path is already used by another panel. If it's the panel_custom block of Live Dashboard 1.x, remove it from configuration.yaml and restart Home Assistant, or choose another path."
+    },
+    "abort": {
+      "single_instance_allowed": "Live Dashboard is already set up. Change its options from the integration page."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Live Dashboard",
+        "description": "Where the dashboard appears in the sidebar.",
+        "data": {
+          "sidebar_title": "Sidebar title",
+          "sidebar_icon": "Sidebar icon",
+          "url_path": "URL path",
+          "require_admin": "Administrators only"
+        },
+        "data_description": {
+          "url_path": "The panel opens at /<path>, e.g. /casa."
+        }
+      }
+    },
+    "error": {
+      "invalid_url_path": "Use lowercase letters, digits and dashes only (e.g. casa).",
+      "url_path_in_use": "This path is already used by another panel. Choose another one."
+    }
+  },
+  "issues": {
+    "url_path_in_use": {
+      "title": "Live Dashboard: /{url_path} is already used by another panel",
+      "description": "Live Dashboard couldn't add its panel because /{url_path} already belongs to another panel. After upgrading from 1.x this is the old panel_custom block for live_dashboard in configuration.yaml: remove it and restart Home Assistant. Otherwise, choose another URL path in the Live Dashboard integration options."
+    },
+    "files_missing": {
+      "title": "Live Dashboard: dashboard files missing",
+      "description": "The dashboard files were not found in {path}. Reinstall Live Dashboard from HACS: the release download contains them, a copy of the source repository does not."
+    }
+  }
+}

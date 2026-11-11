@@ -60,7 +60,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   diagEnvVersion: 'Versione', diagEnvVersionDev: 'sviluppo/demo (nessun ?v=)',
   diagEnvBackend: 'Backend', diagEnvBackendPanel: 'pannello', diagEnvBackendDemo: 'demo',
   diagEnvIframe: 'Dentro il pannello HA', diagEnvIframeYes: 'sì', diagEnvIframeNo: 'no',
-  diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'sì', diagEnvEmbedIframeNo: 'no',
+  diagEnvInstall: 'Installazione', diagEnvInstallIntegration: 'integrazione (HACS)', diagEnvInstallPanelCustom: 'panel_custom manuale (configuration.yaml)', diagEnvEmbedIframe: 'embed_iframe (panel_custom)', diagEnvEmbedIframeYes: 'sì', diagEnvEmbedIframeNo: 'no',
   diagEnvNotApplicableDemo: 'n/d (demo)', diagEnvUnknown: 'non ancora noto',
   pinTitle: 'Codice allarme', pinCancel: 'Annulla', pinConfirm: 'Conferma', pinBackspace: 'Cancella una cifra', pinRejected: 'Codice non accettato. Riprova.',
   diagEnvRuntime: 'Runtime React', diagEnvRuntimeLocal: 'incluso nella dashboard', diagEnvRuntimeCdn: 'da CDN (unpkg) — vendor/ mancante, serve internet',

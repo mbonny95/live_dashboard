@@ -19,3 +19,20 @@ jobs:
       # No npm, no dependencies: the tests load the shipped public/*.js
       # files directly (see tests/*.test.mjs).
       - run: node --test 'tests/*.test.mjs'
+
+  # v2 — the integration in custom_components/live_dashboard/: Home
+  # Assistant's own manifest/translation validator, and HACS's repository
+  # check for the Integration category.
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hacs/action@main
+        with:
+          category: integration
+          ignore: brands

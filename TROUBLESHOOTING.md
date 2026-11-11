@@ -40,6 +40,26 @@ useful too: it means the bug depends on something these nine states don't
 cover (a specific sensor value, a device quirk), which is worth saying in the
 issue.
 
+### The "Casa" panel doesn't appear in the sidebar (v2, integration)
+
+1. **Settings → Repairs.** The integration reports its problems there, not
+   only in the log:
+   - *"/casa is already used by another panel"*: the 1.x `panel_custom`
+     block (`name: live_dashboard-panel`) is still in `configuration.yaml`.
+     Remove it and restart, or pick another path in the integration's
+     options.
+   - *"dashboard files missing"*: the integration folder has no `www/`
+     (a copy of the source repository instead of the HACS download).
+     Reinstall from HACS.
+2. **Settings → Devices & services → Live Dashboard** must be listed and
+   *loaded*. If it isn't listed, it was downloaded but not added: **Add
+   integration → Live Dashboard**.
+3. After an update from HACS, restart Home Assistant when asked: like any
+   integration, the new version loads at startup.
+
+Inside the dashboard, Settings → Diagnostica → Environment → "Installation"
+says whether it is running under the integration or a manual `panel_custom`.
+
 ### White / blank panel
 
 - **Check `panel_custom.name` first, especially with a second/parallel

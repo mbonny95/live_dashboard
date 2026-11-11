@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '2.0.0-dev.2';
+const VERSION = '2.0.0-dev.3';
 console.info(`[live_dashboard] v${VERSION}`);
 
 async function resolveAssetVersion() {
@@ -421,6 +421,10 @@ class CasaPanel extends HTMLElement {
     const states = this._hass.states;
     const language = this._hass.language;
     const embedIframe = window.self !== window.top;
+    // v2 — how this panel was installed: the integration registers it with
+    // config.install = 'integration'; a hand-written panel_custom block has
+    // no such key. Shown in Diagnostica -> Environment.
+    const install = (this._panel && this._panel.config && this._panel.config.install) || 'panel_custom';
     if (this._sentRefs && this._lastFlush - this._lastFull < FULL_RESYNC_MS) {
       const changed = {};
       const removed = [];
@@ -439,7 +443,7 @@ class CasaPanel extends HTMLElement {
       if (!n && !removed.length && language === this._sentLanguage) return;
       this._sentLanguage = language;
       this._iframe.contentWindow.postMessage(
-        { type: 'casa:hass-states-delta', changed, removed, language, embedIframe },
+        { type: 'casa:hass-states-delta', changed, removed, language, embedIframe, install },
         this._targetOrigin
       );
       return;
@@ -458,7 +462,7 @@ class CasaPanel extends HTMLElement {
         // install. A support-issue-shaped question ("is embed_iframe on?")
         // that the Diagnostica panel can answer without the user reading
         // their own configuration.yaml.
-        embedIframe
+        embedIframe, install
       },
       this._targetOrigin
     );

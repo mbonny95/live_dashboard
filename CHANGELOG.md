@@ -8,6 +8,39 @@ All notable changes to this project are documented here. Format follows
 La 1.9 non è mai stata pubblicata: le sue modifiche (le prime sezioni qui
 sotto) escono direttamente con la 2.0, insieme al lavoro "major".
 
+### Breaking — installazione come integrazione di Home Assistant
+
+- **Live Dashboard ora è un'integrazione** (`custom_components/live_dashboard`),
+  categoria HACS **Integrazione** invece di Dashboard. Serve lei i file della
+  dashboard da `/live_dashboard/` e registra il pannello nella barra laterale:
+  niente più blocco `panel_custom` in `configuration.yaml`, niente `?v=` da
+  aggiornare a mano a ogni versione, niente più schermo nero per un `name:`
+  che non corrisponde al nome della cartella. Si aggiunge da Impostazioni →
+  Dispositivi e servizi; titolo, icona, percorso e "solo amministratori" si
+  scelgono lì e si cambiano dalle opzioni senza reinstallare.
+- **Chi ha la 1.x reinstalla una volta**: HACS non può cambiare la categoria
+  di un repository. Rimuovere la Dashboard da HACS, togliere il blocco
+  `panel_custom` di `live_dashboard-panel`, aggiungere il repository come
+  Integrazione, riavviare, aggiungere l'integrazione (README → "Passare dalla
+  1.x alla 2.0"). La configurazione in `config/www/live_dashboard_config.js`
+  non cambia.
+- **Se il vecchio blocco è rimasto**, l'integrazione non si contende `/casa`
+  con lui: lo dice nel modulo di configurazione e in Impostazioni →
+  Riparazioni, con cosa togliere. Stesso avviso nelle Riparazioni se mancano
+  i file della dashboard.
+- **L'installazione manuale resta** (copiare `public/` in `www/` + blocco
+  `panel_custom`), con le funzioni di sempre.
+- Diagnostica → Ambiente → **"Installazione"**: integrazione o
+  `panel_custom` manuale.
+- Requisito minimo: Home Assistant **2024.11**.
+- Release e CI: lo zip contiene l'integrazione con la dashboard in `www/`, e
+  il workflow verifica che la versione del manifest coincida con il tag;
+  hassfest e il controllo di HACS girano a ogni push. 38 test Node.
+- Verificato su un'installazione reale (HA 2026.11.1): integrazione caricata,
+  pannello servito da `/live_dashboard/`, push differenziale e React locale
+  attivi, errori del modulo di opzioni corretti per un percorso già occupato
+  e per uno non valido.
+
 ### Added — live delle telecamere via WebRTC
 
 - **Il live si apre in circa un secondo.** Quando Home Assistant offre

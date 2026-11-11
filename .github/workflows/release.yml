@@ -13,13 +13,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build live_dashboard.zip
-        # HACS (zip_release, content_in_root: false) extracts this archive
-        # straight into the plugin's own folder, so the files it contains
-        # have to sit at the zip's top level — not under a public/ wrapper.
+      # v2 — HACS category Integration: the zip is extracted into
+      # config/custom_components/live_dashboard/, so it holds the integration
+      # at its top level plus the dashboard's files (public/) under www/,
+      # which the integration serves at /live_dashboard/.
+      - name: Check versions match the tag
         run: |
-          cd public
-          zip -r ../live_dashboard.zip . -x '.DS_Store'
+          tag="${{ github.event.release.tag_name }}"
+          manifest=$(python3 -c "import json;print(json.load(open('custom_components/live_dashboard/manifest.json'))['version'])")
+          if [ "v$manifest" != "$tag" ]; then
+            echo "manifest.json version $manifest does not match tag $tag"; exit 1
+          fi
+
+      - name: Build live_dashboard.zip
+        run: |
+          mkdir -p build/www
+          cp -R custom_components/live_dashboard/. build/
+          cp -R public/. build/www/
+          cd build
+          zip -r ../live_dashboard.zip . -x '.DS_Store' -x '*/__pycache__/*'
 
       - name: Attach to release
         env:
