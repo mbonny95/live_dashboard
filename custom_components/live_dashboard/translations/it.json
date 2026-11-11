@@ -11,7 +11,7 @@
           "require_admin": "Solo amministratori"
         },
         "data_description": {
-          "url_path": "Il pannello si apre su /<percorso>, per esempio /casa."
+          "url_path": "Dove si apre il pannello: casa vuol dire /casa."
         }
       }
     },
@@ -35,7 +35,7 @@
           "require_admin": "Solo amministratori"
         },
         "data_description": {
-          "url_path": "Il pannello si apre su /<percorso>, per esempio /casa."
+          "url_path": "Dove si apre il pannello: casa vuol dire /casa."
         }
       }
     },

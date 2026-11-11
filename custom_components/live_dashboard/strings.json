@@ -11,7 +11,7 @@
           "require_admin": "Administrators only"
         },
         "data_description": {
-          "url_path": "The panel opens at /<path>, e.g. /casa."
+          "url_path": "Where the panel opens: casa means /casa."
         }
       }
     },
@@ -35,7 +35,7 @@
           "require_admin": "Administrators only"
         },
         "data_description": {
-          "url_path": "The panel opens at /<path>, e.g. /casa."
+          "url_path": "Where the panel opens: casa means /casa."
         }
       }
     },
