@@ -2405,7 +2405,7 @@ class Component extends window.CasaCore.base(DCLogic) {
             const on = this.isOn(id);
             const b = this.at(id, 'brightness') || 200;
             return { id, name: this.fn(id), on, stroke: on ? 'var(--acc)' : 'var(--tx2)',
-              sub: on ? Math.round((b / 255) * 100) + '% luminosità' : 'spenta',
+              sub: on ? Math.round((b / 255) * 100) + '% ' + this.t('light.brightnessSuffix') : this.t('common.off'),
               bri: Math.max(1, Math.round((b / 255) * 100)),
               toggle: () => this.call('light', on ? 'turn_off' : 'turn_on', { entity_id: id }),
               setBri: (e) => this.call('light', 'turn_on', { entity_id: id, brightness: Math.round((Number(e.target.value) / 100) * 255) }) };

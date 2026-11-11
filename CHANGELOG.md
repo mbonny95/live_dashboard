@@ -3,7 +3,7 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [2.0.0] - Unreleased
+## [2.0.0] - 2026-11-11
 
 La 1.9 non è mai stata pubblicata: le sue modifiche (le prime sezioni qui
 sotto) escono direttamente con la 2.0, insieme al lavoro "major".
@@ -57,6 +57,9 @@ sotto) escono direttamente con la 2.0, insieme al lavoro "major".
 
 - Le schede delle Impostazioni vanno a capo invece di uscire dal pannello:
   con la quinta scheda "Diagnostica" finiva fuori dal bordo.
+- Pannello stanza su desktop: lo stato delle luci ("80% luminosità",
+  "spenta") era scritto in italiano anche con la dashboard in inglese; ora
+  usa le stesse traduzioni del mobile.
 
 ### Breaking — installazione come integrazione di Home Assistant
 
