@@ -32,3 +32,5 @@ graphify-out/.graphify_analysis.json
 # scripts/deploy_ha.sh); the source of truth stays public/.
 custom_components/live_dashboard/www/
 **/__pycache__/
+build/
+live_dashboard.zip

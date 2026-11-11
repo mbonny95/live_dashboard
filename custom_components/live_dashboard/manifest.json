@@ -1,9 +1,16 @@
 {
   "domain": "live_dashboard",
   "name": "Live Dashboard",
-  "codeowners": ["@mbonny95"],
+  "codeowners": [
+    "@mbonny95"
+  ],
   "config_flow": true,
-  "dependencies": ["frontend", "http", "panel_custom"],
+  "dependencies": [
+    "frontend",
+    "http",
+    "panel_custom",
+    "websocket_api"
+  ],
   "documentation": "https://github.com/mbonny95/live_dashboard",
   "integration_type": "service",
   "iot_class": "calculated",

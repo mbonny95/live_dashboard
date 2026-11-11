@@ -23,6 +23,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.loader import async_get_integration
 
+from .config_store import SharedConfig, async_register_websocket
 from .const import (
     CONF_REQUIRE_ADMIN,
     CONF_SIDEBAR_ICON,
@@ -31,6 +32,7 @@ from .const import (
     DEFAULT_OPTIONS,
     DOMAIN,
     ISSUE_FILES_MISSING,
+    ISSUE_LEGACY_DASHBOARD,
     ISSUE_URL_PATH_IN_USE,
     PANEL_ELEMENT,
     URL_BASE,
@@ -55,7 +57,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Serve the dashboard's files and register its sidebar panel."""
     data = hass.data.setdefault(DOMAIN, {})
 
-    if not (WWW_DIR / "panel.js").is_file():
+    # File-system checks off the event loop (HA flags blocking I/O there).
+    legacy_dir = Path(hass.config.path("www", "community", "live_dashboard"))
+    files_ok, legacy_present = await hass.async_add_executor_job(
+        lambda: ((WWW_DIR / "panel.js").is_file(), legacy_dir.is_dir())
+    )
+
+    if not files_ok:
         # A checkout of the repository, not a release zip: www/ is created by
         # the release workflow. Said in Repairs, not only in the log.
         ir.async_create_issue(
@@ -66,6 +74,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
         return False
     ir.async_delete_issue(hass, DOMAIN, ISSUE_FILES_MISSING)
+
+    # v2 migration: the 1.x HACS Dashboard folder still there means HACS
+    # still has the old Dashboard entry, which would keep receiving updates
+    # next to the integration. Not an error (the dashboard works), a nudge.
+    if legacy_present:
+        ir.async_create_issue(
+            hass, DOMAIN, ISSUE_LEGACY_DASHBOARD,
+            is_fixable=False, severity=ir.IssueSeverity.WARNING,
+            translation_key=ISSUE_LEGACY_DASHBOARD,
+            translation_placeholders={"path": str(legacy_dir)},
+        )
+    else:
+        ir.async_delete_issue(hass, DOMAIN, ISSUE_LEGACY_DASHBOARD)
+
+    # Shared configuration (v2): loaded and its WebSocket commands
+    # registered once per run, like the static path below.
+    if "shared_config" not in data:
+        shared = SharedConfig(hass)
+        await shared.async_load()
+        async_register_websocket(hass, shared)
+        data["shared_config"] = shared
 
     # A static path can't be unregistered, so it's registered once per Home
     # Assistant run and survives entry reloads (options changes). No long

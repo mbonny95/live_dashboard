@@ -94,6 +94,7 @@ async function connect(handlers, readyTimeoutMs) {
       if (handlers.onLanguage && d.language) handlers.onLanguage(d.language);
       if (handlers.onEmbedIframe && d.embedIframe !== undefined) handlers.onEmbedIframe(d.embedIframe);
       if (handlers.onInstall && d.install) handlers.onInstall(d.install);
+      if (handlers.onUser && d.user) handlers.onUser(d.user);
       return;
     }
     if (d.type === 'casa:call-result' || d.type === 'casa:history-result' || d.type === 'casa:registries-result'

@@ -193,3 +193,33 @@ test('WebRTC: offer, queued candidates, answer, then fallback on error', async (
   assert.equal(c.camDiag['camera.x'].failDetail, 'no stream');
   c._closeCam();
 });
+
+test('shared config editor: only a JSON object is accepted', () => {
+  const p = CasaCore.parseSharedConfigText;
+  assert.equal(p('{ "rooms": { "max": 8 } }').config.rooms.max, 8);
+  assert.equal(p('{ rooms: 8 }').error, 'invalidJson');
+  assert.equal(p('[1, 2]').error, 'notObject');
+  assert.equal(p('null').error, 'notObject');
+  assert.equal(p('"text"').error, 'notObject');
+});
+
+test('vmSharedConfig: admin actions depend on where the config comes from', () => {
+  const c = make();
+  c.strings = new Proxy({}, { get: (t, k) => String(k) });
+  c.ALL_ROOMS_RESULT = () => ({ rooms: [], overflow: [] });
+  c.ALL_CAMERAS_RESULT = () => [];
+  c.fileConfig = { rooms: { max: 8 } };
+  c.configDiag = { source: 'file', resolvedPath: '/local/live_dashboard_config.js' };
+  c.panelUser = { isAdmin: true, name: 'Manuel' };
+  let v = c.vmSharedConfig();
+  assert.deepEqual(JSON.parse(JSON.stringify(v.sharedActions.map((a) => a.key))), ['import', 'panel', 'edit']);
+  assert.equal(v.sharedCanEdit, true);
+  c.configDiag = { source: 'ha' };
+  c.sharedConfigInfo = { config: { rooms: {} }, updated_at: '2026-11-11T10:00:00Z', updated_by: 'Manuel' };
+  v = c.vmSharedConfig();
+  assert.deepEqual(JSON.parse(JSON.stringify(v.sharedActions.map((a) => a.key))), ['panel', 'edit', 'reset']);
+  c.panelUser = { isAdmin: false, name: 'Sara' };
+  v = c.vmSharedConfig();
+  assert.equal(v.sharedActions.length, 0);
+  assert.equal(v.sharedReadOnly, true);
+});

@@ -900,7 +900,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </button>
 </div>
 
-<div style="display:flex;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px;overflow:auto;margin:14px 0 18px">
+<div style="display:flex;flex-wrap:wrap;gap:5px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:24px;padding:5px;margin:14px 0 18px">
 <sc-for list="{{ settingsTabs }}" as="st" hint-placeholder-count="4">
 <button onClick="{{ st.go }}" data-sel="{{ st.sel }}" style="flex:none;display:flex;align-items:center;gap:6px;border-radius:999px;padding:0 16px;height:44px;background:transparent;color:var(--tx2);font:600 12.5px/1 var(--font-body);white-space:nowrap">
 {{ st.label }}
@@ -1070,6 +1070,33 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-for>
 </div>
+</sc-if>
+
+<!-- v2 — Settings -> Configurazione (integration installs): where the config
+     comes from; administrators can store it in Home Assistant for everyone.
+     Values from casa-core.js vmSharedConfig(). -->
+<sc-if value="{{ settingsTabConfig }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:16px;padding:12px 14px;margin-bottom:14px">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin-bottom:8px">{{ S.sharedSourceLabel }}</div>
+<div style="font:600 13px/1.4 var(--font-body)">{{ sharedSourceText }}</div>
+<div style="font:500 11px/1.45 var(--font-body);color:var(--tx2);margin-top:6px">{{ S.sharedExplain }}</div>
+</div>
+<sc-if value="{{ sharedReadOnly }}" hint-placeholder-val="{{ false }}">
+<div style="font:500 11.5px/1.45 var(--font-body);color:var(--tx2);margin:0 2px 14px">{{ S.sharedNonAdmin }}</div>
+</sc-if>
+<sc-if value="{{ sharedHasError }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11.5px/1.4 var(--font-body);color:var(--accT);margin:0 2px 10px">{{ sharedErrorText }}</div>
+</sc-if>
+<sc-if value="{{ sharedBusy }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 12px/1.4 var(--font-body);color:var(--tx2);margin:0 2px 10px">{{ S.sharedSaving }}</div>
+</sc-if>
+<sc-if value="{{ sharedCanEdit }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column;gap:9px">
+<sc-for list="{{ sharedActions }}" as="a" hint-placeholder-count="3">
+<button onClick="{{ a.run }}" style="min-height:44px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--accT);font:600 12.5px/1.25 var(--font-body);padding:10px 14px;text-align:left">{{ a.label }}<span style="display:block;font:500 10.5px/1.4 var(--font-body);color:var(--tx2);margin-top:3px">{{ a.hint }}</span></button>
+</sc-for>
+</div>
+</sc-if>
 </sc-if>
 
 <sc-if value="{{ settingsTabDiagnostica }}" hint-placeholder-val="{{ false }}">
@@ -1342,6 +1369,40 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<!-- v2 — shared-config JSON editor (vmSharedConfig). Validated on save:
+     invalid JSON or anything but an object is reported here, not stored. -->
+<sc-if value="{{ sharedEditorOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ sharedEditorClose }}" style="position:fixed;inset:0;background:rgba(20,24,30,.52);backdrop-filter:blur(3px);z-index:48"></div>
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;z-index:49;inset:0;display:grid;place-items:center;padding:16px;pointer-events:none;color:var(--tx)">
+<div style="width:min(760px,100%);max-height:92vh;display:flex;flex-direction:column;background:var(--page);box-shadow:0 22px 54px rgba(20,24,30,.3);border-radius:26px;padding:18px;pointer-events:auto">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+<div style="flex:1;font-family:var(--font-heading);font-size:19px;line-height:1.15">{{ S.sharedEditorTitle }}</div>
+<button onClick="{{ sharedEditorClose }}" aria-label="{{ S.pinCancel }}" style="width:44px;height:44px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="17" height="17" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+<textarea spellcheck="false" value="{{ sharedEditorText }}" onChange="{{ sharedEditorInput }}" style="flex:1;min-height:320px;width:100%;resize:vertical;border:0;outline:0;border-radius:16px;background:var(--gr);box-shadow:var(--nu-ins);padding:12px;font:500 12px/1.5 ui-monospace,Menlo,monospace;color:var(--tx)"></textarea>
+<sc-if value="{{ sharedEditorHasError }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 11.5px/1.4 var(--font-body);color:var(--accT);margin-top:10px">{{ sharedEditorError }}</div>
+</sc-if>
+<button onClick="{{ sharedEditorSave }}" data-sel="true" style="height:48px;margin-top:12px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);font:600 13px/1 var(--font-body);color:var(--tx)">{{ sharedEditorSaveLabel }}</button>
+</div>
+</div>
+</sc-if>
+
+<!-- v2 — migration notice for a 1.x HACS Dashboard install updated to 2.0
+     (vmMigration). It keeps working; this says how to switch, once. -->
+<sc-if value="{{ migrationShow }}" hint-placeholder-val="{{ false }}">
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;z-index:65;left:50%;top:14px;transform:translateX(-50%);width:min(560px,calc(100vw - 24px));background:var(--page);box-shadow:0 18px 44px rgba(20,24,30,.3);border-radius:18px;padding:14px 16px;color:var(--tx)">
+<div style="font:700 13.5px/1.3 var(--font-body)">{{ S.migrationTitle }}</div>
+<div style="font:500 11.5px/1.45 var(--font-body);color:var(--tx2);margin-top:5px">{{ S.migrationBody }}</div>
+<div style="display:flex;gap:9px;margin-top:10px">
+<button onClick="{{ migrationOpenGuide }}" data-sel="true" style="flex:1;min-height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1.2 var(--font-body);color:var(--tx)">{{ S.migrationGuide }}</button>
+<button onClick="{{ migrationDismiss }}" style="flex:1;min-height:44px;border-radius:14px;background:var(--gr);box-shadow:var(--nu-sm);font:600 12.5px/1.2 var(--font-body);color:var(--tx2)">{{ S.migrationLater }}</button>
+</div>
+</div>
+</sc-if>
+
 <!-- Alarm PIN pad (v1.9.0) — see alarmGuardedCall() in renderVals. Opens
      only for a panel declaring code_format. No mount animation, same reason
      as the toast below: with live state updates, a style= animation would
@@ -1407,7 +1468,7 @@ class Component extends window.CasaCore.base(DCLogic) {
   state = { st: {}, status: 'connecting', tab: null, theme: null, hist: null, range: 7, room: null, charts: {}, now: Date.now(), hassLanguage: null, cam: null, camRevealed: {}, snapTick: Date.now(),
     settingsOpen: false, settingsRoom: null, settingsTab: null, prefs: { v: 1 }, prefsStorage: null, exportSheet: null, longMenu: null, diagSheet: null, sectionResetConfirm: false,
     diagReasonsOpen: false, diagReasonGroupsOpen: {}, hourlyEnergy: undefined,
-    toast: null, irrigationEnds: {}, irrPending: {}, pin: null };
+    toast: null, irrigationEnds: {}, irrPending: {}, pin: null, shared: null, sharedEditor: null };
 
   chartOn(k) { return !!this.state.charts[k]; }
   toggleChart(k) {
@@ -2072,6 +2133,8 @@ class Component extends window.CasaCore.base(DCLogic) {
       settingsTabEnergia: this.state.settingsTab === 'energia',
       settingsTabCamere: this.state.settingsTab === 'camere',
       settingsTabDiagnostica: this.state.settingsTab === 'diagnostica',
+      settingsTabConfig: this.state.settingsTab === 'config',
+      ...this.vmSharedConfig(), ...this.vmMigration(),
       powerUnitOptions, plugThresholdOptions,
       showBatterySignControl, batterySignOptions, batterySignLiveLabel, batterySignSuspect, batterySignInvert,
       settingsRooms, hasSettingsRooms: settingsRooms.length > 0,

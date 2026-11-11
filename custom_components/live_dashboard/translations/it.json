@@ -52,6 +52,10 @@
     "files_missing": {
       "title": "Live Dashboard: mancano i file della dashboard",
       "description": "I file della dashboard non sono stati trovati in {path}. Reinstalla Live Dashboard da HACS: il download della release li contiene, una copia del repository sorgente no."
+    },
+    "legacy_dashboard_installed": {
+      "title": "Live Dashboard: è ancora installata la vecchia Dashboard 1.x",
+      "description": "La cartella {path} appartiene a Live Dashboard 1.x, installata in HACS come Dashboard. Ora la dashboard la serve l'integrazione: in HACS rimuovi la voce \"Live Dashboard\" di tipo Dashboard (il tuo config/www/live_dashboard_config.js non viene toccato). L'avviso sparisce al riavvio successivo, quando la cartella non c'è più."
     }
   }
 }

@@ -26,12 +26,10 @@ jobs:
           fi
 
       - name: Build live_dashboard.zip
-        run: |
-          mkdir -p build/www
-          cp -R custom_components/live_dashboard/. build/
-          cp -R public/. build/www/
-          cd build
-          zip -r ../live_dashboard.zip . -x '.DS_Store' -x '*/__pycache__/*'
+        # Integration + public/ as www/, plus the bridge files that keep a
+        # 1.x HACS Dashboard install working after this update — see the
+        # script's header.
+        run: scripts/build_release.sh
 
       - name: Attach to release
         env:

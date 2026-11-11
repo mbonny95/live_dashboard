@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '2.0.0-dev.3';
+const VERSION = '2.0.0-dev.4';
 console.info(`[live_dashboard] v${VERSION}`);
 
 async function resolveAssetVersion() {
@@ -39,7 +39,8 @@ async function resolveAssetVersion() {
 
 // v2 — what the iframe may ask HA for through the generic bridge (see
 // _handleWs/_handleSubscribe): the camera WebRTC handshake, nothing else.
-const WS_ALLOWED = new Set(['camera/capabilities', 'camera/webrtc/get_client_config', 'camera/webrtc/candidate']);
+const WS_ALLOWED = new Set(['camera/capabilities', 'camera/webrtc/get_client_config', 'camera/webrtc/candidate',
+  'live_dashboard/config/get', 'live_dashboard/config/set']);
 const SUB_ALLOWED = new Set(['camera/webrtc/offer']);
 
 const FLUSH_MS = 600;
@@ -58,7 +59,16 @@ const CALL_TIMEOUT_MS = 15000;
 // own folder (the same `config/www/<folder>/` the user picked when they
 // copied panel.js there) solves both at once with no config to keep in
 // sync: `panel_custom.name` just has to be `<folder>-panel`.
-const FOLDER_NAME = new URL('.', import.meta.url).pathname.split('/').filter(Boolean).pop();
+// v2 — when this file runs from a www/ subfolder (a 2.0 release zip that
+// HACS extracted as a 1.x *Dashboard*, loaded through the zip's top-level
+// panel.js bridge), the element is still named after the folder above it,
+// so the 1.x panel_custom `name: live_dashboard-panel` keeps matching.
+const PATH_PARTS = new URL('.', import.meta.url).pathname.split('/').filter(Boolean);
+const FOLDER_NAME = PATH_PARTS[PATH_PARTS.length - 1] === 'www' && PATH_PARTS.length > 1
+  ? PATH_PARTS[PATH_PARTS.length - 2] : PATH_PARTS[PATH_PARTS.length - 1];
+// 1.x HACS Dashboard install updated to 2.0: served from /local/community/.
+// Supported (it keeps working) but shown as "to migrate" in the dashboard.
+const LEGACY_HACS_DASHBOARD = /\/(community|hacsfiles)\//.test(new URL('.', import.meta.url).pathname);
 const PANEL_TAG = FOLDER_NAME + '-panel';
 
 // Below this width the phone layout (dash_neumo_mobile.html) loads instead
@@ -424,7 +434,12 @@ class CasaPanel extends HTMLElement {
     // v2 — how this panel was installed: the integration registers it with
     // config.install = 'integration'; a hand-written panel_custom block has
     // no such key. Shown in Diagnostica -> Environment.
-    const install = (this._panel && this._panel.config && this._panel.config.install) || 'panel_custom';
+    const install = (this._panel && this._panel.config && this._panel.config.install)
+      || (LEGACY_HACS_DASHBOARD ? 'hacs_dashboard' : 'panel_custom');
+    // v2 — the shared configuration (integration) can only be written by an
+    // administrator: the dashboard needs to know who's looking.
+    const u = this._hass.user;
+    const user = u ? { isAdmin: !!u.is_admin, name: u.name || '' } : null;
     if (this._sentRefs && this._lastFlush - this._lastFull < FULL_RESYNC_MS) {
       const changed = {};
       const removed = [];
@@ -443,7 +458,7 @@ class CasaPanel extends HTMLElement {
       if (!n && !removed.length && language === this._sentLanguage) return;
       this._sentLanguage = language;
       this._iframe.contentWindow.postMessage(
-        { type: 'casa:hass-states-delta', changed, removed, language, embedIframe, install },
+        { type: 'casa:hass-states-delta', changed, removed, language, embedIframe, install, user },
         this._targetOrigin
       );
       return;
@@ -462,7 +477,7 @@ class CasaPanel extends HTMLElement {
         // install. A support-issue-shaped question ("is embed_iframe on?")
         // that the Diagnostica panel can answer without the user reading
         // their own configuration.yaml.
-        embedIframe, install
+        embedIframe, install, user
       },
       this._targetOrigin
     );

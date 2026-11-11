@@ -31,3 +31,4 @@ URL_PATH_RE = re.compile(r"^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$")
 
 ISSUE_URL_PATH_IN_USE = "url_path_in_use"
 ISSUE_FILES_MISSING = "files_missing"
+ISSUE_LEGACY_DASHBOARD = "legacy_dashboard_installed"

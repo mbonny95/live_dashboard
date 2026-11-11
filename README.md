@@ -90,8 +90,12 @@ panel), and **Settings → Diagnostica** inside the dashboard shows
 
 ### Upgrading from 1.x
 
-1.x was a HACS *Dashboard* (plugin); 2.0 is an *Integration*. HACS can't
-switch a repository's category in place, so once:
+1.x was a HACS *Dashboard* (plugin); 2.0 is an *Integration*. If you just
+update the old Dashboard entry in HACS, nothing breaks: the dashboard keeps
+working from the same `panel_custom` block, and shows a notice ("Switch to
+the Live Dashboard integration") with a link to these steps — dismiss it
+with "Later" and it doesn't come back for you. HACS can't switch a
+repository's category in place, so once, when convenient:
 
 1. In HACS, remove "Live Dashboard" (the Dashboard one). Your
    `config/www/live_dashboard_config.js` is not touched.
@@ -154,6 +158,22 @@ you opt into them (see below) — there's no way to guess a "house mode"
 script pairing, so those stay off by default rather than guessing wrong.
 
 ### Configuring the rest
+
+**With the integration (v2), the configuration can live inside Home
+Assistant**, the same for every user and device: Settings → **Configuration**
+in the dashboard (administrators only):
+
+- **Import the file into Home Assistant** — copies your
+  `live_dashboard_config.js` as it is;
+- **Save the panel choices for everyone** — the rooms, entities and cameras
+  you hid and the orders you chose in the panel become everyone's;
+- **Edit the JSON** — everything else, same shape as the file, validated
+  before saving;
+- **Back to the file** — deletes the stored configuration.
+
+When a configuration is stored in Home Assistant it wins over the file,
+which stays as a fallback; Diagnostica says which one is in use. Without the
+integration (manual install) the file below is the only source, as in 1.x.
 
 Copy [`live_dashboard_config.example.js`](public/live_dashboard_config.example.js)
 to one of the paths below — **renaming it as you copy it**, since the

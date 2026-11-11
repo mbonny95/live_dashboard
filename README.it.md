@@ -85,8 +85,13 @@ altro pannello), e **Impostazioni → Diagnostica** dentro la dashboard mostra
 
 ### Passare dalla 1.x alla 2.0
 
-La 1.x era una *Dashboard* (plugin) di HACS, la 2.0 è un'*Integrazione*. HACS
-non può cambiare la categoria di un repository, quindi una volta sola:
+La 1.x era una *Dashboard* (plugin) di HACS, la 2.0 è un'*Integrazione*. Se
+aggiorni semplicemente la vecchia voce Dashboard in HACS non si rompe niente:
+la dashboard continua a funzionare con lo stesso blocco `panel_custom` e
+mostra un avviso ("Passa all'integrazione Live Dashboard") con il link a
+questi passi — con "Più tardi" lo chiudi e per te non ricompare. HACS non può
+cambiare la categoria di un repository, quindi una volta sola, quando ti
+torna comodo:
 
 1. In HACS rimuovi "Live Dashboard" (quella Dashboard). Il tuo
    `config/www/live_dashboard_config.js` non viene toccato.
@@ -156,6 +161,23 @@ script "modalità casa": per questo resta spento di default invece di
 tentare a caso.
 
 ### Configurare il resto
+
+**Con l'integrazione (v2) la configurazione può stare dentro Home
+Assistant**, uguale per tutti gli utenti e i dispositivi: Impostazioni →
+**Configurazione** nella dashboard (solo amministratori):
+
+- **Importa il file in Home Assistant** — copia il tuo
+  `live_dashboard_config.js` così com'è;
+- **Salva le scelte del pannello per tutti** — stanze, entità e telecamere
+  nascoste e gli ordini scelti nel pannello diventano quelli di tutti;
+- **Modifica il JSON** — tutto il resto, stessa forma del file, validato
+  prima di salvare;
+- **Torna al file** — cancella la configurazione salvata.
+
+Quando c'è una configurazione salvata in Home Assistant ha la precedenza sul
+file, che resta come riserva; Diagnostica dice quale è in uso. Senza
+integrazione (installazione manuale) l'unica fonte resta il file qui sotto,
+come nella 1.x.
 
 Copia [`live_dashboard_config.example.js`](public/live_dashboard_config.example.js)
 in uno dei percorsi qui sotto — **rinominandolo mentre lo copi**, dato che

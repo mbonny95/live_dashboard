@@ -108,6 +108,20 @@ async function loadUserConfig() {
 }
 
 
+// v2 — README section a 1.x HACS Dashboard user is pointed to.
+const MIGRATION_GUIDE_URL = 'https://github.com/mbonny95/live_dashboard#upgrading-from-1x';
+
+// v2 — parse the shared-config JSON editor's text. Returns { config } or
+// { error: 'invalidJson' | 'notObject', detail }: the dashboard stores what
+// window.CASA_CONFIG would be, so it must be a plain JSON object.
+function parseSharedConfigText(text) {
+  let v;
+  try { v = JSON.parse(text); }
+  catch (e) { return { error: 'invalidJson', detail: (e && e.message) || '' }; }
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return { error: 'notObject' };
+  return { config: v };
+}
+
 // The runtime hands each page its DCLogic base class; the shared component
 // class is built on top of it once and reused (the runtime may re-evaluate
 // a page's script, it always passes the same DCLogic).
@@ -132,6 +146,12 @@ function base(DCLogic) {
   // v2 — 'integration' (custom_components/live_dashboard) or 'panel_custom'
   // (manual YAML install); null in demo mode. Sent by panel.js.
   panelInstall = null;
+  // v2 — { isAdmin, name } of the Home Assistant user, sent by panel.js.
+  panelUser = null;
+  // v2 — the raw config read from live_dashboard_config.js (for "import
+  // into Home Assistant") and what the integration returned.
+  fileConfig = null;
+  sharedConfigInfo = null;
   // Ring buffer of the last 20 call() outcomes — Diagnostica's "Recent
   // actions" section reads this directly, same instance-field-not-state
   // pattern as camDiag (mutated in place, a setState elsewhere in the same
@@ -581,12 +601,27 @@ function base(DCLogic) {
       // that carries it), same "no extra render just for this" reasoning as
       // camDiag elsewhere in this file.
       onEmbedIframe: (v) => { this.panelEmbedIframe = v; },
-      onInstall: (v) => { this.panelInstall = v; }
+      onInstall: (v) => { this.panelInstall = v; },
+      onUser: (u) => { this.panelUser = u; }
     });
     const kind = be.kind;
+    // v2 — shared configuration stored in Home Assistant by the integration.
+    // When set (a non-empty object) it wins over live_dashboard_config.js;
+    // the file stays the fallback, and the only source for manual installs.
+    let sharedInfo = null;
+    if (kind !== 'demo' && this.panelInstall === 'integration' && be.ws) {
+      try { sharedInfo = await be.ws({ type: 'live_dashboard/config/get' }); }
+      catch (e) { sharedInfo = { error: (e && e.message) || String(e) }; }
+    }
+    const sharedCfg = sharedInfo && sharedInfo.config && typeof sharedInfo.config === 'object'
+      && Object.keys(sharedInfo.config).length ? sharedInfo.config : null;
+    configDiag.source = sharedCfg ? 'ha' : (configDiag.resolvedPath ? 'file' : 'none');
+    configDiag.shared = sharedInfo;
+    this.fileConfig = userConfig;
+    this.sharedConfigInfo = sharedInfo;
     // The demo backend ships its own config so Energy/Irrigation/Vehicle/
     // alarm/modes are all visible without anyone writing a config.js.
-    const cfg = mergeConfig(kind === 'demo' ? window.CasaBackendDemo.DEMO_CONFIG : userConfig);
+    const cfg = mergeConfig(kind === 'demo' ? window.CasaBackendDemo.DEMO_CONFIG : (sharedCfg || userConfig));
     let registries = { areas: [], devices: [], entities: [] };
     if (be.registries) {
       try { registries = await be.registries(); }
@@ -1657,7 +1692,8 @@ function base(DCLogic) {
         tone: a.loadScript && a.defined === false ? 'warn' : ''
       })) : [];
       const notExecuted = !!cd && !cd.resolvedPath && cd.attempts.some((a) => a.loadScript && a.defined === false);
-      diagConfigSummary = !cd ? '' : cd.resolvedPath ? this.t('diag.configResolved', { path: cd.resolvedPath }) : notExecuted ? S.diagConfigNotExecutedMsg : S.diagConfigNotFound;
+      diagConfigSummary = !cd ? '' : cd.source === 'ha' ? this.t('diag.configFromHa', { when: this._fmtStamp(cd.shared && cd.shared.updated_at), who: (cd.shared && cd.shared.updated_by) || '—' })
+        : cd.resolvedPath ? this.t('diag.configResolved', { path: cd.resolvedPath }) : notExecuted ? S.diagConfigNotExecutedMsg : S.diagConfigNotFound;
       diagConfigOutsideIframe = !!cd && !cd.insideIframe;
 
       diagEnergyInstantRows = this.diagEnergyInstant().map((r) => ({
@@ -1719,7 +1755,7 @@ function base(DCLogic) {
         // env.backend === 'demo' never sends embedIframe at all (see
         // ha-backend-demo.js — there is no real panel_custom config to
         // report on), so null there reads distinctly from a real false.
-        { label: S.diagEnvInstall, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.install === 'integration' ? S.diagEnvInstallIntegration : env.install === 'panel_custom' ? S.diagEnvInstallPanelCustom : S.diagEnvUnknown },
+        { label: S.diagEnvInstall, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.install === 'integration' ? S.diagEnvInstallIntegration : env.install === 'hacs_dashboard' ? S.diagEnvInstallLegacy : env.install === 'panel_custom' ? S.diagEnvInstallPanelCustom : S.diagEnvUnknown },
         { label: S.diagEnvEmbedIframe, value: env.backend === 'demo' ? S.diagEnvNotApplicableDemo : env.embedIframe === true ? S.diagEnvEmbedIframeYes : env.embedIframe === false ? S.diagEnvEmbedIframeNo : S.diagEnvUnknown },
         { label: S.diagEnvLang, value: env.lang || '—' },
         { label: S.diagEnvRuntime, value: env.reactSource === 'local' ? S.diagEnvRuntimeLocal : env.reactSource === 'cdn' ? S.diagEnvRuntimeCdn : S.diagEnvUnknown },
@@ -1864,6 +1900,7 @@ function base(DCLogic) {
       const settingsTabDefs = [['stanze', S.rooms, false], ['energia', this.t('tab.energy'),
         diagEnergyInstantRows.some((r) => r.tone === 'warn' || r.unitWarn) || diagPrefsFailed || diagEnergyDailyRows.some((r) => r.counterWarn) || batterySign.suspect]];
       if (settingsCameras.length > 0) settingsTabDefs.push(['camere', S.settingsCameras, false]);
+      if (this.panelInstall === 'integration') settingsTabDefs.push(['config', S.sharedTab, false]);
       settingsTabDefs.push(['diagnostica', S.diagTitle, diagConfigAttempts.some((a) => a.tone === 'warn') || diagHasHighSeverityReason]);
       settingsTabs = settingsTabDefs.map(([key, label, hasIssue]) => ({
         key, label, hasIssue, sel: (this.state.settingsTab || 'stanze') === key,
@@ -2204,9 +2241,116 @@ function base(DCLogic) {
       consumptionDisplayWatts, consumptionVal, consumptionLabel, batterySign
     };
   }
+
+  // v2 — "Configurazione" settings tab (integration installs only): where the
+  // config comes from, and for administrators the ways to store it in Home
+  // Assistant for every user and device. Saving reloads the page, so the new
+  // config applies exactly as at startup. Shared by both layouts.
+  vmSharedConfig() {
+    const S = this.strings;
+    const info = this.sharedConfigInfo || {};
+    const cd = this.configDiag || {};
+    const isAdmin = !!(this.panelUser && this.panelUser.isAdmin);
+    const st = this.state.shared || {};
+    const source = cd.source || 'none';
+    const sourceText = source === 'ha'
+      ? this.t('shared.sourceHa', { when: this._fmtStamp(info.updated_at), who: info.updated_by || '—' })
+      : source === 'file' ? this.t('shared.sourceFile', { path: cd.resolvedPath || '' }) : S.sharedSourceNone;
+    const actions = [];
+    if (isAdmin) {
+      if (source === 'file' && this.fileConfig && Object.keys(this.fileConfig).length) {
+        actions.push({ key: 'import', label: S.sharedImport, hint: S.sharedImportHint, run: () => this._sharedSave(this.fileConfig) });
+      }
+      actions.push({ key: 'panel', label: S.sharedSavePanel, hint: S.sharedSavePanelHint, run: () => this._sharedSave(this._sharedPanelConfig()) });
+      actions.push({ key: 'edit', label: S.sharedEdit, hint: S.sharedEditHint, run: () => this._sharedOpenEditor() });
+      if (source === 'ha') {
+        actions.push(st.resetConfirm
+          ? { key: 'reset', label: S.sharedResetConfirm, hint: S.sharedResetHint, run: () => this._sharedSave(null) }
+          : { key: 'reset', label: S.sharedReset, hint: S.sharedResetHint, run: () => this.setState({ shared: Object.assign({}, st, { resetConfirm: true }) }) });
+      }
+    }
+    const ed = this.state.sharedEditor;
+    return {
+      sharedSourceText: sourceText,
+      sharedCanEdit: isAdmin,
+      sharedReadOnly: !isAdmin,
+      sharedActions: st.busy ? [] : actions,
+      sharedBusy: !!st.busy,
+      sharedHasError: !!st.error,
+      sharedErrorText: st.error ? this.t('shared.saveFailed', { error: st.error }) : '',
+      sharedEditorOpen: !!ed,
+      sharedEditorText: ed ? ed.text : '',
+      sharedEditorHasError: !!(ed && ed.error),
+      sharedEditorError: ed && ed.error ? ed.error : '',
+      sharedEditorSaveLabel: st.busy ? '…' : S.sharedEditorSave,
+      sharedEditorInput: (e) => { if (this.state.sharedEditor) this.setState({ sharedEditor: { text: e.target.value, error: null } }); },
+      sharedEditorClose: () => this.setState({ sharedEditor: null }),
+      sharedEditorSave: () => {
+        const cur = this.state.sharedEditor;
+        if (!cur) return;
+        const parsed = parseSharedConfigText(cur.text);
+        if (parsed.error) {
+          this.setState({ sharedEditor: { text: cur.text, error: this.t('shared.' + parsed.error, { detail: parsed.detail || '' }) } });
+          return;
+        }
+        this._sharedSave(parsed.config);
+      }
+    };
+  }
+
+  // What "Salva le scelte del pannello per tutti" stores: the same resolved
+  // config "Esporta come config.js" produces (config + this user's hide and
+  // order choices), built by discovery.js's buildExportedConfig.
+  _sharedPanelConfig() {
+    const allRoomsRes = this.ALL_ROOMS_RESULT();
+    const rooms = allRoomsRes.rooms.concat(allRoomsRes.overflow);
+    const known = {
+      roomIds: rooms.map((r) => r.id),
+      entityIds: Array.from(new Set(rooms.reduce((acc, r) => acc.concat((r.catalog || []).map((e) => e.id)), []))),
+      cameraIds: this.ALL_CAMERAS_RESULT().map((c) => c.id)
+    };
+    return window.CasaDiscovery.buildExportedConfig(this.cfg, this.PREFS(), known);
+  }
+
+  _sharedOpenEditor() {
+    const info = this.sharedConfigInfo || {};
+    const base = (info.config && Object.keys(info.config).length) ? info.config : (this.fileConfig || {});
+    this.setState({ sharedEditor: { text: JSON.stringify(base, null, 2), error: null } });
+  }
+
+  async _sharedSave(config) {
+    if (!this.be || !this.be.ws) return;
+    this.setState({ shared: { busy: true, error: null } });
+    try {
+      await this.be.ws({ type: 'live_dashboard/config/set', config });
+      window.location.reload();
+    } catch (e) {
+      this.setState({ shared: { busy: false, error: (e && e.message) || String(e) } });
+    }
+  }
+
+  _fmtStamp(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (isNaN(d)) return '—';
+    return d.toLocaleString(this.lang === 'it' ? 'it-IT' : 'en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  }
+
+  // v2 — migration notice for a 1.x HACS *Dashboard* install that received
+  // the 2.0 update (panel.js reports install = 'hacs_dashboard'). It keeps
+  // working; this says how to move to the integration, once per user
+  // (dismissed in the per-user prefs, like every other panel choice).
+  vmMigration() {
+    const show = this.panelInstall === 'hacs_dashboard' && !this.PREFS().migrationNoticeDismissed;
+    return {
+      migrationShow: show,
+      migrationOpenGuide: () => { try { window.open(MIGRATION_GUIDE_URL, '_blank', 'noopener'); } catch (e) { /* popup blocked */ } },
+      migrationDismiss: () => this.SAVE_PREFS(Object.assign({}, this.PREFS(), { migrationNoticeDismissed: true }))
+    };
+  }
   };
   return Base;
 }
 
-window.CasaCore = { base, DEFAULT_CONFIG, mergeConfig, ASSET_V, bust, loadScript, switchScenario, CONFIG_PATHS, loadUserConfig };
+window.CasaCore = { base, parseSharedConfigText, DEFAULT_CONFIG, mergeConfig, ASSET_V, bust, loadScript, switchScenario, CONFIG_PATHS, loadUserConfig };
 })();

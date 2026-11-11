@@ -8,6 +8,56 @@ All notable changes to this project are documented here. Format follows
 La 1.9 non è mai stata pubblicata: le sue modifiche (le prime sezioni qui
 sotto) escono direttamente con la 2.0, insieme al lavoro "major".
 
+### Added — configurazione condivisa in Home Assistant
+
+- **La configurazione può stare dentro Home Assistant**, uguale per tutti
+  gli utenti e i dispositivi, invece che solo nel file
+  `live_dashboard_config.js`. Nuova scheda Impostazioni → **Configurazione**
+  (solo con l'integrazione), per gli amministratori:
+  - **Importa il file in Home Assistant**;
+  - **Salva le scelte del pannello per tutti**: stanze, entità e telecamere
+    nascoste e gli ordini scelti nel pannello, che finora valevano solo per
+    chi li sceglieva, diventano quelli di tutti (stessa logica di "Esporta
+    come config.js");
+  - **Modifica il JSON**, con validazione prima di salvare;
+  - **Torna al file**, con conferma.
+- **Se c'è una configurazione in HA ha la precedenza**, il file resta come
+  riserva e per l'installazione manuale. Diagnostica → Config dice da dove
+  arriva e chi l'ha salvata quando. I non amministratori la vedono in sola
+  lettura.
+- Integrazione: archivio in `.storage/live_dashboard.config`, comandi
+  WebSocket `live_dashboard/config/get` (tutti) e `live_dashboard/config/set`
+  (solo amministratori, oggetto JSON fino a 256 KB).
+
+### Added — icona dell'integrazione
+
+- Cartella `brand/` nell'integrazione (icona e logo, anche in versione 2x):
+  l'icona compare in Home Assistant quando si aggiunge e nella pagina delle
+  integrazioni.
+
+### Added — ponte di migrazione dalla 1.x
+
+- **Chi aggiorna la vecchia voce Dashboard di HACS alla 2.0 non resta con lo
+  schermo nero.** Lo zip contiene alla radice un `panel.js` di raccordo e due
+  pagine di reindirizzamento: la dashboard continua a funzionare con il
+  vecchio blocco `panel_custom`, anche sui tablet che hanno ancora in cache il
+  `panel.js` della 1.x. Provato estraendo lo zip vero in una cartella di
+  prova su un'installazione reale.
+- **Avviso nella dashboard** per quelle installazioni ("Passa
+  all'integrazione Live Dashboard", con "Come fare" e "Più tardi", che si
+  chiude per utente), e Diagnostica → Ambiente le indica come "Dashboard HACS
+  1.x — da passare all'integrazione". Le installazioni manuali in `www/` non
+  vedono nessun avviso: restano supportate.
+- **Avviso nelle Riparazioni** se, con l'integrazione attiva, è ancora
+  installata la vecchia Dashboard 1.x.
+- `scripts/build_release.sh`: un solo script costruisce lo zip, usato dal
+  workflow di release e in locale.
+
+### Fixed
+
+- Le schede delle Impostazioni vanno a capo invece di uscire dal pannello:
+  con la quinta scheda "Diagnostica" finiva fuori dal bordo.
+
 ### Breaking — installazione come integrazione di Home Assistant
 
 - **Live Dashboard ora è un'integrazione** (`custom_components/live_dashboard`),
