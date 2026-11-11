@@ -101,8 +101,13 @@ repository's category in place, so once, when convenient:
    `config/www/live_dashboard_config.js` is not touched.
 2. Remove the `panel_custom` entry with `name: live_dashboard-panel` from
    `configuration.yaml` (keep any other `panel_custom` entries).
-3. Add the repository again with category **Integration**, download it, and
-   restart Home Assistant.
+3. Register the repository again as an **Integration**. Uninstalling doesn't
+   remove it from HACS's list, and HACS won't add it twice: open
+   **⋮ menu → Custom repositories**, delete the `mbonny95/live_dashboard ·
+   Dashboard` row with the bin icon, then **Add from link** with
+   `https://github.com/mbonny95/live_dashboard` and type **Integration**.
+   Then open it (from the same list: tap its row) and press **Install**
+   (v2.0.0 or later), and restart Home Assistant.
 4. Add the integration (step 3 above). Same path `/casa` as before.
 
 If you skip step 2, the integration doesn't fight the old panel for

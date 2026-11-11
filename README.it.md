@@ -98,8 +98,13 @@ torna comodo:
 2. Togli da `configuration.yaml` la voce `panel_custom` con
    `name: live_dashboard-panel` (lascia le eventuali altre voci
    `panel_custom`).
-3. Aggiungi di nuovo il repository con categoria **Integrazione**,
-   scaricalo e riavvia Home Assistant.
+3. Registra di nuovo il repository come **Integrazione**. La rimozione non
+   lo toglie dalla lista di HACS, e HACS non lo aggiunge due volte: apri
+   **menu ⋮ → Repository personalizzati**, cancella con il cestino la riga
+   `mbonny95/live_dashboard · Dashboard`, poi **Aggiungi da link** con
+   `https://github.com/mbonny95/live_dashboard` e tipo **Integrazione**.
+   Quindi aprilo (dalla stessa lista, toccando la riga), premi **Installa**
+   (v2.0.0 o successiva) e riavvia Home Assistant.
 4. Aggiungi l'integrazione (passo 3 qui sopra). Stesso percorso `/casa` di
    prima.
 
