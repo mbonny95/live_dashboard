@@ -15,7 +15,6 @@
 - **Tab Casa (modes, people, active items, quick covers, ordered sections)** (4 connections) — `public/dash_neumo_mobile.html`
 - **Settings panel (tabs Stanze/Energia/Camere/Diagnostica)** (4 connections) — `public/dash_neumo_mobile.html`
 - **renderVals: demo scenario bar + toast** (4 connections) — `public/dash_neumo_mobile.html`
-- **ALARM_ID()** (3 connections) — `public/casa-core.js`
 - **document.write loader for ./casa-core.js?v=** (3 connections) — `public/dash_neumo_mobile.html`
 - **Room detail (expanded room: sensors, lights, covers, appliances, switches, media, extras)** (3 connections) — `public/dash_neumo_mobile.html`
 - **Tab Irrigazione (zones, duration buttons, 48h chart)** (3 connections) — `public/dash_neumo_mobile.html`
@@ -28,15 +27,17 @@
 - **toggleChart()** (3 connections) — `public/dash_neumo_mobile.html`
 - **renderVals: camera list + mobile home tiles (max 2, motion-first)** (3 connections) — `public/dash_neumo_mobile.html`
 - **renderVals: settings/export/long-menu/diagnostics return fields** (3 connections) — `public/dash_neumo_mobile.html`
+- **CasaComponentBase.ALARM_ID()** (3 connections) — `public/casa-core.js`
 - **window.CASA_REACT_SOURCE** (2 connections) — `public/dash_neumo_mobile.html`
 - *... and 23 more nodes in this community*
 
 ## Relationships
 
-- [CasaComponentBase / vmSettingsDiag](CasaComponentBase_-_vmSettingsDiag.md) (16 shared connections)
-- [renderVals / dash_neumo.html](renderVals_-_dash_neumo.html.md) (7 shared connections)
-- [casa-core.js / _boot](casa-core.js_-__boot.md) (3 shared connections)
+- [CasaComponentBase / CasaComponentBase.vmSettings](CasaComponentBase_-_CasaComponentBase.vmSettings.md) (12 shared connections)
+- [renderVals / dash_neumo.html](renderVals_-_dash_neumo.html.md) (11 shared connections)
+- [CasaComponentBase._boot / casa-core.js](CasaComponentBase._boot_-_casa-core.js.md) (2 shared connections)
 - [CasaPanel / panel.js](CasaPanel_-_panel.js.md) (1 shared connections)
+- [support.js / walk](support.js_-_walk.md) (1 shared connections)
 
 ## Source Files
 

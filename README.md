@@ -466,16 +466,20 @@ maintain.
   the browser tab/page isn't visible.
 - **Live on tap, layered by what the camera and browser can actually do**
   (v1.5.4). Tapping a preview tries, in order, the first one that works:
-  1. A real HLS stream via Home Assistant's `stream` integration, played
+  1. WebRTC, when Home Assistant offers it for the camera (its built-in
+     go2rtc, or the camera's own integration) — the same path as HA's own
+     camera card, live in about a second (v2). If it errors, can't connect,
+     or shows no frame within 12 seconds, the next layer takes over.
+  2. A real HLS stream via Home Assistant's `stream` integration, played
      through `hls.js` 1.7.4 — shipped in `public/vendor/` since v1.9.0 and
      loaded only at this point (~390 KB, never on a page that doesn't open
      a camera). Chrome, Firefox, Android, desktop Safari, iOS 17.1+ and
      most companion apps.
-  2. The same stream played natively by the browser, where hls.js can't
+  3. The same stream played natively by the browser, where hls.js can't
      run (iOS before 17.1). The Diagnostics panel shows which layer is
      actually in use, and which one it fell back from if a layer failed
      while playing.
-  3. Fast still-image polling (2–3 frames/second) from the same
+  4. Fast still-image polling (2–3 frames/second) from the same
      `entity_picture` endpoint the tiles already use, labeled "preview
      refreshing" instead of "live" — the fallback when the camera has no
      `stream` support in Home Assistant, or `camera/stream` fails. It's not

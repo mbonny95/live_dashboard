@@ -7,14 +7,14 @@
 ## Connections by Relation
 
 ### calls
-- [vmSettingsDiag()](vmSettingsDiag%28%29.md) `EXTRACTED`
-- vmLiveConsumption() `EXTRACTED`
-- vmAlarm() `EXTRACTED`
-- vmEnergyRing() `EXTRACTED`
-- vmCameraDetail() `EXTRACTED`
-- vmEnergyEmpty() `EXTRACTED`
-- vmHourlyStrip() `EXTRACTED`
-- ALARM_ID() `EXTRACTED`
+- [CasaComponentBase.vmSettingsDiag()](CasaComponentBase.vmSettingsDiag%28%29.md) `EXTRACTED`
+- CasaComponentBase.vmEnergyRing() `EXTRACTED`
+- CasaComponentBase.vmLiveConsumption() `EXTRACTED`
+- CasaComponentBase.vmAlarm() `EXTRACTED`
+- CasaComponentBase.vmEnergyEmpty() `EXTRACTED`
+- CasaComponentBase.vmHourlyStrip() `EXTRACTED`
+- CasaComponentBase.vmCameraDetail() `EXTRACTED`
+- CasaComponentBase.ALARM_ID() `EXTRACTED`
 
 ### references
 - renderVals: return object `EXTRACTED`

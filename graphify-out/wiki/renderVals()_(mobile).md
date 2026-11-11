@@ -7,25 +7,25 @@
 ## Connections by Relation
 
 ### calls
-- [vmSettingsDiag()](vmSettingsDiag%28%29.md) `EXTRACTED`
-- call() `EXTRACTED`
-- powerVal() `EXTRACTED`
-- _bindAttr() `EXTRACTED`
-- vmLiveConsumption() `EXTRACTED`
-- roomSummary() `EXTRACTED`
-- vmAlarm() `EXTRACTED`
-- vmEnergyRing() `EXTRACTED`
-- vmCameraDetail() `EXTRACTED`
-- vmEnergyEmpty() `EXTRACTED`
-- ROOMS_RESULT() `EXTRACTED`
-- ALL_ROOMS_RESULT() `EXTRACTED`
-- vmHourlyStrip() `EXTRACTED`
-- SECTION_ORDER() `EXTRACTED`
+- [CasaComponentBase.vmSettingsDiag()](CasaComponentBase.vmSettingsDiag%28%29.md) `EXTRACTED`
+- CasaComponentBase.call() `EXTRACTED`
+- CasaComponentBase._bindAttr() `EXTRACTED`
+- CasaComponentBase.powerVal() `EXTRACTED`
+- CasaComponentBase.vmEnergyRing() `EXTRACTED`
+- CasaComponentBase.vmLiveConsumption() `EXTRACTED`
+- CasaComponentBase.roomSummary() `EXTRACTED`
+- CasaComponentBase.vmAlarm() `EXTRACTED`
+- CasaComponentBase.ALL_ROOMS_RESULT() `EXTRACTED`
+- CasaComponentBase.ROOMS_RESULT() `EXTRACTED`
+- CasaComponentBase.vmEnergyEmpty() `EXTRACTED`
+- CasaComponentBase.vmHourlyStrip() `EXTRACTED`
 - roomDetail() `EXTRACTED`
-- spark() `EXTRACTED`
-- ALARM_ID() `EXTRACTED`
+- CasaComponentBase.SECTION_ORDER() `EXTRACTED`
+- CasaComponentBase.vmCameraDetail() `EXTRACTED`
+- CasaComponentBase.spark() `EXTRACTED`
 - chartOn() `EXTRACTED`
 - toggleChart() `EXTRACTED`
+- CasaComponentBase.ALARM_ID() `EXTRACTED`
 
 ### references
 - Component (mobile, extends CasaCore.base(DCLogic)) `EXTRACTED`

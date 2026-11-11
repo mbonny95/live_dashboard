@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '2.0.0-dev.1';
+const VERSION = '2.0.0-dev.2';
 console.info(`[live_dashboard] v${VERSION}`);
 
 async function resolveAssetVersion() {
@@ -36,6 +36,11 @@ async function resolveAssetVersion() {
   } catch (e) { /* missing or unreadable: fall back to this module's VERSION */ }
   return VERSION;
 }
+
+// v2 — what the iframe may ask HA for through the generic bridge (see
+// _handleWs/_handleSubscribe): the camera WebRTC handshake, nothing else.
+const WS_ALLOWED = new Set(['camera/capabilities', 'camera/webrtc/get_client_config', 'camera/webrtc/candidate']);
+const SUB_ALLOWED = new Set(['camera/webrtc/offer']);
 
 const FLUSH_MS = 600;
 // v1.9.0 — after the first full snapshot only changed entities cross the
@@ -317,6 +322,7 @@ class CasaPanel extends HTMLElement {
     this._sentRefs = null;
     this._lastFull = 0;
     this._sentLanguage = null;
+    this._subs = new Map(); // iframe subscription id -> HA unsubscribe promise
     this._onMessage = this._onMessage.bind(this);
   }
 
@@ -373,6 +379,7 @@ class CasaPanel extends HTMLElement {
 
   disconnectedCallback() {
     window.removeEventListener('message', this._onMessage);
+    this._closeAllSubs();
     if (this._timer) { clearTimeout(this._timer); this._timer = null; }
   }
 
@@ -623,6 +630,56 @@ class CasaPanel extends HTMLElement {
     }
   }
 
+  // v2 — generic Home Assistant WS bridge, for the camera WebRTC layer.
+  // One-shot commands and subscriptions are relayed for an explicit list of
+  // types only: the iframe is same-origin, so this isn't a security
+  // boundary, but it keeps what the dashboard can ask HA for written down
+  // in one place.
+  async _handleWs(msg) {
+    const req = msg.msg || {};
+    if (!this._hass || !WS_ALLOWED.has(req.type)) {
+      this._reply(msg.id, 'casa:ws-result', { ok: false, error: !this._hass ? 'hass not ready' : 'ws type not allowed: ' + req.type });
+      return;
+    }
+    try {
+      const result = await this._hass.callWS(req);
+      this._reply(msg.id, 'casa:ws-result', { ok: true, result });
+    } catch (e) {
+      this._reply(msg.id, 'casa:ws-result', { ok: false, error: (e && e.message) || String(e) });
+    }
+  }
+
+  // Each event HA sends on the subscription is posted to the iframe as it
+  // arrives ('casa:sub-event'); a failure to subscribe is posted the same
+  // way with `error` set, so the iframe has one place to listen.
+  _handleSubscribe(msg) {
+    const req = msg.msg || {};
+    const post = (payload) => {
+      if (this._iframe) this._iframe.contentWindow.postMessage(Object.assign({ type: 'casa:sub-event', id: msg.id }, payload), this._targetOrigin);
+    };
+    if (!this._hass || !SUB_ALLOWED.has(req.type)) {
+      post({ error: !this._hass ? 'hass not ready' : 'subscription type not allowed: ' + req.type });
+      return;
+    }
+    const unsub = this._hass.connection.subscribeMessage((event) => post({ event }), req);
+    this._subs.set(msg.id, unsub);
+    unsub.catch((e) => {
+      this._subs.delete(msg.id);
+      post({ error: (e && e.message) || String(e) });
+    });
+  }
+
+  _handleUnsubscribe(msg) {
+    const unsub = this._subs.get(msg.id);
+    this._subs.delete(msg.id);
+    if (unsub) unsub.then((fn) => fn(), () => {});
+  }
+
+  _closeAllSubs() {
+    for (const unsub of this._subs.values()) unsub.then((fn) => fn(), () => {});
+    this._subs.clear();
+  }
+
   _onMessage(e) {
     if (!this._iframe || e.source !== this._iframe.contentWindow) return;
     const d = e.data;
@@ -630,6 +687,7 @@ class CasaPanel extends HTMLElement {
     if (d.type === 'casa:ready') {
       this._ready = true;
       this._sentRefs = null; // a (re)loaded iframe has no copy to patch: send everything
+      this._closeAllSubs(); // nobody is listening to a previous page's subscriptions
       this._flush();
     } else if (d.type === 'casa:call') {
       this._handleCall(d);
@@ -649,6 +707,12 @@ class CasaPanel extends HTMLElement {
       this._handleUserDataSet(d);
     } else if (d.type === 'casa:camera-stream') {
       this._handleCameraStream(d);
+    } else if (d.type === 'casa:ws') {
+      this._handleWs(d);
+    } else if (d.type === 'casa:subscribe') {
+      this._handleSubscribe(d);
+    } else if (d.type === 'casa:unsubscribe') {
+      this._handleUnsubscribe(d);
     }
   }
 }

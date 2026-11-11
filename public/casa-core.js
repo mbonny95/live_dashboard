@@ -222,6 +222,7 @@ function base(DCLogic) {
   _closeCam() {
     if (this.camTimer) { clearInterval(this.camTimer); this.camTimer = null; }
     this._camStopFastPoll();
+    this._camStopWebRtc();
     if (this._hlsInstance) { try { this._hlsInstance.destroy(); } catch (e) { /* already torn down */ } this._hlsInstance = null; }
     // Invalidates any in-flight camera/stream request from _camStartStream
     // so a slow response for a camera the user already closed (or switched
@@ -254,10 +255,30 @@ function base(DCLogic) {
   //   3. camera_proxy stills (the same endpoint the previews already use
   //      successfully), cache-busted at a fast interval, only while the
   //      detail view is open — see _camStartFastPoll.
-  async _camStartStream(id) {
+  async _camStartStream(id, opts) {
     this.camStreamReqId = (this.camStreamReqId || 0) + 1;
     const reqId = this.camStreamReqId;
-    const diag = { wsAttempted: false, wsOk: null, wsError: null, layer: null };
+    const o = opts || {};
+    const diag = Object.assign({ wsAttempted: false, wsOk: null, wsError: null, layer: null }, o.carryDiag || {});
+    // v2 — WebRTC first, when Home Assistant offers it for this camera (its
+    // built-in go2rtc, or the camera's own integration): the same path HA's
+    // own camera card uses, live in a second or two with no HLS segments to
+    // build. Needs the backend's generic WS bridge (panel only; the demo has
+    // no cameras to stream) and a browser with RTCPeerConnection. Anything
+    // short of a playing frame falls back to the HLS layers below — see
+    // _camStartWebRtc and _camLayerFailed('webrtc').
+    if (!o.skipWebRtc && this.be && this.be.ws && this.be.subscribe && typeof RTCPeerConnection !== 'undefined') {
+      let caps = null;
+      try { caps = await this.be.ws({ type: 'camera/capabilities', entity_id: id }); } catch (e) { /* older HA, or not a camera with capabilities */ }
+      if (reqId !== this.camStreamReqId) return;
+      if (caps && Array.isArray(caps.frontend_stream_types) && caps.frontend_stream_types.includes('web_rtc')) {
+        diag.layer = 'webrtc';
+        this._setCamDiag(id, diag);
+        this.setState({ camStreamLayer: 'webrtc', camStreamUrl: 'webrtc:' + id + ':' + reqId, camPlayingUrl: null });
+        this._camStartWebRtc(id, reqId);
+        return;
+      }
+    }
     if (this.be && this.be.cameraStream) {
       diag.wsAttempted = true;
       try {
@@ -334,16 +355,97 @@ function base(DCLogic) {
       }
       el.setAttribute('data-url', url || '');
       el.setAttribute('data-layer', layer);
-      if (layer === 'hlsjs') {
+      if (layer === 'webrtc') {
+        const w = this._camWebRtc;
+        if (w && el.srcObject !== w.stream) el.srcObject = w.stream;
+      } else if (layer === 'hlsjs') {
+        if (el.srcObject) el.srcObject = null;
         if (this._hlsInstance && this._hlsVideo === el && this._hlsUrl === url) return;
         this._attachHlsJs(el, url);
         this._hlsVideo = el;
         this._hlsUrl = url;
       } else if (url && el.getAttribute('src') !== url) {
+        if (el.srcObject) el.srcObject = null;
         el.setAttribute('src', url);
       }
     };
     return this._camVideoRefFn;
+  }
+
+  // v2 — WebRTC session with Home Assistant, the same handshake as HA's own
+  // ha-web-rtc-player (frontend 2026.11): client config -> peer connection
+  // with recvonly audio+video -> offer over the camera/webrtc/offer
+  // subscription -> session id, answer and remote candidates come back as
+  // events; local candidates go up with camera/webrtc/candidate once the
+  // session id is known (queued until then). Audio tracks are dropped: the
+  // live view is muted by design (v1.9.0). No frame within
+  // WEBRTC_START_TIMEOUT_MS, an error event, or a failed ICE connection ->
+  // _camLayerFailed('webrtc'), which retries the HLS path.
+  async _camStartWebRtc(id, reqId) {
+    this._camStopWebRtc();
+    const WEBRTC_START_TIMEOUT_MS = 12000;
+    const s = { id, reqId, pc: null, stream: new MediaStream(), sessionId: null, queue: [], sub: null, timer: null };
+    this._camWebRtc = s;
+    const live = () => this._camWebRtc === s && this.camStreamReqId === reqId && this.state.cam === id;
+    const fail = (why) => { if (live()) this._camLayerFailed('webrtc', why ? String(why) : null); };
+    const sendCandidate = (c) => {
+      this.be.ws({ type: 'camera/webrtc/candidate', entity_id: id, session_id: s.sessionId, candidate: c.toJSON() }).catch(() => {});
+    };
+    try {
+      const cfg = await this.be.ws({ type: 'camera/webrtc/get_client_config', entity_id: id });
+      if (!live()) return;
+      const pc = new RTCPeerConnection((cfg && cfg.configuration) || {});
+      s.pc = pc;
+      if (cfg && cfg.dataChannel) pc.createDataChannel(cfg.dataChannel);
+      pc.ontrack = (e) => {
+        if (e.track.kind === 'video' && !s.stream.getTracks().includes(e.track)) s.stream.addTrack(e.track);
+      };
+      pc.onicecandidate = (e) => {
+        const c = e.candidate;
+        if (!c || !c.candidate) return;
+        if (s.sessionId) sendCandidate(c); else s.queue.push(c);
+      };
+      pc.oniceconnectionstatechange = () => { if (pc.iceConnectionState === 'failed') fail('ICE failed'); };
+      pc.addTransceiver('audio', { direction: 'recvonly' });
+      pc.addTransceiver('video', { direction: 'recvonly' });
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      if (!live()) return;
+      s.sub = this.be.subscribe({ type: 'camera/webrtc/offer', entity_id: id, offer: offer.sdp }, async (ev, err) => {
+        if (!live()) return;
+        if (err) { fail(err); return; }
+        if (!ev) return;
+        if (ev.type === 'session') {
+          s.sessionId = ev.session_id;
+          s.queue.splice(0).forEach(sendCandidate);
+        } else if (ev.type === 'answer') {
+          if (['stable', 'closed'].includes(pc.signalingState)) return;
+          try { await pc.setRemoteDescription({ type: 'answer', sdp: ev.answer }); } catch (e) { fail(e && e.message); }
+        } else if (ev.type === 'candidate') {
+          const c = ev.candidate || {};
+          try {
+            await pc.addIceCandidate(c.sdpMid || c.sdpMLineIndex != null ? c : { candidate: c.candidate, sdpMid: '0' });
+          } catch (e) { /* one bad candidate is not a failed session */ }
+        } else if (ev.type === 'error') {
+          fail(ev.message || ev.code);
+        }
+      });
+      s.timer = setTimeout(() => {
+        if (live() && this.state.camPlayingUrl !== this.state.camStreamUrl) fail('timeout');
+      }, WEBRTC_START_TIMEOUT_MS);
+    } catch (e) {
+      fail((e && e.message) || e);
+    }
+  }
+
+  _camStopWebRtc() {
+    const s = this._camWebRtc;
+    if (!s) return;
+    this._camWebRtc = null;
+    clearTimeout(s.timer);
+    if (s.sub) s.sub.unsubscribe();
+    if (s.pc) { try { s.pc.close(); } catch (e) { /* already closed */ } }
+    s.stream.getTracks().forEach((t) => t.stop());
   }
 
   _camCanNative() {
@@ -357,6 +459,12 @@ function base(DCLogic) {
   _camLayerFailed(layer, detail) {
     const id = this.state.cam;
     if (!id || this.state.camStreamLayer !== layer) return;
+    if (layer === 'webrtc') {
+      // Back to the start of the ladder, minus WebRTC: camera/stream + HLS.
+      this._camStopWebRtc();
+      this._camStartStream(id, { skipWebRtc: true, carryDiag: { failedLayer: 'webrtc', failDetail: detail || null } });
+      return;
+    }
     if (this._hlsInstance) { try { this._hlsInstance.destroy(); } catch (e) { /* already torn down */ } this._hlsInstance = null; }
     this._hlsVideo = null;
     this._hlsUrl = null;
@@ -1624,15 +1732,18 @@ function base(DCLogic) {
       // situation is. camDiag is populated by _camStartStream as each
       // camera detail is opened — a camera never opened this session has no
       // entry yet, shown as "not opened" rather than a false failure.
-      const camLayerLabelKeys = { 'hls-native': 'diagCamLayerNative', 'hlsjs': 'diagCamLayerHlsjs', 'snapshot': 'diagCamLayerSnapshot' };
+      const camLayerLabelKeys = { 'webrtc': 'diagCamLayerWebrtc', 'hls-native': 'diagCamLayerNative', 'hlsjs': 'diagCamLayerHlsjs', 'snapshot': 'diagCamLayerSnapshot' };
       diagCameraRows = camList.map((c) => {
         const d = (this.camDiag || {})[c.id];
         if (!d) return { label: c.name, value: S.diagCamNotOpened };
         const layerLabel = S[camLayerLabelKeys[d.layer]] || d.layer || '—';
-        const wsLabel = !d.wsAttempted ? S.diagCamWsNotAttempted : d.wsOk ? S.diagCamWsOk : S.diagCamWsFailed;
+        // WebRTC never asks for camera/stream (v2): saying it was "not
+        // available" would point at a problem that isn't there.
+        const wsLabel = d.layer === 'webrtc' && !d.wsAttempted ? ''
+          : !d.wsAttempted ? S.diagCamWsNotAttempted : d.wsOk ? S.diagCamWsOk : S.diagCamWsFailed;
         const fellBack = d.failedLayer ? ' · ' + S.diagCamFellBack + ' ' + (S[camLayerLabelKeys[d.failedLayer]] || d.failedLayer)
           + (d.failDetail ? ' (' + d.failDetail + ')' : '') : '';
-        return { label: c.name, value: layerLabel + ' · ' + wsLabel + fellBack };
+        return { label: c.name, value: layerLabel + (wsLabel ? ' · ' + wsLabel : '') + fellBack };
       });
 
       diagRingValue = !hasEnergy ? S.diagRingNoEnergy
@@ -1898,7 +2009,7 @@ function base(DCLogic) {
     // past the first few minutes instead of quietly dying.
     const camStreamLayer = camOpen ? this.state.camStreamLayer : null;
     const camStreamUrl = camOpen ? this.state.camStreamUrl : null;
-    const camLayerVideo = camStreamLayer === 'hls-native' || camStreamLayer === 'hlsjs';
+    const camLayerVideo = camStreamLayer === 'webrtc' || camStreamLayer === 'hls-native' || camStreamLayer === 'hlsjs';
     const camLayerSnapshot = camStreamLayer === 'snapshot' && camCur && !!camCur.picture;
     const camStreamSrc = camLayerSnapshot
       ? (this.state.camStillSrc || camCur.picture + (camCur.picture.indexOf('?') === -1 ? '?' : '&') + '_cb=' + this.state.snapTick)

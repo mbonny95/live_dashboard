@@ -1,6 +1,6 @@
 # support.js / walk
 
-> 61 nodes
+> 66 nodes
 
 ## Key Concepts
 
@@ -14,6 +14,7 @@
 - **boot()** (7 connections) — `public/support.js`
 - **resolve()** (7 connections) — `public/support.js`
 - **compileAttr()** (7 connections) — `public/support.js`
+- **loadReactUmd()** (7 connections) — `public/support.js`
 - **collectProps()** (6 connections) — `public/support.js`
 - **walkFor()** (6 connections) — `public/support.js`
 - **walkComponent()** (6 connections) — `public/support.js`
@@ -28,23 +29,25 @@
 - **init()** (4 connections) — `public/support.js`
 - **parseDcDocument()** (3 connections) — `public/support.js`
 - **parseDcText()** (3 connections) — `public/support.js`
-- **parseDataProps()** (3 connections) — `public/support.js`
-- *... and 36 more nodes in this community*
+- *... and 41 more nodes in this community*
 
 ## Relationships
 
-- [casa-core.js / _boot](casa-core.js_-__boot.md) (3 shared connections)
-- [prefs.js / _loadIrrigationEnds](prefs.js_-__loadIrrigationEnds.md) (2 shared connections)
 - [discovery.js / discoverRooms](discovery.js_-_discoverRooms.md) (2 shared connections)
+- [CasaComponentBase._boot / casa-core.js](CasaComponentBase._boot_-_casa-core.js.md) (2 shared connections)
+- [prefs.js / diagText](prefs.js_-_diagText.md) (1 shared connections)
+- [CasaComponentBase / CasaComponentBase.vmSettings](CasaComponentBase_-_CasaComponentBase.vmSettings.md) (1 shared connections)
+- [renderVals / dash_neumo_mobile.html](renderVals_-_dash_neumo_mobile.html.md) (1 shared connections)
 
 ## Source Files
 
+- `public/dash_neumo.html`
 - `public/support.js`
 
 ## Audit Trail
 
-- EXTRACTED: 269 (99%)
-- INFERRED: 4 (1%)
+- EXTRACTED: 280 (97%)
+- INFERRED: 9 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

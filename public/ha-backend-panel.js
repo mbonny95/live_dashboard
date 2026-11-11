@@ -26,6 +26,11 @@
 //    userDataGet(key) posts 'casa:user-data-get' -> parent runs hass.callWS('frontend/get_user_data')
 //    userDataSet(key, value) posts 'casa:user-data-set' -> parent runs hass.callWS('frontend/set_user_data')
 //    cameraStream() posts 'casa:camera-stream'  -> parent runs hass.callWS('camera/stream')
+//    ws(msg)        posts 'casa:ws'             -> parent runs hass.callWS(msg)  (allow-listed types, v2)
+//    subscribe(msg, onEvent) posts 'casa:subscribe' -> parent runs
+//                   hass.connection.subscribeMessage and relays every event as
+//                   'casa:sub-event'; the returned handle's unsubscribe()
+//                   posts 'casa:unsubscribe' (v2, camera WebRTC)
 //  panel.js answers with the matching '*-result' message, matched back up by
 //  a request id.
 //
@@ -59,6 +64,7 @@ async function connect(handlers, readyTimeoutMs) {
   const pending = new Map();
   let reqId = 0;
   let current = null;
+  const subs = new Map(); // subscription id -> onEvent(event, error)
 
   function onMessage(e) {
     if (e.source !== window.parent) return;
@@ -71,6 +77,11 @@ async function connect(handlers, readyTimeoutMs) {
     // on every update, exactly as before. Applying the same message twice
     // (connect() below routes the very first one through onMessage too) is
     // harmless: both message kinds are idempotent.
+    if (d.type === 'casa:sub-event') {
+      const cb = subs.get(d.id);
+      if (cb) cb(d.event || null, d.error || null);
+      return;
+    }
     if (d.type === 'casa:hass-states' || d.type === 'casa:hass-states-delta') {
       if (d.type === 'casa:hass-states') {
         current = Object.assign({}, d.states);
@@ -87,7 +98,7 @@ async function connect(handlers, readyTimeoutMs) {
     if (d.type === 'casa:call-result' || d.type === 'casa:history-result' || d.type === 'casa:registries-result'
       || d.type === 'casa:energy-prefs-result' || d.type === 'casa:energy-today-result' || d.type === 'casa:energy-hourly-result'
       || d.type === 'casa:user-data-get-result' || d.type === 'casa:user-data-set-result'
-      || d.type === 'casa:camera-stream-result') {
+      || d.type === 'casa:camera-stream-result' || d.type === 'casa:ws-result') {
       const p = pending.get(d.id);
       if (!p) return;
       pending.delete(d.id);
@@ -187,7 +198,29 @@ async function connect(handlers, readyTimeoutMs) {
       return send('casa:camera-stream', { entity_id });
     },
 
+    // v2 — one-shot WS command (panel.js allow-lists the types).
+    ws: function (msg) {
+      return send('casa:ws', { msg });
+    },
+
+    // v2 — HA subscription; onEvent(event, error) runs for every event, or
+    // once with `error` if subscribing failed. No timeout: a subscription
+    // lives until unsubscribe(), unlike send()'s request/response.
+    subscribe: function (msg, onEvent) {
+      const id = ++reqId;
+      subs.set(id, onEvent);
+      window.parent.postMessage({ type: 'casa:subscribe', id, msg }, window.location.origin);
+      return {
+        unsubscribe: function () {
+          if (!subs.delete(id)) return;
+          window.parent.postMessage({ type: 'casa:unsubscribe', id }, window.location.origin);
+        }
+      };
+    },
+
     close: function () {
+      for (const id of subs.keys()) window.parent.postMessage({ type: 'casa:unsubscribe', id }, window.location.origin);
+      subs.clear();
       window.removeEventListener('message', onMessage);
       for (const p of pending.values()) { clearTimeout(p.timeout); p.reject(new Error('backend closed')); }
       pending.clear();

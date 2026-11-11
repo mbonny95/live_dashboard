@@ -71,7 +71,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   // v1.5.4 — camere/anello/allarme, static labels
   diagCameraHeading: 'Telecamere — live', diagCamNotOpened: 'non ancora aperta',
-  diagCamFellBack: 'ripiego dopo errore di', diagCamLayerNative: 'HLS nativo', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'anteprime rapide',
+  diagCamFellBack: 'ripiego dopo errore di', diagCamLayerWebrtc: 'WebRTC', diagCamLayerNative: 'HLS nativo', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'anteprime rapide',
   diagCamWsNotAttempted: 'camera/stream non disponibile su questo backend', diagCamWsOk: 'camera/stream ok', diagCamWsFailed: 'camera/stream fallito',
   diagRingHeading: 'Anello energia', diagRingInUse: 'In uso', diagRingNoEnergy: 'nessun anello (energia non configurata)',
   diagRingDoubleLabel: 'anello doppio', diagRingSingleGeneric: 'anello singolo',

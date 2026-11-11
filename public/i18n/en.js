@@ -71,7 +71,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
 
   // v1.5.4 — cameras/ring/alarm, static labels
   diagCameraHeading: 'Cameras — live', diagCamNotOpened: 'not opened yet',
-  diagCamFellBack: 'fell back after', diagCamLayerNative: 'native HLS', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'fast previews',
+  diagCamFellBack: 'fell back after', diagCamLayerWebrtc: 'WebRTC', diagCamLayerNative: 'native HLS', diagCamLayerHlsjs: 'hls.js', diagCamLayerSnapshot: 'fast previews',
   diagCamWsNotAttempted: 'camera/stream unavailable on this backend', diagCamWsOk: 'camera/stream ok', diagCamWsFailed: 'camera/stream failed',
   diagRingHeading: 'Energy ring', diagRingInUse: 'In use', diagRingNoEnergy: 'no ring (energy not configured)',
   diagRingDoubleLabel: 'double ring', diagRingSingleGeneric: 'single ring',

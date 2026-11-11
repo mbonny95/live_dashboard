@@ -219,7 +219,8 @@ the installed base) never implement, producing exactly this black
 rectangle even though the still preview worked fine (previews use a
 different, universal endpoint). If you're still seeing this on v1.5.4 or
 later: open Settings → Diagnostica and check the camera's row — it names
-which of the three layers (native HLS / hls.js / fast previews) is active
+which layer (WebRTC / hls.js / native HLS / fast previews) is active, and
+which one it fell back from and why if a layer failed while playing,
 and whether `camera/stream` itself succeeded or failed, which narrows down
 whether the problem is the `stream` integration, the browser, or something
 else. On a current version, the worst case should be "anteprima

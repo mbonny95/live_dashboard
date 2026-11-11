@@ -133,3 +133,63 @@ test('vmAlarm: the numeric keypad has 12 keys and submits the code with the serv
   assert.deepEqual(JSON.parse(JSON.stringify(c.calls)), [{ domain: 'alarm_control_panel', service: 'alarm_disarm', data: { entity_id: 'alarm_control_panel.home', code: '42' } }]);
   assert.equal(c.state.pin, null, 'pad closes once HA accepts the code');
 });
+
+// v2 — camera WebRTC handshake, against a fake RTCPeerConnection and a fake
+// backend bridge: the order of messages is what Home Assistant relies on.
+test('WebRTC: offer, queued candidates, answer, then fallback on error', async () => {
+  const log = [];
+  class FakeStream { constructor() { this.tracks = []; } addTrack(t) { this.tracks.push(t); } getTracks() { return this.tracks; } }
+  class FakePC {
+    constructor(cfg) { this.cfg = cfg; this.signalingState = 'new'; FakePC.last = this; log.push('pc'); }
+    createDataChannel(n) { log.push('datachannel:' + n); }
+    addTransceiver(kind, o) { log.push('transceiver:' + kind + ':' + o.direction); }
+    async createOffer() { return { type: 'offer', sdp: 'v=0 fake-offer' }; }
+    async setLocalDescription() { this.signalingState = 'have-local-offer'; }
+    async setRemoteDescription(d) { log.push('remote:' + d.type + ':' + d.sdp); this.signalingState = 'stable'; }
+    async addIceCandidate(c) { log.push('addIce:' + c.candidate); }
+    close() { log.push('close'); }
+  }
+  let onEvent = null;
+  const be = {
+    ws: async (msg) => {
+      log.push('ws:' + msg.type + (msg.candidate ? ':' + msg.candidate.candidate + '@' + msg.session_id : ''));
+      if (msg.type === 'camera/capabilities') return { frontend_stream_types: ['hls', 'web_rtc'] };
+      if (msg.type === 'camera/webrtc/get_client_config') return { configuration: { iceServers: [] }, dataChannel: 'dc' };
+      return {};
+    },
+    subscribe: (msg, cb) => { log.push('subscribe:' + msg.type + ':' + msg.offer); onEvent = cb; return { unsubscribe: () => log.push('unsubscribe') }; },
+    cameraStream: async () => { throw new Error('no hls in this test'); }
+  };
+  Object.assign(sandbox, {
+    RTCPeerConnection: FakePC, MediaStream: FakeStream, setTimeout, clearTimeout, setInterval, clearInterval,
+    document: { visibilityState: 'hidden', createElement: () => ({ canPlayType: () => '' }) }
+  });
+  const c = make({ st: { 'camera.x': { state: 'idle', attributes: {} } } });
+  c.be = be;
+  c.state.cam = 'camera.x';
+  await c._camStartStream('camera.x');
+  for (let i = 0; i < 5; i++) await new Promise((r) => setImmediate(r));
+  assert.equal(c.state.camStreamLayer, 'webrtc');
+  assert.ok(log.includes('subscribe:camera/webrtc/offer:v=0 fake-offer'));
+  assert.ok(log.indexOf('transceiver:audio:recvonly') < log.indexOf('subscribe:camera/webrtc/offer:v=0 fake-offer'));
+  assert.ok(log.includes('datachannel:dc'));
+
+  // a local candidate before the session id is queued, then sent with it
+  FakePC.last.onicecandidate({ candidate: { candidate: 'local1', toJSON() { return { candidate: 'local1', sdpMid: '0' }; } } });
+  assert.ok(!log.some((l) => l.startsWith('ws:camera/webrtc/candidate')));
+  await onEvent({ type: 'session', session_id: 'S1' }, null);
+  assert.ok(log.includes('ws:camera/webrtc/candidate:local1@S1'));
+  await onEvent({ type: 'answer', answer: 'v=0 answer' }, null);
+  assert.ok(log.includes('remote:answer:v=0 answer'));
+  await onEvent({ type: 'candidate', candidate: { candidate: 'remote1', sdpMLineIndex: 0 } }, null);
+  assert.ok(log.includes('addIce:remote1'));
+
+  // an error event closes the session and falls back down the ladder
+  await onEvent({ type: 'error', code: 'webrtc_offer_failed', message: 'no stream' }, null);
+  for (let i = 0; i < 5; i++) await new Promise((r) => setImmediate(r));
+  assert.ok(log.includes('close') && log.includes('unsubscribe'));
+  assert.equal(c.state.camStreamLayer, 'snapshot', 'no HLS in this test: ends on stills');
+  assert.equal(c.camDiag['camera.x'].failedLayer, 'webrtc');
+  assert.equal(c.camDiag['camera.x'].failDetail, 'no stream');
+  c._closeCam();
+});

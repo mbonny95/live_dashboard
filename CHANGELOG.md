@@ -8,6 +8,33 @@ All notable changes to this project are documented here. Format follows
 La 1.9 non è mai stata pubblicata: le sue modifiche (le prime sezioni qui
 sotto) escono direttamente con la 2.0, insieme al lavoro "major".
 
+### Added — live delle telecamere via WebRTC
+
+- **Il live si apre in circa un secondo.** Quando Home Assistant offre
+  WebRTC per una telecamera (il go2rtc integrato in HA, o l'integrazione
+  della telecamera stessa), la dashboard lo usa come primo livello: è lo
+  stesso percorso della card telecamera di HA. Misurato su una telecamera
+  reale (Imou, HEVC 2560×1440): primo fotogramma in **1,0 s** sul tablet e
+  **0,76 s** sul telefono, contro **~12 s** con HLS, che deve prima avviare
+  lo stream e costruire i segmenti. Non serve più tenere acceso "Preload
+  stream" per avere un'apertura rapida.
+- **Stesso handshake del frontend di HA** (2026.11): configurazione client,
+  peer connection solo in ricezione, offerta tramite sottoscrizione
+  `camera/webrtc/offer`, candidati ICE in entrambe le direzioni. Il video
+  resta muto, come dalla 1.9.
+- **Se WebRTC non va, si torna all'HLS da soli**: errore da HA, connessione
+  ICE fallita o nessun fotogramma entro 12 secondi → hls.js, HLS nativo,
+  fermi immagine, come prima. Diagnostica → Telecamere dice quale livello
+  è attivo e, dopo un ripiego, da quale e perché (provato forzando un errore
+  sulla telecamera reale: "hls.js · fell back after WebRTC").
+- **Il ponte con Home Assistant ora gestisce le sottoscrizioni**, non solo
+  richiesta/risposta: `panel.js` inoltra all'iframe gli eventi di HA man mano
+  che arrivano. Limitato per esplicito ai comandi WebRTC delle telecamere;
+  le sottoscrizioni aperte si chiudono quando la pagina si ricarica o il
+  pannello si chiude.
+- Un test simula l'intero handshake (candidati trattenuti fino alla
+  sessione, risposta, errore, ripiego, chiusura): 33 test in tutto.
+
 ### Changed — un solo nucleo di codice per desktop e mobile
 
 - **La logica della dashboard ora esiste una volta sola**, in

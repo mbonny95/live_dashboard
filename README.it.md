@@ -481,16 +481,21 @@ telecamere da mantenere a mano.
 - **Live al tap, a strati, secondo ciò che la telecamera e il browser sanno
   davvero fare** (v1.5.4). Toccare un'anteprima prova, in ordine, il primo
   strato che funziona:
-  1. Uno stream HLS reale via il componente `stream` di Home Assistant,
+  1. WebRTC, quando Home Assistant lo offre per la telecamera (il go2rtc
+     integrato in HA, o l'integrazione della telecamera) — lo stesso
+     percorso della card telecamera di HA, live in circa un secondo (v2). Se
+     va in errore, non si connette o non mostra un fotogramma entro 12
+     secondi, subentra lo strato successivo.
+  2. Uno stream HLS reale via il componente `stream` di Home Assistant,
      riprodotto con `hls.js` 1.7.4 — incluso in `public/vendor/` dalla
      v1.9.0 e caricato solo a questo punto (~390 KB, mai su una pagina che
      non apre una telecamera). Chrome, Firefox, Android, Safari desktop,
      iOS 17.1+ e la maggior parte delle companion app.
-  2. Lo stesso stream riprodotto nativamente dal browser, dove hls.js non
+  3. Lo stesso stream riprodotto nativamente dal browser, dove hls.js non
      gira (iOS prima della 17.1). Il pannello Diagnostica mostra quale
      strato è realmente in uso, e da quale è ripiegato se uno strato ha
      fallito durante la riproduzione.
-  3. Fermi immagine rapidi (2–3 al secondo) dallo stesso endpoint
+  4. Fermi immagine rapidi (2–3 al secondo) dallo stesso endpoint
      `entity_picture` già usato dalle anteprime, con l'etichetta "anteprima
      aggiornata" invece di "live" — il ripiego quando la telecamera non ha
      il supporto `stream` in Home Assistant, o `camera/stream` fallisce. Non

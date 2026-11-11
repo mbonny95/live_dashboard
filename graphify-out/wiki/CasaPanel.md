@@ -1,6 +1,6 @@
 # CasaPanel
 
-> God node · 21 connections · `public/panel.js`
+> God node · 25 connections · `public/panel.js`
 
 **Community:** [CasaPanel / panel.js](CasaPanel_-_panel.js.md)
 
@@ -12,10 +12,13 @@
 ### method
 - ._onMessage() `EXTRACTED`
 - ._reply() `EXTRACTED`
+- ._handleWs() `EXTRACTED`
 - ._flush() `EXTRACTED`
 - ._handleEnergyHourly() `EXTRACTED`
 - ._handleEnergyToday() `EXTRACTED`
 - ._handleHistory() `EXTRACTED`
+- ._handleSubscribe() `EXTRACTED`
+- ._closeAllSubs() `EXTRACTED`
 - ._handleCall() `EXTRACTED`
 - ._handleCameraStream() `EXTRACTED`
 - ._handleEnergyPrefs() `EXTRACTED`
@@ -24,12 +27,9 @@
 - ._handleUserDataSet() `EXTRACTED`
 - ._schedule() `EXTRACTED`
 - .connectedCallback() `EXTRACTED`
-- .hass() `EXTRACTED`
-- .constructor() `EXTRACTED`
 - .disconnectedCallback() `EXTRACTED`
-- .narrow() `EXTRACTED`
-- .panel() `EXTRACTED`
-- .route() `EXTRACTED`
+- ._handleUnsubscribe() `EXTRACTED`
+- .hass() `EXTRACTED`
 
 ---
 

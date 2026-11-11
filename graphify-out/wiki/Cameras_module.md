@@ -1,10 +1,10 @@
-# Cameras / Sorveglianza modul
+# Cameras module
 
 > 1 nodes
 
 ## Key Concepts
 
-- **Cameras / Sorveglianza module** (0 connections) — `CHANGELOG.md`
+- **Cameras module (Sorveglianza tab, hideUntilTap)** (0 connections) — `CHANGELOG.md`
 
 ## Relationships
 
