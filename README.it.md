@@ -98,8 +98,9 @@ torna comodo:
 2. Togli da `configuration.yaml` la voce `panel_custom` con
    `name: live_dashboard-panel` (lascia le eventuali altre voci
    `panel_custom`).
-3. Registra di nuovo il repository come **Integrazione**. La rimozione non
-   lo toglie dalla lista di HACS, e HACS non lo aggiunge due volte: apri
+3. Registra di nuovo il repository come **Integrazione**. La rimozione lo
+   lascia registrato come Dashboard nella lista di HACS, quindi prima va
+   tolto da lì: apri
    **menu ⋮ → Repository personalizzati**, cancella con il cestino la riga
    `mbonny95/live_dashboard · Dashboard`, poi **Aggiungi da link** con
    `https://github.com/mbonny95/live_dashboard` e tipo **Integrazione**.

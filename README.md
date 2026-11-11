@@ -101,8 +101,9 @@ repository's category in place, so once, when convenient:
    `config/www/live_dashboard_config.js` is not touched.
 2. Remove the `panel_custom` entry with `name: live_dashboard-panel` from
    `configuration.yaml` (keep any other `panel_custom` entries).
-3. Register the repository again as an **Integration**. Uninstalling doesn't
-   remove it from HACS's list, and HACS won't add it twice: open
+3. Register the repository again as an **Integration**. Uninstalling leaves it
+   registered as a Dashboard in HACS's list, so remove it from there first:
+   open
    **⋮ menu → Custom repositories**, delete the `mbonny95/live_dashboard ·
    Dashboard` row with the bin icon, then **Add from link** with
    `https://github.com/mbonny95/live_dashboard` and type **Integration**.
