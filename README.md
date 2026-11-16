@@ -5,7 +5,7 @@
 
 [![Latest release](https://img.shields.io/github/v/tag/mbonny95/live_dashboard?sort=semver&label=release&color=c67139)](https://github.com/mbonny95/live_dashboard/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-c67139)](LICENSE)
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2022.x%2B-c67139)](#requirements)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.11%2B-c67139)](#requirements)
 
 ### Support this project
 
@@ -47,7 +47,8 @@ no Home Assistant required. It shows invented data and a `DEMO` badge; see
 ## Requirements
 
 - Home Assistant **2024.11 or later** (the camera WebRTC API this uses).
-- HACS, for the recommended install. Without HACS, the manual install below
+- HACS, for the recommended install (since Home Assistant 2026.11 it's built
+  in as **Settings → Marketplace**). Without it, the manual install below
   needs `www/` access and a `configuration.yaml` you can edit.
 - No npm, no build step. Everything is plain HTML/CSS/JS.
 - No internet access needed to run (v1.9.0). React 18.3.1, the two web
@@ -65,13 +66,17 @@ the dashboard's files itself and adds the sidebar panel, so there is no
 folder name to get right. The manual install (copy the files, write the
 YAML) still works as an alternative without HACS.
 
-### Via HACS (recommended)
+### Via HACS / Marketplace (recommended)
+
+Since Home Assistant **2026.11** HACS is built in and called
+**Marketplace** (in Settings); the steps are the same, only the name
+changes. On older versions it's the HACS entry in the sidebar.
 
 1. In HACS, add this repo as a custom repository: **⋮ menu → Custom
    repositories**, URL `https://github.com/mbonny95/live_dashboard`,
    category **Integration**.
-2. Find "Live Dashboard" in HACS, click **Download**, then **restart Home
-   Assistant** (HACS asks you to).
+2. Find "Live Dashboard" in HACS, click **Download** (**Install** in the
+   Marketplace), then **restart Home Assistant** (HACS asks you to).
 3. **Settings → Devices & services → Add integration → Live Dashboard.**
    Confirm the defaults (sidebar title "Casa", icon `mdi:home-heart`, path
    `/casa`) or change them; they can be changed later from the integration's
@@ -90,7 +95,8 @@ panel), and **Settings → Diagnostica** inside the dashboard shows
 
 ### Upgrading from 1.x
 
-1.x was a HACS *Dashboard* (plugin); 2.0 is an *Integration*. If you just
+1.x was a HACS *Dashboard* (plugin); 2.0 is an *Integration*. On Home
+Assistant 2026.11 or later, read "HACS" below as **Settings → Marketplace**. If you just
 update the old Dashboard entry in HACS, nothing breaks: the dashboard keeps
 working from the same `panel_custom` block, and shows a notice ("Switch to
 the Live Dashboard integration") with a link to these steps — dismiss it

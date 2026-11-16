@@ -5,7 +5,7 @@
 
 [![Ultima release](https://img.shields.io/github/v/tag/mbonny95/live_dashboard?sort=semver&label=release&color=c67139)](https://github.com/mbonny95/live_dashboard/releases)
 [![Licenza: MIT](https://img.shields.io/badge/licenza-MIT-c67139)](LICENSE)
-[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2022.x%2B-c67139)](#requisiti)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.11%2B-c67139)](#requisiti)
 
 *[Read in English](README.md)*
 
@@ -40,7 +40,8 @@ vedi [Modalità demo](#modalità-demo) più sotto.
 
 - Home Assistant **2024.11 o successivo** (serve l'API WebRTC delle
   telecamere).
-- HACS, per l'installazione consigliata. Senza HACS, l'installazione
+- HACS, per l'installazione consigliata (da Home Assistant 2026.11 è
+  integrato come **Impostazioni → Marketplace**). Senza, l'installazione
   manuale qui sotto richiede accesso a `www/` e un `configuration.yaml`
   modificabile.
 - Niente npm, niente build step. Solo HTML/CSS/JS semplice.
@@ -60,13 +61,17 @@ non c'è nessun blocco `panel_custom` da scrivere, nessun `?v=` da aggiornare
 a ogni versione e nessun nome di cartella da azzeccare. L'installazione
 manuale (copiare i file, scrivere lo YAML) resta un'alternativa senza HACS.
 
-### Via HACS (consigliato)
+### Via HACS / Marketplace (consigliato)
+
+Da Home Assistant **2026.11** HACS è integrato e si chiama **Marketplace**
+(in Impostazioni): i passi sono gli stessi, cambia solo il nome. Nelle
+versioni precedenti è la voce HACS nella barra laterale.
 
 1. In HACS aggiungi questo repo come repository personalizzato: **menu ⋮ →
    Repository personalizzati**, URL `https://github.com/mbonny95/live_dashboard`,
    categoria **Integrazione**.
-2. Cerca "Live Dashboard" in HACS, **Scarica**, poi **riavvia Home
-   Assistant** (te lo chiede HACS).
+2. Cerca "Live Dashboard" in HACS, **Scarica** (**Installa** nel
+   Marketplace), poi **riavvia Home Assistant** (te lo chiede HACS).
 3. **Impostazioni → Dispositivi e servizi → Aggiungi integrazione → Live
    Dashboard.** Conferma i valori proposti (titolo "Casa", icona
    `mdi:home-heart`, percorso `/casa`) o cambiali; si possono modificare dopo
@@ -85,7 +90,9 @@ altro pannello), e **Impostazioni → Diagnostica** dentro la dashboard mostra
 
 ### Passare dalla 1.x alla 2.0
 
-La 1.x era una *Dashboard* (plugin) di HACS, la 2.0 è un'*Integrazione*. Se
+La 1.x era una *Dashboard* (plugin) di HACS, la 2.0 è un'*Integrazione*.
+Da Home Assistant 2026.11 in poi, dove qui sotto c'è «HACS» leggi
+**Impostazioni → Marketplace**. Se
 aggiorni semplicemente la vecchia voce Dashboard in HACS non si rompe niente:
 la dashboard continua a funzionare con lo stesso blocco `panel_custom` e
 mostra un avviso ("Passa all'integrazione Live Dashboard") con il link a
