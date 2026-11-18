@@ -5,6 +5,10 @@ All notable changes to this project are documented here. Format follows
 
 ## [2.1.0] - 2026-11-18
 
+Risolve la [issue #3](https://github.com/mbonny95/live_dashboard/issues/3)
+(grazie a @giovitv per la segnalazione): colonna di sinistra nascondibile,
+«Auto» rinominata «Veicolo», storico di temperatura e umidità.
+
 ### Added
 
 - **Le card «Cose accese» e «Azioni rapide» si possono nascondere**, da
