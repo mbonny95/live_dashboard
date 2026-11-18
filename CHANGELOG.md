@@ -5,480 +5,425 @@ All notable changes to this project are documented here. Format follows
 
 ## [2.1.0] - 2026-11-18
 
-Risolve la [issue #3](https://github.com/mbonny95/live_dashboard/issues/3)
-(grazie a @giovitv per la segnalazione): colonna di sinistra nascondibile,
-«Auto» rinominata «Veicolo», storico di temperatura e umidità.
+Resolves [issue #3](https://github.com/mbonny95/live_dashboard/issues/3)
+(thanks to @giovitv for the report): a hideable left column, the "Auto" tab
+renamed "Veicolo", and temperature/humidity history.
 
 ### Added
 
-- **Le card «Cose accese» e «Azioni rapide» si possono nascondere**, da
-  Impostazioni → Sezioni (o `modules.hide: ['onNow', 'quickActions']` nella
-  config). Sono due interruttori indipendenti. Sul desktop, con entrambe
-  nascoste, sparisce la colonna di sinistra: la home passa a due colonne e
-  le stanze si dispongono su tre colonne invece di due. Sul mobile gli
-  stessi interruttori nascondono le stesse card nella scheda Casa (le
-  azioni rapide lì sono i pulsanti tapparelle su/giù). Valgono le regole
-  delle altre sezioni: scelta per utente, «salva per tutti» per
-  l'amministratore. ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
-- **Storico dei sensori.** Toccando una lettura nel pannello di una stanza
-  (temperatura, umidità, qualunque sensore numerico) o una lettura della
-  stazione meteo si apre un foglio con il grafico: **24 ore** dalla History
-  di Home Assistant, **7 giorni** dalle statistiche a lungo termine (medie
-  orarie con la fascia minima–massima), che restano anche dopo la pulizia
-  del Recorder. Un sensore senza statistiche ripiega sulla History e il
-  foglio lo dice. Minima, media e massima sotto il grafico; periodo vuoto
-  ed errori sono scritti nel foglio. Una piccola icona a grafico segna le
-  letture che si possono aprire. Sul desktop il foglio si apre al centro,
-  sul mobile dal basso. ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
-  - `panel.js`: il ponte verso HA accetta anche
-    `history/history_during_period` e `recorder/statistics_during_period`,
-    in sola lettura e con i permessi dell'utente.
-  - Demo: la stazione meteo ha ora temperatura e umidità esterne, e lo
-    storico mostra una curva giornaliera.
+- **The "Things on now" and "Quick actions" cards can be hidden**, from
+  Settings → Sections (or `modules.hide: ['onNow', 'quickActions']` in the
+  config). They are two independent switches. On desktop, with both hidden,
+  the left column goes away: the home screen drops to two columns and the
+  rooms are laid out three across instead of two. On mobile the same
+  switches hide the same cards on the Home tab (there, the quick actions
+  are the covers up/down buttons). The same rules as the other sections
+  apply: a per-user choice, and "Save the panel choices for everyone" for
+  admins. ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
+- **Sensor history.** Tapping a reading in a room panel (temperature,
+  humidity, any numeric sensor) or a weather station reading opens a sheet
+  with its chart: **24 hours** from Home Assistant's History, **7 days**
+  from long-term statistics (hourly averages with a min–max band), which
+  are kept even after the Recorder purge. A sensor without statistics falls
+  back to History, and the sheet says so. Min, average and max under the
+  chart; an empty period and errors are written in the sheet. A small chart
+  icon marks the readings that can be opened. On desktop the sheet opens in
+  the middle, on mobile from the bottom.
+  ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
+  - `panel.js`: the bridge to HA now also accepts
+    `history/history_during_period` and `recorder/statistics_during_period`,
+    read-only and with the user's own permissions.
+  - Demo: the weather station now has outdoor temperature and humidity, and
+    the history shows a daily curve.
 
 ### Changed
 
-- La scheda «Auto» si chiama **«Veicolo»**: in italiano «Auto» si leggeva
-  come «automatico». ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
+- The Italian "Auto" tab is now called **"Veicolo"**: "Auto" read as
+  "automatic". ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
 
 ### Fixed
 
-- **Mobile, barra in basso: le etichette non si sovrappongono più.** Con
-  tutte le schede attive «Sorveglianza» e «Irrigazione» uscivano dal loro
-  spazio e finivano sopra le schede vicine. Ora ogni scheda è larga quanto
-  la sua etichetta, mai meno di 44 px: a 375 px tutto entra. Sui telefoni
-  più stretti le etichette lunghe si accorciano con i puntini, e a 320 px la
-  barra scorre di lato invece di uscire dallo schermo.
+- **Mobile bottom bar: labels no longer overlap.** With every tab on,
+  "Sorveglianza" and "Irrigazione" overflowed their space and ran into the
+  neighbouring tabs. Each tab is now as wide as its label, never less than
+  44 px: at 375 px everything fits. On narrower phones long labels are
+  shortened with an ellipsis, and at 320 px the bar scrolls sideways instead
+  of running off the screen.
 
 ## [2.0.0] - 2026-11-11
 
-La 1.9 non è mai stata pubblicata: le sue modifiche (le prime sezioni qui
-sotto) escono direttamente con la 2.0, insieme al lavoro "major".
+1.9 was never published: its changes (the later sections below) ship
+directly with 2.0, together with the "major" work.
 
-### Added — configurazione condivisa in Home Assistant
+### Added — shared configuration in Home Assistant
 
-- **La configurazione può stare dentro Home Assistant**, uguale per tutti
-  gli utenti e i dispositivi, invece che solo nel file
-  `live_dashboard_config.js`. Nuova scheda Impostazioni → **Configurazione**
-  (solo con l'integrazione), per gli amministratori:
-  - **Importa il file in Home Assistant**;
-  - **Salva le scelte del pannello per tutti**: stanze, entità e telecamere
-    nascoste e gli ordini scelti nel pannello, che finora valevano solo per
-    chi li sceglieva, diventano quelli di tutti (stessa logica di "Esporta
-    come config.js");
-  - **Modifica il JSON**, con validazione prima di salvare;
-  - **Torna al file**, con conferma.
-- **Se c'è una configurazione in HA ha la precedenza**, il file resta come
-  riserva e per l'installazione manuale. Diagnostica → Config dice da dove
-  arriva e chi l'ha salvata quando. I non amministratori la vedono in sola
-  lettura.
-- Integrazione: archivio in `.storage/live_dashboard.config`, comandi
-  WebSocket `live_dashboard/config/get` (tutti) e `live_dashboard/config/set`
-  (solo amministratori, oggetto JSON fino a 256 KB).
+- **The configuration can live inside Home Assistant**, the same for every
+  user and device, instead of only in the `live_dashboard_config.js` file.
+  New Settings → **Configuration** tab (integration only), for admins:
+  - **Import the file into Home Assistant**;
+  - **Save the panel choices for everyone**: the hidden rooms, entities and
+    cameras and the orders chosen in the panel, which until now applied
+    only to whoever chose them, become everyone's (same logic as "Export as
+    config.js");
+  - **Edit the JSON**, validated before saving;
+  - **Back to the file**, with confirmation.
+- **A configuration in HA takes precedence**; the file stays as a fallback
+  and for manual installs. Diagnostica → Config says where it comes from
+  and who saved it when. Non-admins see it read-only.
+- Integration: stored in `.storage/live_dashboard.config`, WebSocket
+  commands `live_dashboard/config/get` (everyone) and
+  `live_dashboard/config/set` (admins only, a JSON object up to 256 KB).
 
-### Added — icona dell'integrazione
+### Added — integration icon
 
-- Cartella `brand/` nell'integrazione (icona e logo, anche in versione 2x):
-  l'icona compare in Home Assistant quando si aggiunge e nella pagina delle
-  integrazioni.
+- A `brand/` folder in the integration (icon and logo, also in 2x): the
+  icon shows in Home Assistant when adding the integration and on the
+  integrations page.
 
-### Added — ponte di migrazione dalla 1.x
+### Added — migration bridge from 1.x
 
-- **Chi aggiorna la vecchia voce Dashboard di HACS alla 2.0 non resta con lo
-  schermo nero.** Lo zip contiene alla radice un `panel.js` di raccordo e due
-  pagine di reindirizzamento: la dashboard continua a funzionare con il
-  vecchio blocco `panel_custom`, anche sui tablet che hanno ancora in cache il
-  `panel.js` della 1.x. Provato estraendo lo zip vero in una cartella di
-  prova su un'installazione reale.
-- **Avviso nella dashboard** per quelle installazioni ("Passa
-  all'integrazione Live Dashboard", con "Come fare" e "Più tardi", che si
-  chiude per utente), e Diagnostica → Ambiente le indica come "Dashboard HACS
-  1.x — da passare all'integrazione". Le installazioni manuali in `www/` non
-  vedono nessun avviso: restano supportate.
-- **Avviso nelle Riparazioni** se, con l'integrazione attiva, è ancora
-  installata la vecchia Dashboard 1.x.
-- `scripts/build_release.sh`: un solo script costruisce lo zip, usato dal
-  workflow di release e in locale.
+- **Updating the old HACS Dashboard entry to 2.0 doesn't leave you with a
+  black screen.** The zip has a bridging `panel.js` and two redirect pages
+  at its root: the dashboard keeps working with the old `panel_custom`
+  block, even on tablets that still have 1.x's `panel.js` cached. Tested by
+  extracting the real zip into a test folder on a real install.
+- **A notice in the dashboard** for those installs ("Switch to the Live
+  Dashboard integration", with "How to" and "Later", dismissed per user), and
+  Diagnostica → Environment lists them as "HACS Dashboard 1.x — switch to
+  the integration". Manual installs in `www/` see no notice: they stay
+  supported.
+- **A notice in Repairs** if, with the integration active, the old 1.x
+  Dashboard is still installed.
+- `scripts/build_release.sh`: a single script builds the zip, used by the
+  release workflow and locally.
 
 ### Fixed
 
-- Le schede delle Impostazioni vanno a capo invece di uscire dal pannello:
-  con la quinta scheda "Diagnostica" finiva fuori dal bordo.
-- Pannello stanza su desktop: lo stato delle luci ("80% luminosità",
-  "spenta") era scritto in italiano anche con la dashboard in inglese; ora
-  usa le stesse traduzioni del mobile.
+- The Settings tabs wrap instead of running out of the panel: with the
+  fifth tab, "Diagnostica", it went past the edge.
+- Desktop room panel: the light status ("80% brightness", "off") was
+  written in Italian even with the dashboard in English; it now uses the
+  same translations as mobile.
 
-### Breaking — installazione come integrazione di Home Assistant
+### Breaking — installed as a Home Assistant integration
 
-- **Live Dashboard ora è un'integrazione** (`custom_components/live_dashboard`),
-  categoria HACS **Integrazione** invece di Dashboard. Serve lei i file della
-  dashboard da `/live_dashboard/` e registra il pannello nella barra laterale:
-  niente più blocco `panel_custom` in `configuration.yaml`, niente `?v=` da
-  aggiornare a mano a ogni versione, niente più schermo nero per un `name:`
-  che non corrisponde al nome della cartella. Si aggiunge da Impostazioni →
-  Dispositivi e servizi; titolo, icona, percorso e "solo amministratori" si
-  scelgono lì e si cambiano dalle opzioni senza reinstallare.
-- **Chi ha la 1.x reinstalla una volta**: HACS non può cambiare la categoria
-  di un repository. Rimuovere la Dashboard da HACS, togliere il blocco
-  `panel_custom` di `live_dashboard-panel`, aggiungere il repository come
-  Integrazione, riavviare, aggiungere l'integrazione (README → "Passare dalla
-  1.x alla 2.0"). La configurazione in `config/www/live_dashboard_config.js`
-  non cambia.
-- **Se il vecchio blocco è rimasto**, l'integrazione non si contende `/casa`
-  con lui: lo dice nel modulo di configurazione e in Impostazioni →
-  Riparazioni, con cosa togliere. Stesso avviso nelle Riparazioni se mancano
-  i file della dashboard.
-- **L'installazione manuale resta** (copiare `public/` in `www/` + blocco
-  `panel_custom`), con le funzioni di sempre.
-- Diagnostica → Ambiente → **"Installazione"**: integrazione o
-  `panel_custom` manuale.
-- Requisito minimo: Home Assistant **2024.11**.
-- Release e CI: lo zip contiene l'integrazione con la dashboard in `www/`, e
-  il workflow verifica che la versione del manifest coincida con il tag;
-  hassfest e il controllo di HACS girano a ogni push. 38 test Node.
-- Verificato su un'installazione reale (HA 2026.11.1): integrazione caricata,
-  pannello servito da `/live_dashboard/`, push differenziale e React locale
-  attivi, errori del modulo di opzioni corretti per un percorso già occupato
-  e per uno non valido.
+- **Live Dashboard is now an integration** (`custom_components/live_dashboard`),
+  HACS category **Integration** instead of Dashboard. It serves the
+  dashboard files from `/live_dashboard/` and registers the panel in the
+  sidebar: no more `panel_custom` block in `configuration.yaml`, no `?v=`
+  to bump by hand on every version, no more black screen from a `name:`
+  that doesn't match the folder name. It's added from Settings → Devices &
+  services; title, icon, path and "admins only" are chosen there and can be
+  changed from the options without reinstalling.
+- **1.x users reinstall once**: HACS can't change a repository's category.
+  Remove the Dashboard from HACS, remove the `live_dashboard-panel`
+  `panel_custom` block, add the repository as an Integration, restart, add
+  the integration (README → "Upgrading from 1.x"). The configuration in
+  `config/www/live_dashboard_config.js` doesn't change.
+- **If the old block is still there**, the integration doesn't fight it for
+  `/casa`: it says so in the setup form and in Settings → Repairs, with
+  what to remove. Same notice in Repairs if the dashboard files are
+  missing.
+- **Manual installation stays** (copy `public/` into `www/` + a
+  `panel_custom` block), with the same features as always.
+- Diagnostica → Environment → **"Installation"**: integration or manual
+  `panel_custom`.
+- Minimum requirement: Home Assistant **2024.11**.
+- Release and CI: the zip contains the integration with the dashboard in
+  `www/`, and the workflow checks that the manifest version matches the
+  tag; hassfest and the HACS check run on every push. 38 Node tests.
+- Verified on a real install (HA 2026.11.1): integration loaded, panel
+  served from `/live_dashboard/`, differential push and local React active,
+  options-form errors correct for a path already in use and for an invalid
+  one.
 
-### Added — live delle telecamere via WebRTC
+### Added — camera live view over WebRTC
 
-- **Il live si apre in circa un secondo.** Quando Home Assistant offre
-  WebRTC per una telecamera (il go2rtc integrato in HA, o l'integrazione
-  della telecamera stessa), la dashboard lo usa come primo livello: è lo
-  stesso percorso della card telecamera di HA. Misurato su una telecamera
-  reale (Imou, HEVC 2560×1440): primo fotogramma in **1,0 s** sul tablet e
-  **0,76 s** sul telefono, contro **~12 s** con HLS, che deve prima avviare
-  lo stream e costruire i segmenti. Non serve più tenere acceso "Preload
-  stream" per avere un'apertura rapida.
-- **Stesso handshake del frontend di HA** (2026.11): configurazione client,
-  peer connection solo in ricezione, offerta tramite sottoscrizione
-  `camera/webrtc/offer`, candidati ICE in entrambe le direzioni. Il video
-  resta muto, come dalla 1.9.
-- **Se WebRTC non va, si torna all'HLS da soli**: errore da HA, connessione
-  ICE fallita o nessun fotogramma entro 12 secondi → hls.js, HLS nativo,
-  fermi immagine, come prima. Diagnostica → Telecamere dice quale livello
-  è attivo e, dopo un ripiego, da quale e perché (provato forzando un errore
-  sulla telecamera reale: "hls.js · fell back after WebRTC").
-- **Il ponte con Home Assistant ora gestisce le sottoscrizioni**, non solo
-  richiesta/risposta: `panel.js` inoltra all'iframe gli eventi di HA man mano
-  che arrivano. Limitato per esplicito ai comandi WebRTC delle telecamere;
-  le sottoscrizioni aperte si chiudono quando la pagina si ricarica o il
-  pannello si chiude.
-- Un test simula l'intero handshake (candidati trattenuti fino alla
-  sessione, risposta, errore, ripiego, chiusura): 33 test in tutto.
+- **The live view opens in about a second.** When Home Assistant offers
+  WebRTC for a camera (HA's built-in go2rtc, or the camera's own
+  integration), the dashboard uses it as the first layer: it's the same
+  path as HA's camera card. Measured on a real camera (Imou, HEVC
+  2560×1440): first frame in **1.0 s** on the tablet and **0.76 s** on the
+  phone, against **~12 s** with HLS, which has to start the stream and
+  build segments first. "Preload stream" no longer needs to stay on for a
+  fast start.
+- **The same handshake as HA's frontend** (2026.11): client configuration,
+  receive-only peer connection, offer through the `camera/webrtc/offer`
+  subscription, ICE candidates in both directions. The video stays muted,
+  as since 1.9.
+- **If WebRTC doesn't work, it falls back to HLS on its own**: an error
+  from HA, a failed ICE connection or no frame within 12 seconds → hls.js,
+  native HLS, stills, as before. Diagnostica → Cameras says which layer is
+  active and, after a fallback, from which one and why (tested by forcing
+  an error on the real camera: "hls.js · fell back after WebRTC").
+- **The bridge to Home Assistant now handles subscriptions**, not just
+  request/response: `panel.js` forwards HA's events to the iframe as they
+  arrive. Explicitly limited to the camera WebRTC commands; open
+  subscriptions are closed when the page reloads or the panel closes.
+- A test simulates the whole handshake (candidates held until the session,
+  answer, error, fallback, close): 33 tests in all.
 
-### Changed — un solo nucleo di codice per desktop e mobile
+### Changed — one code core for desktop and mobile
 
-- **La logica della dashboard ora esiste una volta sola**, in
-  `public/casa-core.js`. Fino alla 1.x `dash_neumo.html` (tablet a muro) e
-  `dash_neumo_mobile.html` (telefono) avevano ciascuna una copia completa: 85
-  metodi su 86 identici, più ~800 righe uguali dentro `renderVals()`. Ogni
-  correzione andava fatta due volte (le telecamere della 1.9 ne sono
-  l'esempio), e le due copie avevano già commenti divergenti. Ora le pagine
-  contengono solo il proprio layout: template, `state` iniziale e il proprio
-  `renderVals()`, che assembla i blocchi comuni (`vmSettingsDiag`, `vmAlarm`,
-  `vmCameraDetail`, `vmEnergyRing`, `vmHourlyStrip`, `vmEnergyEmpty`,
-  `vmLiveConsumption`). Le pagine passano da 4.580/3.677 righe a
-  2.643/2.124; `casa-core.js` ~2.100 righe.
-- **Nessun cambiamento visibile, verificato.** L'output di `renderVals()` è
-  stato confrontato prima/dopo ogni passo su 378 combinazioni (9 scenari demo
-  × 2 layout × 21 stati dell'interfaccia): identico. L'unica differenza,
-  voluta e senza effetti, è un campo in più (`thumbColor`) nelle righe stanza
-  delle impostazioni del mobile, che il template mobile non usa.
-- **Gli aggiornamenti delle pagine arrivano ai tablet senza riavviare Home
-  Assistant.** `panel.js` legge la versione da `version.json` (scavalcando la
-  cache di 31 giorni con cui HA serve `/local/`) e la usa come `?v=`
-  dell'iframe: dopo questo aggiornamento non serve più cambiare
-  `module_url` né riavviare HA a ogni versione, salvo quando cambia
-  `panel.js` stesso.
-- **`support.js` è trattato come dipendenza congelata**: il suo sorgente
-  (`dc-runtime/`) non è nel repo, quindi non si modifica e un test ne fissa
-  l'hash, come per i file in `vendor/`.
-- **Test**: 32 in tutto, tra cui unità sulle funzioni che prima stavano
-  dentro le pagine e non erano raggiungibili da Node (normalizzazione W/kW,
-  consumo derivato con la convenzione del segno della batteria, prese smart,
-  regole del PIN dell'allarme e tastierino), e un test che impedisce a una
-  pagina di ridefinire un metodo già presente nel nucleo comune.
+- **The dashboard's logic now exists only once**, in
+  `public/casa-core.js`. Up to 1.x, `dash_neumo.html` (wall tablet) and
+  `dash_neumo_mobile.html` (phone) each had a full copy: 85 of 86 methods
+  identical, plus ~800 identical lines inside `renderVals()`. Every fix had
+  to be made twice (1.9's cameras are the example), and the two copies
+  already had diverging comments. The pages now hold only their own layout:
+  template, initial `state` and their own `renderVals()`, which assembles
+  the shared blocks (`vmSettingsDiag`, `vmAlarm`, `vmCameraDetail`,
+  `vmEnergyRing`, `vmHourlyStrip`, `vmEnergyEmpty`, `vmLiveConsumption`).
+  The pages go from 4,580/3,677 lines to 2,643/2,124; `casa-core.js` is
+  ~2,100 lines.
+- **No visible change, verified.** The output of `renderVals()` was
+  compared before/after every step across 378 combinations (9 demo
+  scenarios × 2 layouts × 21 interface states): identical. The only
+  difference, intended and without effect, is one extra field
+  (`thumbColor`) in the mobile settings room rows, which the mobile
+  template doesn't use.
+- **Page updates reach tablets without restarting Home Assistant.**
+  `panel.js` reads the version from `version.json` (bypassing the 31-day
+  cache HA uses for `/local/`) and uses it as the iframe's `?v=`: after this
+  update there's no need to change `module_url` or restart HA on every
+  version, except when `panel.js` itself changes.
+- **`support.js` is treated as a frozen dependency**: its source
+  (`dc-runtime/`) isn't in the repo, so it isn't edited and a test pins its
+  hash, as for the files in `vendor/`.
+- **Tests**: 32 in all, including unit tests on functions that used to live
+  inside the pages and couldn't be reached from Node (W/kW normalisation,
+  derived consumption with the battery sign convention, smart plugs, alarm
+  PIN rules and keypad), and a test that stops a page from redefining a
+  method already in the shared core.
 
-### Dalla 1.9 (mai pubblicata)
+### From 1.9 (never published)
 
-Release "funziona anche senza internet, e chiede il codice". Tutto quello che
-la dashboard carica all'avvio ora arriva dall'installazione stessa, la
-centrale d'allarme con PIN si comanda dalla dashboard, e l'irrigazione ha una
-rete di sicurezza che gira dentro Home Assistant.
+The "works without internet, and asks for the code" release. Everything the
+dashboard loads at startup now comes from the installation itself, alarm
+panels with a PIN can be operated from the dashboard, and irrigation has a
+safety net that runs inside Home Assistant.
 
 ### Fixed
 
-- **La dashboard dipendeva da internet per partire, senza dirlo.**
-  `support.js` scaricava React 18.3.1 da `unpkg.com` a ogni caricamento: un
-  Home Assistant senza accesso a internet, una rete che blocca le CDN o un
-  disservizio di unpkg rischiavano uno schermo vuoto, senza nessun messaggio
-  sul tablet. Il README diceva "no dependencies". Ora `react` e `react-dom`
-  sono in `public/vendor/` (~140 KB, licenza MIT inclusa), caricati con due
-  tag `<script>` prima di `support.js`: il runtime trova già `window.React`
-  e salta il download. I file sono **identici byte per byte** a quelli di
-  unpkg: lo SHA-384 coincide con l'SRI già fissato in `support.js`, e un test
-  lo ricontrolla. Se `vendor/` manca (copia manuale a metà), la CDN resta
-  come fallback.
-- **Font da Google Fonts.** Caprasimo e Figtree ora sono in
-  `public/vendor/fonts/` (woff2, licenza OFL, ~53 KB in tutto). Figtree è
-  variabile: un file per sottoinsieme copre tutti i pesi usati, compreso il
-  500 che prima veniva simulato dal browser. Verificato sul campo: zero
-  richieste fuori dall'installazione all'avvio.
-- **Ogni aggiornamento di stato copiava tutto `hass.states` nell'iframe.**
-  `panel.js` inviava ogni 600 ms una copia completa di tutte le entità
-  (su un'installazione reale: 666 entità, ~175 KB a messaggio) e la
-  dashboard si ridisegnava anche quando l'aggiornamento riguardava
-  un'entità che non mostra. Ora dopo il primo snapshot passa solo ciò che è
-  cambiato (`casa:hass-states-delta`): Home Assistant sostituisce l'oggetto
-  di un'entità quando cambia, quindi basta confrontare i riferimenti. Un
-  aggiornamento che non cambia nulla non invia nulla. Misurato sulla stessa
-  installazione: 30 secondi, 4 messaggi, 13 entità, ~14 KB. Uno snapshot
-  completo viene comunque reinviato ogni 5 minuti e a ogni ricaricamento
-  dell'iframe, come rete di sicurezza.
-- **Il live delle telecamere non era mai davvero live (dalla 1.5.4).**
-  Provato su una telecamera reale (Imou, HEVC 2560×1440):
-  - lo stream ripartiva da capo a ogni render (il conto alla rovescia ne
-    fa uno al secondo): 14 ricaricamenti in 10 secondi, riproduzione mai
-    oltre 0,45 s. La causa era una callback `ref` nuova a ogni render che
-    reimpostava `src`. Ora ogni stream ha una callback stabile e non tocca
-    più niente se non cambia;
-  - l'audio della telecamera usciva ad alto volume dal tablet: React non
-    applicava l'attributo `muted` del template. Ora il video è muto
-    davvero;
-  - il livello dei fermi immagine rapidi non mostrava nessun fotogramma
-    sulle telecamere lente (un fermo immagine = 8,5 s su quella provata):
-    l'URL cambiava ogni 400 ms e a ogni render, annullando ogni
-    caricamento. Ora il fotogramma successivo si chiede solo quando il
-    precedente è arrivato, caricato fuori schermo e poi sostituito. Stesso
-    test: prima immagine dopo 2 s, poi una ogni 2-3 s. `_bindAttr` non
-    riscrive più un attributo con lo stesso valore, che riavviava il
-    caricamento di qualunque `<img>`;
-  - ordine dei livelli: prima hls.js ovunque esista Media Source, l'HLS
-    nativo solo dove hls.js non gira (iOS prima della 17.1). Chrome
-    risponde "maybe" a `canPlayType` per HLS ma il suo player nativo è il
-    meno prevedibile; è la stessa scelta del frontend di Home Assistant;
-  - se un livello fallisce mentre gira (errore fatale di hls.js, errore
-    del `<video>`) si scende al successivo — hls.js, HLS nativo, fermi
-    immagine — invece di restare su un riquadro nero con scritto "Live".
-    Diagnostica → Telecamere dice da quale livello è ripiegata e perché;
-  - il badge dice "Connessione…" finché il video non parte davvero (Home
-    Assistant può metterci 10-15 s ad avviare uno stream) e "Live" solo
-    dopo.
+- **The dashboard needed internet to start, without saying so.**
+  `support.js` downloaded React 18.3.1 from `unpkg.com` on every load: a
+  Home Assistant without internet access, a network that blocks CDNs or an
+  unpkg outage risked a blank screen, with no message on the tablet. The
+  README said "no dependencies". `react` and `react-dom` are now in
+  `public/vendor/` (~140 KB, MIT licence included), loaded with two
+  `<script>` tags before `support.js`: the runtime finds `window.React`
+  already there and skips the download. The files are **byte-for-byte
+  identical** to unpkg's: the SHA-384 matches the SRI already pinned in
+  `support.js`, and a test re-checks it. If `vendor/` is missing (a
+  half-done manual copy), the CDN stays as a fallback.
+- **Fonts from Google Fonts.** Caprasimo and Figtree are now in
+  `public/vendor/fonts/` (woff2, OFL licence, ~53 KB in all). Figtree is
+  variable: one file per subset covers every weight used, including the
+  500 the browser used to fake. Verified in the field: zero requests
+  outside the installation at startup.
+- **Every state update copied all of `hass.states` into the iframe.**
+  `panel.js` sent a full copy of every entity every 600 ms (on a real
+  install: 666 entities, ~175 KB per message) and the dashboard redrew even
+  when the update concerned an entity it doesn't show. After the first
+  snapshot only what changed is sent now (`casa:hass-states-delta`): Home
+  Assistant replaces an entity's object when it changes, so comparing
+  references is enough. An update that changes nothing sends nothing.
+  Measured on the same install: 30 seconds, 4 messages, 13 entities,
+  ~14 KB. A full snapshot is still re-sent every 5 minutes and on every
+  iframe reload, as a safety net.
+- **The camera live view was never really live (since 1.5.4).** Tested on
+  a real camera (Imou, HEVC 2560×1440):
+  - the stream restarted from scratch on every render (the countdown does
+    one per second): 14 reloads in 10 seconds, playback never past 0.45 s.
+    The cause was a new `ref` callback on every render that reset `src`.
+    Each stream now has a stable callback and touches nothing unless
+    something changed;
+  - the camera's audio played loudly from the tablet: React didn't apply
+    the template's `muted` attribute. The video is now really muted;
+  - the fast-stills layer showed no frame on slow cameras (one still =
+    8.5 s on the one tested): the URL changed every 400 ms and on every
+    render, cancelling every load. The next frame is now requested only
+    once the previous one has arrived, loaded off-screen and then swapped
+    in. Same test: first image after 2 s, then one every 2–3 s.
+    `_bindAttr` no longer rewrites an attribute with the same value, which
+    restarted the load of any `<img>`;
+  - layer order: hls.js first wherever Media Source exists, native HLS
+    only where hls.js doesn't run (iOS before 17.1). Chrome answers "maybe"
+    to `canPlayType` for HLS but its native player is the least
+    predictable; it's the same choice as Home Assistant's frontend;
+  - if a layer fails while running (a fatal hls.js error, a `<video>`
+    error) it drops to the next one — hls.js, native HLS, stills — instead
+    of staying on a black box labelled "Live". Diagnostica → Cameras says
+    which layer it fell back from and why;
+  - the badge says "Connecting…" until the video actually starts (Home
+    Assistant can take 10–15 s to start a stream) and "Live" only after.
 
 ### Added
 
-- **Tastierino PIN per l'allarme.** Una centrale che dichiara
-  `code_format` prima mostrava solo la nota "usa l'app Home Assistant". Ora
-  ogni inserimento/disinserimento apre un tastierino (tasti da 64 px) per
-  `code_format: number`, oppure un campo password con la tastiera di
-  sistema per i codici alfanumerici. Il tastierino resta aperto finché Home
-  Assistant risponde: con un codice sbagliato cancella le cifre e dice
-  "Codice non accettato", oltre al toast. Il codice non viene mai salvato,
-  registrato in Diagnostica → Ultime azioni, né incluso in "Copia
-  diagnostica". Nuovo scenario demo `?demo&scenario=alarm-pin` (codice
-  `1234`).
-- **Blueprint "irrigation safety close".** In
-  `blueprints/automation/live_dashboard/`, importabile con un clic dal
-  README: chiude le valvole rimaste aperte oltre un tempo massimo (20 minuti
-  di default), chiunque le abbia aperte, più quelle ancora aperte al
-  riavvio di Home Assistant. Copre il limite dichiarato nella 1.8.1: con
-  zero dashboard aperte la chiusura temporizzata non partiva. Gestisce sia
-  `switch.*` sia `valve.*`. Validato su un'installazione reale (blueprint
-  caricato da HA, trigger e azioni validi per `validate_config`).
-- **`hls.js` 1.7.4 incluso** (`vendor/hls.light.min.js`, ~390 KB, Apache-2.0),
-  caricato solo quando si apre il live di una telecamera, su ogni browser con
-  Media Source (tutti tranne iOS prima della 17.1). Prima
-  quel livello del live era scritto ma sempre inattivo, e quegli utenti
-  vedevano al massimo i fermi immagine rapidi. Il file è identico a quello
-  del pacchetto npm (integrità sha512 del registry verificata). Provato su
-  una telecamera reale, desktop e mobile: riproduzione continua, muta.
-- **Diagnostica → Ambiente → "Runtime React"**: "incluso nella dashboard"
-  oppure "da CDN (unpkg) — vendor/ mancante, serve internet".
-- **Test e CI.** 20 test con il test runner di Node, senza dipendenze
-  (`node --test 'tests/*.test.mjs'`): ordine delle sezioni, visibilità,
-  prese smart, duplicati Matter, motivi di scarto di `discoverRooms`,
-  integrità dei file in `vendor/`, nessuna risorsa esterna nelle pagine,
-  stesse chiavi in `it.js` ed `en.js`, `VERSION` allineata al CHANGELOG.
-  Nuovo workflow `.github/workflows/test.yml` su push e pull request.
+- **PIN pad for the alarm.** A panel declaring `code_format` used to show
+  only the note "use the Home Assistant app". Now every arm/disarm opens a
+  keypad (64 px keys) for `code_format: number`, or a password field with
+  the system keyboard for alphanumeric codes. The keypad stays open until
+  Home Assistant answers: with a wrong code it clears the digits and says
+  "Code not accepted", besides the toast. The code is never stored, logged
+  in Diagnostica → Recent actions, or included in "Copy diagnostics". New
+  demo scenario `?demo&scenario=alarm-pin` (code `1234`).
+- **"Irrigation safety close" blueprint.** In
+  `blueprints/automation/live_dashboard/`, importable with one click from
+  the README: it closes valves left open past a maximum time (20 minutes by
+  default), whoever opened them, plus those still open when Home Assistant
+  restarts. It covers the limit stated in 1.8.1: with zero dashboards open
+  the timed close didn't run. It handles both `switch.*` and `valve.*`.
+  Validated on a real install (blueprint loaded by HA, triggers and actions
+  valid for `validate_config`).
+- **`hls.js` 1.7.4 included** (`vendor/hls.light.min.js`, ~390 KB,
+  Apache-2.0), loaded only when a camera's live view opens, on every
+  browser with Media Source (all except iOS before 17.1). Before, that
+  layer of the live view was written but always inactive, and those users
+  got at most the fast stills. The file is identical to the npm package's
+  (registry sha512 integrity verified). Tested on a real camera, desktop
+  and mobile: continuous playback, muted.
+- **Diagnostica → Environment → "React runtime"**: "bundled with the
+  dashboard" or "from CDN (unpkg) — vendor/ missing, needs internet".
+- **Tests and CI.** 20 tests with Node's test runner, no dependencies
+  (`node --test 'tests/*.test.mjs'`): section order, visibility, smart
+  plugs, Matter duplicates, `discoverRooms` discard reasons, integrity of
+  the files in `vendor/`, no external resources in the pages, the same keys
+  in `it.js` and `en.js`, `VERSION` aligned with the CHANGELOG. New
+  workflow `.github/workflows/test.yml` on push and pull request.
 
-### Note
+### Notes
 
-- La domanda aperta della 1.5.4 su `hls.js` partiva dall'idea che sarebbe
-  stata "la prima dipendenza di terze parti a runtime". Non era così: React
-  lo era già, da CDN. Con `vendor/` e il test di integrità la decisione è
-  diventata semplice: è incluso, e si carica solo quando serve.
-- `public/vendor/README.md` elenca ogni file incluso con versione, licenza e
-  hash.
-
----
-
-**English summary.** Everything the dashboard loads at startup now comes
-from the installation itself: React 18.3.1 (byte-identical to the unpkg
-files, SHA-384 matching the SRI in `support.js`) and the Caprasimo/Figtree
-web fonts ship in `public/vendor/`, so a local-only Home Assistant no longer
-risks a blank wall tablet; Diagnostica → Environment shows which React copy
-ran. `panel.js` now pushes only changed entities to the iframe after one
-full snapshot (measured on a real 666-entity install: ~14 KB in 30 s instead
-of a ~175 KB snapshot per update), with a full resync every 5 minutes and on
-iframe reload. Alarm panels declaring `code_format` get a PIN pad (numeric
-keypad or password field); the code is never stored or logged. A new
-automation blueprint closes irrigation valves left open past a maximum time
-from inside Home Assistant, covering the zero-open-dashboards gap noted in
-1.8.1. `hls.js` 1.7.4 ships in `vendor/` and loads only when a camera's
-live view opens. The camera live view, broken since 1.5.4, now actually
-plays: a new ref callback on every render restarted the stream every
-second (14 reloads in 10 s on a real camera), camera audio played unmuted,
-and the fast-still fallback never finished a frame on slow cameras. Layer
-order is now hls.js first, native HLS where hls.js can't run, stills last,
-with automatic fallback on a runtime error and a "Connecting…" badge until
-frames play. 20 dependency-free Node tests and a CI workflow on push/PR.
+- 1.5.4's open question about `hls.js` assumed it would be "the first
+  third-party runtime dependency". It wasn't: React already was, from a
+  CDN. With `vendor/` and the integrity test the decision became simple:
+  it's included, and loads only when needed.
+- `public/vendor/README.md` lists every bundled file with version, licence
+  and hash.
 
 ## [1.8.1] - 2026-09-22
 
-Patch nata da una issue: "i pulsanti dell'irrigazione e la riga del clima non
-rispondono, zero errori in console, Home Assistant è raggiungibile". La causa
-non era un bug nel percorso tap → servizio HA (intatto), ma il fatto che
-niente in questo progetto guardasse mai l'esito di quel percorso.
+A patch that came from an issue: "the irrigation buttons and the climate row
+don't respond, zero errors in the console, Home Assistant is reachable". The
+cause wasn't a bug in the tap → HA service path (which was intact), but the
+fact that nothing in this project ever looked at the outcome of that path.
 
 ### Fixed
 
-- **`call()` non era più fire-and-forget silenzioso.** Ogni chiamata
-  servizio passa ora da un unico punto che registra esito (`ok`/`error`/
-  `timeout`) e durata in un ring buffer di sessione (ultime 20), mostrato in
-  Diagnostica → **Ultime azioni** — la sezione da incollare in una issue
-  d'ora in poi. Un errore o un timeout mostra anche un toast in basso, col
-  nome dell'entità e il motivo; un successo no, perché si vede già dallo
-  stato che cambia. `call()` non rifiuta mai la promise che ritorna, quindi
-  resta sicuro da chiamare senza `await` come già faceva la maggior parte
-  del codice.
-- **Il timeout si riconosce da un codice, non da una stringa.** Il timeout a
-  15s di `ha-backend-panel.js` marca l'errore con `.code = 'timeout'`, non
-  più solo un testo in italiano da confrontare a mano.
-- **I pulsanti durata irrigazione erano tappabili una seconda volta prima
-  che il primo tap avesse un esito.** Ora vanno visibilmente incassati dal
-  tap all'esito e ignorano un secondo tap nel frattempo.
-- **La riga clima nel pannello stanza sembrava un pulsante e non lo è mai
-  stata.** Tolta l'ombra in rilievo: resta una riga piatta, stesso testo,
-  stessa altezza, nessun cursore a mano.
+- **`call()` is no longer silent fire-and-forget.** Every service call now
+  goes through a single point that records its outcome (`ok`/`error`/
+  `timeout`) and duration in a session ring buffer (last 20), shown in
+  Diagnostica → **Recent actions** — the section to paste into an issue
+  from now on. An error or a timeout also shows a toast at the bottom, with
+  the entity name and the reason; a success doesn't, since you already see
+  it from the state changing. `call()` never rejects the promise it
+  returns, so it stays safe to call without `await`, as most of the code
+  already did.
+- **A timeout is recognised by a code, not a string.** The 15 s timeout in
+  `ha-backend-panel.js` marks the error with `.code = 'timeout'`, no longer
+  just an Italian message to match by hand.
+- **Irrigation duration buttons could be tapped a second time before the
+  first tap had an outcome.** They now stay visibly pressed from the tap
+  to the outcome and ignore a second tap meanwhile.
+- **The climate row in the room panel looked like a button and never was
+  one.** Its raised shadow is gone: it stays a flat row, same text, same
+  height, no hand cursor.
 
 ### Added
 
-- **Lo stato dell'irrigazione viene dalla valvola, non dal pulsante.**
-  Valvola `on` → i tre pulsanti durata diventano "In corso · N min" +
-  **Ferma**; chiusa, tornano i pulsanti. Vale solo per zone con `valve` — le
-  zone `buttons` (input_button) restano come sempre, perché questa
-  dashboard non ha modo di sapere quando finiscono.
-- **La chiusura temporizzata non dipende più solo da un `setTimeout` nella
-  scheda che l'ha avviata.** La scadenza è salvata su `frontend/user_data`
-  (o `localStorage` in demo) e controllata ogni 15s da qualunque client sia
-  aperto, più una volta all'apertura — così ricaricare la pagina, chiudere
-  la scheda o passare dal telefono al tablet non lascia la valvola aperta.
-  Il `setTimeout` originale resta come percorso veloce quando la scheda è
-  ancora viva. **Non basta con zero dashboard aperte**: il README ora lo
-  dice esplicitamente, con `buttons` + automazione (o il timer nativo della
-  valvola) come alternativa garantita lato HA.
-- **Diagnostica → Irrigazione**: per ogni zona con una scadenza attiva o
-  appena scaduta, "chiusura prevista alle HH:MM" o "scaduta, chiusa alle
-  HH:MM".
-- **Diagnostica → Ambiente**: nuova riga `embed_iframe (panel_custom)` —
-  come panel.js stesso vede la propria configurazione `panel_custom`, non
-  solo come dash_neumo.html vede il proprio iframe (già mostrato).
-- Demo: nuovo scenario `?demo&scenario=call-timeout` — ogni chiamata
-  `switch.*` va in timeout con lo stesso `.code` del timeout reale a 15s,
-  per provare il percorso toast/ring-buffer/pulsante-incassato senza
-  aspettare 15 secondi veri né avere hardware reale.
-
----
-
-**English summary.** This patch traces back to a support issue: irrigation
-buttons and the climate row "don't respond," no console errors, Home
-Assistant reachable. The tap → service-call path was intact; nothing ever
-read its outcome. `call()` is now the single choke point for every service
-call, logging outcome/duration to a session ring buffer (Diagnostica →
-**Recent actions** — the section to paste into a future issue) and toasting
-on error/timeout. Irrigation duration buttons go visibly pressed until their
-outcome resolves and ignore a second tap meanwhile. Irrigation state now
-comes from the valve entity, not the last-tapped button, and the timed
-auto-close survives a reload or a fully-closed tab via a deadline saved to
-`frontend/user_data` (localStorage in demo), checked every 15s by whichever
-client is open — see the README for why zero open dashboards still needs
-`buttons` + an automation, or the valve's own timer, for a hard guarantee.
-The climate/fan/vacuum row in the room panel no longer looks like a button,
-because it never was one.
+- **Irrigation state comes from the valve, not the button.** Valve `on` →
+  the three duration buttons become "Running · N min" + **Stop**; closed,
+  the buttons come back. This applies only to zones with `valve` — `buttons`
+  zones (input_button) stay as always, because this dashboard has no way to
+  know when they finish.
+- **The timed close no longer depends only on a `setTimeout` in the tab
+  that started it.** The deadline is saved to `frontend/user_data` (or
+  `localStorage` in demo) and checked every 15 s by whichever client is
+  open, plus once on open — so reloading the page, closing the tab or
+  switching from phone to tablet doesn't leave the valve open. The original
+  `setTimeout` stays as the fast path while the tab is still alive. **It is
+  not enough with zero dashboards open**: the README now says so
+  explicitly, with `buttons` + an automation (or the valve's own timer) as
+  the guaranteed alternative on the HA side.
+- **Diagnostica → Irrigation**: for each zone with an active or just-expired
+  deadline, "close scheduled at HH:MM" or "expired, closed at HH:MM".
+- **Diagnostica → Environment**: new row `embed_iframe (panel_custom)` — how
+  panel.js itself sees its own `panel_custom` configuration, not just how
+  dash_neumo.html sees its own iframe (already shown).
+- Demo: new scenario `?demo&scenario=call-timeout` — every `switch.*` call
+  times out with the same `.code` as the real 15 s timeout, to try the
+  toast / ring buffer / pressed-button path without waiting a real 15
+  seconds or having real hardware.
 
 ## [1.8.0] - 2026-09-14
 
 ### Added
 
-- **Storia oraria nell'anello.** Sotto l'anello energia della card Solare
-  (nel layout largo e in quello compatto degli install con telecamere),
-  dentro l'incasso neumorfico consueto, una striscia di 24 barre impilate —
-  una per ora delle ultime 24 — con la stessa grammatica dell'anello, solo
-  lineare invece che radiale: base salvia (autoconsumo), sopra terracotta
-  (prelievo), in cima salvia chiaro (immissione, solo nelle ore in cui il
-  tetto ha prodotto più del consumo). Dati dalle statistiche orarie già in
-  Home Assistant (`recorder/statistics_during_period`, periodo `hour`) sugli
-  stessi `statistic_id` della sorgente energia già configurata — nessuna
-  entità nuova, nessuna modifica al `recorder`. Una sola chiamata
-  all'apertura della vista, ricaricata al cambio d'ora, mai a ogni refresh di
-  stato. Quando le statistiche sono assenti o vuote la card resta
-  esattamente quella di prima — nessun placeholder, nessun errore — e il
-  motivo compare in Diagnostica → Anello energia → Striscia oraria (v1.7.1
-  sapeva già dirlo per le entità mancanti dalle stanze; ora lo sa dire anche
-  per questo). Storico parziale (meno di 24 ore) mostra solo le ore che ci
-  sono, allineate a destra, senza riempire di zeri. Un'installazione solo
-  rete (senza fotovoltaico) mostra comunque la striscia, tutta terracotta.
-- **Posizione reale sulle tapparelle.** La card cover del pannello stanza
-  usa la sua posizione come sfondo: una banda a righe (stessa tinta
-  terracotta della grammatica energia) scende dall'alto per la frazione
-  chiusa — al 62% aperto la banda copre il 38% della card, con una battuta
-  di 2px dove si ferma. Lo slider di posizione resta identico (stessa
-  posizione, stesso comportamento al rilascio, stessi pulsanti): la banda è
-  pura lettura, zero superficie interattiva in più, stessi bersagli tattili
-  di prima (verificato: 44×44px, stesso numero). Tapparella completamente
-  aperta: nessuna banda e nessun bordo residuo. Cover senza `current_position`
-  esposto: nessuna banda, card invariata — mai una posizione finta al posto
-  di nessuna posizione. Durante il trascinamento la banda segue il valore
-  ottimistico dello slider, non quello confermato, così non scatta al
-  rilascio. La room card della griglia in home resta quella di sempre (solo
-  testo, nessuna banda) — un controllo lì si presterebbe ad ambiguità col
-  tap che apre la stanza.
+- **Hourly history in the ring.** Under the energy ring of the Solar card
+  (in the wide layout and in the compact one used by installs with
+  cameras), inside the usual neumorphic inset, a strip of 24 stacked bars —
+  one per hour over the last 24 — with the same grammar as the ring, just
+  linear instead of radial: sage at the bottom (self-consumption),
+  terracotta above (grid import), light sage on top (export, only in hours
+  when the roof produced more than the house used). Data comes from the
+  hourly statistics already in Home Assistant
+  (`recorder/statistics_during_period`, period `hour`) on the same
+  `statistic_id`s as the energy source already configured — no new
+  entities, no `recorder` changes. One call when the view opens, reloaded
+  when the hour changes, never on every state refresh. When statistics are
+  missing or empty the card stays exactly as before — no placeholder, no
+  error — and the reason shows up in Diagnostica → Energy ring → Hourly
+  strip (1.7.1 could already explain entities missing from rooms; now it
+  can explain this too). Partial history (under 24 hours) shows only the
+  hours that exist, right-aligned, without padding with zeros. A grid-only
+  install (no solar) still shows the strip, all terracotta.
+- **Real position on covers.** The cover card in the room panel uses its
+  position as the background: a striped band (the same terracotta as the
+  energy grammar) comes down from the top for the closed fraction — at 62%
+  open the band covers 38% of the card, with a 2 px edge where it stops.
+  The position slider is unchanged (same place, same release behaviour,
+  same buttons): the band is read-only, no extra interactive surface, same
+  touch targets as before (checked: 44×44 px, same count). Fully open
+  cover: no band and no leftover edge. Cover without `current_position`:
+  no band, card unchanged — never a made-up position in place of none.
+  While dragging, the band follows the slider's optimistic value, not the
+  confirmed one, so it doesn't jump on release. The room card in the home
+  grid stays as always (text only, no band) — a control there would be
+  ambiguous with the tap that opens the room.
 
 ## [1.7.1] - 2026-09-14
 
-### Compatibilità con Home Assistant 2026.9.0
+### Compatibility with Home Assistant 2026.9.0
 
-Nessuna modifica necessaria alla dashboard: gli attributi di stato che legge
-(`friendly_name`, `device_class`, `media_title`, `entity_picture`) sono
-invariati. La rimozione di `battery_level` non la riguarda — i valori di
-batteria si configurano come id di sensori, non come attributi.
+No change needed in the dashboard: the state attributes it reads
+(`friendly_name`, `device_class`, `media_title`, `entity_picture`) are
+unchanged. The removal of `battery_level` doesn't affect it — battery values
+are configured as sensor ids, not as attributes.
 
-**Attenzione ai dispositivi Matter dopo l'aggiornamento.** Su alcune
-installazioni 2026.9.0 ri-registra i dispositivi Matter come nuovi: lo stesso
-apparecchio fisico compare due volte, e le entità che rispondono ai comandi
-migrano sulla copia nuova, che nasce **senza area** e con il nome di fabbrica.
-Le entità originali restano orfane con il nome e l'area che avevi scelto.
+**Watch out for Matter devices after the update.** On some installations
+2026.9.0 re-registers Matter devices as new ones: the same physical device
+shows up twice, and the entities that respond to commands move to the new
+copy, which is created **without an area** and with the factory name. The
+original entities stay orphaned with the name and area you had chosen.
 
-Poiché la dashboard raggruppa per area, i dispositivi finiti sulla copia senza
-area **scompaiono dalle stanze**. Caso osservato: 12 tapparelle
-SwitchBot Relay Switch 2PM sparite tutte insieme.
+Because the dashboard groups by area, devices that ended up on the area-less
+copy **disappear from the rooms**. Case observed: 12 SwitchBot Relay Switch
+2PM covers gone all at once.
 
-Come rimediare, per ogni dispositivo:
+How to fix it, for each device:
 
-1. Impostazioni → Dispositivi → Matter, apri la copia che **ha i comandi**
-   (apri/chiudi, accendi/spegni) — non quella con le sole entità diagnostiche.
-2. Assegna l'area e rinominala. Accetta il rinomino delle entità proposto.
-3. Verifica che i comandi agiscano sul dispositivo fisico.
-4. Elimina l'entità orfana rimasta (quella senza dispositivo).
+1. Settings → Devices → Matter, open the copy that **has the controls**
+   (open/close, on/off) — not the one with only diagnostic entities.
+2. Assign the area and rename it. Accept the proposed entity renaming.
+3. Check that the controls act on the physical device.
+4. Delete the leftover orphaned entity (the one without a device).
 
-Le due copie si accoppiano confrontando il **serial number**, non il nome: il
-nome è proprio la cosa che diverge.
+The two copies are matched by **serial number**, not by name: the name is
+exactly what differs.
 
-Da questa versione la sezione **Diagnostica** del pannello impostazioni segnala
-il caso da sola, elencando i dispositivi con serial duplicato e indicando quale
-area riassegnare.
+From this version the **Diagnostica** section of the settings panel reports
+the case on its own, listing the devices with a duplicated serial and which
+area to reassign.
 
 ### Added
 
