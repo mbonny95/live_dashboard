@@ -38,9 +38,12 @@ async function resolveAssetVersion() {
 }
 
 // v2 — what the iframe may ask HA for through the generic bridge (see
-// _handleWs/_handleSubscribe): the camera WebRTC handshake, nothing else.
+// _handleWs/_handleSubscribe): the camera WebRTC handshake, the shared
+// config, and (v2.1.0) read-only History/statistics for the sensor history
+// sheet. HA applies the user's own permissions to each of them.
 const WS_ALLOWED = new Set(['camera/capabilities', 'camera/webrtc/get_client_config', 'camera/webrtc/candidate',
-  'live_dashboard/config/get', 'live_dashboard/config/set']);
+  'live_dashboard/config/get', 'live_dashboard/config/set',
+  'history/history_during_period', 'recorder/statistics_during_period']);
 const SUB_ALLOWED = new Set(['camera/webrtc/offer']);
 
 const FLUSH_MS = 600;

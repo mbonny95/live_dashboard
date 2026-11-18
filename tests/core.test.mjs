@@ -235,3 +235,89 @@ test('vmCasaColumns: the left column goes only when both cards are hidden (issue
   const out = CasaDiscovery.buildExportedConfig({}, { modules: { onNow: false, quickActions: false } }, {});
   assert.equal(JSON.stringify(out.modules.hide), '["onNow","quickActions"]');
 });
+
+test('history sheet: History and statistics rows parse to sorted points', () => {
+  const h = CasaCore.parseHistoryRows([
+    { state: '20.5', last_changed: '2026-11-18T10:00:00Z' },
+    { s: 'unavailable', lu: 1795000100 },
+    { s: '21', lu: 1795000200 }
+  ]);
+  assert.equal(h.length, 2);
+  assert.equal(h[1].v, 21); assert.equal(h[1].t, 1795000200000);
+  const st = CasaCore.parseStatsRows([
+    { start: 2000, mean: 19, min: 18, max: 20 },
+    { start: '1970-01-01T00:00:01Z', mean: 18.5 },
+    { start: 3000, mean: null }
+  ]);
+  assert.equal(JSON.stringify(st.map((p) => [p.t, p.v, p.lo, p.hi])), '[[1000,18.5,18.5,18.5],[2000,19,18,20]]');
+});
+
+test('history sheet: bucketing and chart geometry', () => {
+  const pts = Array.from({ length: 1000 }, (_, i) => ({ t: i, v: i % 2 ? 10 : 20 }));
+  const b = CasaCore.bucketSeries(pts, 0, 1000, 10);
+  assert.equal(b.length, 10);
+  assert.ok(b.every((p) => p.v === 15 && p.lo === 10 && p.hi === 20));
+  const g = CasaCore.chartGeometry([{ t: 0, v: 10 }, { t: 100, v: 20 }], 0, 100, 300, 120, false);
+  const [a, z] = g.line.split(' ').map((s) => s.split(',').map(Number));
+  assert.equal(a[0], 0); assert.equal(z[0], 300);
+  assert.ok(a[1] > z[1], 'higher value is drawn higher (smaller y)');
+  assert.ok(a[1] < 120 && z[1] > 0, 'headroom above and below');
+  assert.equal(g.band, '');
+  assert.equal(CasaCore.chartGeometry([], 0, 1, 300, 120, false), null);
+});
+
+function histHost(wsImpl) {
+  const c = make({ st: { 'sensor.t': sensor('21.3', '°C', { device_class: 'temperature', friendly_name: 'Temp' }) } });
+  c.calls = [];
+  c.setState = (patch) => { c.state = Object.assign({}, c.state, patch); };
+  c._bindAttr = (name, value) => value;
+  c.be = { ws: wsImpl };
+  return c;
+}
+
+test('history sheet: 7 days use statistics, and fall back to History without them', async () => {
+  const seen = [];
+  const withStats = histHost(async (m) => {
+    seen.push(m.type);
+    if (m.type === 'recorder/statistics_during_period') {
+      return { 'sensor.t': Array.from({ length: 168 }, (_, i) => ({ start: Date.now() - (168 - i) * 3600000, mean: 20 + (i % 5), min: 19, max: 26 })) };
+    }
+    return {};
+  });
+  withStats.CHIST_OPEN('sensor.t', 'Temp');
+  await new Promise((r) => setTimeout(r, 0));
+  withStats.CHIST_RANGE('7d');
+  await new Promise((r) => setTimeout(r, 0));
+  let vm = withStats.vmClimateHistory();
+  assert.equal(vm.chistReady, true);
+  assert.equal(vm.chistSource, 'hist.source.stats');
+  assert.ok(vm.chistBandRef.length > 0, 'min–max band drawn from statistics');
+  assert.equal(vm.chistXLabels.length, 7);
+  assert.equal(JSON.stringify(seen), '["history/history_during_period","recorder/statistics_during_period"]');
+
+  const noStats = histHost(async (m) => {
+    if (m.type === 'recorder/statistics_during_period') return { 'sensor.t': [] };
+    return { 'sensor.t': [{ state: '20', last_changed: new Date(Date.now() - 5 * 86400000).toISOString() }, { s: '22', lu: Date.now() / 1000 - 3600 }] };
+  });
+  noStats.state.chist = { id: 'sensor.t', label: 'Temp', range: '7d' };
+  await noStats._chistLoad('sensor.t', '7d');
+  vm = noStats.vmClimateHistory();
+  assert.equal(vm.chistSource, 'hist.source.historyFallback');
+  assert.equal(vm.chistBandRef, '');
+  assert.equal(JSON.stringify(vm.chistStats.map((s) => s.val)), '["20,0°","21,1°","22,0°"]');
+});
+
+test('history sheet: empty, error, and non-sensor readings', async () => {
+  const empty = histHost(async () => ({}));
+  empty.st = empty.state.st; empty.state.st['sensor.t'].state = 'unknown';
+  assert.equal(empty.CHIST_CAN('sensor.t'), false, 'no number now: not tappable');
+  assert.equal(empty.chistTap('weather.home', 'x').histHint, '0');
+  const failing = histHost(async () => { throw new Error('boom'); });
+  failing.CHIST_OPEN('sensor.t', 'Temp');
+  await new Promise((r) => setTimeout(r, 0));
+  const vm = failing.vmClimateHistory();
+  assert.equal(vm.chistFailed, true);
+  assert.equal(vm.chistReady, false);
+  failing.CHIST_CLOSE();
+  assert.equal(failing.vmClimateHistory().chistOpen, false);
+});

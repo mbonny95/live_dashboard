@@ -441,6 +441,20 @@ serve aggiungere solo `feelsLike`/`dewPoint`, che non hanno altrove una
 casa. Del tutto opzionale: lascialo non impostato e l'entità `weather:`
 resta l'unica fonte, come prima.
 
+### Storico dei sensori (v2.1.0)
+
+Tocca una lettura nel pannello di una stanza, o una lettura della stazione
+nella vista meteo, per aprire il suo grafico: le ultime **24 ore** dalla
+History di Home Assistant, o gli ultimi **7 giorni** dalle statistiche a
+lungo termine (medie orarie, con una fascia fra minima e massima). Le
+statistiche sopravvivono a `recorder.purge_keep_days`, quindi la vista a 7
+giorni funziona anche dopo che il Recorder ha cancellato i dati grezzi. Un
+sensore senza statistiche (senza `state_class`) ripiega sulla History, e il
+foglio lo dice. Le letture che si possono aprire hanno una piccola icona a
+grafico. Un'entità `weather.*` da sola non ha storico da mostrare: punta
+`weatherStation.temp`/`humidity` a sensori veri per averlo anche sui valori
+esterni.
+
 ## Veicolo (opzionale)
 
 Non esiste un dominio Home Assistant che standardizzi la telematica

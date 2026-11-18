@@ -1975,6 +1975,131 @@ function base(DCLogic) {
     return { showOnNow, showQuickActions, showLeftCol, casaCols: showLeftCol ? '3' : '2' };
   }
 
+  // v2.1.0 — sensor history sheet (issue #3). Tapping a temperature or
+  // humidity reading (any numeric sensor, in fact) opens a sheet with the
+  // last 24 hours from HA's History, or the last 7 days from long-term
+  // statistics. Both layouts render vmClimateHistory(); the data and its
+  // loading state live here. Fetched results are kept per entity+range for
+  // a minute, so flipping 24h/7d back and forth doesn't refetch.
+  CHIST_CAN(id) {
+    return !!id && /^sensor\./.test(id) && this.n(id) !== null;
+  }
+  // Fields every tappable reading carries in both templates.
+  chistTap(id, label) {
+    const can = this.CHIST_CAN(id);
+    return {
+      histOpen: can ? () => this.CHIST_OPEN(id, label) : () => {},
+      histCursor: can ? 'pointer' : 'default', histHint: can ? '1' : '0'
+    };
+  }
+  CHIST_OPEN(id, label) {
+    if (!this.CHIST_CAN(id)) return;
+    this.setState({ chist: { id, label: label || this.fn(id), range: '24h' } });
+    this._chistLoad(id, '24h');
+  }
+  CHIST_RANGE(range) {
+    const c = this.state.chist;
+    if (!c || c.range === range || !CHIST_RANGES[range]) return;
+    this.setState({ chist: Object.assign({}, c, { range }) });
+    this._chistLoad(c.id, range);
+  }
+  CHIST_CLOSE() { this.setState({ chist: null }); }
+  async _chistLoad(id, range) {
+    this._chistData = this._chistData || {};
+    const key = id + '|' + range;
+    const cached = this._chistData[key];
+    if (cached && (cached.status === 'loading' || (cached.status === 'ok' && Date.now() - cached.at < 60000))) {
+      this.setState({ chistTick: Date.now() });
+      return;
+    }
+    this._chistData[key] = { status: 'loading', at: Date.now() };
+    this.setState({ chistTick: Date.now() });
+    let res;
+    try { res = await this._chistFetch(id, range); } catch (e) { res = { status: 'error', error: (e && e.message) || String(e) }; }
+    this._chistData[key] = Object.assign({ at: Date.now() }, res);
+    this.setState({ chistTick: Date.now() });
+  }
+  async _chistFetch(id, range) {
+    const be = this.be;
+    if (!be || !be.ws) return { status: 'error', error: this.t('hist.noBackend') };
+    const end = Date.now();
+    const start = end - CHIST_RANGES[range] * 3600000;
+    const iso = (ms) => new Date(ms).toISOString();
+    if (range === '7d') {
+      let stats = null;
+      try {
+        const r = await be.ws({ type: 'recorder/statistics_during_period', start_time: iso(start), end_time: iso(end),
+          statistic_ids: [id], period: 'hour', types: ['mean', 'min', 'max'] });
+        stats = parseStatsRows(r && r[id]);
+      } catch (e) { stats = null; /* older HA or no recorder: History below */ }
+      if (stats && stats.length >= 2) return { status: 'ok', source: 'stats', start, end, points: stats };
+    }
+    const r = await be.ws({ type: 'history/history_during_period', start_time: iso(start), end_time: iso(end),
+      entity_ids: [id], minimal_response: true, no_attributes: true, significant_changes_only: false });
+    let pts = parseHistoryRows(r && r[id]);
+    const now = this.n(id);
+    if (now !== null) pts.push({ t: end, v: now });
+    if (!pts.length) return { status: 'empty', source: 'history', start, end };
+    if (pts.length === 1) pts = [{ t: start, v: pts[0].v }, pts[0]];
+    return { status: 'ok', source: range === '7d' ? 'historyFallback' : 'history', start, end,
+      points: bucketSeries(pts, start, end, range === '7d' ? 168 : 144) };
+  }
+  vmClimateHistory() {
+    const c = this.state.chist;
+    const closed = {
+      chistOpen: false, chistTitle: '', chistNow: '', chistClose: () => this.CHIST_CLOSE(), chistRanges: [],
+      chistLoading: false, chistReady: false, chistEmpty: false, chistFailed: false, chistErrorText: '',
+      chistLineRef: this._bindAttr('points', ''), chistBandRef: this._bindAttr('points', ''),
+      chistHiTop: '0%', chistLoTop: '100%', chistHiLabel: '', chistLoLabel: '',
+      chistXLabels: [], chistStats: [], chistSource: '',
+      chistEyebrow: this.t('hist.title'), chistLoadingText: this.t('hist.loading'), chistEmptyText: this.t('hist.empty')
+    };
+    if (!c) return closed;
+    const unitRaw = this.unit(c.id);
+    const unit = /^°[CF]$/.test(unitRaw) ? '°' : unitRaw ? (unitRaw === '%' ? '%' : ' ' + unitRaw) : '';
+    const dc = this.at(c.id, 'device_class');
+    const d = dc === 'humidity' || unitRaw === '%' ? 0 : 1;
+    const fmt = (v) => this.dec(v, d) + unit;
+    const data = (this._chistData || {})[c.id + '|' + c.range] || { status: 'loading' };
+    const locale = this.lang === 'it' ? 'it-IT' : 'en-GB';
+    const out = Object.assign({}, closed, {
+      chistOpen: true, chistTitle: c.label, chistNow: this.n(c.id) === null ? '—' : fmt(this.n(c.id)),
+      chistRanges: ['24h', '7d'].map((r) => ({ label: this.t('hist.range' + r), sel: c.range === r, go: () => this.CHIST_RANGE(r) })),
+      chistLoading: data.status === 'loading', chistEmpty: data.status === 'empty',
+      chistFailed: data.status === 'error', chistErrorText: data.status === 'error' ? this.t('hist.error', { msg: data.error || '' }) : ''
+    });
+    if (data.status !== 'ok') return out;
+    const W = 300, H = 120;
+    const withBand = data.source === 'stats';
+    const g = chartGeometry(data.points, data.start, data.end, W, H, withBand);
+    if (!g) return Object.assign(out, { chistEmpty: true });
+    let sum = 0;
+    for (const p of data.points) sum += p.v;
+    const pct = (v) => {
+      const pad = Math.max((g.hi - g.lo) * 0.12, Math.abs(g.hi) * 0.01, 0.5);
+      return ((g.hi + pad - v) / (g.hi - g.lo + 2 * pad) * 100).toFixed(1) + '%';
+    };
+    const xLabels = [];
+    const steps = c.range === '24h' ? 4 : 7;
+    for (let i = 0; i <= steps; i++) {
+      const t = data.start + (data.end - data.start) * i / steps;
+      if (c.range === '24h') xLabels.push({ txt: new Date(t).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' }) });
+      else if (i < steps) xLabels.push({ txt: new Date(t + 43200000).toLocaleDateString(locale, { weekday: 'short' }) });
+    }
+    return Object.assign(out, {
+      chistReady: true,
+      chistLineRef: this._bindAttr('points', g.line), chistBandRef: this._bindAttr('points', g.band),
+      chistHiTop: pct(g.hi), chistLoTop: pct(g.lo), chistHiLabel: fmt(g.hi), chistLoLabel: fmt(g.lo),
+      chistXLabels: xLabels,
+      chistStats: [
+        { label: this.t('hist.min'), val: fmt(g.lo) },
+        { label: this.t('hist.avg'), val: fmt(sum / data.points.length) },
+        { label: this.t('hist.max'), val: fmt(g.hi) }
+      ],
+      chistSource: this.t('hist.source.' + data.source)
+    });
+  }
+
   // v2 — alarm card + PIN pad view-model (supported_features buttons,
   // code_format gating, v1.9.0 PIN pad), shared by both layouts.
   vmAlarm(ctx) {
@@ -2364,5 +2489,89 @@ function base(DCLogic) {
   return Base;
 }
 
-window.CasaCore = { base, parseSharedConfigText, DEFAULT_CONFIG, mergeConfig, ASSET_V, bust, loadScript, switchScenario, CONFIG_PATHS, loadUserConfig };
+// --- v2.1.0 — sensor history sheet (issue #3) ------------------------------
+// Pure helpers, exported on window.CasaCore for the tests. The sheet reads
+// the last 24 hours from HA's History and the last 7 days from long-term
+// statistics (hourly mean/min/max), which survive recorder.purge_keep_days;
+// a sensor without statistics (no state_class) falls back to History.
+const CHIST_RANGES = { '24h': 24, '7d': 168 };
+
+// history/history_during_period rows with minimal_response: the first row
+// is a full state ({state, last_changed}), the rest are {s, lu} (seconds).
+function parseHistoryRows(rows) {
+  const out = [];
+  for (const r of rows || []) {
+    const v = parseFloat(r.s !== undefined ? r.s : r.state);
+    if (isNaN(v)) continue;
+    const t = r.lu !== undefined ? r.lu * 1000
+      : r.lc !== undefined ? r.lc * 1000
+      : Date.parse(r.last_updated || r.last_changed || '');
+    if (!isFinite(t)) continue;
+    out.push({ t, v });
+  }
+  return out.sort((a, b) => a.t - b.t);
+}
+
+// recorder/statistics_during_period rows: `start` is epoch ms on current HA
+// and an ISO string on older releases — both are accepted.
+function parseStatsRows(rows) {
+  const out = [];
+  for (const r of rows || []) {
+    const v = r.mean != null ? Number(r.mean) : r.state != null ? Number(r.state) : NaN;
+    if (!isFinite(v)) continue;
+    const t = typeof r.start === 'number' ? r.start : Date.parse(r.start);
+    if (!isFinite(t)) continue;
+    const lo = r.min != null && isFinite(Number(r.min)) ? Number(r.min) : v;
+    const hi = r.max != null && isFinite(Number(r.max)) ? Number(r.max) : v;
+    out.push({ t, v, lo, hi });
+  }
+  return out.sort((a, b) => a.t - b.t);
+}
+
+// Time buckets averaged, so a sensor reporting every 10 s doesn't put
+// thousands of vertices on a 300-unit-wide chart. Empty buckets are skipped
+// (the line joins its neighbours) rather than drawn as zero.
+function bucketSeries(points, start, end, n) {
+  if (!points.length || points.length <= n) return points.slice();
+  const span = (end - start) / n;
+  const acc = new Map();
+  for (const p of points) {
+    const i = Math.min(n - 1, Math.max(0, Math.floor((p.t - start) / span)));
+    const b = acc.get(i) || { s: 0, c: 0, lo: Infinity, hi: -Infinity };
+    b.s += p.v; b.c++;
+    b.lo = Math.min(b.lo, p.lo != null ? p.lo : p.v); b.hi = Math.max(b.hi, p.hi != null ? p.hi : p.v);
+    acc.set(i, b);
+  }
+  return [...acc.keys()].sort((a, b) => a - b).map((i) => {
+    const b = acc.get(i);
+    return { t: start + (i + 0.5) * span, v: b.s / b.c, lo: b.lo, hi: b.hi };
+  });
+}
+
+// SVG geometry in a w×h box: the line, and (statistics only) the min–max
+// band. The y range gets a little headroom so a flat line sits mid-chart
+// instead of on the edge.
+function chartGeometry(points, start, end, w, h, withBand) {
+  if (!points.length) return null;
+  let lo = Infinity, hi = -Infinity;
+  for (const p of points) {
+    lo = Math.min(lo, withBand && p.lo != null ? p.lo : p.v);
+    hi = Math.max(hi, withBand && p.hi != null ? p.hi : p.v);
+  }
+  const pad = Math.max((hi - lo) * 0.12, Math.abs(hi) * 0.01, 0.5);
+  const yMin = lo - pad, yMax = hi + pad;
+  const x = (t) => (Math.min(end, Math.max(start, t)) - start) / (end - start) * w;
+  const y = (v) => h - (v - yMin) / (yMax - yMin) * h;
+  const f = (n) => Math.round(n * 10) / 10;
+  const line = points.map((p) => f(x(p.t)) + ',' + f(y(p.v))).join(' ');
+  let band = '';
+  if (withBand) {
+    const top = points.map((p) => f(x(p.t)) + ',' + f(y(p.hi != null ? p.hi : p.v)));
+    const bottom = points.slice().reverse().map((p) => f(x(p.t)) + ',' + f(y(p.lo != null ? p.lo : p.v)));
+    band = top.concat(bottom).join(' ');
+  }
+  return { line, band, lo, hi };
+}
+
+window.CasaCore = { base, parseSharedConfigText, parseHistoryRows, parseStatsRows, bucketSeries, chartGeometry, DEFAULT_CONFIG, mergeConfig, ASSET_V, bust, loadScript, switchScenario, CONFIG_PATHS, loadUserConfig };
 })();

@@ -222,6 +222,13 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
 
   'tab.casa': 'Casa', 'tab.cameras': 'Sorveglianza', 'tab.energy': 'Energia', 'tab.irrigation': 'Irrigazione', 'tab.vehicle': 'Veicolo', 'tab.weather': 'Meteo',
 
+  'hist.range24h': '24 ore', 'hist.range7d': '7 giorni', 'hist.min': 'Minima', 'hist.avg': 'Media', 'hist.max': 'Massima',
+  'hist.loading': 'Carico lo storico…', 'hist.empty': 'Nessun dato registrato in questo periodo. Il Recorder di Home Assistant potrebbe escludere questo sensore.',
+  'hist.error': 'Non riesco a leggere lo storico: {msg}', 'hist.noBackend': 'storico non disponibile in questa modalità',
+  'hist.source.history': 'Dati dalla History di Home Assistant.',
+  'hist.source.stats': 'Medie orarie dalle statistiche a lungo termine di Home Assistant; la fascia chiara va dalla minima alla massima di ogni ora.',
+  'hist.source.historyFallback': 'Dati dalla History di Home Assistant: questo sensore non ha statistiche a lungo termine, quindi i giorni più vecchi del periodo di conservazione del Recorder mancano.',
+  'hist.title': 'Storico',
   'module.onNow': 'Cose accese',
 
   'vacuum.cleaning': 'in pulizia', 'vacuum.name': 'Aspirapolvere', 'vacuum.returning': 'in rientro',

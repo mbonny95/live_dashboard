@@ -423,6 +423,18 @@ only need to add `feelsLike`/`dewPoint` here, since those have no other
 field to live in. Entirely optional; leave it unset and the `weather:`
 entity keeps being the only source, same as before.
 
+### Sensor history (v2.1.0)
+
+Tap a reading in a room panel, or a station reading in the weather view,
+to open its chart: the last **24 hours** from Home Assistant's History, or
+the last **7 days** from its long-term statistics (hourly averages, with a
+min–max band). Statistics outlive `recorder.purge_keep_days`, so the 7-day
+view keeps working after the Recorder purges raw history. A sensor without
+statistics (no `state_class`) falls back to History, and the sheet says so.
+Readings that can be opened carry a small chart icon. A plain `weather.*`
+entity has no history to show: point `weatherStation.temp`/`humidity` at
+real sensors to get one for the outdoor values.
+
 ## Vehicle (optional)
 
 There's no Home Assistant domain that standardizes car telemetry, so

@@ -128,6 +128,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M7.5 11V7.5a4.5 4.5 0 0 1 9 0V11"/></symbol>
 <symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></symbol>
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></symbol>
 </defs></svg>
 
 <div data-nu="1" data-theme="{{ theme }}" style="height:100vh;background:var(--page);color:var(--tx);padding:22px 24px;display:flex;flex-direction:column;gap:12px;overflow:hidden;padding-bottom:{{ scenarioBarPad }}">
@@ -1046,11 +1047,12 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2);margin:0 2px 11px">{{ S.environment }}</div>
 <div data-r="mini" style="margin-bottom:22px">
 <sc-for list="{{ panel.sensors }}" as="s" hint-placeholder-count="2">
-<div data-entity-id="{{ s.id }}" style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:22px;padding:14px 16px">
+<button onClick="{{ s.histOpen }}" data-entity-id="{{ s.id }}" style="position:relative;display:block;width:100%;text-align:left;cursor:{{ s.histCursor }};background:var(--gr);box-shadow:var(--nu-sm);border-radius:22px;padding:14px 16px">
 <svg width="18" height="18" fill="none" stroke="var(--acc)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use ref="{{ s.iconRef }}"></use></svg>
-<div style="font-family:var(--font-heading);font-size:22px;line-height:1.1;margin-top:8px">{{ s.val }}</div>
-<div style="font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ s.label }}</div>
-</div>
+<svg width="15" height="15" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;top:12px;right:12px;opacity:{{ s.histHint }}"><use href="#i-trend"></use></svg>
+<span style="display:block;font-family:var(--font-heading);font-size:22px;line-height:1.1;margin-top:8px">{{ s.val }}</span>
+<span style="display:block;font:500 11px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ s.label }}</span>
+</button>
 </sc-for>
 </div>
 </sc-if>
@@ -1187,11 +1189,12 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 <div data-r="mini" style="margin-bottom:20px">
 <sc-for list="{{ station }}" as="s" hint-placeholder-count="6">
-<div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:15px 16px">
+<button onClick="{{ s.histOpen }}" style="position:relative;display:block;width:100%;text-align:left;cursor:{{ s.histCursor }};background:var(--gr);box-shadow:var(--nu-out);border-radius:22px;padding:15px 16px">
 <svg width="18" height="18" fill="none" stroke="var(--sage)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use ref="{{ s.iconRef }}"></use></svg>
-<div style="font-family:var(--font-heading);font-size:22px;line-height:1.1;margin-top:9px">{{ s.val }}</div>
-<div style="font:500 11px/1.35 var(--font-body);color:var(--tx2);margin-top:4px">{{ s.label }}</div>
-</div>
+<svg width="15" height="15" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;top:12px;right:12px;opacity:{{ s.histHint }}"><use href="#i-trend"></use></svg>
+<span style="display:block;font-family:var(--font-heading);font-size:22px;line-height:1.1;margin-top:9px">{{ s.val }}</span>
+<span style="display:block;font:500 11px/1.35 var(--font-body);color:var(--tx2);margin-top:4px">{{ s.label }}</span>
+</button>
 </sc-for>
 </div>
 <sc-if value="{{ hasIrrigation }}" hint-placeholder-val="{{ true }}">
@@ -1573,6 +1576,67 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <button onClick="{{ diagCopyRun }}" style="width:100%;height:48px;border-radius:16px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx);font:600 12.5px/1 var(--font-body)">{{ S.diagCopyButton }}</button>
 <div style="font:500 10px/1.4 var(--font-body);color:var(--tx2);margin:8px 2px 0">{{ S.diagCopyPrivacyNote }}</div>
 </sc-if>
+</div>
+</sc-if>
+
+<!-- v2.1.0 — sensor history sheet (issue #3); values from casa-core.js vmClimateHistory(). -->
+<sc-if value="{{ chistOpen }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ chistClose }}" style="position:fixed;inset:0;background:rgba(20,24,30,.52);backdrop-filter:blur(3px);z-index:52;animation:fade .18s ease"></div>
+<div data-nu="1" data-theme="{{ theme }}" style="position:fixed;z-index:53;inset:0;display:grid;place-items:center;padding:30px;pointer-events:none;color:var(--tx)">
+<div style="width:min(600px,92vw);max-height:86vh;overflow-y:auto;background:var(--page);box-shadow:0 22px 54px rgba(20,24,30,.3);border-radius:26px;padding:22px;pointer-events:auto;animation:rise .22s cubic-bezier(.2,.8,.3,1)">
+<div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px">
+<div style="flex:1;min-width:0">
+<div style="font:600 11px/1 var(--font-body);letter-spacing:.09em;text-transform:uppercase;color:var(--tx2)">{{ chistEyebrow }}</div>
+<div style="font-family:var(--font-heading);font-size:22px;line-height:1.15;margin-top:7px">{{ chistTitle }}</div>
+<div style="font:500 12.5px/1.3 var(--font-body);color:var(--tx2);margin-top:4px">{{ chistNow }}</div>
+</div>
+<button onClick="{{ chistClose }}" title="{{ S.settingsBack }}" style="width:48px;height:48px;border-radius:999px;background:var(--gr);box-shadow:var(--nu-sm);display:grid;place-items:center;flex:none">
+<svg width="19" height="19" fill="none" stroke="var(--tx2)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-x"></use></svg>
+</button>
+</div>
+<div style="display:flex;gap:8px;margin-bottom:14px">
+<sc-for list="{{ chistRanges }}" as="r" hint-placeholder-count="2">
+<button onClick="{{ r.go }}" data-sel="{{ r.sel }}" style="border-radius:999px;padding:0 18px;height:44px;background:var(--gr);box-shadow:var(--nu-sm);color:var(--tx2);font:600 12.5px/1 var(--font-body)">{{ r.label }}</button>
+</sc-for>
+</div>
+<sc-if value="{{ chistLoading }}" hint-placeholder-val="{{ false }}">
+<div style="height:230px;display:grid;place-items:center;background:var(--gr);box-shadow:var(--nu-ins);border-radius:20px;font:500 12.5px/1.4 var(--font-body);color:var(--tx2)">{{ chistLoadingText }}</div>
+</sc-if>
+<sc-if value="{{ chistEmpty }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:20px;padding:18px;font:500 12.5px/1.5 var(--font-body);color:var(--tx2)">{{ chistEmptyText }}</div>
+</sc-if>
+<sc-if value="{{ chistFailed }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:20px;padding:18px;font:500 12.5px/1.5 var(--font-body);color:var(--alert)">{{ chistErrorText }}</div>
+</sc-if>
+<sc-if value="{{ chistReady }}" hint-placeholder-val="{{ false }}">
+<div style="background:var(--gr);box-shadow:var(--nu-ins);border-radius:20px;padding:16px 14px 10px">
+<div style="position:relative;height:190px;margin:8px 0 6px">
+<svg viewBox="0 0 300 120" preserveAspectRatio="none" width="100%" height="100%" style="position:absolute;inset:0;overflow:visible">
+<polygon ref="{{ chistBandRef }}" fill="var(--tint)" stroke="none"></polygon>
+<polyline ref="{{ chistLineRef }}" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></polyline>
+</svg>
+<div style="position:absolute;left:0;right:0;top:{{ chistHiTop }};border-top:1px dashed var(--tx2);opacity:.45"></div>
+<div style="position:absolute;right:0;top:{{ chistHiTop }};transform:translateY(-110%);font:600 10.5px/1 var(--font-body);color:var(--tx2);background:var(--gr);padding:0 0 2px 4px">{{ chistHiLabel }}</div>
+<div style="position:absolute;left:0;right:0;top:{{ chistLoTop }};border-top:1px dashed var(--tx2);opacity:.45"></div>
+<div style="position:absolute;right:0;top:{{ chistLoTop }};transform:translateY(15%);font:600 10.5px/1 var(--font-body);color:var(--tx2);background:var(--gr);padding:2px 0 0 4px">{{ chistLoLabel }}</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-top:14px">
+<sc-for list="{{ chistXLabels }}" as="x" hint-placeholder-count="5">
+<span style="font:500 10px/1 var(--font-body);color:var(--tx2)">{{ x.txt }}</span>
+</sc-for>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px">
+<sc-for list="{{ chistStats }}" as="st" hint-placeholder-count="3">
+<div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:18px;padding:12px 13px">
+<div style="font-family:var(--font-heading);font-size:18px;line-height:1.1">{{ st.val }}</div>
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ st.label }}</div>
+</div>
+</sc-for>
+</div>
+<div style="font:500 10.5px/1.45 var(--font-body);color:var(--tx2);margin-top:12px">{{ chistSource }}</div>
+</sc-if>
+</div>
 </div>
 </sc-if>
 
@@ -2334,15 +2398,15 @@ class Component extends window.CasaCore.base(DCLogic) {
     // instead via the "go to irrigation" link below, not duplicated as pills.
     const hasStation = !!(stationTempId || stationHumidityId || stationWindId || stationRainId || stationIrradianceId || stationEt0Id || ws.feelsLike || ws.dewPoint);
     const stationDefs = [];
-    if (outT !== null) stationDefs.push(['#i-therm', this.t('wx.outdoorTemp'), this.dec(outT, 1) + '°']);
-    if (outH !== null) stationDefs.push(['#i-drop', this.t('wx.outdoorHumidity'), this.dec(outH, 0) + '%']);
-    if (ws.feelsLike) stationDefs.push(['#i-therm', this.t('wx.feelsLike'), this.val(ws.feelsLike, 1, '°')]);
-    if (ws.dewPoint) stationDefs.push(['#i-drop', this.t('wx.dewPoint'), this.val(ws.dewPoint, 1, '°')]);
-    if (stationWindId) stationDefs.push(['#i-wind', this.t('wx.wind'), this.val(stationWindId, 1, ' km/h')]);
+    if (outT !== null) stationDefs.push(['#i-therm', this.t('wx.outdoorTemp'), this.dec(outT, 1) + '°', stationTempId]);
+    if (outH !== null) stationDefs.push(['#i-drop', this.t('wx.outdoorHumidity'), this.dec(outH, 0) + '%', stationHumidityId]);
+    if (ws.feelsLike) stationDefs.push(['#i-therm', this.t('wx.feelsLike'), this.val(ws.feelsLike, 1, '°'), ws.feelsLike]);
+    if (ws.dewPoint) stationDefs.push(['#i-drop', this.t('wx.dewPoint'), this.val(ws.dewPoint, 1, '°'), ws.dewPoint]);
+    if (stationWindId) stationDefs.push(['#i-wind', this.t('wx.wind'), this.val(stationWindId, 1, ' km/h'), stationWindId]);
     if (stationRainId) stationDefs.push(['#i-rain', this.t('wx.rainToday'), this.val(stationRainId, 1, ' mm')]);
-    if (stationIrradianceId) stationDefs.push(['#i-solar', this.t('wx.irradiance'), this.val(stationIrradianceId, 0, ' W/m²')]);
+    if (stationIrradianceId) stationDefs.push(['#i-solar', this.t('wx.irradiance'), this.val(stationIrradianceId, 0, ' W/m²'), stationIrradianceId]);
     if (stationEt0Id) stationDefs.push(['#i-sun', this.t('irrigation.et0Today'), this.val(stationEt0Id, 2, ' mm')]);
-    const station = stationDefs.map((x) => ({ icon: x[0], iconRef: this._bindAttr('href', x[0]), label: x[1], val: x[2] }));
+    const station = stationDefs.map((x) => Object.assign({ icon: x[0], iconRef: this._bindAttr('href', x[0]), label: x[1], val: x[2] }, this.chistTap(x[3], x[1])));
 
     // vehicle (optional module — no generic HA domain for this, so every
     // field is an explicit mapping in config.vehicle) -----------------------
@@ -2473,7 +2537,7 @@ class Component extends window.CasaCore.base(DCLogic) {
               } };
           }),
           switches: switchesAll,
-          sensors: (r.sensors || []).map((s) => ({ id: s[0], label: s[1], icon: s[2], iconRef: this._bindAttr('href', s[2]), val: this.val(s[0], s[3], s[4]) })),
+          sensors: (r.sensors || []).map((s) => Object.assign({ id: s[0], label: s[1], icon: s[2], iconRef: this._bindAttr('href', s[2]), val: this.val(s[0], s[3], s[4]) }, this.chistTap(s[0], s[1] + ' · ' + r.name))),
           media: (r.media || []).map((id) => {
             const s = this.s(id);
             const live = s !== 'unavailable' && s !== 'unknown';
@@ -2549,6 +2613,7 @@ class Component extends window.CasaCore.base(DCLogic) {
       onCount: activeItems.length, activeItems, nothingOn: activeItems.length === 0,
       quick, rooms,
       ...this.vmCasaColumns(),
+      ...this.vmClimateHistory(),
       hasNoAreas, goToAreas,
       hasOverflowRooms: overflowRooms.length > 0, overflowCount: overflowRooms.length, overflowRooms,
       overflowLabel: this.t('rooms.overflow', { n: overflowRooms.length }),

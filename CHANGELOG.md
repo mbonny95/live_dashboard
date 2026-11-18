@@ -16,6 +16,21 @@ All notable changes to this project are documented here. Format follows
   azioni rapide lì sono i pulsanti tapparelle su/giù). Valgono le regole
   delle altre sezioni: scelta per utente, «salva per tutti» per
   l'amministratore. ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
+- **Storico dei sensori.** Toccando una lettura nel pannello di una stanza
+  (temperatura, umidità, qualunque sensore numerico) o una lettura della
+  stazione meteo si apre un foglio con il grafico: **24 ore** dalla History
+  di Home Assistant, **7 giorni** dalle statistiche a lungo termine (medie
+  orarie con la fascia minima–massima), che restano anche dopo la pulizia
+  del Recorder. Un sensore senza statistiche ripiega sulla History e il
+  foglio lo dice. Minima, media e massima sotto il grafico; periodo vuoto
+  ed errori sono scritti nel foglio. Una piccola icona a grafico segna le
+  letture che si possono aprire. Sul desktop il foglio si apre al centro,
+  sul mobile dal basso. ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
+  - `panel.js`: il ponte verso HA accetta anche
+    `history/history_during_period` e `recorder/statistics_during_period`,
+    in sola lettura e con i permessi dell'utente.
+  - Demo: la stazione meteo ha ora temperatura e umidità esterne, e lo
+    storico mostra una curva giornaliera.
 
 ### Changed
 

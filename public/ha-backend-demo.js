@@ -120,6 +120,8 @@ const SEED = [
   // Optional local weather station (see DEMO_CONFIG.weatherStation below) —
   // feelsLike/dewPoint have no other config field, so demo needs its own
   // entities to show them at all.
+  entity('sensor.station_temperature', null, '18.2', { friendly_name: 'Temperatura esterna', device_class: 'temperature', state_class: 'measurement', unit_of_measurement: '°C' }),
+  entity('sensor.station_humidity', null, '64', { friendly_name: 'Umidità esterna', device_class: 'humidity', state_class: 'measurement', unit_of_measurement: '%' }),
   entity('sensor.station_feels_like', null, '17.8', { friendly_name: 'Percepita', unit_of_measurement: '°C' }),
   entity('sensor.station_dew_point', null, '9.4', { friendly_name: 'Punto di rugiada', unit_of_measurement: '°C' }),
   entity('sun.sun', null, 'above_horizon', {}),
@@ -247,7 +249,7 @@ const DEMO_CONFIG = {
   // humidity/wind/rain/irradiance/et0 would reuse irrigation.weather/et0 if
   // those were set above, but the demo leaves them null on purpose to also
   // exercise the "weather station with no irrigation configured" path.
-  weatherStation: { feelsLike: 'sensor.station_feels_like', dewPoint: 'sensor.station_dew_point' },
+  weatherStation: { temp: 'sensor.station_temperature', humidity: 'sensor.station_humidity', feelsLike: 'sensor.station_feels_like', dewPoint: 'sensor.station_dew_point' },
   vehicle: {
     fuel: 'sensor.car_fuel_level', battery: null, range: 'sensor.car_range', odometer: 'sensor.car_odometer',
     cells: [{ label: 'AdBlue', entity: 'sensor.car_adblue_level', unit: '%' }],
@@ -550,6 +552,36 @@ async function connect(handlers) {
       registries: async function () {
         await new Promise((r) => setTimeout(r, 60));
         return registries;
+      },
+
+      // v2.1.0 — only the two read-only types the sensor history sheet
+      // uses: a daily wave around the sensor's current value, so the chart
+      // has something believable to draw. Humidity moves opposite to
+      // temperature, as it does indoors.
+      ws: async function (msg) {
+        await new Promise((r) => setTimeout(r, 250));
+        const id = (msg.entity_ids || msg.statistic_ids || [])[0];
+        const e = id && states[id];
+        const cur = e ? parseFloat(e.state) : NaN;
+        if (!e || isNaN(cur)) return {};
+        const start = Date.parse(msg.start_time), end = Date.parse(msg.end_time);
+        const amp = (e.attributes.unit_of_measurement === '%' ? 6 : 1.8) * (/humid|umid/.test(id) ? -1 : 1);
+        const at = (t) => cur + amp * Math.sin(((new Date(t).getHours() + new Date(t).getMinutes() / 60) - 9) / 24 * 2 * Math.PI)
+          - amp * Math.sin(((new Date(end).getHours() + new Date(end).getMinutes() / 60) - 9) / 24 * 2 * Math.PI);
+        if (msg.type === 'recorder/statistics_during_period') {
+          const rows = [];
+          for (let t = start - (start % 3600000); t < end; t += 3600000) {
+            const m = at(t + 1800000) + rand(-0.3, 0.3);
+            rows.push({ start: t, end: t + 3600000, mean: m, min: m - rand(0.2, 0.8), max: m + rand(0.2, 0.8) });
+          }
+          return { [id]: rows };
+        }
+        if (msg.type === 'history/history_during_period') {
+          const rows = [{ state: at(start).toFixed(1), last_changed: new Date(start).toISOString() }];
+          for (let t = start + 600000; t < end; t += 600000) rows.push({ s: (at(t) + rand(-0.1, 0.1)).toFixed(1), lu: t / 1000 });
+          return { [id]: rows };
+        }
+        throw new Error('demo: unsupported ' + msg.type);
       },
 
       // The demo's DEMO_CONFIG.energy above always sets production/

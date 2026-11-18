@@ -222,6 +222,13 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
 
   'tab.casa': 'Home', 'tab.cameras': 'Surveillance', 'tab.energy': 'Energy', 'tab.irrigation': 'Irrigation', 'tab.vehicle': 'Vehicle', 'tab.weather': 'Weather',
 
+  'hist.range24h': '24 hours', 'hist.range7d': '7 days', 'hist.min': 'Min', 'hist.avg': 'Average', 'hist.max': 'Max',
+  'hist.loading': 'Loading history…', 'hist.empty': 'Nothing recorded in this period. Home Assistant\'s Recorder may be excluding this sensor.',
+  'hist.error': 'Could not read the history: {msg}', 'hist.noBackend': 'history is not available in this mode',
+  'hist.source.history': 'Data from Home Assistant\'s History.',
+  'hist.source.stats': 'Hourly averages from Home Assistant\'s long-term statistics; the light band spans each hour\'s min to max.',
+  'hist.source.historyFallback': 'Data from Home Assistant\'s History: this sensor has no long-term statistics, so days older than the Recorder\'s retention are missing.',
+  'hist.title': 'History',
   'module.onNow': 'Things on now',
 
   'vacuum.cleaning': 'cleaning', 'vacuum.name': 'Vacuum', 'vacuum.returning': 'returning to base',
