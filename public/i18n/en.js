@@ -222,6 +222,8 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.en = {
 
   'tab.casa': 'Home', 'tab.cameras': 'Surveillance', 'tab.energy': 'Energy', 'tab.irrigation': 'Irrigation', 'tab.vehicle': 'Vehicle', 'tab.weather': 'Weather',
 
+  'module.onNow': 'Things on now',
+
   'vacuum.cleaning': 'cleaning', 'vacuum.name': 'Vacuum', 'vacuum.returning': 'returning to base',
 
   'vehicle.check': 'check', 'vehicle.meta': 'Range {range} · {odometer} total', 'vehicle.ok': 'ok',

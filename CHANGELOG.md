@@ -3,6 +3,25 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.1.0] - 2026-11-18
+
+### Added
+
+- **Le card «Cose accese» e «Azioni rapide» si possono nascondere**, da
+  Impostazioni → Sezioni (o `modules.hide: ['onNow', 'quickActions']` nella
+  config). Sono due interruttori indipendenti. Sul desktop, con entrambe
+  nascoste, sparisce la colonna di sinistra: la home passa a due colonne e
+  le stanze si dispongono su tre colonne invece di due. Sul mobile gli
+  stessi interruttori nascondono le stesse card nella scheda Casa (le
+  azioni rapide lì sono i pulsanti tapparelle su/giù). Valgono le regole
+  delle altre sezioni: scelta per utente, «salva per tutti» per
+  l'amministratore. ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
+
+### Changed
+
+- La scheda «Auto» si chiama **«Veicolo»**: in italiano «Auto» si leggeva
+  come «automatico». ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
+
 ## [2.0.0] - 2026-11-11
 
 La 1.9 non è mai stata pubblicata: le sue modifiche (le prime sezioni qui

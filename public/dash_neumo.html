@@ -52,6 +52,8 @@ input[type=range]::-moz-range-track{height:34px;border-radius:999px;background:v
 input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(--acc);border-radius:999px;background:var(--gr)}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 [data-r="casa"]{display:grid;gap:14px;grid-template-columns:minmax(0,.86fr) minmax(0,1.3fr) minmax(0,.94fr);min-height:100%}
+[data-r="casa"][data-cols="2"]{grid-template-columns:minmax(0,2.16fr) minmax(0,.94fr)}
+@media (min-width:1101px){[data-r="casa"][data-cols="2"] [data-r="rooms"]{grid-template-columns:repeat(3,minmax(0,1fr))}}
 [data-r="hgroup"]{display:flex;align-items:center;gap:9px;flex:none}
 [data-r="cover-band"]{transition:height .5s ease}
 [data-r="rooms"]{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:min-content;align-content:start;flex:1;min-height:0;overflow-y:auto}
@@ -68,8 +70,8 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 [data-r="casa"],[data-r="two"]{height:auto!important;flex:none!important}
 [data-r="rooms"]{grid-template-rows:none}
 [data-r="casa"] > div > div,[data-r="two"] > div{flex:none!important;min-height:auto!important}}
-@media (max-width:860px){[data-r="casa"]{grid-template-columns:minmax(0,1fr) minmax(268px,320px);height:auto}}
-@media (max-width:700px){[data-r="casa"],[data-r="two"]{grid-template-columns:minmax(0,1fr)}[data-r="two"][data-cols="3"]{grid-template-columns:minmax(0,1fr)}[data-r="cells4"]{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:860px){[data-r="casa"],[data-r="casa"][data-cols="2"]{grid-template-columns:minmax(0,1fr) minmax(268px,320px);height:auto}}
+@media (max-width:700px){[data-r="casa"],[data-r="casa"][data-cols="2"],[data-r="two"]{grid-template-columns:minmax(0,1fr)}[data-r="two"][data-cols="3"]{grid-template-columns:minmax(0,1fr)}[data-r="cells4"]{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @keyframes rise{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 </style>
@@ -201,9 +203,11 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 <div data-r="body" style="flex:1;min-height:0;overflow:auto">
 
 <sc-if value="{{ tabCasa }}" hint-placeholder-val="{{ true }}">
-<div data-r="casa" data-screen-label="Casa">
+<div data-r="casa" data-cols="{{ casaCols }}" data-screen-label="Casa">
 
+<sc-if value="{{ showLeftCol }}" hint-placeholder-val="{{ true }}">
 <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+<sc-if value="{{ showOnNow }}" hint-placeholder-val="{{ true }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:1;min-height:0;display:flex;flex-direction:column">
 <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:13px;flex:none">
 <span style="font-family:var(--font-heading);font-size:28px;line-height:1">{{ onCount }}</span>
@@ -227,7 +231,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </sc-if>
 </div>
 </div>
+</sc-if>
 
+<sc-if value="{{ showQuickActions }}" hint-placeholder-val="{{ true }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:26px;padding:18px;flex:none">
 <div style="font:600 11px/1 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--tx2);margin-bottom:12px">{{ S.quickActions }}</div>
 <div style="display:flex;flex-direction:column;gap:9px">
@@ -240,7 +246,9 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </sc-for>
 </div>
 </div>
+</sc-if>
 </div>
+</sc-if>
 
 <div style="display:flex;flex-direction:column;gap:11px;min-height:0">
 <div style="display:flex;align-items:center;gap:8px;padding:3px 2px 0;flex:none">
@@ -2540,6 +2548,7 @@ class Component extends window.CasaCore.base(DCLogic) {
       tabCam: this.state.tab === 'camere',
       onCount: activeItems.length, activeItems, nothingOn: activeItems.length === 0,
       quick, rooms,
+      ...this.vmCasaColumns(),
       hasNoAreas, goToAreas,
       hasOverflowRooms: overflowRooms.length > 0, overflowCount: overflowRooms.length, overflowRooms,
       overflowLabel: this.t('rooms.overflow', { n: overflowRooms.length }),

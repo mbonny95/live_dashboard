@@ -751,9 +751,11 @@ function applyEntityVisibility(room, hiddenIds) {
   return room;
 }
 
-// Section/tab toggle keys — fixed, not discovered, since they mirror the
-// config.js top-level module keys 1:1 (see live_dashboard_config.example.js).
-const MODULE_KEYS = ['energy', 'irrigation', 'cameras', 'appliances', 'vehicle'];
+// Section/tab toggle keys — fixed, not discovered. The first five mirror the
+// config.js top-level module keys 1:1 (see live_dashboard_config.example.js);
+// onNow/quickActions (v2.1.0) are the two Casa cards in the desktop's left
+// column (and the same cards on mobile's Casa tab), hideable since issue #3.
+const MODULE_KEYS = ['energy', 'irrigation', 'cameras', 'appliances', 'vehicle', 'onNow', 'quickActions'];
 
 // --- Casa home section order (v1.7.0) --------------------------------------
 // Only the three cards that already appear together as a linear stack on

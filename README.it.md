@@ -168,7 +168,7 @@ disinserisci seguono il suo `supported_features`, così una centrale che non
 sa fare per esempio Notte non mostra mai un pulsante destinato a fallire.
 Con più di una centrale, `config.alarm` continua a scegliere quale; le
 altre semplicemente non vengono ancora mostrate. Selettore di modalità
-casa, Energia, Irrigazione e Auto restano nascosti finché non li attivi
+casa, Energia, Irrigazione e Veicolo restano nascosti finché non li attivi
 (vedi sotto) — non c'è modo di indovinare l'accoppiata giusta per uno
 script "modalità casa": per questo resta spento di default invece di
 tentare a caso.
@@ -441,7 +441,7 @@ serve aggiungere solo `feelsLike`/`dewPoint`, che non hanno altrove una
 casa. Del tutto opzionale: lascialo non impostato e l'entità `weather:`
 resta l'unica fonte, come prima.
 
-## Auto (opzionale)
+## Veicolo (opzionale)
 
 Non esiste un dominio Home Assistant che standardizzi la telematica
 veicolare, quindi `config.vehicle` è una mappatura esplicita campo per campo
@@ -556,7 +556,7 @@ un layout scorrevole (voluto — vedi TROUBLESHOOTING.md).
 Apri la pagina con `?demo` in coda all'URL (oppure aprila direttamente fuori
 da `panel_custom` — da `file://` la dashboard non ha nessun host con cui
 parlare e passa da sola allo stesso backend demo dopo un breve timeout).
-Mostra tutte le view — Casa, Sorveglianza, Irrigazione, Energia, Auto — con
+Mostra tutte le view — Casa, Sorveglianza, Irrigazione, Energia, Veicolo — con
 dati inventati e un badge `DEMO` visibile, e non chiama mai un servizio
 reale. Le telecamere demo mostrano solo l'icona segnaposto (non c'è un feed
 vero da inventare), compresa una impostata `hideUntilTap` per far vedere

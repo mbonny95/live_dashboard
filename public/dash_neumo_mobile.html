@@ -170,6 +170,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
+<sc-if value="{{ showOnNow }}" hint-placeholder-val="{{ true }}">
 <div style="background:var(--gr);box-shadow:var(--nu-out);border-radius:24px;padding:16px">
 <div style="display:flex;align-items:baseline;gap:8px">
 <span style="font-family:var(--font-heading);font-size:25px;line-height:1">{{ onCount }}</span>
@@ -196,8 +197,9 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </sc-if>
 </div>
 </div>
+</sc-if>
 
-<sc-if value="{{ hasAnyCovers }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ showQuickCovers }}" hint-placeholder-val="{{ true }}">
 <div data-m="two">
 <button onClick="{{ allCoversDown }}" style="background:var(--gr);box-shadow:var(--nu-out);border-radius:20px;padding:14px;min-height:76px;display:flex;flex-direction:column;align-items:flex-start;gap:8px;text-align:left">
 <svg width="20" height="20" fill="none" stroke="var(--accT)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><use href="#i-shutter-close"></use></svg>
@@ -2023,6 +2025,7 @@ class Component extends window.CasaCore.base(DCLogic) {
     const hasToast = !!this.state.toast;
     const toastText = this.state.toast ? this.state.toast.text : '';
 
+    const casaCols = this.vmCasaColumns();
     return {
       S: this.strings, isDemo: this.kind === 'demo',
       hasToast, toastText,
@@ -2059,6 +2062,7 @@ class Component extends window.CasaCore.base(DCLogic) {
       pinInput: (e) => { const p = this.state.pin; if (p && !p.busy) pinSet({ value: e.target.value, error: false }); },
       pinKeyDown: (e) => { if (e.key === 'Enter') pinSubmit(); else if (e.key === 'Escape') pinCancel(); },
       onCount: activeItems.length, activeItems, nothingOn: activeItems.length === 0,
+      ...casaCols, showQuickCovers: ALL_COVERS.length > 0 && casaCols.showQuickActions,
       someLit: litCount > 0, hasAnyCovers: ALL_COVERS.length > 0,
       allLightsOff: () => this.call('light', 'turn_off', { entity_id: ALL_LIGHTS }),
       allCoversUp: () => this.call('cover', 'open_cover', { entity_id: ALL_COVERS }),

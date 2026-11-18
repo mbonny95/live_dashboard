@@ -220,7 +220,9 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'valve.open': 'aperta', 'valve.closed': 'chiusa',
   'valve.openAction': 'Apri', 'valve.closeAction': 'Chiudi',
 
-  'tab.casa': 'Casa', 'tab.cameras': 'Sorveglianza', 'tab.energy': 'Energia', 'tab.irrigation': 'Irrigazione', 'tab.vehicle': 'Auto', 'tab.weather': 'Meteo',
+  'tab.casa': 'Casa', 'tab.cameras': 'Sorveglianza', 'tab.energy': 'Energia', 'tab.irrigation': 'Irrigazione', 'tab.vehicle': 'Veicolo', 'tab.weather': 'Meteo',
+
+  'module.onNow': 'Cose accese',
 
   'vacuum.cleaning': 'in pulizia', 'vacuum.name': 'Aspirapolvere', 'vacuum.returning': 'in rientro',
 

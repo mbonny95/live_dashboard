@@ -1597,7 +1597,8 @@ function base(DCLogic) {
       // parallel set of translations — "Sorveglianza"/"Elettrodomestici" etc.
       // already exist as tab.cameras / S.appliances.
       const moduleLabels = { energy: this.t('tab.energy'), irrigation: this.t('tab.irrigation'), cameras: this.t('tab.cameras'),
-        appliances: this.strings.appliances, vehicle: this.t('tab.vehicle') };
+        appliances: this.strings.appliances, vehicle: this.t('tab.vehicle'),
+        onNow: this.t('module.onNow'), quickActions: this.strings.quickActions };
       settingsModules = window.CasaDiscovery.MODULE_KEYS.map((key) => {
         const active = d.resolveVisible(key, prefsNow.modules, chNow.modules);
         return { key, label: moduleLabels[key], active, toggle: () => this.SETTINGS_SET_MODULE(key, !active) };
@@ -1961,6 +1962,17 @@ function base(DCLogic) {
       hasDiagDuplicateDevices, diagDuplicateDevices, diagDuplicateDevicesTitle, doDiag, settingsTabs, powerUnitOptions,
       plugThresholdOptions, showBatterySignControl, batterySignOptions, batterySignLiveLabel, batterySignSuspect, batterySignInvert
     };
+  }
+
+  // v2.1.0 — visibility of the two Casa cards that make up the desktop's
+  // left column (issue #3). With both hidden the column goes and the grid
+  // drops to two columns (data-cols="2" in dash_neumo.html). Mobile reads
+  // the same two flags for the same cards on its Casa tab.
+  vmCasaColumns() {
+    const showOnNow = this.MODULE_VISIBLE('onNow');
+    const showQuickActions = this.MODULE_VISIBLE('quickActions');
+    const showLeftCol = showOnNow || showQuickActions;
+    return { showOnNow, showQuickActions, showLeftCol, casaCols: showLeftCol ? '3' : '2' };
   }
 
   // v2 — alarm card + PIN pad view-model (supported_features buttons,

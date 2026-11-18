@@ -223,3 +223,15 @@ test('vmSharedConfig: admin actions depend on where the config comes from', () =
   assert.equal(v.sharedActions.length, 0);
   assert.equal(v.sharedReadOnly, true);
 });
+
+test('vmCasaColumns: the left column goes only when both cards are hidden (issue #3)', () => {
+  const all = make().vmCasaColumns();
+  assert.equal(JSON.stringify(all), JSON.stringify({ showOnNow: true, showQuickActions: true, showLeftCol: true, casaCols: '3' }));
+  const one = make({ prefs: { v: 1, modules: { onNow: false } } }).vmCasaColumns();
+  assert.equal(one.showOnNow, false); assert.equal(one.showLeftCol, true); assert.equal(one.casaCols, '3');
+  const none = make({ prefs: { v: 1, modules: { onNow: false, quickActions: false } } }).vmCasaColumns();
+  assert.equal(none.showLeftCol, false); assert.equal(none.casaCols, '2');
+  // "save for everyone" carries the two new switches into modules.hide
+  const out = CasaDiscovery.buildExportedConfig({}, { modules: { onNow: false, quickActions: false } }, {});
+  assert.equal(JSON.stringify(out.modules.hide), '["onNow","quickActions"]');
+});

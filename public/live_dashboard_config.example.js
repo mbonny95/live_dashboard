@@ -202,8 +202,11 @@ window.CASA_CONFIG = {
   // this is only for hiding one you *do* have data for. Keys match the
   // config blocks above 1:1. Same settings-panel override relationship as
   // entities/cameras: a per-user choice from the panel wins over this list.
+  // Two extra keys (v2.1.0) are Casa cards rather than tabs: 'onNow' (things
+  // on right now) and 'quickActions'. With both hidden the desktop drops its
+  // left column and the rooms get the space.
   modules: {
-    hide: []   // ['vehicle', 'appliances']
+    hide: []   // ['vehicle', 'appliances', 'onNow', 'quickActions']
   },
 
   // Home section order (v1.7.0): the order the Alarm/Energy/Surveillance
