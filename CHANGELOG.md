@@ -443,10 +443,10 @@ area to reassign.
   another module (energy/irrigation/cameras/...), disabled or hidden in HA,
   a diagnostic/config entity, an empty room, or a YAML-defined entity HA
   refuses to delete ("does not have a unique ID"). Settings → Diagnostica
-  gained a closed-by-default "Diagnostica · N entità non mostrate" section,
-  grouped by reason and sorted by how actionable the reason is — "nessuna
-  area assegnata" first, not whichever group happens to be biggest (that's
-  almost always "entità di diagnostica", the least interesting one). Two
+  gained a closed-by-default "N entities not shown" section,
+  grouped by reason and sorted by how actionable the reason is — "No area
+  assigned" first, not whichever group happens to be biggest (that's
+  almost always "Diagnostic entity", the least interesting one). Two
   devices sharing a serial number where only one has an area — the exact
   2026.9.0/Matter case above — get their own warning at the top, naming
   both devices and which area to reassign. The demo (`?demo`, from
@@ -595,8 +595,8 @@ area to reassign.
   v1.5.3 behavior.
 - **`energy.gridNote` (the note under the single-ring energy card) mixed an
   instantaneous grid-export reading into a sentence about the day's
-  totals**, sitting right below a ring that's entirely daily — e.g. "1,4 kWh
-  dalla rete · 0,85 kW in immissione". Now both halves are the same day's
+  totals**, sitting right below a ring that's entirely daily — e.g. "1.4 kWh
+  from grid · 0.85 kW exported". Now both halves are the same day's
   totals as the ring above them. Only reachable via the single-ring
   fallback (installs with partial daily energy data), which is why it went
   unnoticed for months.
