@@ -22,6 +22,15 @@ All notable changes to this project are documented here. Format follows
 - La scheda «Auto» si chiama **«Veicolo»**: in italiano «Auto» si leggeva
   come «automatico». ([#3](https://github.com/mbonny95/live_dashboard/issues/3))
 
+### Fixed
+
+- **Mobile, barra in basso: le etichette non si sovrappongono più.** Con
+  tutte le schede attive «Sorveglianza» e «Irrigazione» uscivano dal loro
+  spazio e finivano sopra le schede vicine. Ora ogni scheda è larga quanto
+  la sua etichetta, mai meno di 44 px: a 375 px tutto entra. Sui telefoni
+  più stretti le etichette lunghe si accorciano con i puntini, e a 320 px la
+  barra scorre di lato invece di uscire dallo schermo.
+
 ## [2.0.0] - 2026-11-11
 
 La 1.9 non è mai stata pubblicata: le sue modifiche (le prime sezioni qui

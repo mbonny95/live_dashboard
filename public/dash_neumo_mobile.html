@@ -58,6 +58,7 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 [data-m="col"]{display:flex;flex-direction:column;gap:12px}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 [data-m="view"]{animation:fade .22s ease both}
+[data-m="tabbar"]{scrollbar-width:none}[data-m="tabbar"]::-webkit-scrollbar{display:none}
 </style>
 </helmet>
 
@@ -1350,12 +1351,12 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border:5px solid var(
 </div>
 </sc-if>
 
-<div style="position:fixed;left:0;right:0;bottom:0;background:var(--page);padding:8px 10px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 18px rgba(0,0,0,.06);z-index:5">
-<div style="max-width:540px;margin:0 auto;display:flex;gap:4px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px">
+<div style="position:fixed;left:0;right:0;bottom:0;background:var(--page);padding:8px 8px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 18px rgba(0,0,0,.06);z-index:5">
+<div data-m="tabbar" style="max-width:540px;margin:0 auto;display:flex;gap:2px;background:var(--gr);box-shadow:var(--nu-ins);border-radius:999px;padding:5px;overflow-x:auto">
 <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
-<button onClick="{{ t.go }}" data-sel="{{ t.sel }}" style="flex:1;min-width:0;height:54px;border-radius:999px;background:transparent;color:var(--tx2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0 2px">
+<button onClick="{{ t.go }}" data-sel="{{ t.sel }}" style="flex:1 1 auto;min-width:44px;height:54px;border-radius:999px;background:transparent;color:var(--tx2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0 2px">
 <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><use ref="{{ t.iconRef }}"></use></svg>
-<span style="font:600 9.5px/1 var(--font-body);letter-spacing:.01em">{{ t.label }}</span>
+<span style="font:600 9.5px/1 var(--font-body);letter-spacing:.01em;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.label }}</span>
 </button>
 </sc-for>
 </div>
