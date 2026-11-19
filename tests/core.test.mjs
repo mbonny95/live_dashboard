@@ -321,3 +321,26 @@ test('history sheet: empty, error, and non-sensor readings', async () => {
   failing.CHIST_CLOSE();
   assert.equal(failing.vmClimateHistory().chistOpen, false);
 });
+
+test('TVs count as on in any state but off/standby/unavailable/unknown', () => {
+  const st = {
+    'media_player.samsung': { state: 'on', attributes: {} },
+    'media_player.philips': { state: 'on', attributes: { media_title: 'TV8 HD' } },
+    'media_player.paused': { state: 'paused', attributes: { media_title: 'Film' } },
+    'media_player.idle': { state: 'idle', attributes: { source: 'HDMI 1' } },
+    'media_player.off': { state: 'off', attributes: {} },
+    'media_player.standby': { state: 'standby', attributes: {} },
+    'media_player.gone': { state: 'unavailable', attributes: {} }
+  };
+  const c = make({ st });
+  c.at = (id, a) => (st[id].attributes || {})[a];
+  c.s = (id) => st[id].state;
+  const on = Object.keys(st).filter((id) => c.MEDIA_ON(id));
+  assert.equal(JSON.stringify(on), '["media_player.samsung","media_player.philips","media_player.paused","media_player.idle"]');
+  assert.equal(c.mediaSub('media_player.samsung'), 'common.on');
+  assert.equal(c.mediaSub('media_player.philips'), 'TV8 HD');
+  assert.equal(c.mediaSub('media_player.paused'), 'Film · media.paused');
+  assert.equal(c.mediaSub('media_player.idle'), 'HDMI 1');
+  assert.equal(c.mediaSub('media_player.off'), 'common.off');
+  assert.equal(c.mediaSub('media_player.gone'), 'common.unreachable');
+});

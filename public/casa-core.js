@@ -868,6 +868,24 @@ function base(DCLogic) {
   fn(id) { return this.at(id, 'friendly_name') || id; }
   unit(id) { return this.at(id, 'unit_of_measurement') || ''; }
   isOn(id) { return this.s(id) === 'on'; }
+  // A TV counts as on in any state but off/standby/unavailable/unknown:
+  // Samsung and Philips TVs report `on` (and `idle`, `paused`) and never
+  // `playing`, so a `playing`-only check left them out of "on now" and off
+  // the room card.
+  MEDIA_ON(id) {
+    const s = this.s(id);
+    return !!s && !['off', 'standby', 'unavailable', 'unknown'].includes(s);
+  }
+  // The line under a TV's name: what it's showing when HA knows it (title,
+  // app, source — a Philips puts the channel in media_title), else on/off.
+  mediaSub(id) {
+    const s = this.s(id);
+    if (s === 'unavailable' || s === 'unknown') return this.t('common.unreachable');
+    if (!this.MEDIA_ON(id)) return this.t('common.off');
+    const what = this.at(id, 'media_title') || this.at(id, 'app_name') || this.at(id, 'source');
+    if (s === 'paused') return what ? what + ' · ' + this.t('media.paused') : this.t('media.paused');
+    return what || (s === 'playing' ? this.t('media.playing') : this.t('common.on'));
+  }
   n(id) { const v = parseFloat(this.s(id)); return isNaN(v) ? null : v; }
   dec(v, d) { return v === null || v === undefined ? '—' : Number(v).toLocaleString(this.lang === 'it' ? 'it-IT' : 'en-GB', { minimumFractionDigits: d, maximumFractionDigits: d }); }
   val(id, d, u) {
@@ -1509,7 +1527,7 @@ function base(DCLogic) {
       const plug = this.plugStatus(sw[0], sw[3]);
       if (plug.level === 'running' || (plug.level === null && plug.on)) bits.push(this.t('room.switchRunning', { name: sw[1] }));
     });
-    if ((r.media || []).some((id) => this.s(id) === 'playing')) bits.push(this.t('room.tvOn'));
+    if ((r.media || []).some((id) => this.MEDIA_ON(id))) bits.push(this.t('room.tvOn'));
     if ((r.vacuum || []).some((v) => this.s(v[0]) === 'cleaning')) bits.push(this.t('room.vacuumRunning'));
     (this.MODULE_VISIBLE('appliances') ? (this.cfg.appliances || []) : []).forEach((a) => {
       if (this.discovery && this.discovery.resolveEntityArea(a.status, this.registries) === r.id && !this.applianceState(a).idle) {

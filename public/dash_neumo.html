@@ -2036,8 +2036,8 @@ class Component extends window.CasaCore.base(DCLogic) {
       } else if (dom === 'switch' && s === 'on' && !applianceSwitches.has(id)) {
         const plug = this.plugStatus(id, activeSwitchPowerMap.get(id) || null);
         activeItems.push({ id, icon: '#i-plug', iconRef: this._bindAttr('href', '#i-plug'), name: this.fn(id), sub: plug.sub, off: () => this.call('switch', 'turn_off', { entity_id: id }) });
-      } else if (dom === 'media_player' && s === 'playing') {
-        activeItems.push({ id, icon: '#i-tv', iconRef: this._bindAttr('href', '#i-tv'), name: this.fn(id), sub: this.at(id, 'media_title') || this.t('media.playing'), off: () => this.call('media_player', 'turn_off', { entity_id: id }) });
+      } else if (dom === 'media_player' && this.MEDIA_ON(id)) {
+        activeItems.push({ id, icon: '#i-tv', iconRef: this._bindAttr('href', '#i-tv'), name: this.fn(id), sub: this.mediaSub(id), off: () => this.call('media_player', 'turn_off', { entity_id: id }) });
       } else if (dom === 'vacuum' && (s === 'cleaning' || s === 'returning')) {
         activeItems.push({ id, icon: '#i-bot', iconRef: this._bindAttr('href', '#i-bot'), name: this.t('vacuum.name'), sub: s === 'cleaning' ? this.t('vacuum.cleaning') : this.t('vacuum.returning'), off: () => this.call('vacuum', 'return_to_base', { entity_id: id }) });
       }
@@ -2099,7 +2099,7 @@ class Component extends window.CasaCore.base(DCLogic) {
       // A room with someone in it is an active room; an open door/window on
       // its own isn't (see B2) — same distinction the pill table draws.
       const presenceOn = (r.status || []).some((p) => p[4] === 'presence');
-      const busy = lightOn || (r.switches || []).some((sw) => this.isOn(sw[0])) || (r.media || []).some((id) => this.s(id) === 'playing')
+      const busy = lightOn || (r.switches || []).some((sw) => this.isOn(sw[0])) || (r.media || []).some((id) => this.MEDIA_ON(id))
         || climateOn || fanOn || vacuumOn || humidifierOn || lockUnlocked || waterHeaterOn || valveOpen || lawnMowerOn || sirenOn || presenceOn;
       const statusPills = (r.status || []).map((p) => ({
         icon: p[2], iconRef: this._bindAttr('href', p[2]), val: this.t('pill.' + p[3]),
@@ -2542,8 +2542,8 @@ class Component extends window.CasaCore.base(DCLogic) {
             const s = this.s(id);
             const live = s !== 'unavailable' && s !== 'unknown';
             return { id, name: this.fn(id), quiet: !live,
-              sub: !live ? this.t('common.unreachable') : s === 'playing' ? (this.at(id, 'media_title') || this.t('media.playing')) : s === 'off' ? this.t('common.off') : s,
-              toggle: () => this.call('media_player', s === 'off' ? 'turn_on' : 'turn_off', { entity_id: id }) };
+              sub: this.mediaSub(id),
+              toggle: () => this.call('media_player', this.MEDIA_ON(id) ? 'turn_off' : 'turn_on', { entity_id: id }) };
           }),
           extras: extraTuples.map((x) => {
             const s = this.s(x[0]);

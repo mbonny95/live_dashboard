@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Fixed
+
+- **A TV that is on now shows up in "Things on now" and lights up its
+  room.** Only the `playing` state counted, but Samsung and Philips TVs
+  report `on` (and `idle`, `paused`) and never `playing`, so a TV switched
+  on stayed invisible. A media player now counts as on in any state but
+  `off`, `standby`, `unavailable` and `unknown`. The line under its name
+  shows what HA knows it's showing (title — a Philips puts the channel
+  there —, app or source), otherwise "on"; the room panel no longer shows
+  the raw state (`on`, `idle`) as text.
+
 ## [2.1.0] - 2026-11-18
 
 Resolves [issue #3](https://github.com/mbonny95/live_dashboard/issues/3)

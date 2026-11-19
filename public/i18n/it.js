@@ -175,7 +175,7 @@ window.CasaStrings = window.CasaStrings || {}; window.CasaStrings.it = {
   'lock.locked': 'bloccata', 'lock.unlocked': 'sbloccata',
   'lock.lockAction': 'Blocca', 'lock.unlockAction': 'Sblocca',
 
-  'media.playing': 'in riproduzione',
+  'media.playing': 'in riproduzione', 'media.paused': 'in pausa',
 
   'people.away': 'fuori', 'people.home': 'in casa',
 
