@@ -344,3 +344,17 @@ test('TVs count as on in any state but off/standby/unavailable/unknown', () => {
   assert.equal(c.mediaSub('media_player.off'), 'common.off');
   assert.equal(c.mediaSub('media_player.gone'), 'common.unreachable');
 });
+
+test('room summary: what is on comes before lights off and covers', () => {
+  const st = {
+    'light.a': { state: 'off', attributes: {} },
+    'cover.a': { state: 'open', attributes: { current_position: 100 } },
+    'media_player.tv': { state: 'on', attributes: {} }
+  };
+  const c = make({ st });
+  c.s = (id) => st[id].state;
+  c.at = (id, a) => (st[id].attributes || {})[a];
+  assert.equal(c.roomSummary({ lights: ['light.a'], covers: ['cover.a'], media: ['media_player.tv'] }), 'room.tvOn · room.lightsOff');
+  st['media_player.tv'].state = 'off';
+  assert.equal(c.roomSummary({ lights: ['light.a'], covers: ['cover.a'], media: ['media_player.tv'] }), 'room.lightsOff · room.coverPct');
+});

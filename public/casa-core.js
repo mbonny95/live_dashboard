@@ -1508,15 +1508,21 @@ function base(DCLogic) {
       });
   }
 
+  // Only two bits fit on the card, so what's on or running comes first and
+  // the passive state (lights off, cover positions) fills what's left: with
+  // lights and covers listed first, a TV that was on never made the cut.
   roomSummary(r) {
     const bits = [];
+    const passive = [];
     const lOn = (r.lights || []).filter((id) => this.isOn(id)).length;
-    if ((r.lights || []).length) bits.push(lOn ? this.t('room.lightsOnCount', { n: lOn }) : this.t('room.lightsOff'));
+    if ((r.lights || []).length) {
+      if (lOn) bits.push(this.t('room.lightsOnCount', { n: lOn })); else passive.push(this.t('room.lightsOff'));
+    }
     const cs = (r.covers || []).map((id) => this.at(id, 'current_position')).filter((p) => p !== undefined);
-    if (cs.length === 1) bits.push(this.t('room.coverPct', { pct: cs[0] }));
+    if (cs.length === 1) passive.push(this.t('room.coverPct', { pct: cs[0] }));
     else if (cs.length > 1) {
       const open = cs.filter((p) => p > 0).length;
-      bits.push(open ? this.t('room.coversOpenCount', { open, total: cs.length }) : this.t('room.coversClosed'));
+      passive.push(open ? this.t('room.coversOpenCount', { open, total: cs.length }) : this.t('room.coversClosed'));
     }
     // Room summary says "X in corso", so it must mean the same thing the
     // room panel's "in funzione" does (v1.5.4): a plug merely energized at
@@ -1534,7 +1540,7 @@ function base(DCLogic) {
         bits.push(this.t('room.switchRunning', { name: a.name }));
       }
     });
-    return bits.slice(0, 2).join(' · ') || this.t('room.nothingActive');
+    return bits.concat(passive).slice(0, 2).join(' · ') || this.t('room.nothingActive');
   }
 
   ALARM_ID() { return this.discovery ? this.discovery.discoverAlarm(this.state.st, this.cfg, this.registries) : null; }

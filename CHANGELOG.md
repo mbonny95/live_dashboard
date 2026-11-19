@@ -15,6 +15,10 @@ All notable changes to this project are documented here. Format follows
   shows what HA knows it's showing (title — a Philips puts the channel
   there —, app or source), otherwise "on"; the room panel no longer shows
   the raw state (`on`, `idle`) as text.
+- **The room card summary puts what's on first.** It has room for two
+  bits, and lights and covers always came first, so "TV on" (or a running
+  plug) was cut off in a room with both. Lights on, running plugs, a TV and
+  the vacuum now come before "lights off" and cover positions.
 
 ## [2.1.0] - 2026-11-18
 

@@ -64,11 +64,12 @@ test('it.js and en.js have the same keys', () => {
   assert.deepEqual([...en].filter((k) => !it.has(k)), [], 'in en.js, missing from it.js');
 });
 
-// One VERSION, in panel.js — the CHANGELOG's newest entry must name it.
+// One VERSION, in panel.js — the CHANGELOG's newest released entry must
+// name it. An [Unreleased] section on top (Keep a Changelog) is skipped.
 test('panel.js VERSION matches the newest CHANGELOG entry', () => {
   const version = fs.readFileSync(pub('panel.js'), 'utf8').match(/const VERSION = '([^']+)'/)[1];
   const changelog = fs.readFileSync(path.join(__dirname, '../CHANGELOG.md'), 'utf8');
-  const newest = changelog.match(/^## \[([^\]]+)\]/m)[1];
+  const newest = changelog.match(/^## \[(?!Unreleased\])([^\]]+)\]/m)[1];
   // Development builds deployed for testing carry a -dev.N suffix.
   assert.equal(newest, version.replace(/-dev\.\d+$/, ''));
 });
