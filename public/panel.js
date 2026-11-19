@@ -23,7 +23,7 @@
 // ?v= for manual installs — the module and the page it loads must
 // cache-bust together or a stale module can point at a fresh page's
 // mismatched API).
-const VERSION = '2.1.0';
+const VERSION = '2.1.1';
 console.info(`[live_dashboard] v${VERSION}`);
 
 async function resolveAssetVersion() {
