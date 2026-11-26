@@ -3,6 +3,14 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- Demo: new scenario `?demo&scenario=tv-on`, a TV that reports plain `on`
+  with nothing about what's on screen (the way Samsung's integration does),
+  to try the 2.1.1 fix without real hardware.
+
 ## [2.1.1] - 2026-11-19
 
 ### Fixed

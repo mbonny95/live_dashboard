@@ -364,6 +364,14 @@ const SCENARIOS = [
   { id: 'alarm-pin', name: 'Allarme con codice (1234)',
     states: {
       'alarm_control_panel.demo_home': { attributes: { code_format: 'number', code_arm_required: true } }
+    } },
+  // v2.1.1 — a TV that reports plain `on` and nothing about what's on
+  // screen, the way Samsung's integration does: it must still count as on
+  // ("Things on now", room card). The Philips case (on + media_title) is
+  // the default seed's media_title with this state.
+  { id: 'tv-on', name: 'TV accesa (stato on)',
+    states: {
+      'media_player.soggiorno_tv': { state: 'on', attributes: { media_title: null } }
     } }
 ];
 const DEMO_ALARM_CODE = '1234';
