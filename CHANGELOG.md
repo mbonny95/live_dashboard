@@ -3,6 +3,17 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- Demo: new scenario `?demo&scenario=garden`, a Garden Irrigation 2.x
+  install with two zones ("Prato" needs water, "Orto" doesn't, with rain
+  forecast) and no irrigation config, so the zones are found on their own.
+  The 5/10/15 min buttons work: recording a watering lowers the zone's
+  deficit, recommended minutes and dryness the way the integration would.
+  Scenarios can now add entities and devices, not just patch them.
+
 ## [2.2.0] - 2026-11-27
 
 ### Added

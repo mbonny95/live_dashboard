@@ -278,6 +278,44 @@ const DEMO_CONFIG = {
 //  altrove nel codice. dash_neumo.html, discovery.js e la formattazione non
 //  sanno che gli scenari esistono — vedono solo entità diverse.
 // ===========================================================================
+// v2.2.0 — Garden Irrigation 2.x fixture for the `garden` scenario: one
+// device for the installation, one per zone, and entities carrying the
+// platform/translation_key the dashboard recognises them by. Each zone's
+// numbers are recomputed by gardenRecord() when a watering is recorded.
+const GARDEN_ZONES = [
+  { device: 'gi_zone_prato', name: 'Prato', slug: 'prato', soil: 'sensor.zone1_soil_moisture', rate: 0.25,
+    deficit: 14.2, raw: 9.3, last: 3, week: 6.0, soilStatus: 'dry', soilPct: 22, warnings: [] },
+  { device: 'gi_zone_orto', name: 'Orto', slug: 'orto', soil: 'sensor.zone2_soil_moisture', rate: 0.175,
+    deficit: 4.1, raw: 11.0, last: 1, week: 10.5, soilStatus: 'ok', soilPct: 47, warnings: [{ code: 'rain_forecast', forecast_mm: 6 }] }
+];
+function gardenZoneEntities(z) {
+  const needs = z.deficit >= z.raw;
+  const rec = needs ? z.deficit : 0;
+  const reg = (key) => ({ platform: 'garden_irrigation', translation_key: key, unique_id: z.device + '_' + key, device_id: z.device });
+  const at = (id, state, attributes, key) => Object.assign(entity(id, null, state, attributes), { registry: reg(key) });
+  return [
+    at('binary_sensor.' + z.slug + '_da_irrigare', needs ? 'on' : 'off', { friendly_name: z.name + ' Da irrigare',
+      reasons: [{ code: needs ? 'deficit_reached_raw' : 'deficit_below_raw', deficit_mm: z.deficit, raw_mm: z.raw }], warnings: z.warnings }, 'needs_irrigation'),
+    at('sensor.' + z.slug + '_deficit_idrico_del_suolo', z.deficit.toFixed(1), { friendly_name: z.name + ' Deficit idrico del suolo', unit_of_measurement: 'mm' }, 'deficit'),
+    at('sensor.' + z.slug + '_irrigazione_consigliata', rec.toFixed(1), { friendly_name: z.name + ' Irrigazione consigliata', unit_of_measurement: 'mm' }, 'recommended_irrigation'),
+    at('sensor.' + z.slug + '_minuti_consigliati_rete', String(Math.round(rec / z.rate)), { friendly_name: z.name + ' Minuti consigliati (rete)', unit_of_measurement: 'min', rate_mm_per_min: z.rate }, 'recommended_minutes_mains'),
+    at('sensor.' + z.slug + '_irrigazione_ultimi_7_giorni', z.week.toFixed(1), { friendly_name: z.name + ' Irrigazione ultimi 7 giorni', unit_of_measurement: 'mm' }, 'irrigation_7d'),
+    at('sensor.' + z.slug + '_ultima_irrigazione', new Date(Date.now() - z.last * 86400000).toISOString(), { friendly_name: z.name + ' Ultima irrigazione', device_class: 'timestamp' }, 'last_irrigation'),
+    at('sensor.' + z.slug + '_sensore_umidita_suolo', z.soilStatus, { friendly_name: z.name + ' Sensore umidità suolo', entity_id: z.soil, value_pct: z.soilPct }, 'soil_moisture_status'),
+    at('sensor.' + z.slug + '_acqua_facilmente_disponibile', z.raw.toFixed(1), { friendly_name: z.name + ' Acqua facilmente disponibile', unit_of_measurement: 'mm' }, 'raw')
+  ];
+}
+const GARDEN = {
+  devices: [{ id: 'gi_system', area_id: null, name: 'Garden Irrigation', name_by_user: null }]
+    .concat(GARDEN_ZONES.map((z) => ({ id: z.device, area_id: null, name: z.name, name_by_user: null }))),
+  entities: [
+    Object.assign(entity('sensor.garden_irrigation_et0_ieri', null, '3.4', { friendly_name: 'ET₀ ieri', unit_of_measurement: 'mm' }),
+      { registry: { platform: 'garden_irrigation', translation_key: 'et0_yesterday', unique_id: 'gi_system_et0_yesterday', device_id: 'gi_system' } }),
+    Object.assign(entity('sensor.garden_irrigation_pioggia_ieri', null, '0.0', { friendly_name: 'Pioggia ieri', unit_of_measurement: 'mm' }),
+      { registry: { platform: 'garden_irrigation', translation_key: 'rain_yesterday', unique_id: 'gi_system_rain_yesterday', device_id: 'gi_system' } })
+  ].concat(...GARDEN_ZONES.map(gardenZoneEntities))
+};
+
 const SCENARIOS = [
   { id: 'default', name: 'Giornata normale' },
   { id: 'export', name: 'Sole forte, immissione',
@@ -372,6 +410,19 @@ const SCENARIOS = [
   { id: 'tv-on', name: 'TV accesa (stato on)',
     states: {
       'media_player.soggiorno_tv': { state: 'on', attributes: { media_title: null } }
+    } },
+  // v2.2.0 — the irrigation of a Garden Irrigation 2.x install, found with
+  // no irrigation config (see GARDEN below). The demo's own soil sensors
+  // stand in for the WH51s the zones are linked to.
+  { id: 'garden', name: 'Garden Irrigation 2.x',
+    add: GARDEN.entities, devices: GARDEN.devices,
+    states: {
+      'sensor.zone1_soil_moisture': { state: '22' },
+      'sensor.zone2_soil_moisture': { state: '47' }
+    },
+    patchConfig(cfg) {
+      cfg.irrigation = null;
+      return cfg;
     } }
 ];
 const DEMO_ALARM_CODE = '1234';
@@ -392,6 +443,9 @@ function scenarioSeed(scenario) {
   if (scenario.removeIds) {
     const drop = new Set(scenario.removeIds);
     seed = seed.filter((e) => !drop.has(e.entity_id));
+  }
+  if (scenario.add) {
+    seed = seed.concat(scenario.add.map((e) => Object.assign({}, e, { attributes: Object.assign({}, e.attributes) })));
   }
   if (scenario.states) {
     seed = seed.map((e) => {
@@ -417,12 +471,13 @@ const ACTIVE_CONFIG = scenarioConfig(SCENARIO_MAP[ACTIVE_SCENARIO_ID]);
 
 function buildRegistries() {
   const areas = Object.keys(AREA_NAMES).map((id) => ({ area_id: id, name: AREA_NAMES[id], icon: null }));
-  const entities = ACTIVE_SEED.map((e) => ({
+  const entities = ACTIVE_SEED.map((e) => Object.assign({
     entity_id: e.entity_id, area_id: e.area_id, device_id: DEVICE_LINKS[e.entity_id] || null,
     disabled_by: null, hidden_by: null,
     entity_category: e.entity_id === 'sensor.router_wifi_rssi' ? 'diagnostic' : null
-  }));
-  return { areas, devices: DEVICES, entities };
+  }, e.registry || {}));
+  const scenario = SCENARIO_MAP[ACTIVE_SCENARIO_ID] || {};
+  return { areas, devices: DEVICES.concat(scenario.devices || []), entities };
 }
 
 function cloneStates() {
@@ -532,6 +587,20 @@ async function connect(handlers) {
           for (const id of targets) if (map[service]) setState(id, map[service]);
         } else if (domain === 'script' && service === 'set_house_mode' && data && data.mode) {
           setState('input_select.house_mode', data.mode);
+        } else if (domain === 'garden_irrigation' && service === 'record_irrigation' && data) {
+          // v2.2.0 — the `garden` scenario: what the integration would do on
+          // its next update, so the deficit visibly goes down.
+          const z = GARDEN_ZONES.find((x) => x.device === data.zone);
+          if (z) {
+            const mm = data.mm !== undefined ? Number(data.mm) : Number(data.minutes || 0) * z.rate;
+            z.deficit = Math.max(0, z.deficit - mm);
+            z.week += mm;
+            z.last = 0;
+            z.soilPct = Math.min(60, Math.round(z.soilPct + mm * 2));
+            z.soilStatus = z.soilPct >= 55 ? 'wet' : z.soilPct <= 25 ? 'dry' : 'ok';
+            for (const e of gardenZoneEntities(z)) setState(e.entity_id, e.state, e.attributes);
+            setState(z.soil, String(z.soilPct));
+          }
         } else if (domain === 'input_button' && service === 'press') {
           // No persistent state for a button press in the demo — the caller
           // (irrigation zone "N min" buttons) drives the valve directly via
