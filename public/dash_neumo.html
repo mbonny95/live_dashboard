@@ -711,7 +711,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:4px solid var(
 </div>
 <div style="background:var(--gr);box-shadow:var(--nu-sm);border-radius:18px;padding:11px 13px">
 <div style="font-family:var(--font-heading);font-size:18px;line-height:1.1">{{ z.mmWeek }}</div>
-<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ S.mmPerWeek }}</div>
+<div style="font:500 10.5px/1.3 var(--font-body);color:var(--tx2);margin-top:3px">{{ z.weekLabel }}</div>
 </div>
 </div>
 
@@ -1914,7 +1914,7 @@ class Component extends window.CasaCore.base(DCLogic) {
       energyEmptyState, energyMissingLabel, openEnergySettings
     } = this.vmEnergyEmpty({ en, gridT, hasEnergy, prodT });
 
-    const hasIrrigation = !!(this.cfg.irrigation && this.cfg.irrigation.zones && this.cfg.irrigation.zones.length) && this.MODULE_VISIBLE('irrigation');
+    const hasIrrigation = !!(this.IRRIGATION() && this.IRRIGATION().zones && this.IRRIGATION().zones.length) && this.MODULE_VISIBLE('irrigation');
     const hasVehicle = !!(this.cfg.vehicle) && this.MODULE_VISIBLE('vehicle');
     const alarmId = this.ALARM_ID();
     const hasAlarm = !!alarmId;
@@ -2306,7 +2306,7 @@ class Component extends window.CasaCore.base(DCLogic) {
 
     // irrigation (Fase 3 — zone-by-zone, degrades gracefully: only moisture +
     // valve are required, everything else is extra if configured) ----------
-    const irrZones = hasIrrigation ? this.cfg.irrigation.zones : [];
+    const irrZones = hasIrrigation ? this.IRRIGATION().zones : [];
     const zoneTone = (txt) => /stress/i.test(txt || '') ? 'alert' : new RegExp(this.t('irrigation.needsWaterMatch'), 'i').test(txt || '') ? 'warn' : 'ok';
     const zones = irrZones.map((z, i) => {
       const adv = z.advisory ? this.s(z.advisory) : null;
@@ -2343,11 +2343,12 @@ class Component extends window.CasaCore.base(DCLogic) {
           });
         }
       });
-      return {
+      const zoneVm = {
         name: z.name, advisory: adv || '—', tone: zoneTone(adv),
         urgenza: (z.advisory ? (this.at(z.advisory, 'urgenza') || '') : '') + (mins > 0 ? ' · ' + this.t('irrigation.recommendedMin', { n: mins }) : ''),
         soil: (z.advisory && this.at(z.advisory, 'umidita_suolo')) || this.val(z.moisture, 0, '%'),
         deficit: z.deficit ? this.val(z.deficit, 1, ' mm') : '—',
+        weekLabel: this.strings.mmPerWeek,
         mmWeek: z.weekMm ? this.val(z.weekMm, 1, ' mm') : '—', last,
         lastRunLine: this.t('irrigation.lastRun', { when: last }),
         spark: zoneSpark, sparkRef: this._bindAttr('points', zoneSpark),
@@ -2363,9 +2364,11 @@ class Component extends window.CasaCore.base(DCLogic) {
           ? z.buttons.map((b) => makeDurationButton(this.t('irrigation.minutes', { n: b.minutes }), 'btn:' + b.entity, () => this.call('input_button', 'press', { entity_id: b.entity })))
           : (z.valve ? (z.durations || [5, 10, 15]).map((m) => makeDurationButton(this.t('irrigation.minutes', { n: m }), 'valve:' + z.valve + ':' + m, () => this.runValve(z.valve, m))) : [])
       };
+      // v2.2.0 — a Garden Irrigation zone fills these from its own entities.
+      return z.gi ? Object.assign(zoneVm, this.vmGardenZone(z, makeDurationButton)) : zoneVm;
     });
 
-    const irrWx = (hasIrrigation && this.cfg.irrigation.weather) || {};
+    const irrWx = (hasIrrigation && this.IRRIGATION().weather) || {};
     // config.weatherStation is optional, on top of what irrigation.weather
     // already maps — an install with irrigation configured doesn't have to
     // retype the same local sensors just to prefer them here over the
@@ -2377,7 +2380,7 @@ class Component extends window.CasaCore.base(DCLogic) {
     const stationWindId = ws.wind || irrWx.wind || null;
     const stationRainId = ws.rain || irrWx.rain || null;
     const stationIrradianceId = ws.irradiance || irrWx.irradiance || null;
-    const stationEt0Id = ws.et0 || (hasIrrigation && this.cfg.irrigation.et0) || null;
+    const stationEt0Id = ws.et0 || (hasIrrigation && this.IRRIGATION().et0) || null;
     const outT = stationTempId ? this.n(stationTempId) : entityT;
     const outH = stationHumidityId ? this.n(stationHumidityId) : entityH;
     const meteoDefs = [];
@@ -2386,9 +2389,13 @@ class Component extends window.CasaCore.base(DCLogic) {
     if (irrWx.irradiance) meteoDefs.push(['#i-solar', this.t('wx.irradiance'), this.val(irrWx.irradiance, 0, ' W/m²')]);
     if (irrWx.rain) meteoDefs.push(['#i-rain', this.t('wx.rainToday'), this.val(irrWx.rain, 1, ' mm')]);
     if (irrWx.wind) meteoDefs.push(['#i-wind', this.t('wx.wind'), this.val(irrWx.wind, 1, ' km/h')]);
-    if (hasIrrigation && this.cfg.irrigation.et0) meteoDefs.push(['#i-sun', this.t('irrigation.et0Today'), this.val(this.cfg.irrigation.et0, 2, ' mm')]);
-    if (hasIrrigation && this.cfg.irrigation.etc) meteoDefs.push(['#i-grass', this.t('irrigation.etcToday'), this.val(this.cfg.irrigation.etc, 2, ' mm')]);
-    if (hasIrrigation && this.cfg.irrigation.effectiveRain) meteoDefs.push(['#i-drop', this.t('irrigation.effectiveRain'), this.val(this.cfg.irrigation.effectiveRain, 1, ' mm')]);
+    if (hasIrrigation && this.IRRIGATION().et0) meteoDefs.push(['#i-sun', this.t('irrigation.et0Today'), this.val(this.IRRIGATION().et0, 2, ' mm')]);
+    if (hasIrrigation && this.IRRIGATION().etc) meteoDefs.push(['#i-grass', this.t('irrigation.etcToday'), this.val(this.IRRIGATION().etc, 2, ' mm')]);
+    if (hasIrrigation && this.IRRIGATION().effectiveRain) meteoDefs.push(['#i-drop', this.t('irrigation.effectiveRain'), this.val(this.IRRIGATION().effectiveRain, 1, ' mm')]);
+    // v2.2.0 — Garden Irrigation's own daily balance inputs (yesterday's).
+    const giSys = (hasIrrigation && this.IRRIGATION().gardenIrrigation) || {};
+    if (giSys.et0_yesterday) meteoDefs.push(['#i-sun', this.t('irrigation.et0Yesterday'), this.val(giSys.et0_yesterday, 1, ' mm')]);
+    if (giSys.rain_yesterday) meteoDefs.push(['#i-rain', this.t('irrigation.rainYesterday'), this.val(giSys.rain_yesterday, 1, ' mm')]);
     const meteo = meteoDefs.map((x) => ({ icon: x[0], iconRef: this._bindAttr('href', x[0]), label: x[1], val: x[2] }));
 
     // weather detail slide-over — outdoor temp/humidity prefer a configured
@@ -2680,16 +2687,16 @@ class Component extends window.CasaCore.base(DCLogic) {
       feedInLabel: this.t('energy.feedIn'),
       prodPeriod: this.dec(totP, 1) + ' kWh',
       periodNote: this.t('energy.periodNote', { n: R, grid: this.dec(totG, 1) + ' kWh' }),
-      hasIrrigation, irrSummary: hasIrrigation ? (this.cfg.irrigation.summary ? this.s(this.cfg.irrigation.summary) : this.t('irrigation.defaultSummary', { n: zones.length })) : '',
+      hasIrrigation, irrSummary: hasIrrigation ? (this.IRRIGATION().summary ? this.s(this.IRRIGATION().summary) : this.t('irrigation.defaultSummary', { n: zones.length })) : '',
       irrSub: hasIrrigation
         ? [
-            this.cfg.irrigation.etc ? this.t('irrigation.etcShort') + ' ' + this.val(this.cfg.irrigation.etc, 2, ' mm') : null,
+            this.IRRIGATION().etc ? this.t('irrigation.etcShort') + ' ' + this.val(this.IRRIGATION().etc, 2, ' mm') : null,
             zones.some((z) => z.deficit !== '—') ? this.t('irrigation.deficitShort') + ' ' + zones.filter((z) => z.deficit !== '—').map((z) => z.name + ' ' + z.deficit).join(' / ') : null
           ].filter(Boolean).join(' · ')
         : '',
       zones, meteo,
-      hasResetButton: hasIrrigation && !!this.cfg.irrigation.resetButton,
-      resetWeek: hasIrrigation && this.cfg.irrigation.resetButton ? () => this.call('input_button', 'press', { entity_id: this.cfg.irrigation.resetButton }) : () => {},
+      hasResetButton: hasIrrigation && !!this.IRRIGATION().resetButton,
+      resetWeek: hasIrrigation && this.IRRIGATION().resetButton ? () => this.call('input_button', 'press', { entity_id: this.IRRIGATION().resetButton }) : () => {},
       station, weatherOpen: this.state.weather,
       openWeather: () => this.setState({ weather: true }),
       closeWeather: () => this.setState({ weather: false }),

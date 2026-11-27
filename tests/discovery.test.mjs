@@ -141,3 +141,42 @@ test('discoverRooms: every discarded entity says why', () => {
 test('discoverRooms: no areas at all is an empty result, not a crash', () => {
   assert.deepEqual(plain(D.discoverRooms({}, { areas: [] }, {})), { rooms: [], overflow: [], discardLog: [] });
 });
+
+// v2.2.0 — Garden Irrigation 2.x zones, shaped like a real install's registry.
+function gardenIrrigationFixture() {
+  const st = {};
+  const entities = [];
+  const add = (id, device, key, state, attributes) => {
+    st[id] = { state, attributes: attributes || {} };
+    entities.push({ entity_id: id, platform: 'garden_irrigation', device_id: device, translation_key: key, unique_id: device + '_' + key, disabled_by: null });
+  };
+  add('sensor.garden_irrigation_evapotraspirazione_di_riferimento_ieri', 'sys', 'et0_yesterday', '2.1');
+  add('sensor.garden_irrigation_pioggia_ieri', 'sys', 'rain_yesterday', '0.0');
+  add('binary_sensor.zona_1_da_irrigare', 'z1', 'needs_irrigation', 'off');
+  add('sensor.zona_1_deficit_idrico_del_suolo', 'z1', 'deficit', '12.3');
+  add('sensor.zona_1_minuti_consigliati_rete', 'z1', 'recommended_minutes_mains', '0');
+  add('sensor.zona_2_deficit_idrico_del_suolo', 'z2', 'deficit', '30.0');
+  add('binary_sensor.zona_2_da_irrigare', 'z2', 'needs_irrigation', 'on');
+  entities.push({ entity_id: 'sensor.other', platform: 'template', device_id: 'z1', unique_id: 'x_deficit' });
+  st['sensor.other'] = { state: '1', attributes: {} };
+  const devices = [{ id: 'sys', name: 'Garden Irrigation' }, { id: 'z2', name: 'Zona 2', name_by_user: 'Giardino grande' }, { id: 'z1', name: 'Zona 1' }];
+  return { st, registries: { areas: [], devices, entities } };
+}
+
+test('discoverGardenIrrigation: zones by device, system apart, by translation_key', () => {
+  const { st, registries } = gardenIrrigationFixture();
+  const gi = D.discoverGardenIrrigation(st, registries);
+  assert.equal(gi.zones.map((z) => z.name).join('|'), 'Giardino grande|Zona 1');
+  assert.equal(gi.zones[1].entities.deficit, 'sensor.zona_1_deficit_idrico_del_suolo');
+  assert.equal(gi.zones[1].entities.recommended_minutes_mains, 'sensor.zona_1_minuti_consigliati_rete');
+  assert.equal(gi.system.et0_yesterday, 'sensor.garden_irrigation_evapotraspirazione_di_riferimento_ieri');
+  assert.equal(D.discoverGardenIrrigation(st, { entities: [], devices: [] }), null);
+});
+
+test('discoverGardenIrrigation: unique_id suffix when translation_key is missing', () => {
+  const { st, registries } = gardenIrrigationFixture();
+  registries.entities.forEach((e) => { delete e.translation_key; });
+  const gi = D.discoverGardenIrrigation(st, registries);
+  assert.equal(gi.zones.length, 2);
+  assert.equal(gi.zones[0].entities.needs_irrigation, 'binary_sensor.zona_2_da_irrigare');
+});

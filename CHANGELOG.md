@@ -7,6 +7,19 @@ All notable changes to this project are documented here. Format follows
 
 ### Added
 
+- **Garden Irrigation 2.x, with nothing to configure.** Without
+  `irrigation.zones` in the config, the Irrigation tab finds the zones of
+  the [Garden Irrigation](https://github.com/mbonny95/ha-garden-irrigation)
+  integration (2.0 or later) by its entities' translation keys, not their
+  names. Per zone: the advice from `needs_irrigation` and its reasons
+  ("No need to water · deficit 8 of 20 mm"), recommended minutes and the
+  integration's warnings (rain forecast, soil sensor wet/dry, watered
+  recently, weekly cap), soil moisture from the linked sensor with its
+  48-hour trend, deficit, mm of the last 7 days and last watering. The
+  5/10/15 min buttons record a manual watering with
+  `garden_irrigation.record_irrigation`. Yesterday's ET₀ and rain show with
+  the weather data. Explicit `irrigation.zones` still take precedence.
+
 - Demo: new scenario `?demo&scenario=tv-on`, a TV that reports plain `on`
   with nothing about what's on screen (the way Samsung's integration does),
   to try the 2.1.1 fix without real hardware.

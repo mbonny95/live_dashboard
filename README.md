@@ -364,6 +364,23 @@ see it.
 
 ## Enabling Irrigation
 
+### With Garden Irrigation 2.x: nothing to configure (v2.2.0)
+
+If you use the [Garden Irrigation](https://github.com/mbonny95/ha-garden-irrigation)
+integration (2.0 or later) and your config has no `irrigation.zones`, the
+Irrigation tab finds its zones by itself. Each zone shows the advice
+("Water now: 24.5 mm" or "No need to water · deficit 8 of 20 mm", with the
+recommended minutes and the integration's warnings), the soil moisture of
+the sensor linked to the zone with its 48-hour trend, the deficit, the mm of
+the last 7 days and the last watering. The 5/10/15 min buttons record a
+manual watering with `garden_irrigation.record_irrigation` (from mains, or
+from the tank if that's the only source with a rate); they don't open any
+valve. Yesterday's ET₀ and rain from the integration show next to the
+weather data. Different durations: `irrigation: { durations: [10, 20] }`.
+Zones written in `irrigation.zones` always take precedence.
+
+### Other setups
+
 Each zone needs only `moisture` (a `sensor.*` with `%` state) and a way to run
 water to be useful: sparkline, valve state, and timed-run buttons. Two ways to
 wire that second part, pick whichever matches your setup:

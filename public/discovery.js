@@ -158,6 +158,52 @@ function collectConfiguredEntityModules(config) {
   return byId;
 }
 
+// --- garden-irrigation 2.x (v2.2.0) ------------------------------------------
+// The Garden Irrigation integration (github.com/mbonny95/ha-garden-irrigation)
+// makes one device per zone plus one for the installation. Its entities are
+// recognised by their translation_key (the description key the integration
+// uses; unique_id ends with the same key as a fallback), never by entity_id,
+// which follows the user's language and renames.
+const GI_ZONE_KEYS = ['needs_irrigation', 'deficit', 'recommended_irrigation', 'recommended_minutes_mains',
+  'recommended_minutes_tank', 'irrigation_7d', 'last_irrigation', 'soil_moisture_status', 'taw', 'raw', 'kc',
+  'etc_yesterday', 'effective_rain_yesterday'];
+const GI_SYSTEM_KEYS = ['et0_yesterday', 'rain_yesterday', 'data_quality', 'forecast_rain'];
+const GI_KEYS = GI_ZONE_KEYS.concat(GI_SYSTEM_KEYS).sort((a, b) => b.length - a.length);
+
+function giKey(ent) {
+  if (ent.translation_key && GI_KEYS.includes(ent.translation_key)) return ent.translation_key;
+  const uid = ent.unique_id || '';
+  return GI_KEYS.find((k) => uid.endsWith('_' + k)) || null;
+}
+
+// -> null, or { zones: [{ deviceId, name, entities: { key: entity_id } }],
+//    system: { key: entity_id } }. Zones keep the device registry's order.
+function discoverGardenIrrigation(states, registries) {
+  const entities = (registries && registries.entities) || [];
+  const devices = (registries && registries.devices) || [];
+  const byDevice = new Map();
+  for (const ent of entities) {
+    if (ent.platform !== 'garden_irrigation' || ent.disabled_by || !ent.device_id) continue;
+    const key = giKey(ent);
+    if (!key || !(states && states[ent.entity_id])) continue;
+    if (!byDevice.has(ent.device_id)) byDevice.set(ent.device_id, {});
+    byDevice.get(ent.device_id)[key] = ent.entity_id;
+  }
+  if (!byDevice.size) return null;
+  const zones = [];
+  let system = {};
+  const order = devices.map((d) => d.id).filter((id) => byDevice.has(id));
+  for (const id of byDevice.keys()) if (!order.includes(id)) order.push(id);
+  for (const id of order) {
+    const ents = byDevice.get(id);
+    if (GI_SYSTEM_KEYS.some((k) => ents[k])) { system = Object.assign(system, ents); continue; }
+    if (!ents.deficit && !ents.needs_irrigation) continue;
+    const dev = devices.find((d) => d.id === id) || {};
+    zones.push({ deviceId: id, name: dev.name_by_user || dev.name || id, entities: ents });
+  }
+  return zones.length ? { zones, system } : null;
+}
+
 // --- smart plugs (v1.5.4) ---------------------------------------------------
 // A switch's relay state answers "is it energized" (`switch.x` = on), not
 // "is the appliance plugged into it actually running" — see CLAUDE.md's
@@ -835,7 +881,7 @@ window.CasaDiscovery = {
   SECTION_ORDER_DEFAULT, mergeSectionOrder,
   CONTROLLABLE_DOMAINS, DOMAIN_ICON, domainOf, isExcluded, friendlyName,
   powerSensorForSwitch, classifySwitchPower,
-  collectConfiguredEntityModules, findDuplicateDevices
+  collectConfiguredEntityModules, findDuplicateDevices, discoverGardenIrrigation
 };
 
 })();

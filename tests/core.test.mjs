@@ -358,3 +358,47 @@ test('room summary: what is on comes before lights off and covers', () => {
   st['media_player.tv'].state = 'off';
   assert.equal(c.roomSummary({ lights: ['light.a'], covers: ['cover.a'], media: ['media_player.tv'] }), 'room.lightsOff · room.coverPct');
 });
+
+test('vmGardenZone: advice, warnings and record_irrigation buttons', () => {
+  const st = {
+    'binary_sensor.z_needs': { state: 'on', attributes: { reasons: [{ code: 'deficit_reached_raw', deficit_mm: 24.5, raw_mm: 20 }], warnings: [{ code: 'rain_forecast', forecast_mm: 3.2 }] } },
+    'sensor.z_rec': { state: '24.5', attributes: {} },
+    'sensor.z_min': { state: '98', attributes: {} },
+    'sensor.z_def': { state: '24.5', attributes: { unit_of_measurement: 'mm' } },
+    'sensor.z_7d': { state: '0', attributes: {} },
+    'sensor.z_last': { state: 'unknown', attributes: {} },
+    'sensor.z_soil': { state: 'ok', attributes: { value_pct: 41, entity_id: 'sensor.wh51' } }
+  };
+  const c = make({ st });
+  c.s = (id) => st[id].state;
+  c.at = (id, a) => (st[id].attributes || {})[a];
+  c.t = (k, p) => k + (p ? JSON.stringify(p) : '');
+  const z = { name: 'Zona 1', gi: { deviceId: 'dev1', entities: {
+    needs_irrigation: 'binary_sensor.z_needs', recommended_irrigation: 'sensor.z_rec', recommended_minutes_mains: 'sensor.z_min',
+    deficit: 'sensor.z_def', irrigation_7d: 'sensor.z_7d', last_irrigation: 'sensor.z_last', soil_moisture_status: 'sensor.z_soil' } } };
+  const made = [];
+  const vm = c.vmGardenZone(z, (label, key, run) => { made.push({ label, key, run }); return { label }; });
+  assert.equal(vm.tone, 'warn');
+  assert.ok(vm.advisory.startsWith('irrigation.giWater'));
+  assert.ok(vm.urgenza.includes('irrigation.recommendedMin{"n":98}') && vm.urgenza.includes('irrigation.giWarnRain'));
+  assert.equal(vm.soil, '41%');
+  assert.equal(made.length, 3);
+  made[0].run();
+  assert.equal(JSON.stringify(c.calls[0]), JSON.stringify({ domain: 'garden_irrigation', service: 'record_irrigation', data: { zone: 'dev1', source: 'mains', minutes: 5 } }));
+  st['binary_sensor.z_needs'].state = 'off';
+  st['binary_sensor.z_needs'].attributes.reasons = [{ code: 'deficit_below_raw', deficit_mm: 8, raw_mm: 20 }];
+  st['binary_sensor.z_needs'].attributes.warnings = [];
+  const ok = c.vmGardenZone(z, (label) => ({ label }));
+  assert.equal(ok.tone, 'ok');
+  assert.ok(ok.advisory.startsWith('irrigation.giNoNeed'));
+});
+
+test('IRRIGATION: explicit zones win over Garden Irrigation discovery', () => {
+  const c = make();
+  c.discovery = { discoverGardenIrrigation: () => ({ zones: [{ deviceId: 'd', name: 'Zona 1', entities: {} }], system: { et0_yesterday: 'sensor.e' } }) };
+  c.cfg = { irrigation: null };
+  assert.equal(c.IRRIGATION().zones[0].gi.deviceId, 'd');
+  assert.equal(c.IRRIGATION().gardenIrrigation.et0_yesterday, 'sensor.e');
+  c.cfg = { irrigation: { zones: [{ name: 'Manual', moisture: 'sensor.m' }] } };
+  assert.equal(c.IRRIGATION().zones[0].name, 'Manual');
+});

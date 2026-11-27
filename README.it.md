@@ -379,6 +379,23 @@ il nuovo anello e non lo vedi.
 
 ## Attivare l'Irrigazione
 
+### Con Garden Irrigation 2.x: niente da configurare (v2.2.0)
+
+Se usi l'integrazione [Garden Irrigation](https://github.com/mbonny95/ha-garden-irrigation)
+(2.0 o successiva) e la tua config non ha `irrigation.zones`, la scheda
+Irrigazione trova da sola le sue zone. Ogni zona mostra il consiglio («Da
+irrigare: 24,5 mm» oppure «Non serve irrigare · deficit 8 di 20 mm», con i
+minuti consigliati e gli avvisi dell'integrazione), l'umidità del sensore
+collegato alla zona con l'andamento a 48 ore, il deficit, i mm degli ultimi
+7 giorni e l'ultima irrigazione. I pulsanti 5/10/15 min registrano
+un'irrigazione manuale con `garden_irrigation.record_irrigation` (dalla rete,
+o dalla cisterna se è l'unica sorgente con una portata): non aprono nessuna
+valvola. ET₀ e pioggia di ieri dell'integrazione compaiono accanto ai dati
+meteo. Durate diverse: `irrigation: { durations: [10, 20] }`. Le zone scritte
+in `irrigation.zones` hanno sempre la precedenza.
+
+### Altri impianti
+
 Ogni zona è già utile con solo `moisture` (un `sensor.*` con stato in `%`) e
 un modo di far scorrere l'acqua: sparkline, stato valvola e pulsanti a
 durata. Due modi per collegare questa seconda parte, scegli quello che

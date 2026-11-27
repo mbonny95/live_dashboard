@@ -841,7 +841,7 @@ function base(DCLogic) {
   _loadHistory() {
     if (!this.be) return;
     const jobs = [];
-    ((this.cfg.irrigation && this.cfg.irrigation.zones) || []).forEach((z, i) => {
+    ((this.IRRIGATION() && this.IRRIGATION().zones) || []).forEach((z, i) => {
       if (z.moisture) jobs.push(this.be.history(z.moisture, 48).then((v) => ['zone' + i, v]));
     });
     const en = this.cfg.energy;
@@ -1985,6 +1985,76 @@ function base(DCLogic) {
       diagRingValue, diagHourlyValue, diagAlarmRows, diagReasonGroups, diagReasonTotalLabel, hasDiagReasonGroups,
       hasDiagDuplicateDevices, diagDuplicateDevices, diagDuplicateDevicesTitle, doDiag, settingsTabs, powerUnitOptions,
       plugThresholdOptions, showBatterySignControl, batterySignOptions, batterySignLiveLabel, batterySignSuspect, batterySignInvert
+    };
+  }
+
+  // v2.2.0 — the irrigation config the pages render. An explicit
+  // config.irrigation.zones always wins (manual installs, other systems);
+  // without it, the zones of a Garden Irrigation 2.x integration are used
+  // as found, so that integration needs no dashboard config at all.
+  IRRIGATION() {
+    const cfg = this.cfg && this.cfg.irrigation;
+    if (cfg && cfg.zones && cfg.zones.length) return cfg;
+    const gi = this.discovery && this.discovery.discoverGardenIrrigation
+      ? this.discovery.discoverGardenIrrigation(this.state.st, this.registries) : null;
+    if (!gi) return cfg || null;
+    return Object.assign({}, cfg || {}, {
+      zones: gi.zones.map((z) => {
+        const soil = z.entities.soil_moisture_status;
+        return { name: z.name, moisture: (soil && this.at(soil, 'entity_id')) || null, gi: z };
+      }),
+      gardenIrrigation: gi.system
+    });
+  }
+  // A Garden Irrigation zone's card fields, on top of what the page builds
+  // for every zone. The duration buttons record a manual watering with the
+  // integration's own action (the dashboard doesn't open any valve here).
+  vmGardenZone(z, makeButton) {
+    const e = z.gi.entities;
+    const live = (id) => id && this.s(id) !== 'unavailable' && this.s(id) !== 'unknown';
+    const needsState = live(e.needs_irrigation) ? this.s(e.needs_irrigation) : null;
+    const needs = needsState === 'on';
+    const reasons = (e.needs_irrigation && this.at(e.needs_irrigation, 'reasons')) || [];
+    const warnings = (e.needs_irrigation && this.at(e.needs_irrigation, 'warnings')) || [];
+    const source = e.recommended_minutes_mains ? 'mains' : (e.recommended_minutes_tank ? 'tank' : null);
+    const minId = source === 'mains' ? e.recommended_minutes_mains : e.recommended_minutes_tank;
+    const recMin = live(minId) ? this.n(minId) : null;
+    const recMm = live(e.recommended_irrigation) ? this.n(e.recommended_irrigation) : null;
+    const reason = reasons[0] || {};
+    let advisory;
+    if (needs) advisory = this.t('irrigation.giWater', { mm: this.dec(recMm, 1) });
+    else if (needsState === 'off' && reason.code === 'deficit_below_raw') {
+      advisory = this.t('irrigation.giNoNeed', { deficit: this.dec(reason.deficit_mm, 1), raw: this.dec(reason.raw_mm, 1) });
+    } else advisory = this.t('irrigation.giWaiting');
+    const warnText = (w) => {
+      if (w.code === 'soil_sensor_wet') return this.t('irrigation.giWarnWet');
+      if (w.code === 'soil_sensor_dry') return this.t('irrigation.giWarnDry');
+      if (w.code === 'rain_forecast') return this.t('irrigation.giWarnRain', { mm: this.dec(w.forecast_mm, 1) });
+      if (w.code === 'min_interval') return this.t('irrigation.giWarnInterval');
+      if (w.code === 'weekly_cap') return this.t('irrigation.giWarnCap');
+      if (w.code === 'no_source_rate') return this.t('irrigation.giWarnNoRate');
+      return null;
+    };
+    const extra = [needs && recMin ? this.t('irrigation.recommendedMin', { n: Math.round(recMin) }) : null]
+      .concat(warnings.map(warnText)).filter(Boolean);
+    const soilId = e.soil_moisture_status;
+    const pct = soilId ? this.at(soilId, 'value_pct') : null;
+    const soil = pct != null ? this.dec(pct, 0) + '%' : (live(soilId) ? this.t('irrigation.giSoil.' + this.s(soilId)) : '—');
+    let last = '—';
+    if (live(e.last_irrigation)) {
+      const t = new Date(this.s(e.last_irrigation));
+      const loc = this.lang === 'it' ? 'it-IT' : 'en-GB';
+      if (!isNaN(t)) last = t.toLocaleDateString(loc, { day: 'numeric', month: 'short' }) + ' · ' + t.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
+    }
+    const durations = (this.cfg.irrigation && this.cfg.irrigation.durations) || [5, 10, 15];
+    return {
+      advisory, tone: needs ? 'warn' : 'ok', urgenza: extra.join(' · '), soil,
+      deficit: live(e.deficit) ? this.val(e.deficit, 1, ' mm') : '—',
+      mmWeek: live(e.irrigation_7d) ? this.val(e.irrigation_7d, 1, ' mm') : '—',
+      weekLabel: this.t('irrigation.last7days'),
+      lastRunLine: this.t('irrigation.lastRun', { when: last }),
+      buttons: source ? durations.map((m) => makeButton(this.t('irrigation.minutes', { n: m }), 'gi:' + z.gi.deviceId + ':' + m,
+        () => this.call('garden_irrigation', 'record_irrigation', { zone: z.gi.deviceId, source, minutes: m }))) : []
     };
   }
 
